@@ -10,6 +10,7 @@ class MonitoreoController extends Controller
     public function index(): View
     {
         $incendios = Incendio::query()
+            ->enMonitoreo()
             ->orderByDesc('updated_at')
             ->orderByDesc('fecha_inicio')
             ->get();

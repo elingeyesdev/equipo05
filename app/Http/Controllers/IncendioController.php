@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
-use App\Models\Incendio;
-=======
 use App\Models\HistorialIncendio;
 use App\Models\Incendio;
 use App\Models\Notificacion;
->>>>>>> origin/santiago
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -22,18 +18,7 @@ class IncendioController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-<<<<<<< HEAD
-        $request->merge([
-            'fecha_fin' => $request->input('fecha_fin') ?: null,
-        ]);
-
-        $validated = $this->validateIncendio($request);
-
-        Incendio::create($validated);
-
-        return redirect()->route('home')->with('success', 'Incendio registrado correctamente.');
-=======
-        $data = $request->validate($this->rules());
+        $data = $this->validatedData($request);
 
         $incendio = Incendio::create($data);
 
@@ -55,7 +40,6 @@ class IncendioController extends Controller
         return redirect()
             ->route('monitoreo.index')
             ->with('success', 'Incendio registrado correctamente.');
->>>>>>> origin/santiago
     }
 
     public function edit(Incendio $incendio): View
@@ -65,18 +49,7 @@ class IncendioController extends Controller
 
     public function update(Request $request, Incendio $incendio): RedirectResponse
     {
-<<<<<<< HEAD
-        $request->merge([
-            'fecha_fin' => $request->input('fecha_fin') ?: null,
-        ]);
-
-        $validated = $this->validateIncendio($request);
-
-        $incendio->update($validated);
-
-        return redirect()->route('home')->with('success', 'Incendio actualizado correctamente.');
-=======
-        $data = $request->validate($this->rules());
+        $data = $this->validatedData($request);
         $estadoAnterior = $incendio->estado;
 
         $incendio->update($data);
@@ -101,33 +74,10 @@ class IncendioController extends Controller
         return redirect()
             ->route('monitoreo.index')
             ->with('success', 'Incendio actualizado correctamente.');
->>>>>>> origin/santiago
     }
 
     public function destroy(Incendio $incendio): RedirectResponse
     {
-<<<<<<< HEAD
-        $incendio->delete();
-
-        return redirect()->route('home')->with('success', 'Incendio eliminado correctamente.');
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function validateIncendio(Request $request): array
-    {
-        return $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'latitud' => 'required|numeric|between:-90,90',
-            'longitud' => 'required|numeric|between:-180,180',
-            'estado' => 'required|in:activo,controlado,extinguido',
-            'nivel_riesgo' => 'required|in:bajo,medio,alto',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-        ]);
-=======
         $titulo = $incendio->titulo;
         $incendio->delete();
 
@@ -136,9 +86,9 @@ class IncendioController extends Controller
             ->with('success', "Incendio {$titulo} eliminado correctamente.");
     }
 
-    private function rules(): array
+    private function validatedData(Request $request): array
     {
-        return [
+        $data = $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
             'descripcion' => ['nullable', 'string'],
             'latitud' => ['required', 'numeric', 'between:-90,90'],
@@ -147,7 +97,10 @@ class IncendioController extends Controller
             'nivel_riesgo' => ['required', 'in:bajo,medio,alto'],
             'fecha_inicio' => ['required', 'date'],
             'fecha_fin' => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
-        ];
->>>>>>> origin/santiago
+        ]);
+
+        $data['fecha_fin'] = $request->filled('fecha_fin') ? $data['fecha_fin'] : null;
+
+        return $data;
     }
 }

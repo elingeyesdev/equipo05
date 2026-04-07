@@ -35,6 +35,7 @@
             <div class="brand">Sistema de Gestion de Incendios</div>
             <nav class="nav">
                 <a href="{{ route('monitoreo.index') }}">Monitoreo</a>
+                <a href="{{ route('voluntarios.index') }}">Voluntarios</a>
                 <a href="{{ route('notificaciones.index') }}">Notificaciones</a>
                 <a href="{{ route('historial.index') }}">Historial</a>
                 <a href="{{ route('incendios.create') }}">Registrar incendio</a>
