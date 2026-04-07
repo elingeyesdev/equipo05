@@ -19,6 +19,11 @@
             <div class="alert" role="status">{{ session('success') }}</div>
         @endif
 
+        <section class="historial-link" aria-label="Enlace al historial" style="margin-bottom:1.5rem;padding:0.85rem 1.1rem;border-radius:12px;border:1px solid rgba(255,173,128,0.45);background:#fffbf7;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.75rem">
+            <p style="margin:0;font-size:0.9rem;color:#5c5c5c;max-width:48ch">Consultá el listado completo de incendios (incluidos finalizados) con fechas de registro y ubicación.</p>
+            <a href="{{ route('historial.index') }}" class="btn btn-primary" style="white-space:nowrap">Historial de incendios</a>
+        </section>
+
         <section class="map-section" aria-labelledby="map-heading">
             <h2 id="map-heading">Mapa</h2>
             <p class="hint">Cada punto muestra un incendio. Hacé clic para ver detalle y acceso rápido a edición.</p>
