@@ -32,7 +32,7 @@
 <body>
     <header class="topbar">
         <div class="container">
-            <div class="brand">EDT - Sistema de Gestion de Incendios</div>
+            <div class="brand">Sistema de Gestion de Incendios</div>
             <nav class="nav">
                 <a href="{{ route('monitoreo.index') }}">Monitoreo</a>
                 <a href="{{ route('notificaciones.index') }}">Notificaciones</a>
