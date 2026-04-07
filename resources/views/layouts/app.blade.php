@@ -5,28 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Sistema de Gestion de Incendios')</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f6f8fb; color: #222; }
+        :root {
+            --accent: #ffad80;
+            --accent-deep: #e8956a;
+            --accent-soft: #fff3eb;
+            --accent-border: rgba(255, 173, 128, 0.45);
+            --text: #1c1c1c;
+            --text-muted: #5c5c5c;
+            --surface: #ffffff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 600px at 10% -10%, var(--accent-soft), transparent 55%),
+                radial-gradient(900px 500px at 100% 0%, rgba(255, 173, 128, 0.12), transparent 50%),
+                #fff;
+        }
         .container { width: min(1100px, 92vw); margin: 0 auto; padding: 1.5rem 0 2.5rem; }
-        .topbar { background: #b80000; color: #fff; }
+        .topbar { background: var(--accent); color: var(--text); border-bottom: 1px solid var(--accent-border); }
         .topbar .container { display: flex; gap: .75rem; align-items: center; justify-content: space-between; padding: .9rem 0; }
         .brand { font-weight: 700; font-size: 1.05rem; }
         .nav { display: flex; flex-wrap: wrap; gap: .45rem; }
-        .nav a { color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,.38); padding: .35rem .65rem; border-radius: 6px; font-size: .88rem; }
-        .card { background: #fff; border: 1px solid #dde3ec; border-radius: 10px; padding: 1rem; margin-top: 1rem; }
+        .nav a {
+            color: var(--text);
+            text-decoration: none;
+            border: 1px solid rgba(0, 0, 0, .12);
+            background: rgba(255, 255, 255, .45);
+            padding: .35rem .65rem;
+            border-radius: 6px;
+            font-size: .88rem;
+        }
+        .card { background: var(--surface); border: 1px solid var(--accent-border); border-radius: 10px; padding: 1rem; margin-top: 1rem; }
         table { width: 100%; border-collapse: collapse; background: #fff; }
-        th, td { border: 1px solid #e1e7ef; padding: .55rem .65rem; text-align: left; font-size: .9rem; }
-        th { background: #f3f6fb; }
-        .btn { background: #b80000; color: #fff; border: none; border-radius: 6px; padding: .45rem .75rem; cursor: pointer; text-decoration: none; display: inline-block; font-size: .86rem; }
-        .btn-gray { background: #616975; }
-        .btn-light { background: #fff; color: #b80000; border: 1px solid #b80000; }
+        th, td { border: 1px solid #f1d5c4; padding: .55rem .65rem; text-align: left; font-size: .9rem; }
+        th { background: #fff8f3; }
+        .btn {
+            background: var(--accent);
+            color: var(--text);
+            border: 1px solid rgba(0, 0, 0, .08);
+            border-radius: 6px;
+            padding: .45rem .75rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: .86rem;
+        }
+        .btn-gray { background: #616975; color: #fff; border-color: transparent; }
+        .btn-light { background: #fff; color: var(--accent-deep); border: 1px solid var(--accent-border); }
         .row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
         .field { display: grid; gap: .25rem; margin-bottom: .65rem; }
-        input, select, textarea { border: 1px solid #cfd7e2; border-radius: 6px; padding: .45rem .55rem; font-size: .92rem; width: 100%; }
-        .alert { background: #eaf7ee; border: 1px solid #bce7c8; color: #14532d; border-radius: 8px; padding: .65rem .8rem; margin: .5rem 0 1rem; }
+        input, select, textarea { border: 1px solid var(--accent-border); border-radius: 6px; padding: .45rem .55rem; font-size: .92rem; width: 100%; }
+        .alert { background: #fffbf7; border: 1px solid var(--accent-border); color: var(--text); border-radius: 8px; padding: .65rem .8rem; margin: .5rem 0 1rem; }
         .error { color: #b00020; font-size: .8rem; }
         .status { padding: .2rem .45rem; border-radius: 999px; font-size: .75rem; font-weight: 700; }
         .status-ok { background: #e8f7ea; color: #185f2a; }
-        .status-pendiente { background: #fff0f0; color: #b00020; }
+        .status-pendiente { background: #fff3eb; color: #9a3412; border: 1px solid var(--accent-border); }
     </style>
 </head>
 <body>
