@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 @extends('monitoreo.layout')
+=======
+@extends('layouts.app')
+>>>>>>> origin/santiago
 
 @section('title', 'Editar incendio')
 
 @section('content')
+<<<<<<< HEAD
     <div class="wrap form-page">
         <a class="back" href="{{ route('home') }}">← Volver al monitoreo</a>
         <h1>Editar incendio</h1>
@@ -28,3 +33,13 @@
 @push('scripts')
     @include('monitoreo._map_picker_script')
 @endpush
+=======
+    <h1 style="margin:0;">Editar incendio</h1>
+    <div class="card">
+        <form method="POST" action="{{ route('incendios.update', $incendio) }}">
+            @method('PUT')
+            @include('monitoreo._form', ['submitLabel' => 'Actualizar incendio'])
+        </form>
+    </div>
+@endsection
+>>>>>>> origin/santiago
