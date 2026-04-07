@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Incendio extends Model
@@ -37,6 +38,13 @@ class Incendio extends Model
     public function voluntarioIncendios(): HasMany
     {
         return $this->hasMany(VoluntarioIncendio::class);
+    }
+
+    public function voluntarios(): BelongsToMany
+    {
+        return $this->belongsToMany(Voluntario::class, 'voluntario_incendio')
+            ->withPivot(['rol', 'estado'])
+            ->withTimestamps();
     }
 
     public function historial(): HasMany

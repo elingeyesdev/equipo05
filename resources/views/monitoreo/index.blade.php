@@ -128,6 +128,26 @@
             box-shadow: var(--shadow-hover);
         }
 
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 1rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-ghost:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -300,6 +320,7 @@
             <div class="meta-bar">
                 <span class="chip">En pantalla <strong>{{ $incendios->count() }}</strong></span>
                 <span class="chip">Actualización automática</span>
+                <a class="btn-ghost" href="{{ route('voluntarios.index') }}">Ver voluntarios activos</a>
             </div>
         </header>
 
