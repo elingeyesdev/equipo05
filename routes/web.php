@@ -23,5 +23,8 @@ Route::patch('/notificaciones/leidas', [NotificacionController::class, 'marcarTo
     ->name('notificaciones.marcar-todas');
 
 Route::get('/historial', [HistorialIncendioController::class, 'index'])->name('historial.index');
+Route::get('/voluntarios/crear', [VoluntarioController::class, 'create'])->name('voluntarios.create');
+Route::post('/voluntarios', [VoluntarioController::class, 'store'])->name('voluntarios.store');
+Route::delete('/voluntarios/{id}', [VoluntarioController::class, 'destroy'])->name('voluntarios.destroy');
 Route::get('/voluntarios', [VoluntarioController::class, 'index'])->name('voluntarios.index');
 Route::get('/voluntarios/{id}', [VoluntarioController::class, 'show'])->name('voluntarios.show');

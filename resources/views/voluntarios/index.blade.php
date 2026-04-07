@@ -85,6 +85,7 @@
             </div>
             <div class="actions">
                 <span class="chip">Activos totales <strong>{{ $totalActivos }}</strong></span>
+                <a class="btn btn-primary" href="{{ route('voluntarios.create') }}">+ Agregar voluntario</a>
                 <a class="btn" href="{{ route('monitoreo.index') }}">Volver a monitoreo</a>
             </div>
         </header>
@@ -153,6 +154,11 @@
 
                             <div class="actions" style="margin-top:0.9rem;">
                                 <a class="btn" href="{{ route('voluntarios.show', $voluntario->id) }}">Ver detalle</a>
+                                <form method="POST" action="{{ route('voluntarios.destroy', $voluntario->id) }}" onsubmit="return confirm('¿Eliminar este voluntario? Esta accion no se puede deshacer.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn" type="submit">Eliminar</button>
+                                </form>
                             </div>
                         </div>
                     </article>
