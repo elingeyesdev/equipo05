@@ -1,0 +1,104 @@
+services:
+  # --- TU APP LARAVEL ---
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transparencia-donaciones-laravel
+    restart: unless-stopped
+    volumes:
+      - .:/var/www
+    environment:
+      APP_NAME: Laravel
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: "base64:X8nyK98ag/d2uCKYgyPchsPAZia71misVstUk6G7sto="
+      APP_URL: "http://localhost"
+      
+      # BASE DE DATOS
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: donaciones
+      DB_USERNAME: postgres
+      DB_PASSWORD: "123"
+
+      # TUS APIS
+      API_DONACIONES_URL: "http://donaciones.dasalas.shop"
+      API_GATEWAY_URL: "http://gatealas.dasalas.shop"
+
+      # CONFIGURACIÓN GENERAL
+      QUEUE_CONNECTION: database
+      SESSION_DRIVER: database
+      CACHE_STORE: file
+    depends_on:
+      - db
+    networks:
+      - transparencia-net
+
+  # --- SCHEDULER (CRON AUTOMÁTICO) ---
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transparencia-donaciones-scheduler
+    restart: unless-stopped
+    command: php artisan schedule:work
+    volumes:
+      - .:/var/www
+    environment:
+      APP_KEY: "base64:X8nyK98ag/d2uCKYgyPchsPAZia71misVstUk6G7sto="
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: donaciones
+      DB_USERNAME: postgres
+      DB_PASSWORD: "123"
+      API_DONACIONES_URL: "http://donaciones.dasalas.shop"
+      API_GATEWAY_URL: "http://gatealas.dasalas.shop"
+      QUEUE_CONNECTION: database
+      SESSION_DRIVER: database
+    depends_on:
+      - db
+      - laravel
+    networks:
+      - transparencia-net
+
+  # --- SERVIDOR WEB (NGINX) ---
+  nginx:
+    image: nginx:alpine
+    # ----------------------------------------
+    # ⚠️ CAMBIO SOLICITADO:
+    container_name: emergencias
+    # ----------------------------------------
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - laravel
+    networks:
+      - transparencia-net
+
+  # --- BASE DE DATOS ---
+  db:
+    image: postgres:15
+    container_name: transparencia-donaciones-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: donaciones
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - transparencia-net
+
+networks:
+  transparencia-net:
+    driver: bridge
+
+volumes:
+  db-data:
