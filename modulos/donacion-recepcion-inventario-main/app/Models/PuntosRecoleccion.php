@@ -60,10 +60,13 @@ class PuntosRecoleccion extends Model
     {
         // The foreign key on Donacione is assumed to be 'id_punto_recoleccion'
         // local key is 'id_punto' in this model.
-        return $this->hasMany(\App\Models\Donacione::class, 'id_punto_recoleccion', 'id_punto');
+        return $this->hasMany(\Modules\Inventario\Models\Donacione::class, 'id_punto_recoleccion', 'id_punto');
     }
 
 }
+
+
+
 
 
 

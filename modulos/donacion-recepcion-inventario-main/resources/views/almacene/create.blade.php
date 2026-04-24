@@ -22,7 +22,7 @@
                                 <input type="hidden" name="return_url" value="{{ $returnUrl }}">
                             @endif
 
-                            @include('almacene.form')
+                            @include('inventario::almacene.form')
 
                         </form>
                     </div>
@@ -31,6 +31,8 @@
         </div>
     </section>
 @endsection
+
+
 
 
 

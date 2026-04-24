@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('inventario.puntos-recoleccion.store') }}" role="form" enctype="multipart/form-data">
                 @csrf
 
-                @include('puntos-recoleccion.form')
+                @include('inventario::puntos-recoleccion.form')
 
             </form>
         </div>
@@ -61,6 +61,8 @@
     });
 </script>
 @stop
+
+
 
 
 

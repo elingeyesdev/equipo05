@@ -14,12 +14,14 @@
             <form method="POST" action="{{ route('inventario.campana.store') }}" role="form" enctype="multipart/form-data">
                 @csrf
 
-                @include('campana.form')
+                @include('inventario::campana.form')
 
             </form>
         </div>
     </div>
 @endsection
+
+
 
 
 

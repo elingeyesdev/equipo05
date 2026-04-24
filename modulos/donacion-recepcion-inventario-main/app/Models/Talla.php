@@ -16,3 +16,6 @@ class Talla extends Model
 
 
 
+
+
+

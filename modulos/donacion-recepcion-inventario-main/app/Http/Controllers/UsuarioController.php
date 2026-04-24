@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Modules\Inventario\Http\Requests\UsuarioRequest;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class UsuarioController extends Controller
@@ -28,9 +29,10 @@ class UsuarioController extends Controller
     public function create(): View
     {
         $usuario = new Usuario();
-        $roles = \Spatie\Permission\Models\Role::all();
+        $roles = $this->getInventarioRoles();
+        $usuarioRol = null;
 
-        return view('inventario::usuario.create', compact('usuario', 'roles'));
+        return view('inventario::usuario.create', compact('usuario', 'roles', 'usuarioRol'));
     }
 
     /**
@@ -47,9 +49,8 @@ class UsuarioController extends Controller
         
         $usuario = Usuario::create($data);
         
-        // Asignar rol con Spatie
-        if ($request->has('rol')) {
-            $usuario->assignRole($request->rol);
+        if ($request->filled('rol')) {
+            $this->assignInventarioRole((int) $usuario->id_usuario, (string) $request->rol);
         }
 
         return Redirect::route('inventario.usuario.index')
@@ -69,8 +70,10 @@ class UsuarioController extends Controller
      */
     public function edit(Usuario $usuario): View
     {
-        $roles = \Spatie\Permission\Models\Role::all();
-        return view('inventario::usuario.edit', compact('usuario', 'roles'));
+        $roles = $this->getInventarioRoles();
+        $usuarioRol = $this->getUsuarioRol($usuario);
+
+        return view('inventario::usuario.edit', compact('usuario', 'roles', 'usuarioRol'));
     }
 
     /**
@@ -90,9 +93,8 @@ class UsuarioController extends Controller
         
         $usuario->update($data);
         
-        // Sincronizar rol con Spatie
-        if ($request->has('rol')) {
-            $usuario->syncRoles([$request->rol]);
+        if ($request->filled('rol')) {
+            $this->assignInventarioRole((int) $usuario->id_usuario, (string) $request->rol);
         }
 
         return Redirect::route('inventario.usuario.index')
@@ -101,10 +103,81 @@ class UsuarioController extends Controller
 
     public function destroy(Usuario $usuario): RedirectResponse
     {
+        DB::connection('inventario')
+            ->table('model_has_roles')
+            ->where('model_type', Usuario::class)
+            ->where('model_id', $usuario->id_usuario)
+            ->delete();
+
         $usuario->delete();
 
         return Redirect::route('inventario.usuario.index')
             ->with('success', 'Usuario eliminado exitosamente.');
+    }
+
+    private function getInventarioRoles()
+    {
+        $this->ensureInventarioRoles();
+
+        return DB::connection('inventario')
+            ->table('roles')
+            ->select('id', 'name')
+            ->where('guard_name', 'web')
+            ->orderBy('name')
+            ->get();
+    }
+
+    private function ensureInventarioRoles(): void
+    {
+        $defaultRoles = ['Administrador', 'Almacenero', 'Reportes', 'Voluntario', 'Donante'];
+
+        foreach ($defaultRoles as $roleName) {
+            DB::connection('inventario')
+                ->table('roles')
+                ->updateOrInsert(
+                    ['name' => $roleName, 'guard_name' => 'web'],
+                    ['updated_at' => now(), 'created_at' => now()]
+                );
+        }
+    }
+
+    private function assignInventarioRole(int $usuarioId, string $roleName): void
+    {
+        $this->ensureInventarioRoles();
+
+        $roleId = DB::connection('inventario')
+            ->table('roles')
+            ->where('name', $roleName)
+            ->where('guard_name', 'web')
+            ->value('id');
+
+        if (!$roleId) {
+            return;
+        }
+
+        DB::connection('inventario')
+            ->table('model_has_roles')
+            ->where('model_type', Usuario::class)
+            ->where('model_id', $usuarioId)
+            ->delete();
+
+        DB::connection('inventario')
+            ->table('model_has_roles')
+            ->insert([
+                'role_id' => $roleId,
+                'model_type' => Usuario::class,
+                'model_id' => $usuarioId,
+            ]);
+    }
+
+    private function getUsuarioRol(Usuario $usuario): ?string
+    {
+        return DB::connection('inventario')
+            ->table('model_has_roles')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_type', Usuario::class)
+            ->where('model_has_roles.model_id', $usuario->id_usuario)
+            ->value('roles.name');
     }
 }
 

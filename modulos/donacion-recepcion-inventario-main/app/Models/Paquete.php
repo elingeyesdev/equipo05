@@ -52,7 +52,7 @@ class Paquete extends Model
      */
     // public function solicitud()
     // {
-    //     return $this->belongsTo(\App\Models\SolicitudesAyuda::class, 'id_solicitud', 'id_solicitud');
+    //     return $this->belongsTo(\Modules\Inventario\Models\SolicitudesAyuda::class, 'id_solicitud', 'id_solicitud');
     // }
 
     /**
@@ -61,7 +61,7 @@ class Paquete extends Model
      */
     // public function solicitudesAyuda()
     // {
-    //     return $this->belongsTo(\App\Models\SolicitudesAyuda::class, 'id_solicitud', 'id_solicitud');
+    //     return $this->belongsTo(\Modules\Inventario\Models\SolicitudesAyuda::class, 'id_solicitud', 'id_solicitud');
     // }
 
     /**
@@ -69,7 +69,7 @@ class Paquete extends Model
      */
     public function detalles()
     {
-        return $this->hasMany(\App\Models\PaqueteDetalle::class, 'id_paquete', 'id_paquete');
+        return $this->hasMany(\Modules\Inventario\Models\PaqueteDetalle::class, 'id_paquete', 'id_paquete');
     }
 
     /**
@@ -77,7 +77,7 @@ class Paquete extends Model
      */
     public function paqueteDetalles()
     {
-        return $this->hasMany(\App\Models\PaqueteDetalle::class, 'id_paquete', 'id_paquete');
+        return $this->hasMany(\Modules\Inventario\Models\PaqueteDetalle::class, 'id_paquete', 'id_paquete');
     }
 
     /**
@@ -85,10 +85,13 @@ class Paquete extends Model
      */
     public function registrosSalidas()
     {
-        return $this->hasMany(\App\Models\RegistrosSalida::class, 'id_paquete', 'id_paquete');
+        return $this->hasMany(\Modules\Inventario\Models\RegistrosSalida::class, 'id_paquete', 'id_paquete');
     }
 
 }
+
+
+
 
 
 

@@ -17,7 +17,7 @@
                         @csrf
                         @method('PUT')
                         <div class="card-body">
-                            @include('donaciones.form')
+                            @include('inventario::donaciones.form')
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
@@ -30,8 +30,10 @@
             </div>
         </div>
     </section>
-    @include('donaciones.modals')
+    @include('inventario::donaciones.modals')
 @endsection
+
+
 
 
 

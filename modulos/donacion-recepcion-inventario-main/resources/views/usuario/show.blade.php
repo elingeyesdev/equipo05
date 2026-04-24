@@ -62,7 +62,7 @@
                         </div>
                         <div class="form-group mb-2 mb20">
                             <strong>Rol:</strong>
-                            {{ $usuario->getRoleNames()->first() ?? 'Sin rol' }}
+                            {{ $usuario->primary_role_name ?? 'Sin rol' }}
                         </div>
                         <div class="form-group mb-2 mb20">
                             <strong>Es Recolector:</strong>
@@ -79,6 +79,7 @@
         </div>
     </section>
 @endsection
+
 
 
 

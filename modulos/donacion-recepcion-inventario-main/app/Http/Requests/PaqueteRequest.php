@@ -28,7 +28,7 @@ class PaqueteRequest extends FormRequest
             'codigo_solicitud_externa' => 'nullable|string',
             'paquete_externo_id' => 'nullable|integer',
             'detalles' => 'required|array|min:1',
-            'detalles.*.id_producto' => 'required|integer|exists:productos,id_producto',
+            'detalles.*.id_producto' => 'required|integer|exists:inventario.productos,id_producto',
             'detalles.*.cantidad_usada' => 'required|integer|min:1',
         ];
 
@@ -40,6 +40,7 @@ class PaqueteRequest extends FormRequest
         return $rules;
     }
 }
+
 
 
 

@@ -19,8 +19,8 @@ class DonacionController extends Controller
         $validated = $request->validate([
             'tipo_donacion' => 'required|in:dinero,especie,ropa',
             'fecha_donacion' => 'required|date',
-            'id_donante' => 'required|exists:donantes,id_donante',
-            'id_campana' => 'nullable|exists:campanas,id_campana',
+            'id_donante' => 'required|exists:inventario.donantes,id_donante',
+            'id_campana' => 'nullable|exists:inventario.campanas,id_campana',
         ]);
 
         try {
@@ -110,7 +110,7 @@ class DonacionController extends Controller
     public function createMoneyDonation(Request $request)
     {
         $validated = $request->validate([
-            'id_donacion' => 'required|exists:donaciones,id_donacion',
+            'id_donacion' => 'required|exists:inventario.donaciones,id_donacion',
             'monto' => 'required|numeric|min:0.01',
             'moneda' => 'nullable|string|max:10',
             'metodo_pago' => 'nullable|string|max:30',
@@ -379,6 +379,7 @@ class DonacionController extends Controller
         }
     }
 }
+
 
 
 

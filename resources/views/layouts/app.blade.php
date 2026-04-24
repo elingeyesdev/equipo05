@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @yield('css')
+    @stack('css')
+    @stack('styles')
     <style>
         .brand-link { background-color: #0d6efd !important; }
         .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active { background-color: #0d6efd !important; }
@@ -346,6 +349,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+    @yield('js')
+    @stack('js')
     
     <script>
         (function () {

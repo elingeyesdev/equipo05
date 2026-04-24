@@ -17,7 +17,7 @@ class SolicitudRecoleccionController extends Controller
         $validated = $request->validate([
             'ubicacion' => 'nullable|string|max:500',
             'detalle_solicitud' => 'nullable|string',
-            'id_donante' => 'required|exists:donantes,id_donante',
+            'id_donante' => 'required|exists:inventario.donantes,id_donante',
         ]);
 
         try {
@@ -82,6 +82,7 @@ class SolicitudRecoleccionController extends Controller
         //
     }
 }
+
 
 
 

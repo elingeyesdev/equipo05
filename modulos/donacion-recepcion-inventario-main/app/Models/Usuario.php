@@ -5,6 +5,7 @@ namespace Modules\Inventario\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -136,7 +137,20 @@ class Usuario extends Authenticatable
     {
         return $this->correo;
     }
+
+    public function getPrimaryRoleNameAttribute(): ?string
+    {
+        return DB::connection('inventario')
+            ->table('model_has_roles')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('model_has_roles.model_type', self::class)
+            ->where('model_has_roles.model_id', $this->id_usuario)
+            ->value('roles.name');
+    }
 }
+
+
+
 
 
 

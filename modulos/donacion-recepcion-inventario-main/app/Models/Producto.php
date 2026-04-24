@@ -51,7 +51,7 @@ class Producto extends Model
      */
     public function categoriaProducto()
     {
-        return $this->belongsTo(\App\Models\CategoriasProducto::class, 'id_categoria', 'id_categoria');
+        return $this->belongsTo(\Modules\Inventario\Models\CategoriasProducto::class, 'id_categoria', 'id_categoria');
     }
 
     /**
@@ -59,7 +59,7 @@ class Producto extends Model
      */
     public function categoriasProducto()
     {
-        return $this->belongsTo(\App\Models\CategoriasProducto::class, 'id_categoria', 'id_categoria');
+        return $this->belongsTo(\Modules\Inventario\Models\CategoriasProducto::class, 'id_categoria', 'id_categoria');
     }
     
     /**
@@ -67,10 +67,13 @@ class Producto extends Model
      */
     public function donacionDetalles()
     {
-        return $this->hasMany(\App\Models\DonacionDetalle::class, 'id_producto', 'id_producto');
+        return $this->hasMany(\Modules\Inventario\Models\DonacionDetalle::class, 'id_producto', 'id_producto');
     }
     
 }
+
+
+
 
 
 

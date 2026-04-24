@@ -43,7 +43,7 @@ class Almacene extends Model
      */
     public function estantes()
     {
-        return $this->hasMany(\App\Models\Estante::class, 'id_almacen', 'id_almacen');
+        return $this->hasMany(\Modules\Inventario\Models\Estante::class, 'id_almacen', 'id_almacen');
     }
     
     /**
@@ -51,6 +51,9 @@ class Almacene extends Model
      */
     
 }
+
+
+
 
 
 

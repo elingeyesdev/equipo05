@@ -20,9 +20,11 @@
     role="form" enctype="multipart/form-data">
     @method('PATCH')
     @csrf
-    @include('solicitudes-recoleccion.form')
+    @include('inventario::solicitudes-recoleccion.form')
 </form>
 @stop
+
+
 
 
 

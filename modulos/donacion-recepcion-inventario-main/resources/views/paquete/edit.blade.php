@@ -20,9 +20,11 @@
     enctype="multipart/form-data">
     @method('PATCH')
     @csrf
-    @include('paquete.form')
+    @include('inventario::paquete.form')
 </form>
 @stop
+
+
 
 
 

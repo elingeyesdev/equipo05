@@ -43,10 +43,13 @@ class RegistrosSalida extends Model
      */
     public function paquete()
     {
-        return $this->belongsTo(\App\Models\Paquete::class, 'id_paquete', 'id_paquete');
+        return $this->belongsTo(\Modules\Inventario\Models\Paquete::class, 'id_paquete', 'id_paquete');
     }
     
 }
+
+
+
 
 
 

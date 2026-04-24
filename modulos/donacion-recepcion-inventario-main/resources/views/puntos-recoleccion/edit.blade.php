@@ -16,7 +16,7 @@
                 {{ method_field('PATCH') }}
                 @csrf
 
-                @include('puntos-recoleccion.form')
+                @include('inventario::puntos-recoleccion.form')
 
             </form>
         </div>
@@ -68,6 +68,8 @@
     });
 </script>
 @stop
+
+
 
 
 

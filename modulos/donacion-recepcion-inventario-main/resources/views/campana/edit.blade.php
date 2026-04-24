@@ -16,12 +16,14 @@
                 {{ method_field('PUT') }}
                 @csrf
 
-                @include('campana.form')
+                @include('inventario::campana.form')
 
             </form>
         </div>
     </div>
 @endsection
+
+
 
 
 

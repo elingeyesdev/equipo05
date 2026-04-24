@@ -35,9 +35,12 @@ class Role extends Model
      */
     public function usuarios()
     {
-        return $this->hasMany(\App\Models\Usuario::class, 'id_rol', 'id_rol');
+        return $this->hasMany(\Modules\Inventario\Models\Usuario::class, 'id_rol', 'id_rol');
     }
 }
+
+
+
 
 
 

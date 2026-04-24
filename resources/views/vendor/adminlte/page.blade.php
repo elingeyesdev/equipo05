@@ -22,6 +22,3 @@
     @yield('content')
 @endsection
 
-@push('scripts')
-    @yield('js')
-@endpush

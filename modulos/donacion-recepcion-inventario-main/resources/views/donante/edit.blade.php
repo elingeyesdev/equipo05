@@ -19,7 +19,7 @@
                             {{ method_field('PATCH') }}
                             @csrf
 
-                            @include('donante.form')
+                            @include('inventario::donante.form')
 
                         </form>
                     </div>
@@ -28,6 +28,8 @@
         </div>
     </section>
 @endsection
+
+
 
 
 

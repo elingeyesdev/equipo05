@@ -14,10 +14,10 @@ class DonacioneRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'id_donante' => 'required|exists:donantes,id_donante',
+            'id_donante' => 'required|exists:inventario.donantes,id_donante',
             'tipo' => 'required|in:dinero,especie,ropa',
-            'id_campana' => 'nullable|exists:campanas,id_campana',
-            'id_punto_recoleccion' => 'nullable|exists:puntos_recoleccion,id_punto',
+            'id_campana' => 'nullable|exists:inventario.campanas,id_campana',
+            'id_punto_recoleccion' => 'nullable|exists:inventario.puntos_recoleccion,id_punto',
             'observaciones' => 'nullable|string',
         ];
 
@@ -32,17 +32,18 @@ class DonacioneRequest extends FormRequest
         // Validaciones específicas para tipo especie/ropa
         if (in_array($this->input('tipo'), ['especie', 'ropa'])) {
             $rules['detalles'] = 'required|array|min:1';
-            $rules['detalles.*.id_producto'] = 'required|exists:productos,id_producto';
+            $rules['detalles.*.id_producto'] = 'required|exists:inventario.productos,id_producto';
             $rules['detalles.*.cantidad'] = 'required|numeric|min:1';
             $rules['detalles.*.unidad_medida'] = 'nullable|string|max:50';
-            $rules['detalles.*.id_talla'] = 'nullable|exists:tallas,id_talla';
-            $rules['detalles.*.id_genero'] = 'nullable|exists:generos_ropa,id_genero';
-            $rules['detalles.*.id_espacio'] = 'nullable|exists:espacios,id_espacio';
+            $rules['detalles.*.id_talla'] = 'nullable|exists:inventario.tallas,id_talla';
+            $rules['detalles.*.id_genero'] = 'nullable|exists:inventario.generos_ropa,id_genero';
+            $rules['detalles.*.id_espacio'] = 'nullable|exists:inventario.espacios,id_espacio';
         }
 
         return $rules;
     }
 }
+
 
 
 

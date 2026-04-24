@@ -45,7 +45,7 @@ class SolicitudesRecoleccion extends Model
      */
     public function donante()
     {
-        return $this->belongsTo(\App\Models\Donante::class, 'id_donante', 'id_donante');
+        return $this->belongsTo(\Modules\Inventario\Models\Donante::class, 'id_donante', 'id_donante');
     }
     
     /**
@@ -53,14 +53,17 @@ class SolicitudesRecoleccion extends Model
      */
     public function usuario()
     {
-        return $this->belongsTo(\App\Models\Usuario::class, 'id_recolector', 'id_usuario');
+        return $this->belongsTo(\Modules\Inventario\Models\Usuario::class, 'id_recolector', 'id_usuario');
     }
 
     public function campana()
     {
-        return $this->belongsTo(\App\Models\Campana::class, 'id_campana', 'id_campana');
+        return $this->belongsTo(\Modules\Inventario\Models\Campana::class, 'id_campana', 'id_campana');
     }
 }
+
+
+
 
 
 

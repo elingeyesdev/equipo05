@@ -15,7 +15,7 @@
                     enctype="multipart/form-data">
                     {{ method_field('PUT') }}
                     @csrf
-                    @include('registros-salida.form')
+                    @include('inventario::registros-salida.form')
                 </form>
             </div>
         </div>
@@ -25,6 +25,8 @@
 @section('css')
 <link rel="stylesheet" href="/css/admin_custom.css">
 @stop
+
+
 
 
 

@@ -18,7 +18,7 @@
                             {{ method_field('PUT') }}
                             @csrf
 
-                            @include('almacene.form')
+                            @include('inventario::almacene.form')
 
                         </form>
                     </div>
@@ -27,6 +27,8 @@
         </div>
     </section>
 @endsection
+
+
 
 
 

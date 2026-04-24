@@ -16,7 +16,7 @@ class ImagenController extends Controller
     public function upload(Request $request)
     {
         $validated = $request->validate([
-            'id_solicitud' => 'required|exists:solicitudes_recoleccion,id_solicitud',
+            'id_solicitud' => 'required|exists:inventario.solicitudes_recoleccion,id_solicitud',
             'imagen' => 'required|file|image|max:10240', // max 10MB
         ]);
 

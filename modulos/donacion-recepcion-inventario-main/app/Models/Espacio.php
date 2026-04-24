@@ -44,7 +44,7 @@ class Espacio extends Model
      */
     public function estante()
     {
-        return $this->belongsTo(\App\Models\Estante::class, 'id_estante', 'id_estante');
+        return $this->belongsTo(\Modules\Inventario\Models\Estante::class, 'id_estante', 'id_estante');
     }
 
     /**
@@ -52,10 +52,13 @@ class Espacio extends Model
      */
     public function ubicacionesDonaciones()
     {
-        return $this->hasMany(\App\Models\UbicacionesDonacione::class, 'id_espacio', 'id_espacio');
+        return $this->hasMany(\Modules\Inventario\Models\UbicacionesDonacione::class, 'id_espacio', 'id_espacio');
     }
 
 }
+
+
+
 
 
 

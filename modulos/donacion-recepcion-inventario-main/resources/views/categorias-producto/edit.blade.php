@@ -18,7 +18,7 @@
                             {{ method_field('PATCH') }}
                             @csrf
 
-                            @include('categorias-producto.form')
+                            @include('inventario::categorias-producto.form')
 
                         </form>
                     </div>
@@ -27,6 +27,8 @@
         </div>
     </section>
 @endsection
+
+
 
 
 

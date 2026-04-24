@@ -296,7 +296,7 @@
     function exportarExcel() {
         const params = new URLSearchParams(window.location.search);
         params.set('formato', 'excel');
-        window.location.href = '{{ route("reportes.distribucion") }}?' + params.toString();
+        window.location.href = '{{ route("inventario.reportes.distribucion") }}?' + params.toString();
     }
 
     // Initialize DataTable
@@ -323,6 +323,8 @@
     }
 </style>
 @stop
+
+
 
 
 

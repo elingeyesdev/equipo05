@@ -22,7 +22,7 @@ class RegistrosSalidaRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'id_paquete' => 'nullable|integer|exists:paquetes,id_paquete',
+            'id_paquete' => 'nullable|integer|exists:inventario.paquetes,id_paquete',
             'fecha_salida' => 'nullable|date',
             'destino' => 'nullable|string',
             'observaciones' => 'nullable|string',
@@ -36,6 +36,7 @@ class RegistrosSalidaRequest extends FormRequest
         return $rules;
     }
 }
+
 
 
 

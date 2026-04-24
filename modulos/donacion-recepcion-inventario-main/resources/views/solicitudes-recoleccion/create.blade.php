@@ -18,9 +18,11 @@
 @section('content')
 <form method="POST" action="{{ route('inventario.solicitudes-recoleccions.store') }}" role="form" enctype="multipart/form-data">
     @csrf
-    @include('solicitudes-recoleccion.form')
+    @include('inventario::solicitudes-recoleccion.form')
 </form>
 @stop
+
+
 
 
 

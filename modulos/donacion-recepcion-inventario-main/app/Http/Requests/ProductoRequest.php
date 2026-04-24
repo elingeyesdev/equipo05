@@ -22,7 +22,7 @@ class ProductoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_categoria' => 'required|integer|exists:categorias_productos,id_categoria',
+            'id_categoria' => 'required|integer|exists:inventario.categorias_productos,id_categoria',
             'nombre' => 'required|string',
             'descripcion' => 'string',
             'unidad_medida' => 'string',
@@ -43,6 +43,7 @@ class ProductoRequest extends FormRequest
         parent::failedValidation($validator);
     }
 }
+
 
 
 

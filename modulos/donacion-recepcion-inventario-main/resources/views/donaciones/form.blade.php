@@ -686,7 +686,7 @@ document.addEventListener('DOMContentLoaded', function(){
             submitBtn.disabled = true;
             submitBtn.textContent = 'Guardando...';
             
-            fetch('{{ route("producto.store") }}', {
+            fetch('{{ route("inventario.producto.store") }}', {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -810,7 +810,7 @@ document.addEventListener('DOMContentLoaded', function(){
             submitBtn.disabled = true;
             submitBtn.textContent = 'Guardando...';
             
-            fetch('{{ route("categorias-producto.store") }}', {
+            fetch('{{ route("inventario.categorias-producto.store") }}', {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -876,7 +876,7 @@ document.addEventListener('DOMContentLoaded', function(){
             submitBtn.disabled = true;
             submitBtn.textContent = 'Guardando...';
             
-            fetch('{{ route("donante.store") }}', {
+            fetch('{{ route("inventario.donante.store") }}', {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -942,7 +942,7 @@ document.addEventListener('DOMContentLoaded', function(){
             submitBtn.disabled = true;
             submitBtn.textContent = 'Guardando...';
 
-            fetch('{{ route("campana.store") }}', {
+            fetch('{{ route("inventario.campana.store") }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -1007,7 +1007,7 @@ document.addEventListener('DOMContentLoaded', function(){
             submitBtn.disabled = true;
             submitBtn.textContent = 'Guardando...';
 
-            fetch('{{ route("puntos-recoleccion.store") }}', {
+            fetch('{{ route("inventario.puntos-recoleccion.store") }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -1100,6 +1100,8 @@ function previewReferenciaPago(event) {
 }
 </script>
 @endpush
+
+
 
 
 

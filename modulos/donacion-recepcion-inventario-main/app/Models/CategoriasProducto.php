@@ -47,10 +47,13 @@ class CategoriasProducto extends Model
      */
     public function productos()
     {
-        return $this->hasMany(\App\Models\Producto::class, 'id_categoria', 'id_categoria');
+        return $this->hasMany(\Modules\Inventario\Models\Producto::class, 'id_categoria', 'id_categoria');
     }
     
 }
+
+
+
 
 
 

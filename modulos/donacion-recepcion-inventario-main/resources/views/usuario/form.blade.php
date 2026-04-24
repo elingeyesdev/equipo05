@@ -207,7 +207,7 @@
             <select name="rol" class="form-control @error('rol') is-invalid @enderror" id="rol">
                 <option value="">Seleccione un rol</option>
                 @foreach($roles ?? [] as $role)
-                    <option value="{{ $role->name }}" {{ old('rol', $usuario?->getRoleNames()->first()) == $role->name ? 'selected' : '' }}>
+                    <option value="{{ $role->name }}" {{ old('rol', $usuarioRol ?? null) == $role->name ? 'selected' : '' }}>
                         {{ $role->name }}
                     </option>
                 @endforeach
@@ -598,6 +598,7 @@ $(document).ready(function() {
     });
 });
 </script>
+
 
 
 

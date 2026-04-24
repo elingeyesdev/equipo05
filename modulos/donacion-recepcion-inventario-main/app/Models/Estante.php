@@ -43,12 +43,12 @@ class Estante extends Model
      */
     public function almacene()
     {
-        return $this->belongsTo(\App\Models\Almacene::class, 'id_almacen', 'id_almacen');
+        return $this->belongsTo(\Modules\Inventario\Models\Almacene::class, 'id_almacen', 'id_almacen');
     }
 
     public function almacen()
     {
-        return $this->belongsTo(\App\Models\Almacene::class, 'id_almacen', 'id_almacen');
+        return $this->belongsTo(\Modules\Inventario\Models\Almacene::class, 'id_almacen', 'id_almacen');
     }
     
     /**
@@ -56,10 +56,13 @@ class Estante extends Model
      */
     public function espacios()
     {
-        return $this->hasMany(\App\Models\Espacio::class, 'id_estante', 'id_estante');
+        return $this->hasMany(\Modules\Inventario\Models\Espacio::class, 'id_estante', 'id_estante');
     }
     
 }
+
+
+
 
 
 

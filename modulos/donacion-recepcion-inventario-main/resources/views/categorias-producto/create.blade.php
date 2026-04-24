@@ -17,7 +17,7 @@
                         <form method="POST" action="{{ route('inventario.categorias-producto.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
-                            @include('categorias-producto.form')
+                            @include('inventario::categorias-producto.form')
 
                         </form>
                     </div>
@@ -26,6 +26,8 @@
         </div>
     </section>
 @endsection
+
+
 
 
 

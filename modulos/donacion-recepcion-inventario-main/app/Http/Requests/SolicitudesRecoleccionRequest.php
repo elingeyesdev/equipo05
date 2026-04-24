@@ -22,11 +22,11 @@ class SolicitudesRecoleccionRequest extends FormRequest
     public function rules(): array
     {        
         return [
-			'id_donante' => 'required|integer|exists:donantes,id_donante',
+			'id_donante' => 'required|integer|exists:inventario.donantes,id_donante',
 			'id_recolector' => [
                 'nullable',
                 'integer',
-                'exists:usuarios,id_usuario',
+                'exists:inventario.usuarios,id_usuario',
                 'required_if:estado,en_proceso',
             ],
 			'direccion_recoleccion' => 'required|string',
@@ -48,6 +48,7 @@ class SolicitudesRecoleccionRequest extends FormRequest
         ];
     }
 }
+
 
 
 

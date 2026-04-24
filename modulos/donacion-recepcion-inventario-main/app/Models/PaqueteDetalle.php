@@ -37,3 +37,6 @@ class PaqueteDetalle extends Model
 
 
 
+
+
+

@@ -18,9 +18,11 @@
 @section('content')
 <form method="POST" action="{{ route('inventario.paquete.store') }}" role="form" enctype="multipart/form-data">
     @csrf
-    @include('paquete.form')
+    @include('inventario::paquete.form')
 </form>
 @stop
+
+
 
 
 
