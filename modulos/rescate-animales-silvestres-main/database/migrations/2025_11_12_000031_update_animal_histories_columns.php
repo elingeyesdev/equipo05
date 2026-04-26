@@ -5,8 +5,17 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    private function isSqlite(): bool
+    {
+        return DB::connection()->getDriverName() === 'sqlite';
+    }
+
     public function up(): void
     {
+        if ($this->isSqlite()) {
+            return;
+        }
+
         // Eliminar columnas de estado si existen
         DB::statement('ALTER TABLE ONLY animal_histories DROP COLUMN IF EXISTS estado_anterior');
         DB::statement('ALTER TABLE ONLY animal_histories DROP COLUMN IF EXISTS estado_nuevo');
@@ -35,6 +44,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if ($this->isSqlite()) {
+            return;
+        }
+
         // Renombrar de vuelta a inglés si existen
         $existsVA = DB::selectOne("
             SELECT 1

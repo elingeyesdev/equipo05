@@ -118,9 +118,9 @@ Route::middleware('auth:sanctum')->group(function () {
     ]);
     
     // ========================================================================
-    // ADMIN-ONLY ENDPOINTS (role:administrador)
+    // ADMIN-ONLY ENDPOINTS (role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador)
     // ========================================================================
-    Route::middleware('role:administrador')->group(function () {
+    Route::middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->group(function () {
         // Tipos de Biomasa - Full CRUD (admin only)
         Route::apiResource('tipos-biomasa', TipoBiomasaController::class)->names([
             'index' => 'api.tipos-biomasa.index',
@@ -150,7 +150,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.trazabilidad.mis-estadisticas');
     
     // Consultar por CI específico (requiere rol administrador)
-    Route::middleware('role:administrador')->group(function () {
+    Route::middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->group(function () {
         Route::get('/trazabilidad/estadisticas/{ci}', [UserActivityController::class, 'getStatsByCi'])
             ->name('api.trazabilidad.estadisticas');
     });

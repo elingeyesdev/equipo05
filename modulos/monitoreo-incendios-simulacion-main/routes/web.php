@@ -100,7 +100,7 @@ Route::middleware('auth')->group(function () {
     // ============================================
     // BIOMASAS - Accesible para Voluntarios y Administradores
     // ============================================
-    Route::middleware('role:voluntario|administrador')->group(function () {
+    Route::middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->group(function () {
         // RUTA DE TEST
         Route::get('biomasas/test-create', function() {
             $tipoBiomasas = \Modules\Incendios\Models\TipoBiomasa::all();
@@ -114,7 +114,7 @@ Route::middleware('auth')->group(function () {
     // ============================================
     // VOLUNTARIO ROUTES (Voluntarios y Administradores)
     // ============================================
-    Route::middleware('role:voluntario|administrador')->group(function () {
+    Route::middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->group(function () {
         // Simulador avanzado - Voluntarios pueden usar pero NO guardar
         Route::get('simulaciones/simulator', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'simulator'])
             ->name('simulaciones.simulator');
@@ -141,7 +141,7 @@ Route::middleware('auth')->group(function () {
     // ============================================
     // ADMINISTRADOR ROUTES (Solo Administradores)
     // ============================================
-    Route::middleware('role:administrador')->group(function () {
+    Route::middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->group(function () {
         
         // Biomasas - Moderación (aprobar/rechazar)
         Route::post('biomasas/{id}/aprobar', [Modules\Incendios\Http\Controllers\BiomasaController::class, 'aprobar'])

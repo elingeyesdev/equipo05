@@ -7,8 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    private function isSqlite(): bool
+    {
+        return DB::connection()->getDriverName() === 'sqlite';
+    }
+
     public function up(): void
     {
+        if ($this->isSqlite()) {
+            return;
+        }
+
         // Primero, eliminar la restricción de foreign key si existe
         Schema::table('reports', function (Blueprint $table) {
             // Eliminar la foreign key constraint
@@ -29,6 +38,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if ($this->isSqlite()) {
+            return;
+        }
+
         // Primero, eliminar la foreign key constraint
         Schema::table('reports', function (Blueprint $table) {
             $table->dropForeign(['persona_id']);

@@ -115,3 +115,25 @@ Cambios:
 Resultado esperado:
 
 - La aplicacion vuelve a arrancar y registrar rutas de los tres sistemas sin romper por clases faltantes o configuraciones nulas.
+
+### Hito 6 - Compatibilidad SQLite completa para modulo Rescate
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se ajustan migraciones de rescate para que soporten SQLite (entorno local del proyecto principal) sin SQL exclusivo de PostgreSQL.
+- Se agregan defensas por driver (`isSqlite`) en migraciones con:
+  - `UPDATE ... FROM ...`
+  - `ALTER TABLE ONLY ... ALTER COLUMN ...`
+  - `DROP CONSTRAINT` y `DROP COLUMN` no compatibles en SQLite.
+- Se completa ejecucion de migraciones de `rescate.sqlite` sin errores.
+- Se amplian middlewares de rol en rutas de modulos para compatibilidad con roles actuales del sistema principal.
+
+Verificacion ejecutada:
+
+- `php artisan route:list` exitoso.
+- `php artisan migrate --database=rescate --path=modulos/rescate-animales-silvestres-main/database/migrations` exitoso.
+- Smoke test HTTP:
+  - `/login` responde 200.
+  - `/incendios` y `/rescate` redirigen correctamente a login cuando no hay sesion (302).

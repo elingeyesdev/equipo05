@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private function isSqlite(): bool
+    {
+        return DB::connection()->getDriverName() === 'sqlite';
+    }
+
     public function up(): void
     {
         // Agregar persona_id si no existe aún (inicialmente nullable para permitir la migración de datos)
@@ -17,22 +22,36 @@ return new class extends Migration
         }
 
         // Migrar datos existentes: persona_id <- rescuers.persona_id a partir de transfers.rescatista_id
-        DB::statement("
-            UPDATE transfers t
-            SET persona_id = r.persona_id
-            FROM rescuers r
-            WHERE r.id = t.rescatista_id
-        ");
+        if ($this->isSqlite()) {
+            DB::statement("
+                UPDATE transfers
+                SET persona_id = (
+                    SELECT persona_id
+                    FROM rescuers
+                    WHERE rescuers.id = transfers.rescatista_id
+                )
+                WHERE rescatista_id IS NOT NULL
+            ");
+        } else {
+            DB::statement("
+                UPDATE transfers t
+                SET persona_id = r.persona_id
+                FROM rescuers r
+                WHERE r.id = t.rescatista_id
+            ");
+        }
 
         // Hacer persona_id NOT NULL sin requerir doctrine/dbal
-        if (Schema::hasColumn('transfers', 'persona_id')) {
+        if (!$this->isSqlite() && Schema::hasColumn('transfers', 'persona_id')) {
             DB::statement('ALTER TABLE ONLY transfers ALTER COLUMN persona_id SET NOT NULL');
         }
 
         // Eliminar la FK y columna antigua rescatista_id
         // Intentar quitar la FK por nombre si existe (PostgreSQL)
-        DB::statement('ALTER TABLE ONLY transfers DROP CONSTRAINT IF EXISTS transfers_rescatista_id_foreign');
-        if (Schema::hasColumn('transfers', 'rescatista_id')) {
+        if (!$this->isSqlite()) {
+            DB::statement('ALTER TABLE ONLY transfers DROP CONSTRAINT IF EXISTS transfers_rescatista_id_foreign');
+        }
+        if (!$this->isSqlite() && Schema::hasColumn('transfers', 'rescatista_id')) {
             Schema::table('transfers', function (Blueprint $table) {
                 $table->dropColumn('rescatista_id');
             });
@@ -49,21 +68,35 @@ return new class extends Migration
         }
 
         // Migrar datos inversos: rescatista_id <- rescuers.id a partir de persona_id
-        DB::statement("
-            UPDATE transfers t
-            SET rescatista_id = r.id
-            FROM rescuers r
-            WHERE r.persona_id = t.persona_id
-        ");
+        if ($this->isSqlite()) {
+            DB::statement("
+                UPDATE transfers
+                SET rescatista_id = (
+                    SELECT id
+                    FROM rescuers
+                    WHERE rescuers.persona_id = transfers.persona_id
+                )
+                WHERE persona_id IS NOT NULL
+            ");
+        } else {
+            DB::statement("
+                UPDATE transfers t
+                SET rescatista_id = r.id
+                FROM rescuers r
+                WHERE r.persona_id = t.persona_id
+            ");
+        }
 
         // Hacer no nulo tras migración
-        if (Schema::hasColumn('transfers', 'rescatista_id')) {
+        if (!$this->isSqlite() && Schema::hasColumn('transfers', 'rescatista_id')) {
             DB::statement('ALTER TABLE ONLY transfers ALTER COLUMN rescatista_id SET NOT NULL');
         }
 
         // Quitar persona_id
-        DB::statement('ALTER TABLE ONLY transfers DROP CONSTRAINT IF EXISTS transfers_persona_id_foreign');
-        if (Schema::hasColumn('transfers', 'persona_id')) {
+        if (!$this->isSqlite()) {
+            DB::statement('ALTER TABLE ONLY transfers DROP CONSTRAINT IF EXISTS transfers_persona_id_foreign');
+        }
+        if (!$this->isSqlite() && Schema::hasColumn('transfers', 'persona_id')) {
             Schema::table('transfers', function (Blueprint $table) {
                 $table->dropColumn('persona_id');
             });

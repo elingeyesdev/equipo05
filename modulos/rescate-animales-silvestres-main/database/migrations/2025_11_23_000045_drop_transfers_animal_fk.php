@@ -7,21 +7,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private function isSqlite(): bool
+    {
+        return DB::connection()->getDriverName() === 'sqlite';
+    }
+
     public function up(): void
     {
         if (Schema::hasTable('transfers')) {
             // Intentar eliminar la constraint si existe
-            try {
-                DB::statement('ALTER TABLE ONLY transfers DROP CONSTRAINT IF EXISTS transfers_animal_id_foreign');
-            } catch (\Throwable $e) {
-                // ignorar si no existe o ya fue eliminada
+            if (!$this->isSqlite()) {
+                try {
+                    DB::statement('ALTER TABLE ONLY transfers DROP CONSTRAINT IF EXISTS transfers_animal_id_foreign');
+                } catch (\Throwable $e) {
+                    // ignorar si no existe o ya fue eliminada
+                }
+                // Asegurar tipo de columna sin FK (bigint nullable)
+                Schema::table('transfers', function (Blueprint $table) {
+                    // En Postgres no se puede cambiar tipo a unsigned; mantenemos bigint
+                    // Solo aseguramos nullable
+                    $table->unsignedBigInteger('animal_id')->nullable()->change();
+                });
             }
-            // Asegurar tipo de columna sin FK (bigint nullable)
-            Schema::table('transfers', function (Blueprint $table) {
-                // En Postgres no se puede cambiar tipo a unsigned; mantenemos bigint
-                // Solo aseguramos nullable
-                $table->unsignedBigInteger('animal_id')->nullable()->change();
-            });
         }
     }
 
