@@ -14,7 +14,7 @@
                             <span class="card-title">{{ __('Show') }} {{ __('Animal Condition') }}</span>
                         </div>
                         <div class="ml-auto">
-                            <a class="btn btn-primary btn-sm" href="{{ route('animal-conditions.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.animal-conditions.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 

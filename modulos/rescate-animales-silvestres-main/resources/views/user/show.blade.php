@@ -14,7 +14,7 @@
                             <span class="card-title">{{ __('Show') }} {{ __('User') }}</span>
                         </div>
                         <div class="ml-auto">
-                            <a class="btn btn-primary btn-sm" href="{{ route('users.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.users.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 

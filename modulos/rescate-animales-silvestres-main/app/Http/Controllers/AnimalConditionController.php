@@ -13,7 +13,7 @@ class AnimalConditionController extends Controller
 {
 	public function __construct()
 	{
-		$this->middleware('role:admin');
+		$this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
 	}
 
     /**
@@ -44,7 +44,7 @@ class AnimalConditionController extends Controller
     {
         AnimalCondition::create($request->validated());
 
-        return Redirect::route('animal-conditions.index')
+        return Redirect::route('rescate.animal-conditions.index')
             ->with('success', 'Condición creada correctamente.');
     }
 
@@ -75,7 +75,7 @@ class AnimalConditionController extends Controller
     {
         $animalCondition->update($request->validated());
 
-        return Redirect::route('animal-conditions.index')
+        return Redirect::route('rescate.animal-conditions.index')
             ->with('success', 'Condición actualizada correctamente');
     }
 
@@ -83,7 +83,7 @@ class AnimalConditionController extends Controller
     {
         AnimalCondition::find($id)->delete();
 
-        return Redirect::route('animal-conditions.index')
+        return Redirect::route('rescate.animal-conditions.index')
             ->with('success', 'Condición eliminada correctamente');
     }
 }

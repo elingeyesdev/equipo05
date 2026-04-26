@@ -11,7 +11,6 @@ class UseRescateConnection
 {
     public function handle(Request $request, Closure $next): Response
     {
-        config(['database.default' => 'rescate']);
         DB::purge('rescate');
         DB::reconnect('rescate');
 

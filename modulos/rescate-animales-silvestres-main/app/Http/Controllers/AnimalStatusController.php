@@ -13,7 +13,7 @@ class AnimalStatusController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -43,7 +43,7 @@ class AnimalStatusController extends Controller
     {
         AnimalStatus::create($request->validated());
 
-        return Redirect::route('animal-statuses.index')
+        return Redirect::route('rescate.animal-statuses.index')
             ->with('success', 'Estado creado correctamente.');
     }
 
@@ -74,7 +74,7 @@ class AnimalStatusController extends Controller
     {
         $animalStatus->update($request->validated());
 
-        return Redirect::route('animal-statuses.index')
+        return Redirect::route('rescate.animal-statuses.index')
             ->with('success', 'Estado de Animal actualizado exitosamente');
     }
 
@@ -82,7 +82,7 @@ class AnimalStatusController extends Controller
     {
         AnimalStatus::find($id)->delete();
 
-        return Redirect::route('animal-statuses.index')
+        return Redirect::route('rescate.animal-statuses.index')
             ->with('success', 'Estado eliminado correctamente');
     }
 }

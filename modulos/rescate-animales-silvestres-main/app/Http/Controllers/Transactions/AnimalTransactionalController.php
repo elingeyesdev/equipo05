@@ -119,7 +119,7 @@ class AnimalTransactionalController extends Controller
 			$this->service->createWithFile($animalData, $animalFileData, $image);
 			$msg = 'Hoja de Animal creada.';
 
-			return Redirect::route('animal-files.index')
+			return Redirect::route('rescate.animal-files.index')
 				->with('success', $msg);
 		} catch (\Throwable $e) {
 			return Redirect::back()

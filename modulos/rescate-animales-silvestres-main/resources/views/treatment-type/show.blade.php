@@ -14,7 +14,7 @@
                             <span class="card-title">{{ __('Show') }} {{ __('Treatment Type') }}</span>
                         </div>
                         <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('treatment-types.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.treatment-types.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 

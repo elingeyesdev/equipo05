@@ -14,7 +14,7 @@
                         <span class="card-title">{{ __('Create') }} {{ __('Medical Evaluation') }}</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('medical-evaluations.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.medical-evaluations.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('medical-evaluation.form')

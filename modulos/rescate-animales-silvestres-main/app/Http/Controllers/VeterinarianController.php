@@ -20,10 +20,10 @@ class VeterinarianController extends Controller
     public function __construct()
     {
         // Solo administradores o encargados pueden ver veterinarios
-        $this->middleware('role:admin|encargado');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado');
         // Administradores y encargados pueden crear veterinarios, solo admin puede eliminar
-        $this->middleware('role:admin|encargado')->only(['create','store']);
-        $this->middleware('role:admin')->only(['destroy']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado')->only(['create','store']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -79,7 +79,7 @@ class VeterinarianController extends Controller
             \Log::warning('Error registrando tracking de solicitud de veterinario: ' . $e->getMessage());
         }
 
-        return Redirect::route('veterinarians.index')
+        return Redirect::route('rescate.veterinarians.index')
             ->with('success', 'Veterinario creado correctamente.');
     }
 
@@ -158,7 +158,7 @@ class VeterinarianController extends Controller
             }
         }
 
-        return Redirect::route('veterinarians.index')
+        return Redirect::route('rescate.veterinarians.index')
             ->with('success', 'Veterinario actualizado correctamente');
     }
 
@@ -222,7 +222,7 @@ class VeterinarianController extends Controller
             ? 'La solicitud de veterinario ha sido aprobada correctamente.' 
             : 'La solicitud de veterinario ha sido rechazada correctamente.';
 
-        return Redirect::route('veterinarians.index')
+        return Redirect::route('rescate.veterinarians.index')
             ->with('success', $message);
     }
 
@@ -230,7 +230,7 @@ class VeterinarianController extends Controller
     {
         Veterinarian::find($id)->delete();
 
-        return Redirect::route('veterinarians.index')
+        return Redirect::route('rescate.veterinarians.index')
             ->with('success', 'Veterinario eliminado correctamente');
     }
 }

@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
  */
 class Person extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

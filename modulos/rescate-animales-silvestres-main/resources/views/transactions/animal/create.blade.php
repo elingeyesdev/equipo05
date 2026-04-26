@@ -24,7 +24,7 @@
                                 </ul>
                             </div>
                         @endif
-                        <form method="POST" action="{{ route('animal-records.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.animal-records.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             <div class="mb-3">
@@ -102,7 +102,7 @@
                             </div>
 
                             <div class="mt-3" id="save_wrap" style="display:none;">
-                                <a href="{{ route('animal-files.index') }}" class="btn btn-secondary">{{ __('Cancelar') }}</a>
+                                <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-secondary">{{ __('Cancelar') }}</a>
                                 <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
                             </div>
                         </form>

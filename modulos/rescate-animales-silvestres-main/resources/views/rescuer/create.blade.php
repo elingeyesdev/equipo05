@@ -14,7 +14,7 @@
                         <span class="card-title">{{ __('Create') }} {{ __('Rescuer') }}</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('rescuers.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.rescuers.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('rescuer.form')

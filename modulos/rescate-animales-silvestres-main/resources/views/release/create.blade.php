@@ -19,7 +19,7 @@
                                 <strong>{{ $message }}</strong>
                             </div>
                         @endif
-                        <form method="POST" action="{{ route('releases.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.releases.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('release.form')

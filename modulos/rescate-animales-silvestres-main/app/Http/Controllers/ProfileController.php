@@ -295,7 +295,7 @@ class ProfileController extends Controller
         }
 
         return redirect()
-            ->route('profile.index')
+            ->route('rescate.profile.index')
             ->with('success', 'Perfil actualizado correctamente.');
     }
 }

@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (hiddenAnimalId) hiddenAnimalId.value = id || '';
         centerInput.value = '';
         if (!id) { currentName.textContent = ''; currentWrap.style.display = 'none'; centersWrap.style.display = 'none'; return; }
-        const url = new URL('{{ route('transfers.index') }}', window.location.origin);
+        const url = new URL('{{ route('rescate.transfers.index') }}', window.location.origin);
         url.searchParams.set('current_center', '1');
         url.searchParams.set('animal_id', id);
         fetch(url.toString())

@@ -16,7 +16,7 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{ $tab === 'activity' ? 'active' : '' }}" 
                    id="activity-tab" 
-                   href="{{ route('reportes.index', ['tab' => 'activity']) }}"
+                   href="{{ route('rescate.reportes.index', ['tab' => 'activity']) }}"
                    role="tab">
                     <i class="fas fa-chart-line mr-2"></i>Reportes de Actividad
                 </a>
@@ -24,7 +24,7 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{ $tab === 'management' ? 'active' : '' }}" 
                    id="management-tab" 
-                   href="{{ route('reportes.index', ['tab' => 'management']) }}"
+                   href="{{ route('rescate.reportes.index', ['tab' => 'management']) }}"
                    role="tab">
                     <i class="fas fa-cog mr-2"></i>Reportes de Gestión
                 </a>
@@ -32,19 +32,19 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{ $tab === 'personalized' ? 'active' : '' }}" 
                    id="personalized-tab" 
-                   href="{{ route('reportes.index', ['tab' => 'personalized']) }}"
+                   href="{{ route('rescate.reportes.index', ['tab' => 'personalized']) }}"
                    role="tab">
                     <i class="fas fa-sliders-h mr-2"></i>Reportes Personalizados
                 </a>
             </li>
         </ul>
         <div>
-            <a href="{{ route('reportes.export-pdf', request()->all()) }}" 
+            <a href="{{ route('rescate.reportes.export-pdf', request()->all()) }}" 
                class="btn btn-danger btn-sm" 
                target="_blank">
                 <i class="fas fa-file-pdf mr-2"></i>Exportar a PDF
             </a>
-            <a href="{{ route('reportes.export-excel', request()->all()) }}" 
+            <a href="{{ route('rescate.reportes.export-excel', request()->all()) }}" 
                class="btn btn-success btn-sm ml-2" 
                target="_blank">
                 <i class="fas fa-file-excel mr-2"></i>Exportar a Excel
@@ -65,7 +65,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ (!isset($subtab) || $subtab === 'states') ? 'active' : '' }}" 
                        id="states-subtab" 
-                       href="{{ route('reportes.index', ['tab' => 'activity', 'subtab' => 'states']) }}"
+                       href="{{ route('rescate.reportes.index', ['tab' => 'activity', 'subtab' => 'states']) }}"
                        role="tab">
                         <i class="fas fa-map-marked-alt mr-2"></i>Actividad por Estados
                     </a>
@@ -73,7 +73,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ (isset($subtab) && $subtab === 'health') ? 'active' : '' }}" 
                        id="health-subtab" 
-                       href="{{ route('reportes.index', ['tab' => 'activity', 'subtab' => 'health']) }}"
+                       href="{{ route('rescate.reportes.index', ['tab' => 'activity', 'subtab' => 'health']) }}"
                        role="tab">
                         <i class="fas fa-heartbeat mr-2"></i>Salud Animal Actual
                     </a>
@@ -309,7 +309,7 @@
                         </div>
                         <div class="card-body py-2">
                             <!-- Filtro por rango de fechas de inicio de tratamiento -->
-                            <form method="GET" action="{{ route('reportes.index') }}" class="mb-0">
+                            <form method="GET" action="{{ route('rescate.reportes.index') }}" class="mb-0">
                                 <input type="hidden" name="tab" value="activity">
                                 <input type="hidden" name="subtab" value="health">
                                 <div class="row align-items-center">
@@ -345,7 +345,7 @@
                                             <i class="fas fa-filter mr-1"></i>Filtrar
                                         </button>
                                         @if(isset($fechaDesde) || isset($fechaHasta))
-                                            <a href="{{ route('reportes.index', ['tab' => 'activity', 'subtab' => 'health']) }}" 
+                                            <a href="{{ route('rescate.reportes.index', ['tab' => 'activity', 'subtab' => 'health']) }}" 
                                                class="btn btn-secondary ml-2">
                                                 <i class="fas fa-times mr-1"></i>Limpiar
                                             </a>
@@ -444,7 +444,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ (!isset($management_subtab) || $management_subtab === 'rescue') ? 'active' : '' }}" 
                        id="rescue-subtab" 
-                       href="{{ route('reportes.index', ['tab' => 'management', 'management_subtab' => 'rescue']) }}"
+                       href="{{ route('rescate.reportes.index', ['tab' => 'management', 'management_subtab' => 'rescue']) }}"
                        role="tab">
                         <i class="fas fa-ambulance mr-2"></i>Eficacia de Rescate
                     </a>
@@ -453,7 +453,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ (isset($management_subtab) && $management_subtab === 'initial_review') ? 'active' : '' }}" 
                        id="initial-review-subtab" 
-                       href="{{ route('reportes.index', ['tab' => 'management', 'management_subtab' => 'initial_review']) }}"
+                       href="{{ route('rescate.reportes.index', ['tab' => 'management', 'management_subtab' => 'initial_review']) }}"
                        role="tab">
                         <i class="fas fa-stethoscope mr-2"></i>Eficacia de Revisión Inicial
                     </a>
@@ -462,7 +462,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ (isset($management_subtab) && $management_subtab === 'treatment') ? 'active' : '' }}" 
                        id="treatment-subtab" 
-                       href="{{ route('reportes.index', ['tab' => 'management', 'management_subtab' => 'treatment']) }}"
+                       href="{{ route('rescate.reportes.index', ['tab' => 'management', 'management_subtab' => 'treatment']) }}"
                        role="tab">
                         <i class="fas fa-heartbeat mr-2"></i>Eficacia de Tratamiento
                     </a>
@@ -470,7 +470,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ (isset($management_subtab) && $management_subtab === 'release') ? 'active' : '' }}" 
                        id="release-subtab" 
-                       href="{{ route('reportes.index', ['tab' => 'management', 'management_subtab' => 'release']) }}"
+                       href="{{ route('rescate.reportes.index', ['tab' => 'management', 'management_subtab' => 'release']) }}"
                        role="tab">
                         <i class="fas fa-dove mr-2"></i>Eficacia de Liberación
                     </a>

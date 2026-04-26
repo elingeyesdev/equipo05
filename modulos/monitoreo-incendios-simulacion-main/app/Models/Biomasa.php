@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Biomasa extends Model
 {
+    protected $connection = 'incendios';
     use SoftDeletes;
     
     protected $perPage = 20;

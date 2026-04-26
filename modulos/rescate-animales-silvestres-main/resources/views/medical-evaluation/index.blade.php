@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('medical-evaluation-transactions.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.medical-evaluation-transactions.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -107,7 +107,7 @@
                                                                     
                                                                     <td class="text-center">
                                                                         <div class="btn-group btn-group-sm" role="group">
-                                                                            <a class="btn btn-primary btn-sm" href="{{ route('medical-evaluations.show', $medicalEvaluation->id) }}" title="{{ __('Show') }}">
+                                                                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.medical-evaluations.show', $medicalEvaluation->id) }}" title="{{ __('Show') }}">
                                                                                 <i class="fa fa-fw fa-eye"></i> Ver
                                                                             </a>
                                                                             

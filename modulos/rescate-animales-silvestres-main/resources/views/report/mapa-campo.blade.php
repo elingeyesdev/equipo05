@@ -15,7 +15,7 @@
                                 <i class="fas fa-map-marked-alt"></i> {{ __('Mapa de Campo') }}
                             </span>
                             <div class="float-right">
-                                <a href="{{ route('reports.index') }}" class="btn btn-secondary btn-sm float-right">
+                                <a href="{{ route('rescate.reports.index') }}" class="btn btn-secondary btn-sm float-right">
                                     {{ __('Volver') }}
                                 </a>
                             </div>

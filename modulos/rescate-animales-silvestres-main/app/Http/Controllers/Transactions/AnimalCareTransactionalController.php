@@ -121,7 +121,7 @@ class AnimalCareTransactionalController extends Controller
 
 		$this->service->registerCare($data, $image);
 
-		return Redirect::route('cares.index')
+		return Redirect::route('rescate.cares.index')
 			->with('success', 'Cuidado registrado correctamente.');
 	}
 }

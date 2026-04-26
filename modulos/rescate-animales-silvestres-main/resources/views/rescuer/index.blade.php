@@ -15,7 +15,7 @@
                                 {{ __('Rescuers') }}
                             </span>
                             <div class="float-right">
-                                <a href="{{ route('rescuers.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
+                                <a href="{{ route('rescate.rescuers.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
                                     {{ __('Create New') }}
                                 </a>
                             </div>
@@ -94,10 +94,10 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="d-flex w-100">
-                                                <a class="btn btn-sm btn-primary" href="{{ route('rescuers.show', $rescuer->id) }}" style="flex: 1 1 0;">
+                                                <a class="btn btn-sm btn-primary" href="{{ route('rescate.rescuers.show', $rescuer->id) }}" style="flex: 1 1 0;">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
                                                 </a>
-                                                <a class="btn btn-sm btn-success" href="{{ route('rescuers.edit', $rescuer->id) }}" style="flex: 1 1 0; margin-left: 0.5rem;">
+                                                <a class="btn btn-sm btn-success" href="{{ route('rescate.rescuers.edit', $rescuer->id) }}" style="flex: 1 1 0; margin-left: 0.5rem;">
                                                     <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
                                                 </a>
                                                 @if($isPending)
@@ -149,7 +149,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('rescuers.approve', $rescuer->id) }}" method="POST" id="formAprobarRescuer{{ $rescuer->id }}">
+                    <form action="{{ route('rescate.rescuers.approve', $rescuer->id) }}" method="POST" id="formAprobarRescuer{{ $rescuer->id }}">
                         @method('PUT')
                         @csrf
                         <div class="modal-body">

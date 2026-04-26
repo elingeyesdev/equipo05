@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CareFeeding extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

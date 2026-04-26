@@ -26,7 +26,7 @@
                                 <i class="fa fa-check"></i> {{ __('Aprobar/Rechazar') }}
                             </button>
                             @endif
-                            <a class="btn btn-success btn-sm" href="{{ route('reports.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-success btn-sm" href="{{ route('rescate.reports.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('reports.approve', $report->id) }}" method="POST" id="formAprobarReport{{ $report->id }}">
+            <form action="{{ route('rescate.reports.approve', $report->id) }}" method="POST" id="formAprobarReport{{ $report->id }}">
                 @method('PUT')
                 @csrf
                 <input type="hidden" name="redirect_to" value="show">

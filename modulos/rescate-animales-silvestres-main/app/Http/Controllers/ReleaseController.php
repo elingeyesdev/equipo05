@@ -104,7 +104,7 @@ class ReleaseController extends Controller
             return Redirect::back()->withInput()->with('error', 'No se pudo registrar la liberación: '.$e->getMessage());
         }
 
-        return Redirect::route('releases.index')
+        return Redirect::route('rescate.releases.index')
             ->with('success', 'Liberación creada correctamente.');
     }
 
@@ -175,7 +175,7 @@ class ReleaseController extends Controller
         
         $release->update($data);
 
-        return Redirect::route('releases.index')
+        return Redirect::route('rescate.releases.index')
             ->with('success', 'Liberación actualizada correctamente');
     }
 
@@ -183,7 +183,7 @@ class ReleaseController extends Controller
     {
         Release::find($id)->delete();
 
-        return Redirect::route('releases.index')
+        return Redirect::route('rescate.releases.index')
             ->with('success', 'Liberación eliminada correctamente');
     }
 }

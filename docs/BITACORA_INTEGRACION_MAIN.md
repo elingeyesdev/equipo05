@@ -234,3 +234,35 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - Los dos sistemas integrados ya exponen rutas internas funcionales dentro del monolito principal, mas alla del acceso de sidebar.
+
+### Hito 11 - Correccion de reportes avanzados y permisos cruzados
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se corrigen errores 500 en Incendios (reportes y focos):
+  - `isAdministrador()` reemplazado por validacion robusta compatible con `Usuario` del core.
+  - Se agrega plantilla faltante `resources/views/vendor/pagination/no-prev-next.blade.php`.
+- Se estabiliza Rescate para entorno de autenticacion unificada:
+  - Los modelos de `Modules\\Rescate\\Models\\*` y `Modules\\Incendios\\Models\\*` se fijan a su conexion dedicada (`rescate` e `incendios`) sin alterar la conexion global.
+  - Los middlewares `incendios.db` y `rescate.db` dejan de cambiar `database.default`, evitando conflictos con permisos/roles de Spatie en el core.
+  - Se amplian middlewares de rol en `ReportController` para aceptar roles del sistema principal.
+  - Se normalizan rutas `route()` en vistas/controladores de rescate al prefijo `rescate.*` y se corrigen referencias a login central.
+
+Verificacion ejecutada:
+
+- Smoke test autenticado (`127.0.0.1:8000`):
+  - `/incendios/modulo/reports/fires` => `200`
+  - `/incendios/modulo/focos-incendios` => `200`
+  - `/incendios/modulo/reports/biomasas` => `200`
+  - `/incendios/modulo/reports/simulations` => `200`
+  - `/rescate/modulo/centers` => `200`
+  - `/rescate/modulo/species` => `200`
+  - `/rescate/modulo/reports` => `200`
+  - `/rescate/modulo/reports/claim` => `200`
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+
+Resultado esperado:
+
+- Se eliminan los errores internos de rutas avanzadas y queda operativa la navegacion de modulos integrados con autenticacion central.

@@ -1,7 +1,7 @@
 @extends('adminlte::auth.login')
 @section('auth_footer')
     <p class="my-0">
-        <a href="{{ route('register') }}">Crear cuenta nueva</a>
+        <a href="{{ route('rescate.register') }}">Crear cuenta nueva</a>
     </p>
     
     {{-- Sección de búsqueda por CI - Siempre visible encima de Usuarios de Prueba --}}
@@ -172,7 +172,7 @@
                     // Solo redirigir si NO es sistema rescate (verificación final)
                     if (!isRescateSystem || !isFound) {
                         console.log('→→→→→ Redirigiendo al registro con CI:', ci, '(sistema:', systemValue, ')');
-                        window.location.href = '{{ route("register") }}?ci=' + encodeURIComponent(ci);
+                        window.location.href = '{{ route("rescate.register") }}?ci=' + encodeURIComponent(ci);
                         return; // Importante: retornar después de redirigir
                     } else {
                         console.log('⚠️ No se redirige porque es sistema rescate');
@@ -183,7 +183,7 @@
                     sessionStorage.removeItem('gatewayData');
                     // Si hay error, también redirigir al registro
                     console.log('Redirigiendo al registro con CI (después de error):', ci);
-                    window.location.href = '{{ route("register") }}?ci=' + encodeURIComponent(ci);
+                    window.location.href = '{{ route("rescate.register") }}?ci=' + encodeURIComponent(ci);
                     return; // CORTAR BUCLE
                 }
             } catch (error) {
@@ -191,7 +191,7 @@
                 sessionStorage.removeItem('gatewayData');
                 // Si hay error en el catch, también redirigir al registro
                 console.log('Redirigiendo al registro con CI (después de catch):', ci);
-                window.location.href = '{{ route("register") }}?ci=' + encodeURIComponent(ci);
+                window.location.href = '{{ route("rescate.register") }}?ci=' + encodeURIComponent(ci);
                 return; // CORTAR BUCLE
             }
         };

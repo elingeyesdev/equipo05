@@ -9,7 +9,7 @@
         </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('rescate.home') }}">Inicio</a></li>
                 <li class="breadcrumb-item active">Perfil de usuario</li>
             </ol>
         </div>
@@ -150,7 +150,7 @@
                         <div class="tab-content">
                             {{-- TAB DATOS PERSONALES --}}
                             <div class="active tab-pane" id="datos">
-                                <form class="form-horizontal" method="POST" action="{{ route('profile.update', 0) }}"
+                                <form class="form-horizontal" method="POST" action="{{ route('rescate.profile.update', 0) }}"
                                       enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
@@ -274,7 +274,7 @@
                                 <div class="tab-content">
                                     {{-- Sub-tab Cuidador --}}
                                     <div class="active tab-pane" id="tab-cuidador">
-                                        <form class="form-horizontal" method="POST" action="{{ route('profile.update', 0) }}">
+                                        <form class="form-horizontal" method="POST" action="{{ route('rescate.profile.update', 0) }}">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="modo" value="cuidador">
@@ -395,7 +395,7 @@
 
                                         @if(!$rescuer)
                                             {{-- Formulario solo si aún no existe una postulación --}}
-                                            <form class="form-horizontal" method="POST" action="{{ route('profile.update', 0) }}"
+                                            <form class="form-horizontal" method="POST" action="{{ route('rescate.profile.update', 0) }}"
                                                   enctype="multipart/form-data">
                                                 @csrf
                                                 @method('PUT')
@@ -476,7 +476,7 @@
                                                     </p>
                                                 @endif
                                                 <p class="mb-0">
-                                                    <a href="{{ route('rescuers.show', $rescuer->id) }}" class="btn btn-link p-0">
+                                                    <a href="{{ route('rescate.rescuers.show', $rescuer->id) }}" class="btn btn-link p-0">
                                                         Ver detalles completos de tu postulación
                                                     </a>
                                                 </p>
@@ -522,7 +522,7 @@
 
                                         @if(!$veterinarian)
                                             {{-- Formulario solo si aún no existe una postulación --}}
-                                            <form class="form-horizontal" method="POST" action="{{ route('profile.update', 0) }}"
+                                            <form class="form-horizontal" method="POST" action="{{ route('rescate.profile.update', 0) }}"
                                                   enctype="multipart/form-data">
                                                 @csrf
                                                 @method('PUT')
@@ -622,7 +622,7 @@
                                                     </p>
                                                 @endif
                                                 <p class="mb-0">
-                                                    <a href="{{ route('veterinarians.show', $veterinarian->id) }}" class="btn btn-link p-0">
+                                                    <a href="{{ route('rescate.veterinarians.show', $veterinarian->id) }}" class="btn btn-link p-0">
                                                         Ver detalles completos de tu postulación
                                                     </a>
                                                 </p>
@@ -693,7 +693,7 @@
                                                                     <i class="fas fa-eye"></i> Ver
                                                                 </button>
                                                                 @if(!$message->leido)
-                                                                    <form action="{{ route('contact-messages.update', $message->id) }}" method="POST" class="d-inline">
+                                                                    <form action="{{ route('rescate.contact-messages.update', $message->id) }}" method="POST" class="d-inline">
                                                                         @csrf
                                                                         @method('PUT')
                                                                         <button type="submit" class="btn btn-sm btn-success">
@@ -733,7 +733,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         @if(!$message->leido)
-                                                                            <form action="{{ route('contact-messages.update', $message->id) }}" method="POST" class="d-inline">
+                                                                            <form action="{{ route('rescate.contact-messages.update', $message->id) }}" method="POST" class="d-inline">
                                                                                 @csrf
                                                                                 @method('PUT')
                                                                                 <button type="submit" class="btn btn-success">
@@ -762,7 +762,7 @@
                                         Si tienes alguna consulta, problema o necesitas comunicarte directamente con un administrador o encargado, puedes enviar un mensaje aquí.
                                     </p>
                                     
-                                    <form action="{{ route('contact-messages.store') }}" method="POST">
+                                    <form action="{{ route('rescate.contact-messages.store') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
                                             <label for="motivo">Motivo del contacto <span class="text-danger">*</span></label>

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Simulacione extends Model
 {
+    protected $connection = 'incendios';
     use SoftDeletes;
     
     protected $perPage = 20;

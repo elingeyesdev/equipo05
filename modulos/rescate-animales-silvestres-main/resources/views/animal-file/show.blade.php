@@ -27,10 +27,10 @@
                                 // (el controlador puede manejar ambos casos)
                                 $historyId = $oldestHistory ? $oldestHistory->id : $animalFile->id;
                             @endphp
-                            <a class="btn btn-info btn-sm mr-2" href="{{ route('animal-histories.show', $historyId) }}">
+                            <a class="btn btn-info btn-sm mr-2" href="{{ route('rescate.animal-histories.show', $historyId) }}">
                                 <i class="fas fa-history"></i> {{ __('Ver historial') }}
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('animal-files.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-info btn-sm" href="{{ route('rescate.animal-files.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
                     <div class="card-body bg-white">

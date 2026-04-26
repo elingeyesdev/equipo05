@@ -14,7 +14,7 @@ class SpeciesController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar especies
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class SpeciesController extends Controller
     {
         Species::create($request->validated());
 
-        return Redirect::route('species.index')
+        return Redirect::route('rescate.species.index')
             ->with('success', 'Especie creada correctamente.');
     }
 
@@ -75,7 +75,7 @@ class SpeciesController extends Controller
     {
         $species->update($request->validated());
 
-        return Redirect::route('species.index')
+        return Redirect::route('rescate.species.index')
             ->with('success', 'Especie actualizada correctamente');
     }
 
@@ -83,7 +83,7 @@ class SpeciesController extends Controller
     {
         Species::find($id)->delete();
 
-        return Redirect::route('species.index')
+        return Redirect::route('rescate.species.index')
             ->with('success', 'Especie eliminada correctamente');
     }
 }

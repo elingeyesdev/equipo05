@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class HealthRecord extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

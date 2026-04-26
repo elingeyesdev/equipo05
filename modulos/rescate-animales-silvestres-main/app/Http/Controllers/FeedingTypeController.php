@@ -14,7 +14,7 @@ class FeedingTypeController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar tipos de alimentación
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class FeedingTypeController extends Controller
     {
         FeedingType::create($request->validated());
 
-        return Redirect::route('feeding-types.index')
+        return Redirect::route('rescate.feeding-types.index')
             ->with('success', 'Tipo de alimentación creado correctamente.');
     }
 
@@ -75,7 +75,7 @@ class FeedingTypeController extends Controller
     {
         $feedingType->update($request->validated());
 
-        return Redirect::route('feeding-types.index')
+        return Redirect::route('rescate.feeding-types.index')
             ->with('success', 'Tipo de alimentación actualizado correctamente');
     }
 
@@ -83,7 +83,7 @@ class FeedingTypeController extends Controller
     {
         FeedingType::find($id)->delete();
 
-        return Redirect::route('feeding-types.index')
+        return Redirect::route('rescate.feeding-types.index')
             ->with('success', 'Tipo de alimentación eliminado correctamente');
     }
 }

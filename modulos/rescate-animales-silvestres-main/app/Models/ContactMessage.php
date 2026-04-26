@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContactMessage extends Model
 {
+    protected $connection = 'rescate';
     protected $fillable = [
         'user_id',
         'motivo',

@@ -72,7 +72,7 @@ class CareController extends Controller
         }
         Care::create($data);
 
-        return Redirect::route('cares.index')
+        return Redirect::route('rescate.cares.index')
             ->with('success', 'Cuidado creado correctamente.');
     }
 
@@ -118,7 +118,7 @@ class CareController extends Controller
         }
         $care->update($data);
 
-        return Redirect::route('cares.index')
+        return Redirect::route('rescate.cares.index')
             ->with('success', 'Cuidado actualizado correctamente');
     }
 
@@ -126,7 +126,7 @@ class CareController extends Controller
     {
         Care::find($id)->delete();
 
-        return Redirect::route('cares.index')
+        return Redirect::route('rescate.cares.index')
             ->with('success', 'Cuidado eliminado correctamente');
     }
 }

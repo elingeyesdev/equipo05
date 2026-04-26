@@ -36,7 +36,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="POST" action="{{ route('reports.store') }}"  role="form" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('rescate.reports.store') }}"  role="form" enctype="multipart/form-data">
                                 @csrf
                                 @include('report.form')
                             </form>
@@ -62,7 +62,7 @@
                                         {{ __('Si gustas hacer seguimiento al animalito,') }} 
                                         <a href="{{ route('login') }}" class="alert-link">{{ __('inicia sesión') }}</a> 
                                         {{ __('o') }} 
-                                        <a href="{{ route('register') }}" class="alert-link">{{ __('regístrate') }}</a> 
+                                        <a href="{{ route('rescate.register') }}" class="alert-link">{{ __('regístrate') }}</a> 
                                         {{ __('luego de enviar el registro.') }}
                                     </p>
                                 </div>
@@ -77,7 +77,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="POST" action="{{ route('reports.store') }}"  role="form" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('rescate.reports.store') }}"  role="form" enctype="multipart/form-data">
                                 @csrf
                                 @include('report.form')
                             </form>

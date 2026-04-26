@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('animal-statuses.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.animal-statuses.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -49,9 +49,9 @@
 										<td >{{ $animalStatus->nombre }}</td>
 
                                             <td>
-                                                <form action="{{ route('animal-statuses.destroy', $animalStatus->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('animal-statuses.show', $animalStatus->id) }}"><i class="fa fa-fw fa-eye"></i> <span class="d-none d-md-inline">{{ __('Ver') }}</span></a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('animal-statuses.edit', $animalStatus->id) }}"><i class="fa fa-fw fa-edit"></i> <span class="d-none d-md-inline">{{ __('Editar') }}</span></a>
+                                                <form action="{{ route('rescate.animal-statuses.destroy', $animalStatus->id) }}" method="POST">
+                                                    <a class="btn btn-sm btn-primary " href="{{ route('rescate.animal-statuses.show', $animalStatus->id) }}"><i class="fa fa-fw fa-eye"></i> <span class="d-none d-md-inline">{{ __('Ver') }}</span></a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('rescate.animal-statuses.edit', $animalStatus->id) }}"><i class="fa fa-fw fa-edit"></i> <span class="d-none d-md-inline">{{ __('Editar') }}</span></a>
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> <span class="d-none d-md-inline">{{ __('Eliminar') }}</span></button>

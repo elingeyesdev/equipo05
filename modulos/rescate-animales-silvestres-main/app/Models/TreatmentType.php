@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TreatmentType extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

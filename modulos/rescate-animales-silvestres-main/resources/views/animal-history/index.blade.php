@@ -133,7 +133,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer">
-                                            <a class="btn btn-primary btn-sm w-100" href="{{ route('animal-histories.show', $h->id) }}">
+                                            <a class="btn btn-primary btn-sm w-100" href="{{ route('rescate.animal-histories.show', $h->id) }}">
                                                 <i class="fa fa-fw fa-eye"></i> {{ __('Ver Historial') }}
                                             </a>
                                         </div>

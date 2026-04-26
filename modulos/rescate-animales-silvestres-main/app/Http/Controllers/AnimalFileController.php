@@ -27,7 +27,7 @@ class AnimalFileController extends Controller
         // Solo veterinarios y administradores pueden crear o modificar hojas de vida
         $this->middleware('role:veterinario|admin')->only(['create','store','edit','update']);
         // Solo administradores pueden eliminar hojas de vida
-        $this->middleware('role:admin')->only(['destroy']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -110,7 +110,7 @@ class AnimalFileController extends Controller
                 }
             }
 
-            return Redirect::route('animal-files.index')
+            return Redirect::route('rescate.animal-files.index')
                 ->with('success', 'Hoja del Animal creada correctamente.');
         } catch (\Throwable $e) {
             return Redirect::back()
@@ -187,7 +187,7 @@ class AnimalFileController extends Controller
                 }
             }
 
-            return Redirect::route('animal-files.index')
+            return Redirect::route('rescate.animal-files.index')
                 ->with('success', 'Hoja del Animal actualizada exitosamente');
         } catch (\Throwable $e) {
             return Redirect::back()
@@ -200,7 +200,7 @@ class AnimalFileController extends Controller
     {
         AnimalFile::find($id)->delete();
 
-        return Redirect::route('animal-files.index')
+        return Redirect::route('rescate.animal-files.index')
             ->with('success', 'Hoja del Animal eliminada correctamente');
     }
 }

@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Rescuer extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

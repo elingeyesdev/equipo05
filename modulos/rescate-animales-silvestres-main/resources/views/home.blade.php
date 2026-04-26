@@ -7,10 +7,10 @@
         <h1 class="text-dark">Panel de Control</h1>
         <div class="d-flex align-items-center">
             @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
-            <a href="{{ route('dashboard.export-pdf') }}" class="btn btn-danger btn-sm mr-2" target="_blank">
+            <a href="{{ route('rescate.dashboard.export-pdf') }}" class="btn btn-danger btn-sm mr-2" target="_blank">
                 <i class="fas fa-file-pdf mr-1"></i> Exportar PDF
             </a>
-            <a href="{{ route('dashboard.export-excel') }}" class="btn btn-success btn-sm mr-2" target="_blank">
+            <a href="{{ route('rescate.dashboard.export-excel') }}" class="btn btn-success btn-sm mr-2" target="_blank">
                 <i class="fas fa-file-excel mr-1"></i> Exportar a Excel
             </a>
             @endif
@@ -138,7 +138,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('reports.mapa-campo') }}">
+                        <a class="nav-link" href="{{ route('rescate.reports.mapa-campo') }}">
                             <i class="fas fa-map-marked-alt mr-2"></i>Mapa de Campo
                         </a>
                     </li>
@@ -184,7 +184,7 @@
                                         <span class="info-box-number">
                                             {{ ($pendingRescuersCount ?? 0) + ($pendingVeterinariansCount ?? 0) + ($pendingCaregiversCount ?? 0) }}
                                         </span>
-                                        <a href="{{ route('people.index') }}" class="text-xs text-warning font-weight-bold mt-2 d-block">
+                                        <a href="{{ route('rescate.people.index') }}" class="text-xs text-warning font-weight-bold mt-2 d-block">
                                             Revisar solicitudes <i class="fas fa-arrow-right ml-1"></i>
                                         </a>
                                     </div>
@@ -198,7 +198,7 @@
                                     <div class="info-box-content">
                                         <span class="info-box-text text-muted">Animales en Sistema</span>
                                         <span class="info-box-number">{{ $totalAnimals ?? 0 }}</span>
-                                        <a href="{{ route('animal-files.index') }}" class="text-xs text-success font-weight-bold mt-2 d-block">
+                                        <a href="{{ route('rescate.animal-files.index') }}" class="text-xs text-success font-weight-bold mt-2 d-block">
                                             Ver animales <i class="fas fa-arrow-right ml-1"></i>
                                         </a>
                                     </div>
@@ -207,7 +207,7 @@
 
                             {{-- Mensajes --}}
                             <div class="col-12 col-sm-6 col-md-3">
-                                <a href="{{ route('profile.index') }}#contactar" class="text-decoration-none">
+                                <a href="{{ route('rescate.profile.index') }}#contactar" class="text-decoration-none">
                                     <div class="info-box shadow-sm mb-3 h-100">
                                         <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-envelope-open-text"></i></span>
                                         <div class="info-box-content">
@@ -576,7 +576,7 @@
                 <div class="card-footer bg-transparent border-0 pt-0">
                     <i class="fas fa-paw fa-2x opacity-50 float-right" style="opacity: 0.3;"></i>
                     @if(!$isOnlyCitizen)
-                    <a href="{{ route('animal-files.index') }}" class="text-white small stretched-link">Ver detalles <i class="fas fa-arrow-right ml-1"></i></a>
+                    <a href="{{ route('rescate.animal-files.index') }}" class="text-white small stretched-link">Ver detalles <i class="fas fa-arrow-right ml-1"></i></a>
                     @endif
                 </div>
             </div>
@@ -594,7 +594,7 @@
                     <small>{{ $rpct }}% tasa de éxito</small>
                 </div>
                 @if(!$isOnlyCitizen)
-                <a href="{{ route('releases.index') }}" class="stretched-link"></a>
+                <a href="{{ route('rescate.releases.index') }}" class="stretched-link"></a>
                 @endif
             </div>
         </div>
@@ -612,7 +612,7 @@
                 </div>
                 @if(!$isOnlyCitizen)
                 <div class="card-footer bg-white text-center p-1">
-                     <a href="{{ route('reports.index') }}" class="text-warning small">Ir a reportes</a>
+                     <a href="{{ route('rescate.reports.index') }}" class="text-warning small">Ir a reportes</a>
                 </div>
                 @endif
             </div>
@@ -631,7 +631,7 @@
                     </div>
                 </div>
                 <div class="card-footer bg-white text-center p-1">
-                     <a href="{{ route('animal-histories.index') }}" class="text-primary small">Ver historial</a>
+                     <a href="{{ route('rescate.animal-histories.index') }}" class="text-primary small">Ver historial</a>
                 </div>
             </div>
             @else
@@ -647,7 +647,7 @@
                 </div>
                 @if(!$isOnlyCitizen)
                 <div class="card-footer bg-white text-center p-1">
-                     <a href="{{ route('transfers.index') }}" class="text-primary small">Ver logística</a>
+                     <a href="{{ route('rescate.transfers.index') }}" class="text-primary small">Ver logística</a>
                 </div>
                 @endif
             </div>

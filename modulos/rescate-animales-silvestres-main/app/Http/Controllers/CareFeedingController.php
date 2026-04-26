@@ -85,7 +85,7 @@ class CareFeedingController extends Controller
     {
         CareFeeding::create($request->validated());
 
-        return Redirect::route('care-feedings.index')
+        return Redirect::route('rescate.care-feedings.index')
             ->with('success', 'Cuidado de alimentación creado correctamente.');
     }
 
@@ -133,7 +133,7 @@ class CareFeedingController extends Controller
     {
         $careFeeding->update($request->validated());
 
-        return Redirect::route('care-feedings.index')
+        return Redirect::route('rescate.care-feedings.index')
             ->with('success', 'Cuidado de alimentación actualizado correctamente');
     }
 
@@ -141,7 +141,7 @@ class CareFeedingController extends Controller
     {
         CareFeeding::find($id)->delete();
 
-        return Redirect::route('care-feedings.index')
+        return Redirect::route('rescate.care-feedings.index')
             ->with('success', 'Cuidado de alimentación eliminado correctamente');
     }
 }

@@ -14,7 +14,7 @@ class FeedingPortionController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar porciones de alimentación
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class FeedingPortionController extends Controller
     {
         FeedingPortion::create($request->validated());
 
-        return Redirect::route('feeding-portions.index')
+        return Redirect::route('rescate.feeding-portions.index')
             ->with('success', 'Porción de alimentación creada correctamente.');
     }
 
@@ -75,7 +75,7 @@ class FeedingPortionController extends Controller
     {
         $feedingPortion->update($request->validated());
 
-        return Redirect::route('feeding-portions.index')
+        return Redirect::route('rescate.feeding-portions.index')
             ->with('success', 'Porción de alimentación actualizada correctamente');
     }
 
@@ -83,7 +83,7 @@ class FeedingPortionController extends Controller
     {
         FeedingPortion::find($id)->delete();
 
-        return Redirect::route('feeding-portions.index')
+        return Redirect::route('rescate.feeding-portions.index')
             ->with('success', 'Porción de alimentación eliminada correctamente');
     }
 }

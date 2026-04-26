@@ -12,7 +12,7 @@
                     <div class="card-header">
                         <span class="card-title">{{ __('Registrar Cuidado') }}</span>
                     </div>
-                    <form method="POST" action="{{ route('animal-care-records.store') }}" role="form" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('rescate.animal-care-records.store') }}" role="form" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body bg-white">
                             <div class="row padding-1 p-1">
@@ -142,7 +142,7 @@
                             </div>
                         </div>
                         <div class="card-footer" id="submit_wrap" style="display:none;">
-                            <a href="{{ route('cares.index') }}" class="btn btn-secondary">{{ __('Cancelar') }}</a>
+                            <a href="{{ route('rescate.cares.index') }}" class="btn btn-secondary">{{ __('Cancelar') }}</a>
                             <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
                         </div>
                     </form>

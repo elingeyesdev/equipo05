@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Species extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

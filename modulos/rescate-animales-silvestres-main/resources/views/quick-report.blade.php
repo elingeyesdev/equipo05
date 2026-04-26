@@ -59,7 +59,7 @@
                                 <div class="card h-100">
                                     <div class="card-header"><h3 class="card-title">Información del Reporte</h3></div>
                                     <div class="card-body">
-                                        <form id="reporteForm" action="{{ route('reporte-rapido.store') }}" method="POST" enctype="multipart/form-data">
+                                        <form id="reporteForm" action="{{ route('rescate.reporte-rapido.store') }}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <div class="form-group">
                                                 <label>Tipo de Emergencia</label>

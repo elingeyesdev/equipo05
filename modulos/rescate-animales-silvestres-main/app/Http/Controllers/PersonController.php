@@ -19,9 +19,9 @@ class PersonController extends Controller
         // Debe estar autenticado
         $this->middleware('auth');
         // Solo administradores o encargados pueden ver personas
-        $this->middleware('role:admin|encargado');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado');
         // Solo administradores pueden crear, editar, actualizar o eliminar personas
-        $this->middleware('role:admin')->only(['create','store','edit','update','destroy']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['create','store','edit','update','destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -148,7 +148,7 @@ class PersonController extends Controller
             \Log::warning('Error registrando tracking de usuario creado por admin: ' . $e->getMessage());
         }
 
-        return Redirect::route('people.index')
+        return Redirect::route('rescate.people.index')
             ->with('success', 'Persona y usuario creados correctamente.');
     }
 
@@ -318,11 +318,11 @@ class PersonController extends Controller
             } else {
                 $message = 'Solicitud de cuidador rechazada correctamente.';
             }
-            return Redirect::route('people.show', $person->id)
+            return Redirect::route('rescate.people.show', $person->id)
                 ->with('success', $message);
         }
 
-        return Redirect::route('people.index')
+        return Redirect::route('rescate.people.index')
             ->with('success', 'Persona actualizada correctamente');
     }
 
@@ -330,7 +330,7 @@ class PersonController extends Controller
     {
         Person::find($id)->delete();
 
-        return Redirect::route('people.index')
+        return Redirect::route('rescate.people.index')
             ->with('success', 'Persona eliminada correctamente');
     }
 
@@ -368,7 +368,7 @@ class PersonController extends Controller
         $role = Role::firstOrCreate(['name' => 'encargado', 'guard_name' => 'web']);
         $person->user->assignRole($role);
 
-        return Redirect::route('people.show', $person->id)
+        return Redirect::route('rescate.people.show', $person->id)
             ->with('success', 'La persona ha sido convertida en encargado correctamente.');
     }
 

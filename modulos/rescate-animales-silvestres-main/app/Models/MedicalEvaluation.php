@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class MedicalEvaluation extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

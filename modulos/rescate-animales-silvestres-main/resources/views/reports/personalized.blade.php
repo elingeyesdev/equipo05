@@ -33,7 +33,7 @@
     </div>
     <div class="card-body">
         <!-- Formulario de Configuración -->
-        <form method="GET" action="{{ route('reportes.index') }}" id="personalizedReportForm">
+        <form method="GET" action="{{ route('rescate.reportes.index') }}" id="personalizedReportForm">
             <input type="hidden" name="tab" value="personalized">
             
             <!-- Selección de Columnas - Colapsable -->
@@ -166,7 +166,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-search mr-2"></i>Generar Reporte
                     </button>
-                    <a href="{{ route('reportes.index', ['tab' => 'personalized']) }}" class="btn btn-secondary">
+                    <a href="{{ route('rescate.reportes.index', ['tab' => 'personalized']) }}" class="btn btn-secondary">
                         <i class="fas fa-redo mr-2"></i>Limpiar Filtros
                     </a>
                 </div>
@@ -228,7 +228,7 @@
                                         <td>{{ $eval['status'] }}</td>
                                         <td>
                                             @if($eval['animal_id'])
-                                                <a href="{{ route('animal-files.show', $eval['animal_id']) }}" 
+                                                <a href="{{ route('rescate.animal-files.show', $eval['animal_id']) }}" 
                                                    class="btn btn-sm btn-primary" 
                                                    title="Ver Detalles">
                                                     <i class="fas fa-eye"></i> Ver
@@ -247,14 +247,14 @@
                                         <td>{{ $transfer['rescue_date'] }}</td>
                                         <td>
                                             @if($transfer['report_id'])
-                                                <a href="{{ route('reports.show', $transfer['report_id']) }}" 
+                                                <a href="{{ route('rescate.reports.show', $transfer['report_id']) }}" 
                                                    class="btn btn-sm btn-primary" 
                                                    title="Ver Reporte">
                                                     <i class="fas fa-eye"></i> Ver Reporte
                                                 </a>
                                             @endif
                                             @if(isset($transfer['animal_file_id']) && $transfer['animal_file_id'])
-                                                <a href="{{ route('animal-histories.index', ['animal_file_id' => $transfer['animal_file_id']]) }}" 
+                                                <a href="{{ route('rescate.animal-histories.index', ['animal_file_id' => $transfer['animal_file_id']]) }}" 
                                                    class="btn btn-sm btn-info" 
                                                    title="Ver Historial">
                                                     <i class="fas fa-history"></i> Historial
@@ -298,7 +298,7 @@
                                 <td>
                                     @if(isset($row['_animal_file_id']))
                                         
-                                        <a href="{{ route('animal-files.show', $row['_animal_file_id']) }}" 
+                                        <a href="{{ route('rescate.animal-files.show', $row['_animal_file_id']) }}" 
                                            class="btn btn-sm btn-primary" 
                                            title="Ver Detalles">
                                             <i class="fas fa-eye"></i> Ver

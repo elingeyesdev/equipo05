@@ -97,7 +97,7 @@ class LoginController extends Controller
                     $request->session()->forget('pending_report_id');
                     
                     // Redirigir al perfil con mensaje de éxito
-                    return redirect()->route('profile.index')
+                    return redirect()->route('rescate.profile.index')
                         ->with('success', '¡Bienvenido! Tu hallazgo ha sido asociado a tu cuenta. Puedes verlo en tu perfil.');
                 } else {
                     // Si el usuario no tiene persona asociada, limpiar la sesión y continuar
@@ -124,6 +124,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('landing');
+        return redirect()->route('rescate.landing');
     }
 }

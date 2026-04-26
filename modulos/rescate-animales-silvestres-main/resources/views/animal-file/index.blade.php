@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('animal-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.animal-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -72,7 +72,7 @@
                             </div>
                             <div class="mt-2 d-flex align-items-center">
                                 <button type="submit" class="btn btn-primary btn-sm mr-3">{{ __('Buscar') }}</button>
-                                <a href="{{ route('animal-files.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
+                                <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
                             </div>
                         </form>
 
@@ -168,11 +168,11 @@
                                         </div>
                                         <div class="card-footer">
                                             @if(Auth::user()->hasRole('admin'))
-                                            <form action="{{ route('animal-files.destroy', $animalFile->id) }}" method="POST" class="mb-0 d-flex w-100">
-                                                <a class="btn btn-primary btn-sm" href="{{ route('animal-files.show', $animalFile->id) }}">
+                                            <form action="{{ route('rescate.animal-files.destroy', $animalFile->id) }}" method="POST" class="mb-0 d-flex w-100">
+                                                <a class="btn btn-primary btn-sm" href="{{ route('rescate.animal-files.show', $animalFile->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                                 </a>
-                                                <a class="btn btn-success btn-sm" href="{{ route('animal-files.edit', $animalFile->id) }}">
+                                                <a class="btn btn-success btn-sm" href="{{ route('rescate.animal-files.edit', $animalFile->id) }}">
                                                     <i class="fa fa-fw fa-edit"></i> {{ __('Editar') }}
                                                 </a>
                                                 @csrf
@@ -183,11 +183,11 @@
                                             </form>
                                             @else
                                             <div class="btn-group-two">
-                                                <a class="btn btn-primary btn-sm" href="{{ route('animal-files.show', $animalFile->id) }}">
+                                                <a class="btn btn-primary btn-sm" href="{{ route('rescate.animal-files.show', $animalFile->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                                 </a>
                                                 @if(Auth::user()->hasRole('veterinario'))
-                                                <a class="btn btn-success btn-sm" href="{{ route('animal-files.edit', $animalFile->id) }}">
+                                                <a class="btn btn-success btn-sm" href="{{ route('rescate.animal-files.edit', $animalFile->id) }}">
                                                     <i class="fa fa-fw fa-edit"></i> {{ __('Editar') }}
                                                 </a>
                                                 @endif

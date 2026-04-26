@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('animal-feeding-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.animal-feeding-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -108,7 +108,7 @@
                                                                     </td>
                                                                     <td class="text-center">
                                                                         <div class="btn-group btn-group-sm" role="group">
-                                                                            <a class="btn btn-primary btn-sm" href="{{ route('care-feedings.show', $careFeeding->id) }}" title="{{ __('Show') }}">
+                                                                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.care-feedings.show', $careFeeding->id) }}" title="{{ __('Show') }}">
                                                                                 <i class="fa fa-fw fa-eye"></i> Ver
                                                                             </a>
                                                                         </div>

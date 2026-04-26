@@ -14,7 +14,7 @@ class TreatmentTypeController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar tipos de tratamiento
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class TreatmentTypeController extends Controller
     {
         TreatmentType::create($request->validated());
 
-        return Redirect::route('treatment-types.index')
+        return Redirect::route('rescate.treatment-types.index')
             ->with('success', 'Tipo de tratamiento creado correctamente.');
     }
 
@@ -75,7 +75,7 @@ class TreatmentTypeController extends Controller
     {
         $treatmentType->update($request->validated());
 
-        return Redirect::route('treatment-types.index')
+        return Redirect::route('rescate.treatment-types.index')
             ->with('success', 'Tipo de tratamiento actualizado correctamente');
     }
 
@@ -83,7 +83,7 @@ class TreatmentTypeController extends Controller
     {
         TreatmentType::find($id)->delete();
 
-        return Redirect::route('treatment-types.index')
+        return Redirect::route('rescate.treatment-types.index')
             ->with('success', 'Tipo de tratamiento eliminado correctamente');
     }
 }

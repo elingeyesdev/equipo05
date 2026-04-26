@@ -57,7 +57,7 @@ class AnimalFeedingTransactionalController extends Controller
 	{
 		$this->service->registerFeeding($request->validated());
 
-		return Redirect::route('care-feedings.index')
+		return Redirect::route('rescate.care-feedings.index')
 			->with('success', 'Alimentación registrada correctamente.');
 	}
 }

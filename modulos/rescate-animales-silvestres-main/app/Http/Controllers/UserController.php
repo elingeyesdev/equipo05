@@ -39,7 +39,7 @@ class UserController extends Controller
     {
         User::create($request->validated());
 
-        return Redirect::route('users.index')
+        return Redirect::route('rescate.users.index')
             ->with('success', 'Usuario creado correctamente.');
     }
 
@@ -70,7 +70,7 @@ class UserController extends Controller
     {
         $user->update($request->validated());
 
-        return Redirect::route('users.index')
+        return Redirect::route('rescate.users.index')
             ->with('success', 'Usuario actualizado correctamente');
     }
 
@@ -78,7 +78,7 @@ class UserController extends Controller
     {
         User::find($id)->delete();
 
-        return Redirect::route('users.index')
+        return Redirect::route('rescate.users.index')
             ->with('success', 'Usuario eliminado correctamente');
     }
 }

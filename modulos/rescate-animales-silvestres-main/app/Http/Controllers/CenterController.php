@@ -14,7 +14,7 @@ class CenterController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar centros
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class CenterController extends Controller
     {
         Center::create($request->validated());
 
-        return Redirect::route('centers.index')
+        return Redirect::route('rescate.centers.index')
             ->with('success', 'Centro creado correctamente.');
     }
 
@@ -75,7 +75,7 @@ class CenterController extends Controller
     {
         $center->update($request->validated());
 
-        return Redirect::route('centers.index')
+        return Redirect::route('rescate.centers.index')
             ->with('success', 'Centro actualizado correctamente');
     }
 
@@ -83,7 +83,7 @@ class CenterController extends Controller
     {
         Center::find($id)->delete();
 
-        return Redirect::route('centers.index')
+        return Redirect::route('rescate.centers.index')
             ->with('success', 'Centro eliminado correctamente');
     }
 }

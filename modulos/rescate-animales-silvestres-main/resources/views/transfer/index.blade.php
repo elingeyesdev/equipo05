@@ -17,7 +17,7 @@
                             </span>
 
                              <!--<div class="float-right">
-                                <a href="{{ route('transfers.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.transfers.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>-->
@@ -32,10 +32,10 @@
                     <div class="card-body bg-white">
                         <ul class="nav nav-pills mb-3" id="transferTabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link {{ ($tab ?? 'first')==='first' ? 'active' : '' }}" id="first-tab" href="{{ route('transfers.index', ['tab' => 'first']) }}" role="tab">{{ __('Primer traslado') }}</a>
+                                <a class="nav-link {{ ($tab ?? 'first')==='first' ? 'active' : '' }}" id="first-tab" href="{{ route('rescate.transfers.index', ['tab' => 'first']) }}" role="tab">{{ __('Primer traslado') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ ($tab ?? 'first')==='internal' ? 'active' : '' }}" id="internal-tab" href="{{ route('transfers.index', ['tab' => 'internal']) }}" role="tab">{{ __('Traslado entre centros') }}</a>
+                                <a class="nav-link {{ ($tab ?? 'first')==='internal' ? 'active' : '' }}" id="internal-tab" href="{{ route('rescate.transfers.index', ['tab' => 'internal']) }}" role="tab">{{ __('Traslado entre centros') }}</a>
                             </li>
                             <!--<li class="nav-item">
                                 <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab">{{ __('Historial') }}</a>
@@ -74,7 +74,7 @@
                                                     <div class="mb-2">
                                                         <strong>{{ __('Condición') }}:</strong> {{ $report->condicionInicial?->nombre ?? '-' }}
                                                     </div>
-                                                    <form method="POST" action="{{ route('transfers.store') }}">
+                                                    <form method="POST" action="{{ route('rescate.transfers.store') }}">
                                                         @csrf
                                                         <input type="hidden" name="report_id" value="{{ $report->id }}">
                                                         <div class="form-group mb-2 mb20">
@@ -139,7 +139,7 @@
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <button type="button" class="btn btn-secondary btn-sm" id="internal_back_btn"><i class="fa fa-arrow-left"></i> {{ __('Volver a hojas de vida') }}</button>
                                         </div>
-                                        <form method="POST" action="{{ route('transfers.store') }}">
+                                        <form method="POST" action="{{ route('rescate.transfers.store') }}">
                                             @csrf
                                             <input type="hidden" name="animal_file_id" id="internal_af_hidden">
                                             <input type="hidden" name="animal_id" id="internal_animal_hidden">
@@ -200,9 +200,9 @@
                                                     <td>{{ $transfer->center?->nombre ?? $transfer->center?->id }}</td>
                                                     <td>{{ $transfer->observaciones }}</td>
                                                     <td>
-                                                        <form action="{{ route('transfers.destroy', $transfer->id) }}" method="POST">
-                                                            <a class="btn btn-sm btn-primary" href="{{ route('transfers.show', $transfer->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                            <a class="btn btn-sm btn-success" href="{{ route('transfers.edit', $transfer->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                        <form action="{{ route('rescate.transfers.destroy', $transfer->id) }}" method="POST">
+                                                            <a class="btn btn-sm btn-primary" href="{{ route('rescate.transfers.show', $transfer->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
+                                                            <a class="btn btn-sm btn-success" href="{{ route('rescate.transfers.edit', $transfer->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>

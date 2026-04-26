@@ -184,7 +184,7 @@
 
         <div class="form-group mt-3">
             <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
-            <a href="{{ route('people.index') }}" class="btn btn-secondary ml-2">{{ __('Cancelar') }}</a>
+            <a href="{{ route('rescate.people.index') }}" class="btn btn-secondary ml-2">{{ __('Cancelar') }}</a>
         </div>
     </div>
 </div>

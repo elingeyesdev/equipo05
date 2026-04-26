@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('incident-types.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.incident-types.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -56,9 +56,9 @@
 										<td >{{ (int)$incidentType->activo === 1 ? 'Sí' : 'No' }}</td>
 
                                             <td>
-                                                <form action="{{ route('incident-types.destroy', $incidentType->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('incident-types.show', $incidentType->id) }}"><i class="fa fa-fw fa-eye"></i> <span class="d-none d-md-inline">{{ __('Ver') }}</span></a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('incident-types.edit', $incidentType->id) }}"><i class="fa fa-fw fa-edit"></i> <span class="d-none d-md-inline">{{ __('Editar') }}</span></a>
+                                                <form action="{{ route('rescate.incident-types.destroy', $incidentType->id) }}" method="POST">
+                                                    <a class="btn btn-sm btn-primary " href="{{ route('rescate.incident-types.show', $incidentType->id) }}"><i class="fa fa-fw fa-eye"></i> <span class="d-none d-md-inline">{{ __('Ver') }}</span></a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('rescate.incident-types.edit', $incidentType->id) }}"><i class="fa fa-fw fa-edit"></i> <span class="d-none d-md-inline">{{ __('Editar') }}</span></a>
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> <span class="d-none d-md-inline">{{ __('Eliminar') }}</span></button>

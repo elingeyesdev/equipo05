@@ -20,10 +20,10 @@ class RescuerController extends Controller
     public function __construct()
     {
         // Solo administradores o encargados pueden ver rescatistas
-        $this->middleware('role:admin|encargado');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado');
         // Administradores y encargados pueden crear rescatistas, solo admin puede eliminar
-        $this->middleware('role:admin|encargado')->only(['create','store']);
-        $this->middleware('role:admin')->only(['destroy']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado')->only(['create','store']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -78,7 +78,7 @@ class RescuerController extends Controller
             \Log::warning('Error registrando tracking de solicitud de rescatista: ' . $e->getMessage());
         }
 
-        return Redirect::route('rescuers.index')
+        return Redirect::route('rescate.rescuers.index')
             ->with('success', 'Rescatista creado correctamente.');
     }
 
@@ -157,7 +157,7 @@ class RescuerController extends Controller
             }
         }
 
-        return Redirect::route('rescuers.index')
+        return Redirect::route('rescate.rescuers.index')
             ->with('success', 'Rescatista actualizado correctamente');
     }
 
@@ -221,7 +221,7 @@ class RescuerController extends Controller
             ? 'La solicitud de rescatista ha sido aprobada correctamente.' 
             : 'La solicitud de rescatista ha sido rechazada correctamente.';
 
-        return Redirect::route('rescuers.index')
+        return Redirect::route('rescate.rescuers.index')
             ->with('success', $message);
     }
 
@@ -229,7 +229,7 @@ class RescuerController extends Controller
     {
         Rescuer::find($id)->delete();
 
-        return Redirect::route('rescuers.index')
+        return Redirect::route('rescate.rescuers.index')
             ->with('success', 'Rescatista eliminado correctamente');
     }
 }

@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function(){
 @endpush
 
 @section('auth_body')
-    <form action="{{ route('register') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('rescate.register') }}" method="post" enctype="multipart/form-data">
         @csrf
  
         <div class="row">

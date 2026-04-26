@@ -14,7 +14,7 @@
                             <span class="card-title">{{ __('Show') }} {{ __('Rescuer') }}</span>
                         </div>
                         <div class="ml-auto">
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescuers.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.rescuers.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 
@@ -86,7 +86,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('rescuers.approve', $rescuer->id) }}" method="POST" id="formAprobarRescuer">
+                <form action="{{ route('rescate.rescuers.approve', $rescuer->id) }}" method="POST" id="formAprobarRescuer">
                     @method('PUT')
                     @csrf
                     <div class="modal-body">

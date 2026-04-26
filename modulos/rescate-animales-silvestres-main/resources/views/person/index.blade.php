@@ -18,7 +18,7 @@
 
                              <div class="float-right">
                                 @if(Auth::user()->hasRole('admin'))
-                                <a href="{{ route('people.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.people.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                                 @endif
@@ -83,7 +83,7 @@
                             </div>
                             <div class="mt-2 d-flex align-items-center">
                                 <button type="submit" class="btn btn-primary btn-sm mr-3">{{ __('Buscar') }}</button>
-                                <a href="{{ route('people.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
+                                <a href="{{ route('rescate.people.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
                             </div>
                         </form>
                     </div>
@@ -157,11 +157,11 @@
                                         </div>
                                         <div class="card-footer">
                                             @if(Auth::user()->hasRole('admin'))
-                                            <form action="{{ route('people.destroy', $person->id) }}" method="POST" class="mb-0 d-flex w-100">
-                                                <a class="btn btn-sm btn-primary" href="{{ route('people.show', $person->id) }}">
+                                            <form action="{{ route('rescate.people.destroy', $person->id) }}" method="POST" class="mb-0 d-flex w-100">
+                                                <a class="btn btn-sm btn-primary" href="{{ route('rescate.people.show', $person->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
                                                 </a>
-                                                <a class="btn btn-sm btn-success" href="{{ route('people.edit', $person->id) }}">
+                                                <a class="btn btn-sm btn-success" href="{{ route('rescate.people.edit', $person->id) }}">
                                                     <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
                                                 </a>
                                                 @csrf
@@ -171,7 +171,7 @@
                                                 </button>
                                             </form>
                                             @else
-                                            <a class="btn btn-sm btn-primary w-100" href="{{ route('people.show', $person->id) }}">
+                                            <a class="btn btn-sm btn-primary w-100" href="{{ route('rescate.people.show', $person->id) }}">
                                                 <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
                                             </a>
                                             @endif

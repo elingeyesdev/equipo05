@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FeedingPortion extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

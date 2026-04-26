@@ -29,6 +29,7 @@ use Modules\Incendios\Models\Administrador;
  */
 class User extends Authenticatable
 {
+    protected $connection = 'incendios';
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
     
     protected $perPage = 20;

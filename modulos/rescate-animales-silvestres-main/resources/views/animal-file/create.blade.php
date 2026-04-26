@@ -24,7 +24,7 @@
                                 </ul>
                             </div>
                         @endif
-                        <form method="POST" action="{{ route('animal-files.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.animal-files.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('animal-file.form')

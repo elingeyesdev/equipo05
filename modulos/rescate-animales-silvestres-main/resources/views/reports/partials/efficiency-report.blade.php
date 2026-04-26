@@ -34,7 +34,7 @@
     </div>
     <div class="card-body py-2">
         <!-- Filtro -->
-        <form method="GET" action="{{ route('reportes.index') }}" class="mb-3">
+        <form method="GET" action="{{ route('rescate.reportes.index') }}" class="mb-3">
             <input type="hidden" name="tab" value="management">
             <input type="hidden" name="management_subtab" value="{{ $management_subtab }}">
             <div class="row align-items-center">

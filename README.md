@@ -41,6 +41,15 @@ Proyecto nuevo para unificar de forma gradual:
     - `/incendios/modulo/simulaciones`
     - `/rescate/modulo/home`
     - `/rescate/modulo/animals`
+  - Se corrigieron rutas avanzadas de reportes y catalogos que estaban fallando:
+    - `/incendios/modulo/reports/fires`
+    - `/incendios/modulo/focos-incendios`
+    - `/incendios/modulo/reports/biomasas`
+    - `/incendios/modulo/reports/simulations`
+    - `/rescate/modulo/centers`
+    - `/rescate/modulo/species`
+    - `/rescate/modulo/reports`
+    - `/rescate/modulo/reports/claim`
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local

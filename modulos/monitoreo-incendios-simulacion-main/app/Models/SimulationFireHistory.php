@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SimulationFireHistory extends Model
 {
+    protected $connection = 'incendios';
     protected $table = 'simulation_fire_history';
 
     protected $fillable = [

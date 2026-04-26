@@ -18,7 +18,7 @@
                             </h3>
                         </div>
                         <div>
-                            <a class="btn btn-primary btn-sm" href="{{ route('releases.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.releases.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
                     <div class="card-body bg-white">
@@ -64,7 +64,7 @@
                         </div>
                         @if(!$release->animalFile)
                         <div>
-                            <a class="btn btn-primary btn-sm" href="{{ route('releases.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.releases.index') }}"> {{ __('Back') }}</a>
                         </div>
                         @endif
                     </div>

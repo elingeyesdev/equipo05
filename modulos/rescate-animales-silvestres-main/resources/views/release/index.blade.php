@@ -14,7 +14,7 @@
                             <span id="card_title">{{ __('Liberaciones') }}</span>
                             @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
                             <div class="float-right">
-                                <a href="{{ route('releases.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
+                                <a href="{{ route('rescate.releases.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
                                     {{ __('Crear nueva') }}
                                 </a>
                             </div>
@@ -56,7 +56,7 @@
                             </div>
                             <div class="mt-2 d-flex align-items-center">
                                 <button type="submit" class="btn btn-primary btn-sm mr-3">{{ __('Buscar') }}</button>
-                                <a href="{{ route('releases.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
+                                <a href="{{ route('rescate.releases.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
                             </div>
                         </form>
 
@@ -150,7 +150,7 @@
                                             </ul>
                                         </div>
                                         <div class="card-footer">
-                                            <a class="btn btn-primary btn-sm w-100" href="{{ route('releases.show', $release->id) }}">
+                                            <a class="btn btn-primary btn-sm w-100" href="{{ route('rescate.releases.show', $release->id) }}">
                                                 <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                             </a>
                                         </div>

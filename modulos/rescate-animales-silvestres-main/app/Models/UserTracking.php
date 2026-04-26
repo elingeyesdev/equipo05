@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserTracking extends Model
 {
+    protected $connection = 'rescate';
     protected $table = 'user_tracking';
 
     protected $fillable = [

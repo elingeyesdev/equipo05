@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Transfer extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

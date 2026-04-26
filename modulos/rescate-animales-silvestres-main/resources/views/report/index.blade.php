@@ -14,11 +14,11 @@
                             <span id="card_title">{{ __('Hallazgos') }}</span>
                             <div class="float-right">
                                 
-                                <a href="{{ route('reports.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
+                                <a href="{{ route('rescate.reports.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
                                     {{ __('Crear nuevo') }}
                                 </a>
                                 @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
-                                <a href="{{ route('reports.mapa-campo') }}" class="btn btn-info btn-sm float-right mr-3" data-placement="left">
+                                <a href="{{ route('rescate.reports.mapa-campo') }}" class="btn btn-info btn-sm float-right mr-3" data-placement="left">
                                     <i class="fas fa-map-marked-alt"></i> {{ __('Mapa de Campo') }}
                                 </a>
                                 @endif
@@ -81,7 +81,7 @@
                             </div>
                             <div class="mt-2 d-flex align-items-center">
                                 <button type="submit" class="btn btn-primary btn-sm mr-3">{{ __('Buscar') }}</button>
-                                <a href="{{ route('reports.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
+                                <a href="{{ route('rescate.reports.index') }}" class="btn btn-link p-0">{{ __('Mostrar todos') }}</a>
                             </div>
                         </form>
 
@@ -202,12 +202,12 @@
                                                 $isOnlyCitizen = Auth::user()->hasRole('ciudadano') && !Auth::user()->hasAnyRole(['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
                                             @endphp
                                             @if($isOnlyCitizen)
-                                            <a class="btn btn-primary btn-sm w-100" href="{{ route('reports.show', $report->id) }}">
+                                            <a class="btn btn-primary btn-sm w-100" href="{{ route('rescate.reports.show', $report->id) }}">
                                                 <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                             </a>
                                             @else
-                                            <form action="{{ route('reports.destroy', $report->id) }}" method="POST" class="mb-0 d-flex w-100">
-                                                <a class="btn btn-primary btn-sm" href="{{ route('reports.show', $report->id) }}">
+                                            <form action="{{ route('rescate.reports.destroy', $report->id) }}" method="POST" class="mb-0 d-flex w-100">
+                                                <a class="btn btn-primary btn-sm" href="{{ route('rescate.reports.show', $report->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                                 </a>
                                                 @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
@@ -299,7 +299,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('reports.approve', $report->id) }}" method="POST" id="formAprobarReport{{ $report->id }}">
+                    <form action="{{ route('rescate.reports.approve', $report->id) }}" method="POST" id="formAprobarReport{{ $report->id }}">
                         @method('PUT')
                         @csrf
                         <div class="modal-body">

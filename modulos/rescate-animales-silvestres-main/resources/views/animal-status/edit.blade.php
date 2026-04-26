@@ -14,7 +14,7 @@
                         <span class="card-title">{{ __('Update') }} {{ __('Animal Status') }}</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('animal-statuses.update', $animalStatus->id) }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.animal-statuses.update', $animalStatus->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 

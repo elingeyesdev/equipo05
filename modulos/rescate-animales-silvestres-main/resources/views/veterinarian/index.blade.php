@@ -15,7 +15,7 @@
                                 {{ __('Veterinarians') }}
                             </span>
                             <div class="float-right">
-                                <a href="{{ route('veterinarians.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
+                                <a href="{{ route('rescate.veterinarians.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
                                     {{ __('Create New') }}
                                 </a>
                             </div>
@@ -97,10 +97,10 @@
                                         </div>
                                         <div class="card-footer">
                                             <div class="d-flex w-100">
-                                                <a class="btn btn-sm btn-primary" href="{{ route('veterinarians.show', $veterinarian->id) }}" style="flex: 1 1 0;">
+                                                <a class="btn btn-sm btn-primary" href="{{ route('rescate.veterinarians.show', $veterinarian->id) }}" style="flex: 1 1 0;">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
                                                 </a>
-                                                <a class="btn btn-sm btn-success" href="{{ route('veterinarians.edit', $veterinarian->id) }}" style="flex: 1 1 0; margin-left: 0.5rem;">
+                                                <a class="btn btn-sm btn-success" href="{{ route('rescate.veterinarians.edit', $veterinarian->id) }}" style="flex: 1 1 0; margin-left: 0.5rem;">
                                                     <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
                                                 </a>
                                                 @if($isPending)
@@ -152,7 +152,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('veterinarians.approve', $veterinarian->id) }}" method="POST" id="formAprobarVeterinarian{{ $veterinarian->id }}">
+                    <form action="{{ route('rescate.veterinarians.approve', $veterinarian->id) }}" method="POST" id="formAprobarVeterinarian{{ $veterinarian->id }}">
                         @method('PUT')
                         @csrf
                         <div class="modal-body">

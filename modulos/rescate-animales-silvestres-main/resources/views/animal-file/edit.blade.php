@@ -24,7 +24,7 @@
                                 </ul>
                             </div>
                         @endif
-                        <form method="POST" action="{{ route('animal-files.update', $animalFile->id) }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.animal-files.update', $animalFile->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 

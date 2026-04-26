@@ -24,7 +24,7 @@ class ContactMessageController extends Controller
             'mensaje' => $request->input('mensaje'),
         ]);
 
-        return redirect()->route('profile.index')
+        return redirect()->route('rescate.profile.index')
             ->with('success', 'Tu mensaje ha sido enviado. Un administrador o encargado se pondrá en contacto contigo pronto.');
     }
 

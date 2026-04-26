@@ -14,7 +14,7 @@ class FeedingFrequencyController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar frecuencias de alimentación
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class FeedingFrequencyController extends Controller
     {
         FeedingFrequency::create($request->validated());
 
-        return Redirect::route('feeding-frequencies.index')
+        return Redirect::route('rescate.feeding-frequencies.index')
             ->with('success', 'Frecuencia de alimentación creada correctamente.');
     }
 
@@ -75,7 +75,7 @@ class FeedingFrequencyController extends Controller
     {
         $feedingFrequency->update($request->validated());
 
-        return Redirect::route('feeding-frequencies.index')
+        return Redirect::route('rescate.feeding-frequencies.index')
             ->with('success', 'Frecuencia de alimentación actualizada correctamente');
     }
 
@@ -83,7 +83,7 @@ class FeedingFrequencyController extends Controller
     {
         FeedingFrequency::find($id)->delete();
 
-        return Redirect::route('feeding-frequencies.index')
+        return Redirect::route('rescate.feeding-frequencies.index')
             ->with('success', 'Frecuencia de alimentación eliminada correctamente');
     }
 }

@@ -17,7 +17,7 @@
                                     {{ $animalHistory->animalFile->animal->nombre }}
                                 @endif
                             </span>
-                            <a href="{{ route('animal-histories.index') }}" class="btn btn-info btn-sm">
+                            <a href="{{ route('rescate.animal-histories.index') }}" class="btn btn-info btn-sm">
                                 <i class="fas fa-arrow-left"></i> {{ __('Volver') }}
                             </a>
                         </div>
@@ -77,7 +77,7 @@
                                 // (el controlador pdf() puede manejar ambos casos)
                                 $pdfParam = $lastHistory ? $lastHistory->id : $animalFileId;
                             @endphp
-                            <a href="{{ route('animal-histories.pdf', $pdfParam) }}" 
+                            <a href="{{ route('rescate.animal-histories.pdf', $pdfParam) }}" 
                                class="btn btn-danger btn-sm" 
                                target="_blank">
                                 <i class="fas fa-file-pdf"></i> {{ __('Imprimir PDF') }}

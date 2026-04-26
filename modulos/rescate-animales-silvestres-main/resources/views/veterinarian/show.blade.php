@@ -14,7 +14,7 @@
                             <span class="card-title">{{ __('Show') }} {{ __('Veterinarian') }}</span>
                         </div>
                         <div class="ml-auto">
-                            <a class="btn btn-primary btn-sm" href="{{ route('veterinarians.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.veterinarians.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 
@@ -90,7 +90,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('veterinarians.approve', $veterinarian->id) }}" method="POST" id="formAprobarVeterinarian">
+                <form action="{{ route('rescate.veterinarians.approve', $veterinarian->id) }}" method="POST" id="formAprobarVeterinarian">
                     @method('PUT')
                     @csrf
                     <div class="modal-body">

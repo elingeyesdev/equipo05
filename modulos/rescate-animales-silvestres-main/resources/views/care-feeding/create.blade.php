@@ -14,7 +14,7 @@
                         <span class="card-title">{{ __('Create') }} {{ __('Care Feeding') }}</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('care-feedings.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.care-feedings.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('care-feeding.form')

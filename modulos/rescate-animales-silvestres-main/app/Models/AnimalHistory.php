@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AnimalHistory extends Model
 {
+    protected $connection = 'rescate';
     protected $table = 'animal_histories';
 
     public $timestamps = false;

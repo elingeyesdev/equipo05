@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('animal-care-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -113,7 +113,7 @@
                                                                     <td class="text-center">{{ $care->fecha ? \Carbon\Carbon::parse($care->fecha)->format('d/m/Y') : '-' }}</td>
                                                                     <td class="text-center">
                                                                         <div class="btn-group btn-group-sm" role="group">
-                                                                            <a class="btn btn-primary btn-sm" href="{{ route('cares.show', $care->id) }}" title="{{ __('Show') }}">
+                                                                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.cares.show', $care->id) }}" title="{{ __('Show') }}">
                                                                                 <i class="fa fa-fw fa-eye"></i> Ver
                                                                             </a>
                                                                         </div>

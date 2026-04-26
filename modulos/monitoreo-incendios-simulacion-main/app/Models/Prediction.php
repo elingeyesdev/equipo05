@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Prediction extends Model
 {
+    protected $connection = 'incendios';
     use HasFactory;
     use SoftDeletes;
 

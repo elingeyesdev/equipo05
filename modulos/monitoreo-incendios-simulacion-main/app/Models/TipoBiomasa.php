@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TipoBiomasa extends Model
 {
+    protected $connection = 'incendios';
     use HasFactory;
 
     protected $table = 'tipo_biomasa';

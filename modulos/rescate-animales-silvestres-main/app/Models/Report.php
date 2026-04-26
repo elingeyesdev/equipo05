@@ -23,6 +23,7 @@ use Modules\Rescate\Models\Transfer;
  */
 class Report extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

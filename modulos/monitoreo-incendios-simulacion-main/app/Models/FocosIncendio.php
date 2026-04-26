@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FocosIncendio extends Model
 {
+    protected $connection = 'incendios';
     
     protected $perPage = 20;
 

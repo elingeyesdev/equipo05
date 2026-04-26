@@ -206,7 +206,7 @@ class TransferController extends Controller
                     \Log::warning('Error registrando tracking de traslado: ' . $e->getMessage());
                 }
                 
-                return Redirect::route('reports.index')
+                return Redirect::route('rescate.reports.index')
                     ->with('success', 'Primer traslado registrado correctamente.');
             }
             // Modo traslado interno (entre centros) usando animal_id
@@ -231,7 +231,7 @@ class TransferController extends Controller
             return Redirect::back()->withInput()->with('error', 'No se pudo registrar el traslado: '.$e->getMessage());
         }
 
-        return Redirect::route('transfers.index')
+        return Redirect::route('rescate.transfers.index')
             ->with('success', 'Traslado creado correctamente.');
     }
 
@@ -282,7 +282,7 @@ class TransferController extends Controller
     {
         $transfer->update($request->validated());
 
-        return Redirect::route('transfers.index')
+        return Redirect::route('rescate.transfers.index')
             ->with('success', 'Traslado actualizado correctamente');
     }
 
@@ -290,7 +290,7 @@ class TransferController extends Controller
     {
         Transfer::find($id)->delete();
 
-        return Redirect::route('transfers.index')
+        return Redirect::route('rescate.transfers.index')
             ->with('success', 'Traslado eliminado correctamente');
     }
 }

@@ -40,11 +40,11 @@ class ReportController extends Controller
         // Permitir create y store sin autenticación (para usuarios anónimos desde landing)
         $this->middleware('auth')->except(['create', 'store']);
         // Solo ciertos roles gestionan reportes en el panel interno
-        $this->middleware('role:ciudadano|rescatista|veterinario|encargado|admin')->except(['create', 'store']);
+        $this->middleware('role:ciudadano|rescatista|veterinario|encargado|admin|Administrador|Voluntario|Reportes|Almacenero|Donante|voluntario|administrador')->except(['create', 'store']);
         // Ciudadanos solo pueden ver y crear, no editar ni eliminar
-        $this->middleware('role:admin|encargado|rescatista|veterinario')->only(['edit', 'update']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado|rescatista|veterinario')->only(['edit', 'update']);
         // Solo administradores pueden eliminar reportes
-        $this->middleware('role:admin')->only(['destroy']);
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -132,8 +132,8 @@ class ReportController extends Controller
         // Detectar si viene desde landing o desde el panel interno
         $referer = $request->headers->get('referer');
         $hasFromParam = $request->has('from') && $request->get('from') === 'landing';
-        $fromLanding = $referer && (str_contains($referer, route('landing', [], false)) || str_contains($referer, '/landing'));
-        $fromReports = $referer && (str_contains($referer, route('reports.index', [], false)) || str_contains($referer, '/reports'));
+        $fromLanding = $referer && (str_contains($referer, route('rescate.landing', [], false)) || str_contains($referer, '/landing'));
+        $fromReports = $referer && (str_contains($referer, route('rescate.reports.index', [], false)) || str_contains($referer, '/reports'));
         
         // Si viene con parámetro 'from=landing' o desde landing, usar formato simple
         $useSimpleFormat = $hasFromParam || $fromLanding;
@@ -252,11 +252,11 @@ class ReportController extends Controller
             if (!$isAuthenticated) {
                 // Guardar el ID del reporte en la sesión para asociarlo después del login
                 $request->session()->put('pending_report_id', $report->id);
-                return Redirect::route('reports.claim')
+                return Redirect::route('rescate.reports.claim')
                     ->with('success', 'El hallazgo se registró correctamente. ¿Deseas conservar este reporte como tuyo?');
             }
 
-            return Redirect::route('reports.index')
+            return Redirect::route('rescate.reports.index')
                 ->with('success', 'El hallazgo se registró correctamente.');
         } catch (\Throwable $e) {
             return Redirect::back()
@@ -313,7 +313,7 @@ class ReportController extends Controller
 
         $report->update($data);
 
-        return Redirect::route('reports.index')
+        return Redirect::route('rescate.reports.index')
             ->with('success', 'El hallazgo se actualizó correctamente');
     }
 
@@ -371,11 +371,11 @@ class ReportController extends Controller
         // Redirigir a la vista desde donde se llamó (index o show)
         $redirectTo = $request->get('redirect_to', 'reports.index');
         if ($redirectTo === 'show') {
-            return Redirect::route('reports.show', $report->id)
+            return Redirect::route('rescate.reports.show', $report->id)
                 ->with('success', $message);
         }
         
-        return Redirect::route('reports.index')
+        return Redirect::route('rescate.reports.index')
             ->with('success', $message);
     }
 
@@ -383,7 +383,7 @@ class ReportController extends Controller
     {
         Report::find($id)->delete();
 
-        return Redirect::route('reports.index')
+        return Redirect::route('rescate.reports.index')
             ->with('success', 'El hallazgo se eliminó correctamente');
     }
 
@@ -529,14 +529,14 @@ class ReportController extends Controller
 
         $reportId = session('pending_report_id');
         if (!$reportId) {
-            return Redirect::route('landing')
+            return Redirect::route('rescate.landing')
                 ->with('info', 'No hay reportes pendientes de asociar.');
         }
 
         if ($validated['action'] === 'no') {
             // El usuario no quiere conservar el reporte, limpiar sesión y redirigir
             session()->forget('pending_report_id');
-            return Redirect::route('landing')
+            return Redirect::route('rescate.landing')
                 ->with('success', 'El reporte se ha registrado correctamente. Gracias por tu colaboración.');
         }
 

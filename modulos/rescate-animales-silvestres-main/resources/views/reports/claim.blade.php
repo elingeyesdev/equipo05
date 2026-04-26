@@ -64,7 +64,7 @@
                                 </div>
                             </div>
 
-                            <form method="POST" action="{{ route('reports.claim.store') }}">
+                            <form method="POST" action="{{ route('rescate.reports.claim.store') }}">
                                 @csrf
                                 <div class="d-flex justify-content-center gap-3">
                                     <button type="submit" name="action" value="yes" class="btn btn-success btn-lg">
@@ -85,7 +85,7 @@
                                     {{ __('No se encontró ningún reporte pendiente de asociar.') }}
                                 </p>
                             </div>
-                            <a href="{{ route('landing') }}" class="btn btn-primary btn-lg">
+                            <a href="{{ route('rescate.landing') }}" class="btn btn-primary btn-lg">
                                 <i class="fas fa-home mr-2"></i>
                                 {{ __('Volver al inicio') }}
                             </a>

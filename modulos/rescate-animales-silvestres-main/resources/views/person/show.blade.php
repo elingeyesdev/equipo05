@@ -25,11 +25,11 @@
                                 </div>
                             @endif
                             @if($isAdmin)
-                                <a class="btn btn-success btn-sm" href="{{ route('people.edit', $person->id) }}">
+                                <a class="btn btn-success btn-sm" href="{{ route('rescate.people.edit', $person->id) }}">
                                     <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
                                 </a>
                             @endif
-                            <a class="btn btn-primary btn-sm" href="{{ route('people.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.people.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 
@@ -182,12 +182,12 @@
                                 
                                 @if(!$hasRescuer)
                                     <a class="btn btn-outline-info btn-sm" 
-                                       href="{{ route('rescuers.create', ['persona_id' => $person->id]) }}">
+                                       href="{{ route('rescate.rescuers.create', ['persona_id' => $person->id]) }}">
                                         <i class="fa fa-user-injured"></i> Asignar como rescatista
                                     </a>
                                 @elseif($rescuerEnRevision)
                                     <a class="btn btn-outline-warning btn-sm" 
-                                       href="{{ route('rescuers.show', $rescuer->id) }}">
+                                       href="{{ route('rescate.rescuers.show', $rescuer->id) }}">
                                         <i class="fa fa-user-injured"></i> Ver Solicitud de Rescatista
                                     </a>
                                 @else
@@ -198,12 +198,12 @@
                                 
                                 @if(!$hasVeterinarian)
                                     <a class="btn btn-outline-info btn-sm" 
-                                       href="{{ route('veterinarians.create', ['persona_id' => $person->id]) }}">
+                                       href="{{ route('rescate.veterinarians.create', ['persona_id' => $person->id]) }}">
                                         <i class="fa fa-user-md"></i> Asignar como veterinario
                                     </a>
                                 @elseif($veterinarianEnRevision)
                                     <a class="btn btn-outline-warning btn-sm" 
-                                       href="{{ route('veterinarians.show', $veterinarian->id) }}">
+                                       href="{{ route('rescate.veterinarians.show', $veterinarian->id) }}">
                                         <i class="fa fa-user-md"></i> Ver Solicitud de Veterinario
                                     </a>
                                 @else
@@ -399,7 +399,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('people.update', $person->id) }}" method="POST" id="formCuidadorAprobacion">
+                <form action="{{ route('rescate.people.update', $person->id) }}" method="POST" id="formCuidadorAprobacion">
                     @method('PUT')
                     @csrf
                     <div class="modal-body">
@@ -525,7 +525,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('people.convert-to-encargado', $person->id) }}" method="POST" id="formConvertirEncargado">
+                <form action="{{ route('rescate.people.convert-to-encargado', $person->id) }}" method="POST" id="formConvertirEncargado">
                     @csrf
                     <div class="modal-body">
                         <div class="alert alert-info">

@@ -14,7 +14,7 @@ class CareTypeController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar tipos de cuidado
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class CareTypeController extends Controller
     {
         CareType::create($request->validated());
 
-        return Redirect::route('care-types.index')
+        return Redirect::route('rescate.care-types.index')
             ->with('success', 'Tipo de cuidado creado correctamente.');
     }
 
@@ -75,7 +75,7 @@ class CareTypeController extends Controller
     {
         $careType->update($request->validated());
 
-        return Redirect::route('care-types.index')
+        return Redirect::route('rescate.care-types.index')
             ->with('success', 'Tipo de cuidado actualizado correctamente');
     }
 
@@ -83,7 +83,7 @@ class CareTypeController extends Controller
     {
         CareType::find($id)->delete();
 
-        return Redirect::route('care-types.index')
+        return Redirect::route('rescate.care-types.index')
             ->with('success', 'Tipo de cuidado eliminado correctamente');
     }
 }

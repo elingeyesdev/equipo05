@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FocoIncendio extends Model
 {
+    protected $connection = 'incendios';
     use HasFactory;
 
     protected $table = 'focos_incendios';

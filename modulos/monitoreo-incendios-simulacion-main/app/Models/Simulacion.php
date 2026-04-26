@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Simulacion extends Model
 {
+    protected $connection = 'incendios';
     use HasFactory;
 
     protected $fillable = [

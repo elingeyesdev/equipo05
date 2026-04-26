@@ -164,7 +164,7 @@ class DashboardController extends Controller
     public function firesActivityReport(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
+        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
 
         // Filtros
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
@@ -229,7 +229,7 @@ class DashboardController extends Controller
     {
         // Reutilizar la misma lógica del reporte
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
+        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
 
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
         $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
@@ -270,7 +270,7 @@ class DashboardController extends Controller
     {
         // Reutilizar la misma lógica del reporte
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
+        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
 
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
         $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
@@ -310,7 +310,7 @@ class DashboardController extends Controller
     public function biomasasManagementReport(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
+        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
 
         // Filtros
         $estado = $request->input('estado');
@@ -375,7 +375,7 @@ class DashboardController extends Controller
     public function simulationsEffectivenessReport(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
+        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
 
         // Filtros
         $fechaInicio = $request->input('fecha_inicio');
@@ -488,7 +488,7 @@ class DashboardController extends Controller
     public function biomasasManagementExportExcel(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
+        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
 
         // Filtros
         $estado = $request->input('estado');
@@ -528,7 +528,7 @@ class DashboardController extends Controller
     public function biomasasManagementExportPdf(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
+        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
 
         $estado = $request->input('estado');
         $tipoBiomasaId = $request->input('tipo_biomasa_id');

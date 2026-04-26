@@ -14,7 +14,7 @@ class IncidentTypeController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar tipos de incidentes
-        $this->middleware('role:admin');
+        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.
@@ -44,7 +44,7 @@ class IncidentTypeController extends Controller
     {
         IncidentType::create($request->validated());
 
-        return Redirect::route('incident-types.index')
+        return Redirect::route('rescate.incident-types.index')
             ->with('success', 'IncidentType created successfully.');
     }
 
@@ -75,7 +75,7 @@ class IncidentTypeController extends Controller
     {
         $incidentType->update($request->validated());
 
-        return Redirect::route('incident-types.index')
+        return Redirect::route('rescate.incident-types.index')
             ->with('success', 'IncidentType updated successfully');
     }
 
@@ -83,7 +83,7 @@ class IncidentTypeController extends Controller
     {
         IncidentType::find($id)->delete();
 
-        return Redirect::route('incident-types.index')
+        return Redirect::route('rescate.incident-types.index')
             ->with('success', 'IncidentType deleted successfully');
     }
 }

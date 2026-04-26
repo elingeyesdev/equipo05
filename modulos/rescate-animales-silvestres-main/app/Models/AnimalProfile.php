@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AnimalProfile extends Model
 {
+    protected $connection = 'rescate';
     
     protected $perPage = 20;
 

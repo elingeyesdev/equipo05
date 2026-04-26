@@ -14,7 +14,7 @@
                         <span class="card-title">{{ __('Update') }} {{ __('Feeding Portion') }}</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('feeding-portions.update', $feedingPortion->id) }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('rescate.feeding-portions.update', $feedingPortion->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 
