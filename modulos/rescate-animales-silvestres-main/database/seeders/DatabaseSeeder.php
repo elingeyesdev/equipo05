@@ -1,0 +1,42 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use App\Models\Person;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+
+class DatabaseSeeder extends Seeder
+{
+    use WithoutModelEvents;
+
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // Roles y permisos base
+        $this->call(RolesAndPermissionsSeeder::class);
+
+        // Usuario administrador por defecto (idempotente)
+        $admin = User::firstOrCreate(
+            ['email' => 'rescateanimales25@gmail.com'],
+            ['password' => 'rescate123'] // se encripta automáticamente por el cast "hashed"
+        );
+
+        // Asignar rol admin
+        $admin->assignRole('admin');
+
+        // Crear registro de Person para el administrador si no existe
+        Person::firstOrCreate(
+            ['usuario_id' => $admin->id],
+            [
+                'nombre' => 'Carmen Rojas',
+                'ci' => '8799668',
+                'telefono' => '74412589',
+            ]
+        );
+    }
+}

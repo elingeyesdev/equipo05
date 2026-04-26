@@ -1,0 +1,82 @@
+services:
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rescate-laravel
+    volumes:
+      - .:/var/www
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db       # Nombre del servicio del contenedor de postgres
+      DB_PORT: 5432
+      DB_DATABASE: rescate_db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+      APP_NAME: RescateAnimales
+      APP_LOCALE: es
+      APP_FALLBACK_LOCALE: es
+      APP_FAKER_LOCALE: es_BO
+      NASA_FIRMS_API_KEY: ${NASA_FIRMS_API_KEY:-}
+      NASA_FIRMS_API_BASE: ${NASA_FIRMS_API_BASE:-https://firms.modaps.eosdis.nasa.gov/api/area/csv}
+      HOTSPOTS_INTEGRATION_API_URL: ${HOTSPOTS_INTEGRATION_API_URL:-http://gatealas.dasalas.shop/api/gateway/brigadas/hotspots}
+      EXTERNAL_FIRE_REPORTS_API_URL: ${EXTERNAL_FIRE_REPORTS_API_URL:-http://gatealas.dasalas.shop/api/gateway/brigadas/reportesanimales}
+      SIPI_WEATHER_API_URL: ${SIPI_WEATHER_API_URL:-http://gatealas.dasalas.shop/api/gateway/prediccion/weather}
+      OPEN_METEO_API_URL: https://api.open-meteo.com/v1/forecast
+      FIRE_PREDICTIONS_LOOKUP_API_URL: ${FIRE_PREDICTIONS_LOOKUP_API_URL:-http://gatealas.dasalas.shop/api/gateway/prediccion/lookup}
+      MAIL_MAILER: ${MAIL_MAILER:-smtp}
+      MAIL_HOST: ${MAIL_HOST:-smtp-relay.brevo.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-noreply@example.com}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-RescateAnimales}
+      HELPDESK_API_KEY: ${HELPDESK_API_KEY:-}
+      HELPDESK_API_URL: ${HELPDESK_API_URL:-}
+      HELPDESK_DEBUG: ${HELPDESK_DEBUG:-false}
+    depends_on:
+      - db
+    networks:
+      - rescate-net
+  nginx:
+    image: nginx:latest
+    container_name: rescate
+    expose:
+      - "80" #---> no es necesario para despliegue local, solo para el reverse proxy
+    # ports:
+    #   - "8080:80" #---> despliegue local con puerto 8080
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - laravel
+    networks:
+      - rescate-net
+      - internal-network
+      - proxy-network
+  db:
+    image: postgres:latest
+    container_name: rescate-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rescate_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    # ports:
+    #   - "5432:5432" #---> para acceso local a la base de datos, comentar esto para despliegue en producción
+    volumes:
+      - db-data:/var/lib/postgresql
+    networks:
+      - rescate-net
+
+networks:
+  rescate-net:
+    driver: bridge
+  internal-network:
+    external: true
+  proxy-network:
+    external: true
+
+volumes:
+  db-data:

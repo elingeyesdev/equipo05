@@ -17,6 +17,9 @@ Proyecto nuevo para unificar de forma gradual:
 - Modulo Donacion/Recepcion/Inventario integrado bajo prefijos:
   - Web: `/inventario/*`
   - API: `/api/inventario/*`
+- Codigo fuente incorporado para proxima integracion modular:
+  - `modulos/monitoreo-incendios-simulacion-main`
+  - `modulos/rescate-animales-silvestres-main`
 
 ## Arranque local
 1. Instalar dependencias:
@@ -39,3 +42,4 @@ Proyecto nuevo para unificar de forma gradual:
 
 ## Documento tecnico de fase
 - Ver `docs/FASE1_UNIFICACION.md`
+- Ver bitacora de avances en `main`: `docs/BITACORA_INTEGRACION_MAIN.md`

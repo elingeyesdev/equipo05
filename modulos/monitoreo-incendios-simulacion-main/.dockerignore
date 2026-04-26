@@ -1,0 +1,53 @@
+# Archivos de configuración local
+.env
+.env.backup
+.env.production
+
+# Dependencias
+/node_modules
+/vendor
+
+# Compilados
+/public/hot
+/public/storage
+/public/build
+
+# Storage y caché
+/storage/*.key
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# Bootstrap cache
+/bootstrap/cache/*
+
+# IDE y editores
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.phpunit.result.cache
+.phpunit.cache
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Otros
+*.log
+*.pid
+*.seed
+*.pid.lock
+.npm
+.cache

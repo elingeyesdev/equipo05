@@ -1,0 +1,38 @@
+# Bitacora de Integracion en main
+
+Este documento registra, por hitos, los cambios aplicados directamente en la rama `main` del repositorio `elingeyesdev/equipo05`.
+
+## Objetivo de integracion
+
+Integrar completamente:
+
+- `Monitoreo de Incendios`
+- `Rescate de Animales Silvestres`
+
+dentro de `equipo05`, con login unico y navegacion desde el menu lateral.
+
+## Hitos
+
+### Hito 1 - Copia completa de modulos fuente
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se incorpora el codigo fuente del sistema de monitoreo en:
+  - `modulos/monitoreo-incendios-simulacion-main/`
+- Se incorpora el codigo fuente del sistema de rescate en:
+  - `modulos/rescate-animales-silvestres-main/`
+- Se excluyen artefactos no versionables:
+  - `vendor/`
+  - `node_modules/`
+  - archivos `.env`
+  - logs runtime
+- Se eliminaron archivos con credenciales embebidas para cumplir reglas de seguridad del repositorio:
+  - `.env.example` y `.env.docker` del modulo de monitoreo
+  - `docker-compose.yml` del modulo de monitoreo
+  - `.env.example`, `SECRETS.md` y `CONFIGURACION_GMAIL.md` del modulo de rescate
+
+Resultado esperado:
+
+- Ambos sistemas quedan versionados dentro del proyecto principal para iniciar su adaptacion modular (rutas, auth unica, conexiones de BD y menu unificado).

@@ -1,0 +1,132 @@
+<?php
+
+namespace App\Http\Controllers\Transactions;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Transactions\AnimalWithFileRequest;
+use App\Models\Animal;
+use App\Models\AnimalFile;
+use App\Models\AnimalStatus;
+use App\Models\Report;
+use App\Models\Species;
+use App\Models\AnimalHistory;
+use App\Services\Animal\AnimalTransactionalService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+
+class AnimalTransactionalController extends Controller
+{
+	public function __construct(
+		private readonly AnimalTransactionalService $service
+	) {
+		$this->middleware('auth');
+	}
+
+	/**
+	 * Formulario combinado para crear Animal + Hoja de Animal en una sola operación.
+	 */
+	public function create(): View
+	{
+		$animal = new Animal();
+		$animalFile = new AnimalFile();
+
+		// Defaults
+		$defaultStatusId = AnimalStatus::whereRaw('LOWER(nombre) = ?', ['en recuperación'])->value('id');
+        // Default especie "Desconocido" en el formulario de hoja
+        $unknownSpeciesId = Species::whereRaw('LOWER(nombre) = ?', ['desconocido'])->value('id');
+        if ($unknownSpeciesId && empty($animalFile->especie_id)) {
+            $animalFile->especie_id = $unknownSpeciesId;
+        }
+
+		// Datos requeridos por el form de Animal (select oculto y tarjetas)
+		// Mostrar solo hallazgos aprobados que NO estén asignados a un animal existente
+		$reports = Report::query()
+			->where('reports.aprobado', 1)
+			->whereNotExists(function($query) {
+				$query->select(DB::raw(1))
+					->from('animals')
+					->whereColumn('animals.reporte_id', 'reports.id');
+			})
+			->orderByDesc('reports.id')
+			->get(['reports.id']);
+
+        $reportCards = Report::query()
+            ->where('reports.aprobado', 1)
+            ->whereNotExists(function($query) {
+				$query->select(DB::raw(1))
+					->from('animals')
+					->whereColumn('animals.reporte_id', 'reports.id');
+			})
+            ->leftJoin('people', 'people.id', '=', 'reports.persona_id')
+            ->leftJoin('animal_conditions', 'animal_conditions.id', '=', 'reports.condicion_inicial_id')
+            ->select([
+                'reports.id',
+                'reports.imagen_url',
+                'reports.observaciones',
+                DB::raw("COALESCE(people.nombre, '') as reportante_nombre"),
+                'reports.condicion_inicial_id',
+                DB::raw("COALESCE(animal_conditions.nombre, '') as condicion_nombre"),
+            ])
+            ->groupBy('reports.id','reports.imagen_url','reports.observaciones','people.nombre','reports.condicion_inicial_id','animal_conditions.nombre')
+            ->orderByDesc('reports.id')
+            ->get();
+
+		// Datos requeridos por el form de AnimalFile (salvo animales)
+		$species = Species::orderBy('nombre')->get(['id','nombre']);
+		$animalStatuses = AnimalStatus::orderBy('nombre')->get(['id','nombre']);
+
+		return view('transactions.animal.create', compact(
+			'animal',
+			'animalFile',
+			'reports',
+			'species',
+			'animalStatuses',
+			'reportCards',
+            'defaultStatusId'
+		));
+	}
+
+	/**
+	 * Persiste Animal + Hoja de Animal (transaccional).
+	 */
+	public function store(AnimalWithFileRequest $request): RedirectResponse
+	{
+		try {
+			$animalData = $request->only(['nombre','sexo','descripcion','reporte_id','transfer_history_ids','llegaron_cantidad']);
+			$animalFileData = $request->only(['tipo_id','especie_id','estado_id']);
+			$image = $request->file('imagen');
+
+			// Si no viene estado, mapear desde la condición inicial del reporte
+			if (empty($animalFileData['estado_id']) && !empty($animalData['reporte_id'])) {
+				$rep = Report::with('animalCondition')->find($animalData['reporte_id']);
+				if ($rep && $rep->animalCondition && $rep->animalCondition->nombre) {
+					$status = AnimalStatus::whereRaw('LOWER(nombre) = ?', [mb_strtolower($rep->animalCondition->nombre)])->value('id');
+					if ($status) {
+						$animalFileData['estado_id'] = $status;
+					} else {
+						// fallback
+						$animalFileData['estado_id'] = AnimalStatus::whereRaw('LOWER(nombre) = ?', ['en atención'])->value('id');
+					}
+				}
+				// Copiar observaciones en descripción si no se envió
+				if (empty($animalData['descripcion']) && $rep && !empty($rep->observaciones)) {
+					$animalData['descripcion'] = $rep->observaciones;
+				}
+			}
+
+			$this->service->createWithFile($animalData, $animalFileData, $image);
+			$msg = 'Hoja de Animal creada.';
+
+			return Redirect::route('animal-files.index')
+				->with('success', $msg);
+		} catch (\Throwable $e) {
+			return Redirect::back()
+				->withInput()
+				->withErrors(['general' => 'No se pudo registrar la hoja del animal: ' . $e->getMessage()]);
+		}
+	}
+}
+
+
