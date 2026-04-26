@@ -40,7 +40,7 @@ class HomeController extends Controller
             $data = array_merge($data, $this->getMapaCampoData());
         }
         
-        return view('home', $data);
+        return view('rescate::home', $data);
     }
 
     /**
@@ -161,7 +161,7 @@ class HomeController extends Controller
         $data['usuario'] = auth()->user();
         
         // Generar PDF
-        $pdf = Pdf::loadView('dashboard.pdf', $data);
+        $pdf = Pdf::loadView('rescate::dashboard.pdf', $data);
         
         // Nombre del archivo
         $fileName = 'dashboard_' . date('d_m_Y_H_i_s') . '.pdf';
