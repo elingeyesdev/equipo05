@@ -196,14 +196,14 @@ Route::prefix('inventario')
         require base_path('modulos/donacion-recepcion-inventario-main/routes/web.php');
     });
 
-Route::prefix('incendios')
+Route::prefix('incendios/modulo')
     ->as('incendios.')
     ->middleware(['auth'])
     ->group(function () {
         require base_path('modulos/monitoreo-incendios-simulacion-main/routes/web.php');
     });
 
-Route::prefix('rescate')
+Route::prefix('rescate/modulo')
     ->as('rescate.')
     ->middleware(['auth'])
     ->group(function () {

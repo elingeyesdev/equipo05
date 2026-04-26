@@ -177,3 +177,30 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - El docente puede navegar los dos modulos desde el menu lateral dentro del sistema principal, con autenticacion unica y sin romper el flujo base del proyecto.
+
+### Hito 9 - Correccion de errores internos en ejecucion real (VS Code local)
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se corrige colision de rutas entre accesos de sidebar y rutas internas de modulos:
+  - Se mantiene el acceso estable del menu en:
+    - `/incendios`
+    - `/rescate`
+  - Se mueven rutas internas completas de modulos a:
+    - `/incendios/modulo/*`
+    - `/rescate/modulo/*`
+- Se ajustan enlaces del sidebar para navegar por URL estable (`/incendios`, `/rescate`) evitando error por resolucion de nombre de ruta en entornos con estado parcial.
+
+Verificacion ejecutada:
+
+- Smoke test autenticado en servidor local (`127.0.0.1:8000`):
+  - `/dashboard` => `200`
+  - `/incendios` => `200`
+  - `/rescate` => `200`
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+
+Resultado esperado:
+
+- El sistema deja de mostrar "Internal Server Error" al iniciar sesion y al abrir los accesos del sidebar para Incendios y Rescate en el proyecto `equipo05-main-integration`.

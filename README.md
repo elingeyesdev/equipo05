@@ -29,6 +29,9 @@ Proyecto nuevo para unificar de forma gradual:
   - Se aplicaron correcciones de compatibilidad en servicios y rutas del modulo rescate para evitar errores fatales de arranque.
   - Migraciones de `rescate` adaptadas para SQLite local del monolito y ejecutadas exitosamente.
   - Las entradas de sidebar `Monitoreo de Incendios` y `Rescate de Animales Silvestres` apuntan a vistas integradas estables (`/incendios` y `/rescate`) con autenticacion central.
+  - Las rutas internas completas de los modulos quedaron bajo prefijos sin colision con el sidebar:
+    - Incendios: `/incendios/modulo/*`
+    - Rescate: `/rescate/modulo/*`
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local
