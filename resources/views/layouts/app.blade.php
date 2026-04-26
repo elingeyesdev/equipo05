@@ -280,18 +280,112 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('incendios.dashboard') }}" class="nav-link {{ request()->is('incendios') || request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'active' : '' }}">
+                        <li class="nav-item {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-fire"></i>
-                                <p>Monitoreo de Incendios</p>
+                                <p>Monitoreo de Incendios <i class="fas fa-angle-left right"></i></p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.dashboard') }}" class="nav-link {{ request()->routeIs('incendios.dashboard') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Dashboard + Mapa</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.focos-incendios.index') }}" class="nav-link {{ request()->routeIs('incendios.focos-incendios.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Focos de Incendio</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.biomasas.index') }}" class="nav-link {{ request()->routeIs('incendios.biomasas.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Biomasas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.tipo-biomasas.index') }}" class="nav-link {{ request()->routeIs('incendios.tipo-biomasas.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de Biomasa</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.simulaciones.index') }}" class="nav-link {{ request()->routeIs('incendios.simulaciones.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Simulaciones</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.predictions.index') }}" class="nav-link {{ request()->routeIs('incendios.predictions.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Predicciones</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.reports.fires') }}" class="nav-link {{ request()->routeIs('incendios.reports.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Reportes</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('rescate.home') }}" class="nav-link {{ request()->is('rescate') || request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
+                        <li class="nav-item {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-paw"></i>
-                                <p>Rescate de Animales Silvestres</p>
+                                <p>Rescate de Animales Silvestres <i class="fas fa-angle-left right"></i></p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.home') }}" class="nav-link {{ request()->routeIs('rescate.home') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Dashboard</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.reports.index') }}" class="nav-link {{ request()->routeIs('rescate.reports.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Reportes/Hallazgos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.reports.mapa-campo') }}" class="nav-link {{ request()->routeIs('rescate.reports.mapa-campo') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Mapa de Campo</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animals.index') }}" class="nav-link {{ request()->routeIs('rescate.animals.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Animales</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animal-files.index') }}" class="nav-link {{ request()->routeIs('rescate.animal-files.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Hojas de Vida</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.transfers.index') }}" class="nav-link {{ request()->routeIs('rescate.transfers.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Traslados</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.releases.index') }}" class="nav-link {{ request()->routeIs('rescate.releases.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Liberaciones</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.rescuers.index') }}" class="nav-link {{ request()->routeIs('rescate.rescuers.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Rescatistas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.veterinarians.index') }}" class="nav-link {{ request()->routeIs('rescate.veterinarians.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Veterinarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.centers.index') }}" class="nav-link {{ request()->routeIs('rescate.centers.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Centros</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.species.index') }}" class="nav-link {{ request()->routeIs('rescate.species.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Especies</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li class="nav-header">SISTEMA</li>

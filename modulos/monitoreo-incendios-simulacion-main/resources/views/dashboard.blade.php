@@ -626,6 +626,8 @@
         }
         const map = L.map(mapContainer).setView([-17.8857, -60.7556], 12);
         console.log('Mapa inicializado:', map);
+        setTimeout(() => map.invalidateSize(), 200);
+        setTimeout(() => map.invalidateSize(), 800);
 
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1038,6 +1040,13 @@
         // DOM ya está listo, iniciar inmediatamente
         initDashboard();
     }
+
+    // Reajustar el mapa al cambiar entre pestañas del dashboard.
+    $(document).on('shown.bs.tab', '#mainDashboardTabs a[data-toggle="tab"]', function () {
+        setTimeout(() => {
+            document.dispatchEvent(new Event('resize'));
+        }, 250);
+    });
 
     // Chart initialization handled by global `initChart` in the layout.
     // The tab listeners below will call the global `initChart` for canvases.
