@@ -93,6 +93,16 @@ class AnimalTransactionalController extends Controller
 		));
 	}
 
+	public function show($id): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-records.create');
+	}
+
+	public function edit($id): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-records.create');
+	}
+
 	/**
 	 * Persiste Animal + Hoja de Animal (transaccional).
 	 */

@@ -114,6 +114,16 @@ class AnimalCareTransactionalController extends Controller
 		return view('transactions.animal.care.create', compact('animalFiles','careTypes','afCards'));
 	}
 
+	public function show($id): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-care-records.create');
+	}
+
+	public function edit($id): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-care-records.create');
+	}
+
 	public function index(): RedirectResponse
 	{
 		return Redirect::route('rescate.animal-care-records.create');

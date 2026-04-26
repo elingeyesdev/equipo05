@@ -47,7 +47,7 @@ class TipoBiomasaController extends Controller
      */
     public function show($id): View
     {
-        $tipoBiomasa = TipoBiomasa::find($id);
+        $tipoBiomasa = TipoBiomasa::findOrFail($id);
 
         return view('tipo-biomasa.show', compact('tipoBiomasa'));
     }
@@ -57,7 +57,7 @@ class TipoBiomasaController extends Controller
      */
     public function edit($id): View
     {
-        $tipoBiomasa = TipoBiomasa::find($id);
+        $tipoBiomasa = TipoBiomasa::findOrFail($id);
 
         return view('tipo-biomasa.edit', compact('tipoBiomasa'));
     }

@@ -87,7 +87,7 @@ class RescuerController extends Controller
      */
     public function show($id): View
     {
-        $rescuer = Rescuer::find($id);
+        $rescuer = Rescuer::findOrFail($id);
 
         return view('rescuer.show', compact('rescuer'));
     }
@@ -97,7 +97,7 @@ class RescuerController extends Controller
      */
     public function edit($id): View
     {
-        $rescuer = Rescuer::find($id);
+        $rescuer = Rescuer::findOrFail($id);
         $people = Person::orderBy('nombre')->get(['id','nombre']);
         return view('rescuer.edit', compact('rescuer','people'));
     }

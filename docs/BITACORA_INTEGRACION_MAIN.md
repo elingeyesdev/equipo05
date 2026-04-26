@@ -433,3 +433,34 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - El alta transaccional de animales queda funcional en entorno integrado con SQLite por modulo, sin desbordar a tablas inexistentes del core.
+
+### Hito 18 - Cierre de 500 en rutas dinamicas con parametros
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se endurecen controladores para retornar `404` controlado en recursos inexistentes:
+  - `SimulacioneController` (`show`, `edit`) -> `findOrFail`.
+  - `TipoBiomasaController` (`show`, `edit`) -> `findOrFail`.
+  - `UserController` (`show`, `edit`) -> `findOrFail`.
+  - `RescuerController` (`show`, `edit`) -> `findOrFail`.
+  - `VeterinarianController` (`show`, `edit`) -> `findOrFail`.
+- Se corrigen errores de Blade en vistas de detalle de Incendios:
+  - `tipo-biomasa/show.blade.php` (`$3` -> `$tipoBiomasa->id`)
+  - `user/show.blade.php` (`$3` -> `$user->id`)
+- Se completan metodos faltantes `show/edit` en controladores transaccionales de Rescate para rutas `resource`, redirigiendo a sus formularios `create`:
+  - `AnimalTransactionalController`
+  - `AnimalCareTransactionalController`
+  - `AnimalFeedingTransactionalController`
+  - `AnimalMedicalEvaluationTransactionalController`
+
+Verificacion ejecutada:
+
+- Barrido autenticado de rutas dinamicas (`GET|HEAD` con parametros) en ambos modulos:
+  - `TOTAL_DYNAMIC_TARGETS=72`
+  - `NO_500_DYNAMIC`
+
+Resultado esperado:
+
+- La navegacion a rutas con parametros ya no genera errores `500`; ante registros inexistentes se obtiene comportamiento estable (404 o redireccion valida segun flujo).

@@ -59,6 +59,7 @@ Proyecto nuevo para unificar de forma gradual:
   - Se agrega sincronizacion automatica del usuario autenticado hacia las tablas `users` de `incendios` y `rescate` para evitar errores de FK entre modulo y core.
   - Se agrega provision automatica de `people` en Rescate para que flujos autenticados de reportes/animales no fallen por falta de persona asociada.
   - Se corrigen validaciones transaccionales de `animal-records` para que `exists` consulte `rescate.*` y no la BD principal.
+  - Se corrigen rutas dinamicas con parametros (`show/edit`) para evitar `500` en recursos inexistentes y metodos faltantes de controladores transaccionales.
   - Verificacion funcional real en servidor local:
     - Creacion de biomasa en `/incendios/modulo/biomasas` exitosa (insercion en `incendios.sqlite`).
     - Creacion de centro en `/rescate/modulo/centers` exitosa.

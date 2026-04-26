@@ -294,7 +294,7 @@ class SimulacioneController extends Controller
      */
     public function show($id): View
     {
-        $simulacione = Simulacione::find($id);
+        $simulacione = Simulacione::findOrFail($id);
 
         return view('simulacione.show', compact('simulacione'));
     }
@@ -313,7 +313,7 @@ class SimulacioneController extends Controller
      */
     public function edit($id): View
     {
-        $simulacione = Simulacione::find($id);
+        $simulacione = Simulacione::findOrFail($id);
 
         return view('simulacione.edit', compact('simulacione'));
     }

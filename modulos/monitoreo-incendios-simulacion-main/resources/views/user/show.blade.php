@@ -11,7 +11,7 @@
                 <x-adminlte-card title="Información del Usuario: {{ $user->name }}" theme="info" icon="fas fa-user">
                     <x-slot name="toolsSlot">
                         <a href="{{ route('incendios.users.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
-                        <a href="{{ route('incendios.users.edit', $3) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                        <a href="{{ route('incendios.users.edit', $user->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
                     </x-slot>
 
                     <div class="row">

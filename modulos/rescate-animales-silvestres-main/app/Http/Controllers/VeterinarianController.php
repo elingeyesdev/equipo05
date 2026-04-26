@@ -88,7 +88,7 @@ class VeterinarianController extends Controller
      */
     public function show($id): View
     {
-        $veterinarian = Veterinarian::find($id);
+        $veterinarian = Veterinarian::findOrFail($id);
 
         return view('veterinarian.show', compact('veterinarian'));
     }
@@ -98,7 +98,7 @@ class VeterinarianController extends Controller
      */
     public function edit($id): View
     {
-        $veterinarian = Veterinarian::find($id);
+        $veterinarian = Veterinarian::findOrFail($id);
         $people = Person::orderBy('nombre')->get(['id','nombre']);
         return view('veterinarian.edit', compact('veterinarian','people'));
     }

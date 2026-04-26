@@ -53,6 +53,16 @@ class AnimalFeedingTransactionalController extends Controller
 		));
 	}
 
+	public function show($id): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-feeding-records.create');
+	}
+
+	public function edit($id): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-feeding-records.create');
+	}
+
 	public function index(): RedirectResponse
 	{
 		return Redirect::route('rescate.animal-feeding-records.create');
