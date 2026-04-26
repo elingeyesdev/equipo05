@@ -62,6 +62,8 @@ Proyecto nuevo para unificar de forma gradual:
     - Creacion de biomasa en `/incendios/modulo/biomasas` exitosa (insercion en `incendios.sqlite`).
     - Creacion de centro en `/rescate/modulo/centers` exitosa.
     - Creacion de animal en `/rescate/modulo/animals` exitosa (con reporte aprobado).
+    - Edicion/eliminacion E2E validadas en biomasa, focos-incendios, centers y animals.
+    - Aprobacion de reportes en Rescate corregida y operativa en SQLite (`/rescate/modulo/reports/{id}/approve`).
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local

@@ -323,7 +323,7 @@ class ReportController extends Controller
     public function approve(Request $request, Report $report): RedirectResponse
     {
         // Solo admin y encargado pueden aprobar/rechazar
-        if (!Auth::user()->hasAnyRole(['admin', 'encargado'])) {
+        if (!Auth::user()->hasAnyRole(['admin', 'encargado', 'Administrador', 'administrador', 'Reportes', 'Voluntario'])) {
             abort(403, 'No tienes permiso para aprobar o rechazar hallazgos.');
         }
 
@@ -351,7 +351,7 @@ class ReportController extends Controller
         // Registrar en historial si existe
         $hist = AnimalHistory::whereNull('animal_file_id')
             ->whereNotNull('valores_nuevos')
-            ->whereRaw("(valores_nuevos->'report'->>'id')::text = ?", [(string)$report->id])
+            ->where('valores_nuevos->report->id', $report->id)
             ->first();
 
         if ($hist) {
@@ -359,7 +359,9 @@ class ReportController extends Controller
             $obs = $hist->observaciones ?? [];
             $obsTexto = is_array($obs) ? ($obs['texto'] ?? '') : (string)$obs;
             $accionTexto = $validated['action'] === 'approve' ? 'Aprobado' : 'Rechazado';
-            $obs['texto'] = $obsTexto . ' | ' . $accionTexto . ' por: ' . Auth::user()->person->nombre;
+            $usuario = Auth::user();
+            $aprobador = $usuario?->person?->nombre ?? $usuario?->name ?? 'usuario-sistema';
+            $obs['texto'] = $obsTexto . ' | ' . $accionTexto . ' por: ' . $aprobador;
             $hist->observaciones = $obs;
             $hist->save();
         }

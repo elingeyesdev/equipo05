@@ -345,3 +345,32 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - Los flujos CRUD autenticados de modulos funcionan con usuario unico del core sin romper por integridad referencial entre bases separadas.
+
+### Hito 15 - Cierre E2E de CRUD y aprobacion de reportes en SQLite
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se ejecutan pruebas E2E autenticadas sobre flujos reales (create/update/delete) y se validan redirecciones funcionales (`302`) en:
+  - `incendios.modulo.biomasas`
+  - `incendios.modulo.focos-incendios`
+  - `rescate.modulo.centers`
+  - `rescate.modulo.animals`
+- Se corrige autorizacion de `approve()` en `ReportController` para aceptar roles del sistema principal ya integrados.
+- Se corrige consulta de historial en aprobacion de reportes:
+  - Antes usaba SQL PostgreSQL-specific (`whereRaw` con `::text` y operadores `->`).
+  - Ahora usa acceso JSON compatible con SQLite/Laravel (`where('valores_nuevos->report->id', $report->id)`).
+- Se agrega fallback robusto para nombre del aprobador en historial cuando no existe `person` asociado en la sesion.
+
+Verificacion ejecutada:
+
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+- Smoke test autenticado:
+  - Aprobacion de reporte `PUT /rescate/modulo/reports/{id}/approve`:
+    - antes: `403` y luego `500` por SQL incompatible
+    - ahora: `302` hacia `/rescate/modulo/reports`
+
+Resultado esperado:
+
+- Los flujos principales CRUD y aprobacion quedan operativos en entorno integrado con SQLite, sin bloqueos por diferencias de dialecto SQL ni por validaciones de rol inconsistentes.
