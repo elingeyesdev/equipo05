@@ -25,7 +25,7 @@ class AnimalRequest extends FormRequest
 			'nombre' => 'nullable|string',
 			'sexo' => 'required|string|in:Hembra,Macho,Desconocido',
 			'descripcion' => 'nullable|string',
-			'reporte_id' => 'required|exists:reports,id',
+			'reporte_id' => 'required|exists:rescate.reports,id',
         ];
     }
 }

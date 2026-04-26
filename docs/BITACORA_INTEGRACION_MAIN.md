@@ -291,3 +291,30 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - El sistema integrado maneja correctamente casos limite de URLs manuales o IDs invalidados sin romper la aplicacion.
+
+### Hito 13 - Validaciones multi-BD y redirecciones consistentes en Incendios
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se corrigen reglas `exists` para que validen contra la base correcta de cada modulo:
+  - `BiomasaRequest`: `exists:incendios.tipo_biomasa,id`
+  - `AnimalRequest`: `exists:rescate.reports,id`
+  - `ReportRequest`: `exists:rescate.animal_conditions,id`, `exists:rescate.incident_types,id`, `exists:rescate.centers,id`
+- Se corrigen redirecciones en controladores de Incendios para apuntar a rutas con prefijo `incendios.*`:
+  - `BiomasaController`
+  - `FocosIncendioController`
+  - `AdministradorController`
+  - `VoluntarioController`
+  - `UserController`
+  - `SimulacioneController`
+
+Verificacion ejecutada:
+
+- `php artisan route:list` mantiene registro de rutas `incendios.*` y `rescate.*`.
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+
+Resultado esperado:
+
+- Las altas/ediciones dejan de romper por validaciones contra la BD equivocada y los flujos de retorno de Incendios permanecen dentro del prefijo integrado del modulo.

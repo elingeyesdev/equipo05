@@ -66,7 +66,7 @@ class VoluntarioController extends Controller
         // Assign voluntario role using Spatie
         $user->assignRole('voluntario');
 
-        return Redirect::route('voluntarios.index')
+        return Redirect::route('incendios.voluntarios.index')
             ->with('success', 'Voluntario creado exitosamente.');
     }
 
@@ -125,7 +125,7 @@ class VoluntarioController extends Controller
             'notas' => $request->notas,
         ]);
 
-        return Redirect::route('voluntarios.index')
+        return Redirect::route('incendios.voluntarios.index')
             ->with('success', 'Voluntario actualizado exitosamente.');
     }
 
@@ -140,7 +140,8 @@ class VoluntarioController extends Controller
         $voluntario->delete();
         $user->delete();
 
-        return Redirect::route('voluntarios.index')
+        return Redirect::route('incendios.voluntarios.index')
             ->with('success', 'Voluntario eliminado exitosamente.');
     }
 }
+

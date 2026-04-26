@@ -31,13 +31,13 @@ class ReportRequest extends FormRequest
             'longitud' => $isUpdate ? 'nullable|numeric' : 'required|numeric',
             'direccion' => 'nullable|string',
             // nuevos campos parametrizables
-            'condicion_inicial_id' => 'required|exists:animal_conditions,id',
-            'tipo_incidente_id' => 'required|exists:incident_types,id',
+            'condicion_inicial_id' => 'required|exists:rescate.animal_conditions,id',
+            'tipo_incidente_id' => 'required|exists:rescate.incident_types,id',
             'tamano' => 'required|in:pequeno,mediano,grande',
             'puede_moverse' => 'required|boolean',
             // traslado_inmediato y centro solo aplican al crear
             'traslado_inmediato' => $isUpdate ? 'nullable' : 'nullable|boolean',
-            'centro_id' => $isUpdate ? 'nullable' : 'nullable|exists:centers,id|required_if:traslado_inmediato,1',
+            'centro_id' => $isUpdate ? 'nullable' : 'nullable|exists:rescate.centers,id|required_if:traslado_inmediato,1',
             // incendio_id para endpoints externos (API Gateway)
             'incendio_id' => 'nullable|integer',
         ];

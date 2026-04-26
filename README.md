@@ -52,6 +52,10 @@ Proyecto nuevo para unificar de forma gradual:
     - `/rescate/modulo/reports/claim`
   - Se endurecieron rutas CRUD para manejo de IDs inexistentes:
     - acciones `show/edit/destroy` ya no provocan `500`, ahora retornan `404` controlado.
+  - Se corrigieron validaciones `exists` para usar la conexion SQLite de cada modulo:
+    - Incendios: `exists:incendios.tipo_biomasa,id`
+    - Rescate: `exists:rescate.*`
+  - Se normalizaron redirecciones internas de controladores de Incendios a rutas `incendios.*` para evitar fallos tras crear/editar/eliminar.
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local

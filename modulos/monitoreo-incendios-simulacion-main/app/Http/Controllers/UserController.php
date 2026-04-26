@@ -41,7 +41,7 @@ class UserController extends Controller
         // password will be hashed automatically by cast in the model
         User::create($data);
 
-        return Redirect::route('users.index')
+        return Redirect::route('incendios.users.index')
             ->with('success', 'User created successfully.');
     }
 
@@ -76,7 +76,7 @@ class UserController extends Controller
         }
         $user->update($data);
 
-        return Redirect::route('users.index')
+        return Redirect::route('incendios.users.index')
             ->with('success', 'User updated successfully');
     }
 
@@ -84,7 +84,8 @@ class UserController extends Controller
     {
         User::find($id)->delete();
 
-        return Redirect::route('users.index')
+        return Redirect::route('incendios.users.index')
             ->with('success', 'User deleted successfully');
     }
 }
+

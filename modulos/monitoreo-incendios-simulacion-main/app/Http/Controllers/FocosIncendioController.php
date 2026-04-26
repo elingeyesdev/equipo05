@@ -40,7 +40,7 @@ class FocosIncendioController extends Controller
     {
         FocosIncendio::create($request->validated());
 
-        return Redirect::route('focos-incendios.index')
+        return Redirect::route('incendios.focos-incendios.index')
             ->with('success', 'FocosIncendio created successfully.');
     }
 
@@ -71,7 +71,7 @@ class FocosIncendioController extends Controller
     {
         $focosIncendio->update($request->validated());
 
-        return Redirect::route('focos-incendios.index')
+        return Redirect::route('incendios.focos-incendios.index')
             ->with('success', 'FocosIncendio updated successfully');
     }
 
@@ -79,7 +79,7 @@ class FocosIncendioController extends Controller
     {
         FocosIncendio::findOrFail($id)->delete();
 
-        return Redirect::route('focos-incendios.index')
+        return Redirect::route('incendios.focos-incendios.index')
             ->with('success', 'FocosIncendio deleted successfully');
     }
 
@@ -117,3 +117,4 @@ class FocosIncendioController extends Controller
         }
     }
 }
+

@@ -64,7 +64,7 @@ class AdministradorController extends Controller
         // Assign administrador role using Spatie
         $user->assignRole('administrador');
 
-        return Redirect::route('administradores.index')
+        return Redirect::route('incendios.administradores.index')
             ->with('success', 'Administrador creado exitosamente.');
     }
 
@@ -121,7 +121,7 @@ class AdministradorController extends Controller
             'activo' => $request->has('activo') ? true : false,
         ]);
 
-        return Redirect::route('administradores.index')
+        return Redirect::route('incendios.administradores.index')
             ->with('success', 'Administrador actualizado exitosamente.');
     }
 
@@ -136,7 +136,8 @@ class AdministradorController extends Controller
         $administrador->delete();
         $user->delete();
 
-        return Redirect::route('administradores.index')
+        return Redirect::route('incendios.administradores.index')
             ->with('success', 'Administrador eliminado exitosamente.');
     }
 }
+

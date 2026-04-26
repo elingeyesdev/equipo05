@@ -33,7 +33,7 @@ class BiomasaRequest extends FormRequest
         
         return [
             'fecha_reporte' => ['nullable','date'],
-            'tipo_biomasa_id' => ['required','exists:tipo_biomasa,id'],
+            'tipo_biomasa_id' => ['required','exists:incendios.tipo_biomasa,id'],
             'area_m2' => ['nullable','numeric','min:0'],
             'perimetro_m' => ['nullable','numeric','min:0'],
             'densidad' => ['nullable','string'],

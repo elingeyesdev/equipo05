@@ -78,7 +78,7 @@ class SimulacioneController extends Controller
 
         $simulacion = Simulacione::create($data);
 
-        return Redirect::route('simulaciones.index')
+        return Redirect::route('incendios.simulaciones.index')
             ->with('success', 'Simulación creada exitosamente.');
     }
 
@@ -325,7 +325,7 @@ class SimulacioneController extends Controller
     {
         $simulacione->update($request->validated());
 
-        return Redirect::route('simulaciones.index')
+        return Redirect::route('incendios.simulaciones.index')
             ->with('success', 'Simulacione updated successfully');
     }
 
@@ -333,7 +333,8 @@ class SimulacioneController extends Controller
     {
         Simulacione::find($id)->delete();
 
-        return Redirect::route('simulaciones.index')
+        return Redirect::route('incendios.simulaciones.index')
             ->with('success', 'Simulacione deleted successfully');
     }
 }
+

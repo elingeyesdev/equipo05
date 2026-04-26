@@ -112,7 +112,7 @@ class BiomasaController extends Controller
                 'estado' => $data['estado']
             ]);
 
-            return Redirect::route('biomasas.index')
+            return Redirect::route('incendios.biomasas.index')
                 ->with('success', $successMessage);
                 
         } catch (\Exception $e) {
@@ -156,7 +156,7 @@ class BiomasaController extends Controller
     {
         $biomasa->update($request->validated());
 
-        return Redirect::route('biomasas.index')
+        return Redirect::route('incendios.biomasas.index')
             ->with('success', 'Biomasa updated successfully');
     }
 
@@ -164,7 +164,7 @@ class BiomasaController extends Controller
     {
         Biomasa::findOrFail($id)->delete();
 
-        return Redirect::route('biomasas.index')
+        return Redirect::route('incendios.biomasas.index')
             ->with('success', 'Biomasa deleted successfully');
     }
     
@@ -206,3 +206,4 @@ class BiomasaController extends Controller
         return back()->with('success', 'Biomasa rechazada.');
     }
 }
+
