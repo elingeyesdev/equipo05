@@ -28,6 +28,7 @@ Proyecto nuevo para unificar de forma gradual:
   - El enrutamiento integrado de los tres sistemas se registra correctamente (`php artisan route:list`).
   - Se aplicaron correcciones de compatibilidad en servicios y rutas del modulo rescate para evitar errores fatales de arranque.
   - Migraciones de `rescate` adaptadas para SQLite local del monolito y ejecutadas exitosamente.
+  - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local
 1. Instalar dependencias:

@@ -137,3 +137,21 @@ Verificacion ejecutada:
 - Smoke test HTTP:
   - `/login` responde 200.
   - `/incendios` y `/rescate` redirigen correctamente a login cuando no hay sesion (302).
+
+### Hito 7 - Validacion automatizada minima post-integracion
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se ajustan pruebas feature para reflejar el comportamiento real del sistema integrado:
+  - `/` redirige a `/login` para usuario no autenticado.
+  - `/login` carga correctamente.
+  - `/incendios` y `/rescate` exigen autenticacion (redirect a `/login`).
+- Se ejecuta la suite de pruebas de Laravel:
+  - `5` pruebas aprobadas.
+  - `0` fallos.
+
+Resultado esperado:
+
+- Existe una verificacion automatizada basica que cubre el flujo de acceso principal y evita regresiones evidentes tras la integracion modular.
