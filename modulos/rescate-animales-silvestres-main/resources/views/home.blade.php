@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="text-dark">Panel de Control</h1>
         <div class="d-flex align-items-center">
-            @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+            @if($canViewAdminDashboard ?? false)
             <a href="{{ route('rescate.dashboard.export-pdf') }}" class="btn btn-danger btn-sm mr-2" target="_blank">
                 <i class="fas fa-file-pdf mr-1"></i> Exportar PDF
             </a>
@@ -121,7 +121,7 @@
     {{-- =========================================================== --}}
     {{-- SECCIÓN: ADMIN Y ENCARGADO --}}
     {{-- =========================================================== --}}
-    @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+    @if($canViewAdminDashboard ?? false)
         
         {{-- Sistema de Pestañas para Dashboard --}}
         <div class="card card-primary card-outline">
@@ -562,7 +562,7 @@
     {{-- =========================================================== --}}
     
     @php
-        $isOnlyCitizen = Auth::user()->hasRole('ciudadano') && !Auth::user()->hasAnyRole(['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
+        $isOnlyCitizen = Auth::user()->hasRole('ciudadano') && !($canViewAdminDashboard ?? false) && !Auth::user()->hasAnyRole(['rescatista', 'veterinario', 'cuidador']);
     @endphp
 
     @if($isOnlyCitizen || Auth::user()->hasAnyRole(['rescatista', 'veterinario', 'cuidador']))
@@ -619,7 +619,7 @@
         </div>
 
         <div class="col-md-3 col-sm-6 col-12 d-flex">
-            @if(Auth::user()->hasRole('cuidador') && !Auth::user()->hasAnyRole(['admin', 'encargado']))
+            @if(Auth::user()->hasRole('cuidador') && !($canViewAdminDashboard ?? false))
             <div class="card card-outline card-primary shadow-sm mb-3 w-100">
                 <div class="card-body">
                      <div class="d-flex justify-content-between">
@@ -659,7 +659,7 @@
     {{-- =========================================================== --}}
     {{-- SECCIÓN: KPIs PARA VETERINARIOS --}}
     {{-- =========================================================== --}}
-    @if(Auth::user()->hasRole('veterinario') && !Auth::user()->hasAnyRole(['admin', 'encargado']))
+    @if(Auth::user()->hasRole('veterinario') && !($canViewAdminDashboard ?? false))
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card shadow-sm mb-2">
@@ -695,7 +695,7 @@
     {{-- =========================================================== --}}
     {{-- SECCIÓN: KPIs PARA RESCATISTAS --}}
     {{-- =========================================================== --}}
-    @if(Auth::user()->hasRole('rescatista') && !Auth::user()->hasAnyRole(['admin', 'encargado']))
+    @if(Auth::user()->hasRole('rescatista') && !($canViewAdminDashboard ?? false))
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card shadow-sm mb-2">
@@ -726,7 +726,7 @@
     {{-- =========================================================== --}}
     {{-- SECCIÓN: BIENVENIDA ESPECÍFICA (Resto de roles) --}}
     {{-- =========================================================== --}}
-    @if(!Auth::user()->hasAnyRole(['admin', 'encargado']))
+    @if(!($canViewAdminDashboard ?? false))
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow-lg border-0 bg-white">
@@ -760,7 +760,7 @@
 @endsection
 
 @section('js')
-@if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+@if($canViewAdminDashboard ?? false)
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

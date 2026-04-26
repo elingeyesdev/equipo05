@@ -516,6 +516,7 @@
 @stop
 
 @push('css')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     #map {
         height: 460px;
@@ -603,6 +604,7 @@
 @endpush
 
 @push('js')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     // Esperar a que todo esté cargado (Leaflet incluido)
     function initDashboard() {
@@ -617,7 +619,12 @@
         console.log('✓ Inicializando dashboard...');
         
         // Initialize map centered on San José de Chiquitos, Bolivia
-        const map = L.map('map').setView([-17.8857, -60.7556], 12);
+        const mapContainer = document.getElementById('map');
+        if (!mapContainer) {
+            console.error('No se encontró el contenedor #map');
+            return;
+        }
+        const map = L.map(mapContainer).setView([-17.8857, -60.7556], 12);
         console.log('Mapa inicializado:', map);
 
     // Add OpenStreetMap tiles
@@ -704,10 +711,10 @@
         const intensity = Math.min(5, Math.max(1, Math.round(frp / 50)));
         
         // Crear URL para el simulador con parámetros del foco
-        const simulatorUrl = `/simulaciones/simulator?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
+        const simulatorUrl = `/incendios/modulo/simulaciones/simulator?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
         
         // Crear URL para predicción con parámetros del foco
-        const predictionUrl = `/predictions/create?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
+        const predictionUrl = `/incendios/modulo/predictions/create?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
         
         return `
             <div style="min-width: 250px; font-family: system-ui, -apple-system, sans-serif;">
@@ -855,7 +862,7 @@
     }
 
     // Load fire hotspots con visualización mejorada
-    fetch('/api/fires')
+    fetch('/api/incendios/fires')
         .then(res => res.json())
         .then(result => {
             if (result.ok && result.data && result.data.length > 0) {
@@ -884,7 +891,7 @@
 
     // Load biomasas
     console.log('Intentando cargar biomasas desde /dashboard/biomasas...');
-    fetch('/dashboard/biomasas', {
+    fetch('/incendios/modulo/dashboard/biomasas', {
         credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',

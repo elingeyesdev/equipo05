@@ -33,10 +33,12 @@ class HomeController extends Controller
 
     public function index()
     {
+        $canViewAdminDashboard = $this->canViewAdminDashboard();
         $data = $this->dashboardService->getDashboardData();
+        $data['canViewAdminDashboard'] = $canViewAdminDashboard;
         
         // Si es admin o encargado, incluir datos del mapa de campo
-        if (auth()->user()->hasAnyRole(['admin', 'encargado'])) {
+        if ($canViewAdminDashboard) {
             $data = array_merge($data, $this->getMapaCampoData());
         }
         
@@ -149,10 +151,11 @@ class HomeController extends Controller
      */
     public function exportPdf(): Response
     {
+        $canViewAdminDashboard = $this->canViewAdminDashboard();
         $data = $this->dashboardService->getDashboardData();
         
         // Si es admin o encargado, incluir datos del mapa de campo
-        if (auth()->user()->hasAnyRole(['admin', 'encargado'])) {
+        if ($canViewAdminDashboard) {
             $data = array_merge($data, $this->getMapaCampoData());
         }
         
@@ -174,10 +177,11 @@ class HomeController extends Controller
      */
     public function exportExcel(): StreamedResponse
     {
+        $canViewAdminDashboard = $this->canViewAdminDashboard();
         $data = $this->dashboardService->getDashboardData();
         
         // Si es admin o encargado, incluir datos del mapa de campo
-        if (auth()->user()->hasAnyRole(['admin', 'encargado'])) {
+        if ($canViewAdminDashboard) {
             $data = array_merge($data, $this->getMapaCampoData());
         }
         
@@ -206,7 +210,7 @@ class HomeController extends Controller
             
             $row = 4;
             
-            if ($usuario->hasAnyRole(['admin', 'encargado'])) {
+            if ($canViewAdminDashboard) {
                 // ==========================================
                 // 1. RESUMEN GENERAL (KPIs Principales)
                 // ==========================================
@@ -540,5 +544,23 @@ class HomeController extends Controller
                 ]);
                 break;
         }
+    }
+
+    private function canViewAdminDashboard(): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+
+        return $user->hasAnyRole([
+            'admin',
+            'encargado',
+            'Administrador',
+            'administrador',
+            'Reportes',
+            'Voluntario',
+            'Almacenero',
+        ]);
     }
 }
