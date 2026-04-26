@@ -266,3 +266,28 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - Se eliminan los errores internos de rutas avanzadas y queda operativa la navegacion de modulos integrados con autenticacion central.
+
+### Hito 12 - Hardening CRUD: no mas 500 por IDs inexistentes
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se corrigen acciones `show/edit/destroy` para evitar fallos por registros inexistentes:
+  - `BiomasaController`
+  - `FocosIncendioController`
+  - `AnimalController`
+  - `CenterController`
+  - `ReportController` (edit/destroy)
+- Se reemplaza `find()` por `findOrFail()` en esos flujos para devolver `404` controlado en lugar de `500`.
+
+Verificacion ejecutada:
+
+- Smoke test autenticado sobre rutas CRUD con IDs no existentes:
+  - antes: respondian `500` en varios endpoints
+  - ahora: responden `404` consistentemente
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+
+Resultado esperado:
+
+- El sistema integrado maneja correctamente casos limite de URLs manuales o IDs invalidados sin romper la aplicacion.

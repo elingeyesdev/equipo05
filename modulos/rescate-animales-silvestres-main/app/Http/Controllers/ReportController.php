@@ -290,7 +290,7 @@ class ReportController extends Controller
      */
     public function edit($id): View
     {
-        $report = Report::find($id);
+        $report = Report::findOrFail($id);
 
         $conditions = AnimalCondition::where('activo', true)->orderBy('nombre')->get(['id','nombre']);
         $incidentTypes = IncidentType::where('activo', true)->orderBy('nombre')->get(['id','nombre']);
@@ -381,7 +381,7 @@ class ReportController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Report::find($id)->delete();
+        Report::findOrFail($id)->delete();
 
         return Redirect::route('rescate.reports.index')
             ->with('success', 'El hallazgo se eliminó correctamente');

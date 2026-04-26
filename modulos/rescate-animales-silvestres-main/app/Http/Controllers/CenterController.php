@@ -53,7 +53,7 @@ class CenterController extends Controller
      */
     public function show($id): View
     {
-        $center = Center::find($id);
+        $center = Center::findOrFail($id);
 
         return view('center.show', compact('center'));
     }
@@ -63,7 +63,7 @@ class CenterController extends Controller
      */
     public function edit($id): View
     {
-        $center = Center::find($id);
+        $center = Center::findOrFail($id);
 
         return view('center.edit', compact('center'));
     }
@@ -81,7 +81,7 @@ class CenterController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Center::find($id)->delete();
+        Center::findOrFail($id)->delete();
 
         return Redirect::route('rescate.centers.index')
             ->with('success', 'Centro eliminado correctamente');

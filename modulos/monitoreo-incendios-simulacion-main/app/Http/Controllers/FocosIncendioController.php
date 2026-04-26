@@ -49,7 +49,7 @@ class FocosIncendioController extends Controller
      */
     public function show($id): View
     {
-        $focosIncendio = FocosIncendio::find($id);
+        $focosIncendio = FocosIncendio::findOrFail($id);
 
         return view('focos-incendio.show', compact('focosIncendio'));
     }
@@ -59,7 +59,7 @@ class FocosIncendioController extends Controller
      */
     public function edit($id): View
     {
-        $focosIncendio = FocosIncendio::find($id);
+        $focosIncendio = FocosIncendio::findOrFail($id);
 
         return view('focos-incendio.edit', compact('focosIncendio'));
     }
@@ -77,7 +77,7 @@ class FocosIncendioController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        FocosIncendio::find($id)->delete();
+        FocosIncendio::findOrFail($id)->delete();
 
         return Redirect::route('focos-incendios.index')
             ->with('success', 'FocosIncendio deleted successfully');

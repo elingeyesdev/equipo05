@@ -55,7 +55,7 @@ class AnimalController extends Controller
      */
     public function show($id): View
     {
-        $animal = Animal::find($id);
+        $animal = Animal::findOrFail($id);
 
         return view('animal.show', compact('animal'));
     }
@@ -65,7 +65,7 @@ class AnimalController extends Controller
      */
     public function edit($id): View
     {
-        $animal = Animal::find($id);
+        $animal = Animal::findOrFail($id);
         // Reportes aprobados
         $reports = Report::query()
             ->where('aprobado', 1)
@@ -96,7 +96,7 @@ class AnimalController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Animal::find($id)->delete();
+        Animal::findOrFail($id)->delete();
 
         return Redirect::route('rescate.animals.index')
             ->with('success', 'Animal eliminado exitosamente.');

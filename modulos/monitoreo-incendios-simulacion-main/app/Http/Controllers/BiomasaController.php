@@ -133,7 +133,7 @@ class BiomasaController extends Controller
      */
     public function show($id): View
     {
-        $biomasa = Biomasa::find($id);
+        $biomasa = Biomasa::findOrFail($id);
 
         return view('biomasa.show', compact('biomasa'));
     }
@@ -143,7 +143,7 @@ class BiomasaController extends Controller
      */
     public function edit($id): View
     {
-        $biomasa = Biomasa::find($id);
+        $biomasa = Biomasa::findOrFail($id);
         $tipoBiomasas = TipoBiomasa::all();
 
         return view('biomasa.edit', compact('biomasa', 'tipoBiomasas'));
@@ -162,7 +162,7 @@ class BiomasaController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Biomasa::find($id)->delete();
+        Biomasa::findOrFail($id)->delete();
 
         return Redirect::route('biomasas.index')
             ->with('success', 'Biomasa deleted successfully');

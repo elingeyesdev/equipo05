@@ -50,6 +50,8 @@ Proyecto nuevo para unificar de forma gradual:
     - `/rescate/modulo/species`
     - `/rescate/modulo/reports`
     - `/rescate/modulo/reports/claim`
+  - Se endurecieron rutas CRUD para manejo de IDs inexistentes:
+    - acciones `show/edit/destroy` ya no provocan `500`, ahora retornan `404` controlado.
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local
