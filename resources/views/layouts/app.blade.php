@@ -281,14 +281,14 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('incendios.dashboard') }}" class="nav-link {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'active' : '' }}">
+                            <a href="{{ route('fusion.modulos.incendios') }}" class="nav-link {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-fire"></i>
                                 <p>Monitoreo de Incendios</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('rescate.home') }}" class="nav-link {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
+                            <a href="{{ route('fusion.modulos.rescate') }}" class="nav-link {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-paw"></i>
                                 <p>Rescate de Animales Silvestres</p>
                             </a>

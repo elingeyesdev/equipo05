@@ -41,26 +41,51 @@ class DashboardController extends Controller
         $firesData = $firms->getFireData('VIIRS_NOAA20_NRT', '-62.5,-18.5,-57.5,-14.5', 2, true, 20.0);
 
         // Count biomasas APROBADAS
-        $biomasasCount = Biomasa::aprobadas()->count();
+        $biomasasCount = 0;
+        try {
+            $biomasasCount = Biomasa::aprobadas()->count();
+        } catch (\Throwable $e) {
+            \Log::warning('Incendios dashboard: no se pudo contar biomasas', [
+                'error' => $e->getMessage(),
+            ]);
+        }
         
         // Count active fires
         $firesCount = isset($firesData['data']) ? count($firesData['data']) : 0;
 
         // Get user info for permission checks
         $user = auth()->user();
-        $isAdmin = $user->isAdministrador();
-        $userId = $user->id;
+        $isAdmin = method_exists($user, 'isAdministrador')
+            ? (bool) $user->isAdministrador()
+            : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $userId = $user->id ?? $user->usuarioid ?? null;
 
         // Get dashboard metrics with caching
-        $generalStats = $metrics->getGeneralStats($userId, $isAdmin);
-        $fireTrends = $metrics->getFireTrends($userId, $isAdmin);
-        $fireHourly = $metrics->getFireHourlyDistribution($userId, $isAdmin);
-        $monthlyComparison = $metrics->getMonthlyFireComparison();
-        $riskAreas = $metrics->getRiskAreasAnalysis();
-        $biomasaDistribution = $metrics->getBiomasaDistribution($userId, $isAdmin);
-        $biomasaStatus = $metrics->getBiomasaStatusDistribution($userId, $isAdmin);
-        $simulationStats = $metrics->getSimulationStats($isAdmin);
-        $userActivity = $metrics->getUserActivity($isAdmin);
+        $generalStats = [];
+        $fireTrends = [];
+        $fireHourly = [];
+        $monthlyComparison = [];
+        $riskAreas = [];
+        $biomasaDistribution = [];
+        $biomasaStatus = [];
+        $simulationStats = [];
+        $userActivity = [];
+
+        try {
+            $generalStats = $metrics->getGeneralStats($userId, $isAdmin);
+            $fireTrends = $metrics->getFireTrends($userId, $isAdmin);
+            $fireHourly = $metrics->getFireHourlyDistribution($userId, $isAdmin);
+            $monthlyComparison = $metrics->getMonthlyFireComparison();
+            $riskAreas = $metrics->getRiskAreasAnalysis();
+            $biomasaDistribution = $metrics->getBiomasaDistribution($userId, $isAdmin);
+            $biomasaStatus = $metrics->getBiomasaStatusDistribution($userId, $isAdmin);
+            $simulationStats = $metrics->getSimulationStats($isAdmin);
+            $userActivity = $metrics->getUserActivity($isAdmin);
+        } catch (\Throwable $e) {
+            \Log::warning('Incendios dashboard: metricas no disponibles en entorno integrado', [
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return view('dashboard', [
             'weather' => $weatherData,

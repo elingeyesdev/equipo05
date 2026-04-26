@@ -155,3 +155,25 @@ Cambios:
 Resultado esperado:
 
 - Existe una verificacion automatizada basica que cubre el flujo de acceso principal y evita regresiones evidentes tras la integracion modular.
+
+### Hito 8 - Estabilizacion de accesos de sidebar para validacion funcional
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se normaliza el acceso principal de ambos modulos desde el sistema central:
+  - `/incendios` -> `fusion.modulos.incendios`
+  - `/rescate` -> `fusion.modulos.rescate`
+- Se actualiza el sidebar para usar esas rutas estables como puntos de entrada unificados.
+- Se agrega hardening en `DashboardController` de incendios para tolerar falta de datos del modulo durante pruebas de integracion (sin romper el panel principal).
+- Se corrige redireccion raiz en rutas de rescate para usar nombres de ruta prefijados (`rescate.home` y `rescate.landing`).
+
+Verificacion ejecutada:
+
+- `php artisan route:list` exitoso.
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+
+Resultado esperado:
+
+- El docente puede navegar los dos modulos desde el menu lateral dentro del sistema principal, con autenticacion unica y sin romper el flujo base del proyecto.

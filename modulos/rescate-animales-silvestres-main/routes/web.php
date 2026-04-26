@@ -34,9 +34,9 @@ use Modules\Rescate\Http\Controllers\ReportsController;
 
 Route::get('/', function () {
 if (Auth::check()) {
-        return redirect('home');
+        return redirect()->route('rescate.home');
     }
-    return redirect('landing');
+    return redirect()->route('rescate.landing');
 });
 
 // Authentication is centralized in the main application.
