@@ -16,7 +16,7 @@
 
                 <x-adminlte-card title="Voluntarios" theme="info" icon="fas fa-hands-helping">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('voluntarios.create') }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('incendios.voluntarios.create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Crear Nuevo
                         </a>
                     </x-slot>
@@ -45,13 +45,13 @@
                                         <td>{{ $voluntario->direccion }}</td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('voluntarios.show', $voluntario->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <a href="{{ route('incendios.voluntarios.show', $voluntario->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('voluntarios.edit', $voluntario->id) }}" class="btn btn-warning btn-sm" title="Editar">
+                                                <a href="{{ route('incendios.voluntarios.edit', $voluntario->id) }}" class="btn btn-warning btn-sm" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('voluntarios.destroy', $voluntario->id) }}" method="POST" style="display: inline;" 
+                                                <form action="{{ route('incendios.voluntarios.destroy', $voluntario->id) }}" method="POST" style="display: inline;" 
                                                     onsubmit="return confirm('¿Está seguro de eliminar este voluntario?');">
                                                     @csrf
                                                     @method('DELETE')

@@ -178,7 +178,7 @@
 {{-- Google OAuth Button --}}
 <div class="social-auth-links text-center mt-3">
     <p class="text-muted">- O -</p>
-    <a href="{{ route('google.redirect') }}" class="btn btn-danger btn-block">
+    <a href="{{ route('incendios.google.redirect') }}" class="btn btn-danger btn-block">
         <i class="fab fa-google mr-2"></i> Registrarse con Google
     </a>
 </div>

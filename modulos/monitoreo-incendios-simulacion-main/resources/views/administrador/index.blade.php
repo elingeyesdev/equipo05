@@ -16,7 +16,7 @@
 
                 <x-adminlte-card title="Administradores" theme="warning" icon="fas fa-user-shield">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('administradores.create') }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('incendios.administradores.create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Crear Nuevo
                         </a>
                     </x-slot>
@@ -51,13 +51,13 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('administradores.show', $administrador->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <a href="{{ route('incendios.administradores.show', $administrador->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('administradores.edit', $administrador->id) }}" class="btn btn-warning btn-sm" title="Editar">
+                                                <a href="{{ route('incendios.administradores.edit', $administrador->id) }}" class="btn btn-warning btn-sm" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('administradores.destroy', $administrador->id) }}" method="POST" style="display: inline;" 
+                                                <form action="{{ route('incendios.administradores.destroy', $administrador->id) }}" method="POST" style="display: inline;" 
                                                     onsubmit="return confirm('¿Está seguro de eliminar este administrador?');">
                                                     @csrf
                                                     @method('DELETE')

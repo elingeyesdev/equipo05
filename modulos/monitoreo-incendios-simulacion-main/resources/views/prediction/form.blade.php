@@ -170,7 +170,7 @@
 
     <div class="col-md-12 mt-3">
         <x-adminlte-button type="submit" label="Generar Predicción" theme="primary" icon="fas fa-chart-line" class="btn-lg" id="submitBtn"/>
-        <a href="{{ route('predictions.index') }}" class="btn btn-danger btn-lg"><i class="fas fa-times"></i> Cancelar</a>
+        <a href="{{ route('incendios.predictions.index') }}" class="btn btn-danger btn-lg"><i class="fas fa-times"></i> Cancelar</a>
     </div>
 </div>
 

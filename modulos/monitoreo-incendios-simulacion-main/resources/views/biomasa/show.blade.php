@@ -14,7 +14,7 @@
                             <span class="card-title">{{ __('Show') }} Biomasa</span>
                         </div>
                         <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('biomasas.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('incendios.biomasas.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 

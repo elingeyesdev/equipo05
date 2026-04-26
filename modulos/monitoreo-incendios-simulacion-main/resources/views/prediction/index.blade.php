@@ -16,7 +16,7 @@
 
                 <x-adminlte-card title="Predicciones" theme="purple" icon="fas fa-chart-line">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('predictions.create') }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('incendios.predictions.create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Generar Predicción
                         </a>
                     </x-slot>
@@ -65,13 +65,13 @@
                                         <td>{{ is_array($prediction->path) ? count($prediction->path) : 0 }}</td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('predictions.show', $prediction->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <a href="{{ route('incendios.predictions.show', $prediction->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('predictions.pdf', $prediction->id) }}" class="btn btn-primary btn-sm" title="Ver Informe" target="_blank">
+                                                <a href="{{ route('incendios.predictions.pdf', $prediction->id) }}" class="btn btn-primary btn-sm" title="Ver Informe" target="_blank">
                                                     <i class="fas fa-file-pdf"></i>
                                                 </a>
-                                                <form action="{{ route('predictions.destroy', $prediction->id) }}" method="POST" style="display: inline;" 
+                                                <form action="{{ route('incendios.predictions.destroy', $prediction->id) }}" method="POST" style="display: inline;" 
                                                     onsubmit="return confirm('¿Estás seguro de eliminar?');">
                                                     @csrf
                                                     @method('DELETE')

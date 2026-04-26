@@ -10,10 +10,10 @@
             <div class="col-md-12">
                 <x-adminlte-card title="Crear Tipo de Biomasa" theme="success" icon="fas fa-leaf">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('tipo-biomasas.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                        <a href="{{ route('incendios.tipo-biomasas.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
                     </x-slot>
 
-                    <form method="POST" action="{{ route('tipo-biomasas.store') }}" role="form" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('incendios.tipo-biomasas.store') }}" role="form" enctype="multipart/form-data">
                         @csrf
                         @include('tipo-biomasa.form')
                     </form>

@@ -128,6 +128,6 @@
 
     <div class="col-12 mt-3">
         <x-adminlte-button type="submit" label="Guardar" theme="primary" icon="fas fa-save"/>
-        <a href="{{ route('voluntarios.index') }}" class="btn btn-danger "><i class="fas fa-arrow-left"></i> Cancelar</a>
+        <a href="{{ route('incendios.voluntarios.index') }}" class="btn btn-danger "><i class="fas fa-arrow-left"></i> Cancelar</a>
     </div>
 </div>

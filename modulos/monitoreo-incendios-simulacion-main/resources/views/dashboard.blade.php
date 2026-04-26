@@ -272,28 +272,28 @@
                 <x-adminlte-card title="Accesos Rápidos" theme="primary" icon="fas fa-bolt" class="mt-3">
                     <div class="row">
                         <div class="col-md-3">
-                            <a href="{{ route('reports.fires') }}" class="btn btn-danger btn-block btn-lg">
+                            <a href="{{ route('incendios.reports.fires') }}" class="btn btn-danger btn-block btn-lg">
                                 <i class="fas fa-fire"></i>
                                 <br>
                                 <span class="small">Reporte de Focos de Incendio</span>
                             </a>
                         </div>
                         <div class="col-md-3">
-                            <a href="{{ route('reports.biomasas') }}" class="btn btn-success btn-block btn-lg">
+                            <a href="{{ route('incendios.reports.biomasas') }}" class="btn btn-success btn-block btn-lg">
                                 <i class="fas fa-leaf"></i>
                                 <br>
                                 <span class="small">Reporte de Biomasas</span>
                             </a>
                         </div>
                         <div class="col-md-3">
-                            <a href="{{ route('reports.simulations') }}" class="btn btn-primary btn-block btn-lg">
+                            <a href="{{ route('incendios.reports.simulations') }}" class="btn btn-primary btn-block btn-lg">
                                 <i class="fas fa-chart-bar"></i>
                                 <br>
                                 <span class="small">Reporte de Simulaciones</span>
                             </a>
                         </div>
                         <div class="col-md-3">
-                            <a href="{{ route('reports.predictions') }}" class="btn btn-purple btn-block btn-lg">
+                            <a href="{{ route('incendios.reports.predictions') }}" class="btn btn-purple btn-block btn-lg">
                                 <i class="fas fa-chart-line"></i>
                                 <br>
                                 <span class="small">Reporte de Predicciones</span>

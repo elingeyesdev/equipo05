@@ -8,7 +8,7 @@
 <div class="row">
     <div class="col-md-6">
         <x-adminlte-card title="Clima Actual (OpenWeatherMap)" theme="info" icon="fas fa-cloud-sun">
-            <form method="get" action="{{ route('test.index') }}" class="mb-3">
+            <form method="get" action="{{ route('incendios.test.index') }}" class="mb-3">
                 <div class="form-row">
                     <div class="col">
                         <x-adminlte-input name="city" label="Ciudad" value="{{ $params['city'] ?? 'Santa Cruz' }}" placeholder="Opcional si usas lat/lon" />
@@ -34,7 +34,7 @@
     </div>
     <div class="col-md-6">
         <x-adminlte-card title="Focos de Calor (FIRMS)" theme="warning" icon="fas fa-fire">
-            <form method="get" action="{{ route('test.index') }}" class="mb-3">
+            <form method="get" action="{{ route('incendios.test.index') }}" class="mb-3">
                 <div class="form-row">
                     <div class="col">
                         <x-adminlte-input name="product" label="Producto FIRMS (ej. VIIRS_SNPP_NRT)" value="{{ $params['product'] ?? 'VIIRS_SNPP_NRT' }}" />

@@ -57,7 +57,7 @@
                                 title="Agregar focos marcándolos en el mapa">
                             <i class="fas fa-map-marked-alt"></i> Agregar desde Mapa
                         </button>
-                        <a href="{{ route('focos-incendios.create') }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('incendios.focos-incendios.create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Crear Nuevo
                         </a>
                     </x-slot>
@@ -111,13 +111,13 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('focos-incendios.show', $focosIncendio->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <a href="{{ route('incendios.focos-incendios.show', $focosIncendio->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('focos-incendios.edit', $focosIncendio->id) }}" class="btn btn-warning btn-sm" title="Editar">
+                                                <a href="{{ route('incendios.focos-incendios.edit', $focosIncendio->id) }}" class="btn btn-warning btn-sm" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('focos-incendios.destroy', $focosIncendio->id) }}" method="POST" style="display: inline;" 
+                                                <form action="{{ route('incendios.focos-incendios.destroy', $focosIncendio->id) }}" method="POST" style="display: inline;" 
                                                     onsubmit="return confirm('¿Está seguro de eliminar este foco?');">
                                                     @csrf
                                                     @method('DELETE')
@@ -375,7 +375,7 @@ async function saveFires() {
             fecha: new Date().toISOString().split('T')[0]
         }));
         
-        const response = await fetch('{{ route('focos-incendios.import-firms') }}', {
+        const response = await fetch('{{ route('incendios.focos-incendios.import-firms') }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -498,7 +498,7 @@ async function loadFirmsData() {
         // Guardar en base de datos
         document.getElementById('progressText').textContent = 'Guardando en base de datos...';
         
-        const saveResponse = await fetch('{{ route('focos-incendios.import-firms') }}', {
+        const saveResponse = await fetch('{{ route('incendios.focos-incendios.import-firms') }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

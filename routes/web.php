@@ -198,14 +198,14 @@ Route::prefix('inventario')
 
 Route::prefix('incendios/modulo')
     ->as('incendios.')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'incendios.db'])
     ->group(function () {
         require base_path('modulos/monitoreo-incendios-simulacion-main/routes/web.php');
     });
 
 Route::prefix('rescate/modulo')
     ->as('rescate.')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'rescate.db'])
     ->group(function () {
         require base_path('modulos/rescate-animales-silvestres-main/routes/web.php');
     });

@@ -1443,7 +1443,7 @@ function fireSimulator() {
             };
             
             try {
-                const response = await fetch('{{ route('simulaciones.save') }}', {
+                const response = await fetch('{{ route('incendios.simulaciones.save') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -32,6 +32,15 @@ Proyecto nuevo para unificar de forma gradual:
   - Las rutas internas completas de los modulos quedaron bajo prefijos sin colision con el sidebar:
     - Incendios: `/incendios/modulo/*`
     - Rescate: `/rescate/modulo/*`
+  - Se activaron middlewares de conexion dedicada por modulo para asegurar consultas sobre SQLite correcto:
+    - `incendios.db`
+    - `rescate.db`
+  - Se valido navegacion autenticada de rutas internas clave:
+    - `/incendios/modulo`
+    - `/incendios/modulo/biomasas`
+    - `/incendios/modulo/simulaciones`
+    - `/rescate/modulo/home`
+    - `/rescate/modulo/animals`
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local

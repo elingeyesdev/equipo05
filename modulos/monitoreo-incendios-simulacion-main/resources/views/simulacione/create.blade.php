@@ -14,7 +14,7 @@
                         <span class="card-title">{{ __('Crear') }} Simulaciones</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('simulaciones.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('incendios.simulaciones.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('simulacione.form')

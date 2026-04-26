@@ -16,7 +16,7 @@
 
                 <x-adminlte-card title="Simulaciones" theme="orange" icon="fas fa-play-circle">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('simulaciones.simulator') }}" class="btn btn-warning btn-sm">
+                        <a href="{{ route('incendios.simulaciones.simulator') }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-fire"></i> Simulador Avanzado
                         </a>
                     </x-slot>
@@ -49,16 +49,16 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('simulaciones.show', $simulacione->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <a href="{{ route('incendios.simulaciones.show', $simulacione->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('simulaciones.pdf', $simulacione->id) }}" class="btn btn-primary btn-sm" title="Ver Informe" target="_blank">
+                                                <a href="{{ route('incendios.simulaciones.pdf', $simulacione->id) }}" class="btn btn-primary btn-sm" title="Ver Informe" target="_blank">
                                                     <i class="fas fa-file-pdf"></i>
                                                 </a>
-                                                <a href="{{ route('simulaciones.edit', $simulacione->id) }}" class="btn btn-success btn-sm" title="Editar">
+                                                <a href="{{ route('incendios.simulaciones.edit', $simulacione->id) }}" class="btn btn-success btn-sm" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('simulaciones.destroy', $simulacione->id) }}" method="POST" style="display: inline;" 
+                                                <form action="{{ route('incendios.simulaciones.destroy', $simulacione->id) }}" method="POST" style="display: inline;" 
                                                     onsubmit="return confirm('¿Está seguro de eliminar esta simulación?');">
                                                     @csrf
                                                     @method('DELETE')

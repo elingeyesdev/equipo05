@@ -10,10 +10,10 @@
             <div class="col-md-12">
                 <x-adminlte-card title="Editar Tipo de Biomasa: {{ $tipoBiomasa->tipo_biomasa }}" theme="warning" icon="fas fa-edit">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('tipo-biomasas.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                        <a href="{{ route('incendios.tipo-biomasas.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
                     </x-slot>
 
-                    <form method="POST" action="{{ route('tipo-biomasas.update', $tipoBiomasa->id) }}" role="form" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('incendios.tipo-biomasas.update', $tipoBiomasa->id) }}" role="form" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
                         @include('tipo-biomasa.form')

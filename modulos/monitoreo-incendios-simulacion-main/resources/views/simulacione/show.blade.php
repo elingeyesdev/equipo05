@@ -14,7 +14,7 @@
                             <span class="card-title">{{ __('Show') }} Simulaciones</span>
                         </div>
                         <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('simulaciones.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('incendios.simulaciones.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 

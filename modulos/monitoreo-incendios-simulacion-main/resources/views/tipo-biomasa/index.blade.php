@@ -16,7 +16,7 @@
 
                 <x-adminlte-card title="Tipos de Biomasa" theme="olive" icon="fas fa-list">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('tipo-biomasas.create') }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('incendios.tipo-biomasas.create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Crear Nuevo
                         </a>
                     </x-slot>
@@ -47,13 +47,13 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('tipo-biomasas.show', $tipoBiomasa->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <a href="{{ route('incendios.tipo-biomasas.show', $tipoBiomasa->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('tipo-biomasas.edit', $tipoBiomasa->id) }}" class="btn btn-success btn-sm" title="Editar">
+                                                <a href="{{ route('incendios.tipo-biomasas.edit', $tipoBiomasa->id) }}" class="btn btn-success btn-sm" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('tipo-biomasas.destroy', $tipoBiomasa->id) }}" method="POST" style="display: inline;" 
+                                                <form action="{{ route('incendios.tipo-biomasas.destroy', $tipoBiomasa->id) }}" method="POST" style="display: inline;" 
                                                     onsubmit="return confirm('¿Está seguro de eliminar este tipo de biomasa?');">
                                                     @csrf
                                                     @method('DELETE')

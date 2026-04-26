@@ -8,16 +8,16 @@
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-chart-line text-purple"></i> Filtros de Búsqueda</h3>
         <div class="card-tools">
-            <a href="{{ route('reports.predictions.export-excel', request()->all()) }}" class="btn btn-success btn-sm mr-1">
+            <a href="{{ route('incendios.reports.predictions.export-excel', request()->all()) }}" class="btn btn-success btn-sm mr-1">
                 <i class="fas fa-file-excel"></i> Exportar Excel
             </a>
-            <a href="{{ route('reports.predictions.export-pdf', request()->all()) }}" class="btn btn-danger btn-sm">
+            <a href="{{ route('incendios.reports.predictions.export-pdf', request()->all()) }}" class="btn btn-danger btn-sm">
                 <i class="fas fa-file-pdf"></i> Exportar PDF
             </a>
         </div>
     </div>
     <div class="card-body">
-        <form method="GET" action="{{ route('reports.predictions') }}" class="row">
+        <form method="GET" action="{{ route('incendios.reports.predictions') }}" class="row">
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="fecha_inicio">Fecha Inicio</label>
@@ -237,7 +237,7 @@
                         {{ isset($inputs['humidity']) ? number_format($inputs['humidity'], 1) : 'N/A' }}%
                     </td>
                     <td>
-                        <a href="{{ route('predictions.show', $prediction->id) }}" 
+                        <a href="{{ route('incendios.predictions.show', $prediction->id) }}" 
                            class="btn btn-sm btn-info" title="Ver Detalle">
                             <i class="fas fa-eye"></i>
                         </a>

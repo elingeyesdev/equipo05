@@ -8,16 +8,16 @@
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-fire text-danger"></i> Filtros de Búsqueda</h3>
         <div class="card-tools">
-            <a href="{{ route('reports.fires.export-pdf', request()->all()) }}" class="btn btn-danger btn-sm">
+            <a href="{{ route('incendios.reports.fires.export-pdf', request()->all()) }}" class="btn btn-danger btn-sm">
                 <i class="fas fa-file-pdf"></i> Exportar PDF
             </a>
-            <a href="{{ route('reports.fires.export-excel', request()->all()) }}" class="btn btn-success btn-sm">
+            <a href="{{ route('incendios.reports.fires.export-excel', request()->all()) }}" class="btn btn-success btn-sm">
                 <i class="fas fa-file-excel"></i> Exportar Excel
             </a>
         </div>
     </div>
     <div class="card-body">
-        <form method="GET" action="{{ route('reports.fires') }}" class="row">
+        <form method="GET" action="{{ route('incendios.reports.fires') }}" class="row">
             <div class="col-md-3">
                 <div class="form-group">
                     <label>Fecha Inicio</label>

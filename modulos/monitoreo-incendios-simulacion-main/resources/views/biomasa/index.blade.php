@@ -8,7 +8,7 @@
     <div class="container-fluid">
         <div class="row mb-3">
             <div class="col-12">
-                <a href="{{ route('biomasas.create') }}" class="btn btn-primary">
+                <a href="{{ route('incendios.biomasas.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Reportar Nueva Biomasa
                 </a>
             </div>
@@ -88,18 +88,18 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <a href="{{ route('biomasas.show', $biomasa->id) }}" 
+                                                    <a href="{{ route('incendios.biomasas.show', $biomasa->id) }}" 
                                                        class="btn btn-info btn-sm" title="Ver detalles">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                     
                                                     @if($biomasa->estado == 'pendiente')
-                                                        <a href="{{ route('biomasas.edit', $biomasa->id) }}" 
+                                                        <a href="{{ route('incendios.biomasas.edit', $biomasa->id) }}" 
                                                            class="btn btn-warning btn-sm" title="Editar">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         
-                                                        <form action="{{ route('biomasas.destroy', $biomasa->id) }}" 
+                                                        <form action="{{ route('incendios.biomasas.destroy', $biomasa->id) }}" 
                                                               method="POST" style="display:inline;" 
                                                               onsubmit="return confirm('¿Está seguro de eliminar esta biomasa?');">
                                                             @csrf
@@ -137,7 +137,7 @@
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
                             No has reportado ninguna biomasa aún. 
-                            <a href="{{ route('biomasas.create') }}" class="alert-link">¡Reporta la primera!</a>
+                            <a href="{{ route('incendios.biomasas.create') }}" class="alert-link">¡Reporta la primera!</a>
                         </div>
                     @endif
                 </x-adminlte-card>

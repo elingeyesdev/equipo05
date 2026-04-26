@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'inventario.db' => \App\Http\Middleware\UseInventarioConnection::class,
+            'incendios.db' => \App\Http\Middleware\UseIncendiosConnection::class,
+            'rescate.db' => \App\Http\Middleware\UseRescateConnection::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

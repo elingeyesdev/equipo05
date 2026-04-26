@@ -8,7 +8,7 @@
     <div class="container-fluid">
         <div class="row mb-3">
             <div class="col-12">
-                <a href="{{ route('biomasas.create') }}" class="btn btn-success">
+                <a href="{{ route('incendios.biomasas.create') }}" class="btn btn-success">
                     <i class="fas fa-plus"></i> Crear Nueva Biomasa
                 </a>
             </div>

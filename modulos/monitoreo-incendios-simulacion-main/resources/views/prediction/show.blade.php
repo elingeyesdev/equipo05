@@ -22,7 +22,7 @@
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-info-circle"></i> Información General</h3>
                     <div class="card-tools">
-                        <a href="{{ route('predictions.index') }}" class="btn btn-tool">
+                        <a href="{{ route('incendios.predictions.index') }}" class="btn btn-tool">
                             <i class="fas fa-arrow-left"></i> Volver
                         </a>
                     </div>
@@ -534,10 +534,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body text-center">
-                    <a href="{{ route('predictions.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('incendios.predictions.index') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Volver a la Lista
                     </a>
-                    <a href="{{ route('predictions.create') }}" class="btn btn-primary">
+                    <a href="{{ route('incendios.predictions.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Nueva Predicción
                     </a>
                     <button onclick="window.print()" class="btn btn-info">

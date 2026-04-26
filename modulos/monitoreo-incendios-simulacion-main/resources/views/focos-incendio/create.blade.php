@@ -10,10 +10,10 @@
             <div class="col-md-12">
                 <x-adminlte-card title="Crear Foco de Incendio" theme="success" icon="fas fa-fire">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('focos-incendios.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                        <a href="{{ route('incendios.focos-incendios.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
                     </x-slot>
 
-                    <form method="POST" action="{{ route('focos-incendios.store') }}" role="form" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('incendios.focos-incendios.store') }}" role="form" enctype="multipart/form-data">
                         @csrf
                         @include('focos-incendio.form')
                     </form>

@@ -10,8 +10,8 @@
             <div class="col-md-12">
                 <x-adminlte-card title="Información del Foco de Incendio: {{ $focosIncendio->ubicacion }}" theme="info" icon="fas fa-fire">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('focos-incendios.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
-                        <a href="{{ route('focos-incendios.edit', $focosIncendio->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                        <a href="{{ route('incendios.focos-incendios.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                        <a href="{{ route('incendios.focos-incendios.edit', $focosIncendio->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
                     </x-slot>
 
                     <div class="row">

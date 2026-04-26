@@ -14,7 +14,7 @@
                         <span class="card-title">{{ __('Editar') }} Simulaciones</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('simulaciones.update', $simulacione->id) }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('incendios.simulaciones.update', $simulacione->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 

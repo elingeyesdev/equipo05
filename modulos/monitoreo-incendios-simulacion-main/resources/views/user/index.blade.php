@@ -16,7 +16,7 @@
 
                 <x-adminlte-card title="Usuarios" theme="primary" icon="fas fa-users">
                     <x-slot name="toolsSlot">
-                        <a href="{{ route('users.create') }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('incendios.users.create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Crear Nuevo
                         </a>
                     </x-slot>
@@ -43,13 +43,13 @@
                                         <td>{{ $user->cedula_identidad }}</td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <a href="{{ route('incendios.users.show', $user->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-success btn-sm" title="Editar">
+                                                <a href="{{ route('incendios.users.edit', $user->id) }}" class="btn btn-success btn-sm" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display: inline;" 
+                                                <form action="{{ route('incendios.users.destroy', $user->id) }}" method="POST" style="display: inline;" 
                                                     onsubmit="return confirm('¿Está seguro de eliminar este usuario?');">
                                                     @csrf
                                                     @method('DELETE')

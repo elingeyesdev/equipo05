@@ -74,7 +74,7 @@
                         <td>
                             @if($estado == 'pendiente')
                                 <div class="btn-group" role="group">
-                                    <form action="{{ route('biomasas.aprobar', $biomasa->id) }}" method="POST" style="display:inline;" 
+                                    <form action="{{ route('incendios.biomasas.aprobar', $biomasa->id) }}" method="POST" style="display:inline;" 
                                           onsubmit="return confirm('¿Está seguro de aprobar esta biomasa?');">
                                         @csrf
                                         <button type="submit" class="btn btn-success btn-sm" title="Aprobar">
@@ -87,19 +87,19 @@
                                         <i class="fas fa-ban"></i> Rechazar
                                     </button>
                                     
-                                    <a href="{{ route('biomasas.show', $biomasa->id) }}" 
+                                    <a href="{{ route('incendios.biomasas.show', $biomasa->id) }}" 
                                        class="btn btn-info btn-sm ml-1" title="Ver detalles">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </div>
                             @else
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('biomasas.show', $biomasa->id) }}" 
+                                    <a href="{{ route('incendios.biomasas.show', $biomasa->id) }}" 
                                        class="btn btn-info btn-sm" title="Ver detalles">
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
                                     
-                                    <form action="{{ route('biomasas.destroy', $biomasa->id) }}" method="POST" 
+                                    <form action="{{ route('incendios.biomasas.destroy', $biomasa->id) }}" method="POST" 
                                           style="display:inline;" 
                                           onsubmit="return confirm('¿Está seguro de eliminar esta biomasa? Esta acción no se puede deshacer.')">
                                         @csrf

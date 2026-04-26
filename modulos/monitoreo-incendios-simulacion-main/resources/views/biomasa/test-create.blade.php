@@ -22,7 +22,7 @@
         <div class="alert alert-danger">{{ $message }}</div>
     @endif
     
-    <form method="POST" action="{{ route('biomasas.store') }}">
+    <form method="POST" action="{{ route('incendios.biomasas.store') }}">
         @csrf
         
         <div class="form-group">
@@ -46,7 +46,7 @@
         </div>
         
         <button type="submit" class="btn btn-primary">GUARDAR TEST</button>
-        <a href="{{ route('biomasas.index') }}" class="btn btn-secondary">Cancelar</a>
+        <a href="{{ route('incendios.biomasas.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 @endsection

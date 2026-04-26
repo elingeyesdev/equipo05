@@ -8,16 +8,16 @@
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-project-diagram text-purple"></i> Filtros de Búsqueda</h3>
         <div class="card-tools">
-            <a href="{{ route('reports.simulations.export-excel', request()->all()) }}" class="btn btn-success btn-sm mr-1">
+            <a href="{{ route('incendios.reports.simulations.export-excel', request()->all()) }}" class="btn btn-success btn-sm mr-1">
                 <i class="fas fa-file-excel"></i> Exportar Excel
             </a>
-            <a href="{{ route('reports.simulations.export-pdf', request()->all()) }}" class="btn btn-danger btn-sm">
+            <a href="{{ route('incendios.reports.simulations.export-pdf', request()->all()) }}" class="btn btn-danger btn-sm">
                 <i class="fas fa-file-pdf"></i> Exportar PDF
             </a>
         </div>
     </div>
     <div class="card-body">
-        <form method="GET" action="{{ route('reports.simulations') }}" class="row">
+        <form method="GET" action="{{ route('incendios.reports.simulations') }}" class="row">
             <div class="col-md-3">
                 <div class="form-group">
                     <label>Fecha Inicio</label>

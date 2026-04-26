@@ -204,3 +204,33 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - El sistema deja de mostrar "Internal Server Error" al iniciar sesion y al abrir los accesos del sidebar para Incendios y Rescate en el proyecto `equipo05-main-integration`.
+
+### Hito 10 - Activacion funcional de rutas internas de Incendios y Rescate
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se agregan middlewares dedicados para conexion de base de datos por modulo:
+  - `UseIncendiosConnection` (`incendios.db`)
+  - `UseRescateConnection` (`rescate.db`)
+- Se aplican esos middlewares a los grupos:
+  - `/incendios/modulo/*`
+  - `/rescate/modulo/*`
+- Se corrige compatibilidad de vistas para Incendios con componentes Blade `x-adminlte-*` mediante componentes anonimos locales en `resources/views/components/`.
+- Se corrigen helpers `route()` en vistas de modulos para respetar prefijos de nombres (`incendios.*` y `rescate.animals.*`) en el entorno integrado.
+- Se elimina recursion de layouts al evitar prepend de vistas del modulo dentro de middleware.
+
+Verificacion ejecutada:
+
+- Smoke test autenticado (`127.0.0.1:8000`):
+  - `/incendios/modulo` => `200`
+  - `/incendios/modulo/biomasas` => `200`
+  - `/incendios/modulo/simulaciones` => `200`
+  - `/rescate/modulo/home` => `200`
+  - `/rescate/modulo/animals` => `200`
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+
+Resultado esperado:
+
+- Los dos sistemas integrados ya exponen rutas internas funcionales dentro del monolito principal, mas alla del acceso de sidebar.
