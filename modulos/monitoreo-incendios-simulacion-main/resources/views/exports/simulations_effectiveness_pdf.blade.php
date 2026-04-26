@@ -374,7 +374,7 @@
                 }
                 arsort($condicionesClimaticas);
                 $condicionesClimaticas = array_slice($condicionesClimaticas, 0, 5, true);
-                $maxCondicion = max($condicionesClimaticas) ?: 1;
+                $maxCondicion = !empty($condicionesClimaticas) ? max($condicionesClimaticas) : 1;
             @endphp
 
             <div class="chart-row">

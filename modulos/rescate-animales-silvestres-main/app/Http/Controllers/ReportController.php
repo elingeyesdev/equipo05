@@ -506,6 +506,27 @@ class ReportController extends Controller
         ));
     }
 
+    public function getExternalFireReportsApi()
+    {
+        $reports = $this->externalFireReportsService->getExternalFireReports();
+        $formatted = $this->externalFireReportsService->formatForMap($reports);
+
+        return response()->json($formatted);
+    }
+
+    public function getExternalFireReportDetails(string $externalId)
+    {
+        $reports = $this->externalFireReportsService->getExternalFireReports();
+        $formatted = collect($this->externalFireReportsService->formatForMap($reports));
+        $found = $formatted->firstWhere('id', $externalId);
+
+        if (!$found) {
+            return response()->json(['message' => 'Reporte externo no encontrado'], 404);
+        }
+
+        return response()->json($found);
+    }
+
     /**
      * Mostrar página para reclamar el reporte (si el usuario no estaba autenticado)
      */

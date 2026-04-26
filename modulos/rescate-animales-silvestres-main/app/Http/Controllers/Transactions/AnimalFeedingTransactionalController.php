@@ -53,6 +53,11 @@ class AnimalFeedingTransactionalController extends Controller
 		));
 	}
 
+	public function index(): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-feeding-records.create');
+	}
+
 	public function store(FeedingProcessRequest $request): RedirectResponse
 	{
 		$this->service->registerFeeding($request->validated());

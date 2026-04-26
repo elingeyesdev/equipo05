@@ -387,7 +387,7 @@
                 }
                 arsort($topUbicaciones);
                 $topUbicaciones = array_slice($topUbicaciones, 0, 5, true);
-                $maxUbicacion = max($topUbicaciones) ?: 1;
+                $maxUbicacion = !empty($topUbicaciones) ? max($topUbicaciones) : 1;
             @endphp
 
             <div class="chart-row">

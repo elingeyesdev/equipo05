@@ -97,6 +97,11 @@ class AnimalMedicalEvaluationTransactionalController extends Controller
 		));
 	}
 
+	public function index(): RedirectResponse
+	{
+		return Redirect::route('rescate.medical-evaluation-transactions.create');
+	}
+
 	public function store(MedicalEvaluationProcessRequest $request): RedirectResponse
 	{
 		$data = $request->validated();

@@ -27,6 +27,11 @@ class AnimalTransactionalController extends Controller
 	/**
 	 * Formulario combinado para crear Animal + Hoja de Animal en una sola operación.
 	 */
+	public function index(): RedirectResponse
+	{
+		return Redirect::route('rescate.animal-records.create');
+	}
+
 	public function create(): View
 	{
 		$animal = new Animal();
