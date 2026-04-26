@@ -23,15 +23,15 @@ class AnimalWithFileRequest extends FormRequest
             'nombre' => 'nullable|string',
             'sexo' => 'required|string|in:Hembra,Macho,Desconocido',
             'descripcion' => 'nullable|string',
-            'reporte_id' => 'required|exists:reports,id',
+            'reporte_id' => 'required|exists:rescate.reports,id',
             'llegaron_cantidad' => 'nullable|integer|min:1',
             'modo_creacion' => 'nullable|in:uno_para_todos,uno_por_cada',
             'crear_cantidad' => 'nullable|required_if:modo_creacion,uno_por_cada|integer|min:1',
-            'estado_inicial_id' => 'nullable|exists:animal_conditions,id',
+            'estado_inicial_id' => 'nullable|exists:rescate.animal_conditions,id',
             // AnimalFile (sin animal_id, se asigna en servicio)
-            'especie_id' => 'required|exists:species,id',
+            'especie_id' => 'required|exists:rescate.species,id',
             'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
-            'estado_id' => 'required|exists:animal_statuses,id',
+            'estado_id' => 'required|exists:rescate.animal_statuses,id',
         ];
     }
 }

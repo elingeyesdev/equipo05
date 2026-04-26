@@ -405,3 +405,31 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - Las rutas estaticas de los dos modulos cargan sin errores `500` y mantienen comportamiento integrado estable bajo autenticacion central.
+
+### Hito 17 - Validacion transaccional multi-BD en Animal Records
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se corrige `AnimalWithFileRequest` para validar `exists` contra la conexion `rescate` en lugar de la BD por defecto:
+  - `reporte_id` -> `exists:rescate.reports,id`
+  - `estado_inicial_id` -> `exists:rescate.animal_conditions,id`
+  - `especie_id` -> `exists:rescate.species,id`
+  - `estado_id` -> `exists:rescate.animal_statuses,id`
+
+Problema corregido:
+
+- Antes, `POST /rescate/modulo/animal-records` podia responder `500` con `no such table: reports` al resolver validaciones de formulario en la conexion equivocada.
+
+Verificacion ejecutada:
+
+- Smoke E2E autenticado:
+  - `POST /rescate/modulo/animal-records` => `302`
+  - `POST /incendios/modulo/biomasas` => `302`
+  - `POST/DELETE /incendios/modulo/focos-incendios` => `302/302`
+  - `POST/DELETE /rescate/modulo/centers` => `302/302`
+
+Resultado esperado:
+
+- El alta transaccional de animales queda funcional en entorno integrado con SQLite por modulo, sin desbordar a tablas inexistentes del core.
