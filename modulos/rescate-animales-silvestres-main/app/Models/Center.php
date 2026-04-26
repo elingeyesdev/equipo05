@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,7 +38,7 @@ class Center extends Model
      */
     public function transfers()
     {
-        return $this->hasMany(\App\Models\Transfer::class, 'id', 'centro_id');
+        return $this->hasMany(\Modules\Rescate\Models\Transfer::class, 'id', 'centro_id');
     }
     
 }

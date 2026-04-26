@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Center;
+use Modules\Rescate\Models\Center;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CenterRequest;
+use Modules\Rescate\Http\Requests\CenterRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Modules\Rescate\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +26,7 @@ class AnimalFileRequest extends FormRequest
             'animal_id' => 'required|exists:animals,id',
 			'especie_id' => 'required|exists:species,id',
 			'imagen_url' => 'nullable|string',
-			'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \App\Rules\NotWebpImage()],
+			'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
 			'estado_id' => 'required|exists:animal_statuses,id',
         ];
     }

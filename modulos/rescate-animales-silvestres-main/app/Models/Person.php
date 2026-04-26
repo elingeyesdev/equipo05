@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -53,7 +53,7 @@ class Person extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'usuario_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\User::class, 'usuario_id', 'id');
     }
     
     /**
@@ -61,7 +61,7 @@ class Person extends Model
      */
     public function reports()
     {
-        return $this->hasMany(\App\Models\Report::class, 'persona_id', 'id');
+        return $this->hasMany(\Modules\Rescate\Models\Report::class, 'persona_id', 'id');
     }
     
     /**
@@ -69,7 +69,7 @@ class Person extends Model
      */
     public function rescuers()
     {
-        return $this->hasMany(\App\Models\Rescuer::class, 'persona_id', 'id');
+        return $this->hasMany(\Modules\Rescate\Models\Rescuer::class, 'persona_id', 'id');
     }
     
     /**
@@ -77,7 +77,7 @@ class Person extends Model
      */
     public function veterinarians()
     {
-        return $this->hasMany(\App\Models\Veterinarian::class, 'persona_id', 'id');
+        return $this->hasMany(\Modules\Rescate\Models\Veterinarian::class, 'persona_id', 'id');
     }
 
     /**
@@ -85,7 +85,7 @@ class Person extends Model
      */
     public function cuidadorCenter()
     {
-        return $this->belongsTo(\App\Models\Center::class, 'cuidador_center_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Center::class, 'cuidador_center_id', 'id');
     }
 
     /**

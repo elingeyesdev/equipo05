@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Modules\Rescate\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\Person;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 

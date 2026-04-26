@@ -288,7 +288,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('fusion.modulos.rescate') }}" class="nav-link {{ request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
+                            <a href="{{ route('rescate.home') }}" class="nav-link {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-paw"></i>
                                 <p>Rescate de Animales Silvestres</p>
                             </a>

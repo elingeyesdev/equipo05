@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Services\Animal;
+namespace Modules\Rescate\Services\Animal;
 
-use App\Models\AnimalFile;
-use App\Models\AnimalHistory;
-use App\Models\Care;
-use App\Models\CareFeeding;
-use App\Models\CareType;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\Care;
+use Modules\Rescate\Models\CareFeeding;
+use Modules\Rescate\Models\CareType;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class AnimalFeedingTransactionalService
 {

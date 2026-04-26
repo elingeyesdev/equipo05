@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Modules\Rescate\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,7 +24,7 @@ class RescuerRequest extends FormRequest
         return [
 			'persona_id' => 'required',
 			'cv_documentado' => 'nullable|string',
-			'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120', new \App\Rules\NotWebpImage()],
+			'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage()],
             'aprobado' => 'nullable|boolean',
             'motivo_revision' => 'nullable|string',
         ];

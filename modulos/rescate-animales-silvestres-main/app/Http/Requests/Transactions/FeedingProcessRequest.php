@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Transactions;
+namespace Modules\Rescate\Http\Requests\Transactions;
 
 use Illuminate\Foundation\Http\FormRequest;
 

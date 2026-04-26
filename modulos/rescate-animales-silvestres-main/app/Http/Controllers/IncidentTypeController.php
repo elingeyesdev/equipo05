@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\IncidentType;
+use Modules\Rescate\Models\IncidentType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\IncidentTypeRequest;
+use Modules\Rescate\Http\Requests\IncidentTypeRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

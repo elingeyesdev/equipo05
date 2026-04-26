@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Fire;
+namespace Modules\Rescate\Services\Fire;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -504,7 +504,7 @@ class FocosCalorService
      * 
      * @deprecated
      */
-    public function associateNearestHotspotToReport(\App\Models\Report $report, float $maxDistanceKm = 10): bool
+    public function associateNearestHotspotToReport(\Modules\Rescate\Models\Report $report, float $maxDistanceKm = 10): bool
     {
         // No asociar por ID - los focos de calor son independientes
         return false;

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Person;
+use Modules\Rescate\Models\Person;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\PersonRequest;
+use Modules\Rescate\Http\Requests\PersonRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class PersonController extends Controller
 {
@@ -78,7 +78,7 @@ class PersonController extends Controller
     public function create(): View
     {
         $person = new Person();
-        $centers = \App\Models\Center::orderBy('nombre')->get(['id', 'nombre', 'latitud', 'longitud']);
+        $centers = \Modules\Rescate\Models\Center::orderBy('nombre')->get(['id', 'nombre', 'latitud', 'longitud']);
 
         return view('person.create', compact('person', 'centers'));
     }
@@ -91,7 +91,7 @@ class PersonController extends Controller
         $data = $request->validated();
         
         // Crear usuario primero
-        $user = \App\Models\User::create([
+        $user = \Modules\Rescate\Models\User::create([
             'email' => $data['email'],
             'password' => $data['password'], // Se encripta automáticamente por el cast "hashed"
         ]);
@@ -194,7 +194,7 @@ class PersonController extends Controller
     public function edit($id): View
     {
         $person = Person::with('cuidadorCenter')->findOrFail($id);
-        $centers = \App\Models\Center::orderBy('nombre')->get(['id', 'nombre', 'latitud', 'longitud']);
+        $centers = \Modules\Rescate\Models\Center::orderBy('nombre')->get(['id', 'nombre', 'latitud', 'longitud']);
 
         return view('person.edit', compact('person', 'centers'));
     }

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\TransferRequest;
-use App\Models\Transfer;
-use App\Models\Animal;
-use App\Models\Person;
-use App\Models\Report;
-use App\Models\Center;
-use App\Services\Animal\AnimalTransferTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\TransferRequest;
+use Modules\Rescate\Models\Transfer;
+use Modules\Rescate\Models\Animal;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Center;
+use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -111,7 +111,7 @@ class TransferApiController extends Controller
             // Modo traslado interno (entre centros) usando animal_id
             // Derivar animal_id desde animal_file_id si corresponde
             if (empty($data['animal_id']) && !empty($data['animal_file_id'])) {
-                $data['animal_id'] = \App\Models\AnimalFile::where('id', $data['animal_file_id'])->value('animal_id');
+                $data['animal_id'] = \Modules\Rescate\Models\AnimalFile::where('id', $data['animal_file_id'])->value('animal_id');
             }
             $personId = $data['persona_id'] ?? Person::where('usuario_id', Auth::id())->value('id');
             $payload = array_merge($data, [

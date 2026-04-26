@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\AnimalConditionResource;
-use App\Models\AnimalCondition;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Resources\AnimalConditionResource;
+use Modules\Rescate\Models\AnimalCondition;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Services\Dashboard;
+namespace Modules\Rescate\Services\Dashboard;
 
-use App\Models\ContactMessage;
-use App\Models\Report;
-use App\Models\AnimalFile;
-use App\Models\Person;
-use App\Models\Rescuer;
-use App\Models\Veterinarian;
-use App\Models\Transfer;
-use App\Models\Release;
-use App\Models\MedicalEvaluation;
-use App\Models\Care;
+use Modules\Rescate\Models\ContactMessage;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\Rescuer;
+use Modules\Rescate\Models\Veterinarian;
+use Modules\Rescate\Models\Transfer;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\MedicalEvaluation;
+use Modules\Rescate\Models\Care;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -127,7 +127,7 @@ class DashboardService
     /**
      * Obtiene datos del dashboard para veterinarios
      *
-     * @param \App\Models\User $user
+     * @param \Modules\Rescate\Models\User $user
      * @return array
      */
     private function getVeterinarianDashboardData($user): array
@@ -183,7 +183,7 @@ class DashboardService
     /**
      * Obtiene datos del dashboard para rescatistas
      *
-     * @param \App\Models\User $user
+     * @param \Modules\Rescate\Models\User $user
      * @return array
      */
     private function getRescuerDashboardData($user): array
@@ -708,11 +708,11 @@ class DashboardService
     private function getEfficiencyReadyAttended(): array
     {
         // Obtener ID del estado "Estable"
-        $estableStatusId = \App\Models\AnimalStatus::whereRaw('LOWER(nombre) = ?', ['estable'])->value('id');
+        $estableStatusId = \Modules\Rescate\Models\AnimalStatus::whereRaw('LOWER(nombre) = ?', ['estable'])->value('id');
         
         // Si no existe "Estable", buscar por LIKE
         if (!$estableStatusId) {
-            $estableStatusId = \App\Models\AnimalStatus::whereRaw('LOWER(nombre) LIKE ?', ['%estable%'])->value('id');
+            $estableStatusId = \Modules\Rescate\Models\AnimalStatus::whereRaw('LOWER(nombre) LIKE ?', ['%estable%'])->value('id');
         }
         
         // Animales en atención = todos los animales en el sistema (sin release)
@@ -770,7 +770,7 @@ class DashboardService
     private function getTopVolunteers(int $limit = 5): array
     {
         // Obtener IDs de usuarios admin y encargado para excluirlos
-        $adminUserIds = \App\Models\User::whereHas('roles', function($query) {
+        $adminUserIds = \Modules\Rescate\Models\User::whereHas('roles', function($query) {
             $query->whereIn('name', ['admin', 'encargado']);
         })->pluck('id')->toArray();
 

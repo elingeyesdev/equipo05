@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\CareType;
+use Modules\Rescate\Models\CareType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CareTypeRequest;
+use Modules\Rescate\Http\Requests\CareTypeRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\Animal;
+namespace Modules\Rescate\Services\Animal;
 
-use App\Models\Animal;
-use App\Models\AnimalFile;
-use App\Models\AnimalHistory;
-use App\Models\Report;
-use App\Models\Transfer;
+use Modules\Rescate\Models\Animal;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Transfer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;

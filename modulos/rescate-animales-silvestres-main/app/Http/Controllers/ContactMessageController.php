@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Http\Requests\ContactMessageRequest;
-use App\Models\ContactMessage;
+use Modules\Rescate\Http\Requests\ContactMessageRequest;
+use Modules\Rescate\Models\ContactMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

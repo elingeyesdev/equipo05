@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Animal;
+namespace Modules\Rescate\Services\Animal;
 
-use App\Models\AnimalFile;
-use App\Models\AnimalHistory;
-use App\Models\AnimalStatus;
-use App\Models\MedicalEvaluation;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Models\MedicalEvaluation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;

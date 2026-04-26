@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,7 +38,7 @@ class Care extends Model
      */
     public function animalFile()
     {
-        return $this->belongsTo(\App\Models\AnimalFile::class, 'hoja_animal_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\AnimalFile::class, 'hoja_animal_id', 'id');
     }
     
     /**
@@ -46,7 +46,7 @@ class Care extends Model
      */
     public function careType()
     {
-        return $this->belongsTo(\App\Models\CareType::class, 'tipo_cuidado_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\CareType::class, 'tipo_cuidado_id', 'id');
     }
     
 }

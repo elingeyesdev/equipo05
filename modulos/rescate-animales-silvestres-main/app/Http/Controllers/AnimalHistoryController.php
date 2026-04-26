@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\AnimalHistory;
-use App\Services\History\AnimalHistoryTimelineService;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Services\History\AnimalHistoryTimelineService;
 use Illuminate\View\View;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
@@ -38,7 +38,7 @@ class AnimalHistoryController extends Controller
 			$animalFileId = (int) $id;
 			
 			// Verificar que existe el AnimalFile
-			$animalFile = \App\Models\AnimalFile::find($animalFileId);
+			$animalFile = \Modules\Rescate\Models\AnimalFile::find($animalFileId);
 			if (!$animalFile) {
 				abort(404, 'Animal file not found');
 			}
@@ -89,7 +89,7 @@ class AnimalHistoryController extends Controller
 		}
 		
 		// Verificar que existe el AnimalFile
-		$animalFile = \App\Models\AnimalFile::with([
+		$animalFile = \Modules\Rescate\Models\AnimalFile::with([
 			'animal.report.condicionInicial',
 			'animal.report.incidentType',
 			'animal.report.firstTransfer.center',

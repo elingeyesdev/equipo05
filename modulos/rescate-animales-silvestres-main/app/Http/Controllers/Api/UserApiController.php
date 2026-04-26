@@ -1,11 +1,11 @@
 <?php
  
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
  
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Person;
-use App\Services\Api\User\UserRegistrationService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Models\User;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Services\Api\User\UserRegistrationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
  

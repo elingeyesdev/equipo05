@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\User;
+namespace Modules\Rescate\Services\User;
 
-use App\Models\UserTracking;
-use App\Models\User;
+use Modules\Rescate\Models\UserTracking;
+use Modules\Rescate\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;

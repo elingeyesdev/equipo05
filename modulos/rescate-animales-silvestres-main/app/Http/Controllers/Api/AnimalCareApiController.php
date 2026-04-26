@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Transactions\CareProcessRequest;
-use App\Models\Care;
-use App\Services\Animal\AnimalCareTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\Transactions\CareProcessRequest;
+use Modules\Rescate\Models\Care;
+use Modules\Rescate\Services\Animal\AnimalCareTransactionalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

@@ -1,9 +1,9 @@
 <?php
  
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
  
-use App\Http\Controllers\Controller;
-use App\Models\AnimalStatus;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Models\AnimalStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
  

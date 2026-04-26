@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Mail;
+namespace Modules\Rescate\Mail;
 
-use App\Models\Person;
-use App\Models\Center;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\Center;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;

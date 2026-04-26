@@ -1,33 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Report;
-use App\Models\Person;
-use App\Models\Center;
-use App\Models\User;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\Center;
+use Modules\Rescate\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\ReportRequest;
+use Modules\Rescate\Http\Requests\ReportRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use App\Services\Animal\AnimalTransferTransactionalService;
-use App\Services\Report\ReportUrgencyService;
-use App\Services\Fire\FocosCalorService;
-use App\Services\Fire\ExternalFireReportsService;
-use App\Models\AnimalCondition;
-use App\Models\IncidentType;
-use App\Models\AnimalHistory;
-use App\Mail\NewReportNotification;
-use App\Services\User\UserTrackingService;
-use App\Models\Animal;
-use App\Models\AnimalFile;
-use App\Models\Species;
-use App\Models\Release;
-use App\Models\Transfer;
+use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
+use Modules\Rescate\Services\Report\ReportUrgencyService;
+use Modules\Rescate\Services\Fire\FocosCalorService;
+use Modules\Rescate\Services\Fire\ExternalFireReportsService;
+use Modules\Rescate\Models\AnimalCondition;
+use Modules\Rescate\Models\IncidentType;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Mail\NewReportNotification;
+use Modules\Rescate\Services\User\UserTrackingService;
+use Modules\Rescate\Models\Animal;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\Species;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\Transfer;
 
 class ReportController extends Controller
 {

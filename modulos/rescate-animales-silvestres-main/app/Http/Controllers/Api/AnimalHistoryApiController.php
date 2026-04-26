@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\AnimalHistory;
-use App\Services\History\AnimalHistoryTimelineService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Services\History\AnimalHistoryTimelineService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

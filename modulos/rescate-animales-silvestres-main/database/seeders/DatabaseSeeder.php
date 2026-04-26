@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\Rescate\Database\Seeders;
 
-use App\Models\User;
-use App\Models\Person;
+use Modules\Rescate\Models\User;
+use Modules\Rescate\Models\Person;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;

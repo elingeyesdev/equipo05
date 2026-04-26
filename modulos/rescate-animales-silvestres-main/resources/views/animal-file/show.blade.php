@@ -19,7 +19,7 @@
                         <div>
                             @php
                                 // Buscar el AnimalHistory más antiguo para este animal_file_id
-                                $oldestHistory = \App\Models\AnimalHistory::where('animal_file_id', $animalFile->id)
+                                $oldestHistory = \Modules\Rescate\Models\AnimalHistory::where('animal_file_id', $animalFile->id)
                                     ->orderBy('id', 'asc') // El más antiguo (menor ID)
                                     ->first();
                                 

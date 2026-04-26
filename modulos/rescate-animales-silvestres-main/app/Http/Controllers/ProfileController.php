@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Person;
-use App\Models\Rescuer;
-use App\Models\Veterinarian;
-use App\Models\Center;
-use App\Models\User;
-use App\Models\ContactMessage;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\Rescuer;
+use Modules\Rescate\Models\Veterinarian;
+use Modules\Rescate\Models\Center;
+use Modules\Rescate\Models\User;
+use Modules\Rescate\Models\ContactMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
-use App\Mail\NewRescuerApplicationNotification;
-use App\Mail\NewVeterinarianApplicationNotification;
-use App\Mail\CaregiverCommitmentConfirmation;
-use App\Rules\NotWebpImage;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Mail\NewRescuerApplicationNotification;
+use Modules\Rescate\Mail\NewVeterinarianApplicationNotification;
+use Modules\Rescate\Mail\CaregiverCommitmentConfirmation;
+use Modules\Rescate\Rules\NotWebpImage;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class ProfileController extends Controller
 {
@@ -77,7 +77,7 @@ class ProfileController extends Controller
             'telefono' => 'nullable|string|max:255',
 
             // Foto de la persona
-            'foto'                => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:5120', new \App\Rules\NotWebpImage()],
+            'foto'                => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage()],
 
             // Cuidador voluntario
             'es_cuidador'         => 'nullable|boolean',
@@ -92,7 +92,7 @@ class ProfileController extends Controller
             'especialidad'        => 'nullable|string|max:255',
 
             // CV y motivo (para rescatista o veterinario)
-            'cv'                  => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120', new \App\Rules\NotWebpImage()],
+            'cv'                  => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage()],
             'motivo_postulacion'  => 'nullable|string',
         ]);
 

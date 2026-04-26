@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Rescate\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\Fire\FocosCalorService;
+use Modules\Rescate\Services\Fire\FocosCalorService;
 use Carbon\Carbon;
 
 class CheckFocosCalor extends Command

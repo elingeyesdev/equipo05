@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Modules\Rescate\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use Modules\Rescate\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ConfirmsPasswords;
 
 class ConfirmPasswordController extends Controller

@@ -20,7 +20,7 @@
                             @include('animal.form', [
                                             'animal' => $animal ?? null,
                                             'reports' => $reports ?? [],
-                                            'animalStatuses' => (\App\Models\AnimalStatus::orderBy('nombre')->get())
+                                            'animalStatuses' => (\Modules\Rescate\Models\AnimalStatus::orderBy('nombre')->get())
                                         ])
 
                         </form>

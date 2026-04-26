@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Transactions\MedicalEvaluationProcessRequest;
-use App\Models\MedicalEvaluation;
-use App\Services\Animal\AnimalMedicalEvaluationTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\Transactions\MedicalEvaluationProcessRequest;
+use Modules\Rescate\Models\MedicalEvaluation;
+use Modules\Rescate\Services\Animal\AnimalMedicalEvaluationTransactionalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

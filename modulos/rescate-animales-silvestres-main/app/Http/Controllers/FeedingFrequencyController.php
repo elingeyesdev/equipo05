@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\FeedingFrequency;
+use Modules\Rescate\Models\FeedingFrequency;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\FeedingFrequencyRequest;
+use Modules\Rescate\Http\Requests\FeedingFrequencyRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

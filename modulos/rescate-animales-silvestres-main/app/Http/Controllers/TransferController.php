@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Transfer;
-use App\Models\Rescuer;
-use App\Models\Center;
+use Modules\Rescate\Models\Transfer;
+use Modules\Rescate\Models\Rescuer;
+use Modules\Rescate\Models\Center;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\TransferRequest;
+use Modules\Rescate\Http\Requests\TransferRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use App\Models\Animal;
-use App\Services\Animal\AnimalTransferTransactionalService;
+use Modules\Rescate\Models\Animal;
+use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
 use Illuminate\Http\JsonResponse;
-use App\Models\Report;
-use App\Models\Person;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Person;
 use Illuminate\Support\Facades\Auth;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class TransferController extends Controller
 {
@@ -38,7 +38,7 @@ class TransferController extends Controller
         // Soporte JSON para centro actual via resource index con query params
         if ($request->boolean('current_center') && $request->filled('animal_id')) {
             $animalId = (int) $request->input('animal_id');
-            $last = \App\Models\Transfer::where('animal_id', $animalId)->orderByDesc('id')->first();
+            $last = \Modules\Rescate\Models\Transfer::where('animal_id', $animalId)->orderByDesc('id')->first();
             $currentCenter = $last?->center;
             $centers = Center::orderBy('nombre')->get(['id','nombre','latitud','longitud']);
             $destinations = $centers->when($currentCenter, function ($c) use ($currentCenter) {
@@ -61,7 +61,7 @@ class TransferController extends Controller
         
         // Filtrar personas: excluir a los que son solo ciudadanos
         // Obtener IDs de usuarios que son solo ciudadanos
-        $onlyCitizenUserIds = \App\Models\User::whereHas('roles', function ($query) {
+        $onlyCitizenUserIds = \Modules\Rescate\Models\User::whereHas('roles', function ($query) {
             $query->where('name', 'ciudadano');
         })->whereDoesntHave('roles', function ($query) {
             $query->whereIn('name', ['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
@@ -127,7 +127,7 @@ class TransferController extends Controller
                 ->take(12)
                 ->get(['id','persona_id','condicion_inicial_id','aprobado','created_at','direccion','imagen_url']);
         } elseif ($tab === 'internal') {
-            $animalFiles = \App\Models\AnimalFile::with(['animal:id,nombre', 'center:id,nombre'])
+            $animalFiles = \Modules\Rescate\Models\AnimalFile::with(['animal:id,nombre', 'center:id,nombre'])
                 ->leftJoin('releases', 'releases.animal_file_id', '=', 'animal_files.id')
                 ->whereNull('releases.animal_file_id')
                 ->orderByDesc('animal_files.id')
@@ -151,14 +151,14 @@ class TransferController extends Controller
         
         // Filtrar personas: excluir a los que son solo ciudadanos
         // Obtener IDs de usuarios que son solo ciudadanos
-        $onlyCitizenUserIds = \App\Models\User::whereHas('roles', function ($query) {
+        $onlyCitizenUserIds = \Modules\Rescate\Models\User::whereHas('roles', function ($query) {
             $query->where('name', 'ciudadano');
         })->whereDoesntHave('roles', function ($query) {
             $query->whereIn('name', ['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
         })->pluck('id');
         
         // Obtener personas que NO tienen usuarios solo ciudadanos
-        $people = \App\Models\Person::where(function ($query) use ($onlyCitizenUserIds) {
+        $people = \Modules\Rescate\Models\Person::where(function ($query) use ($onlyCitizenUserIds) {
             $query->whereNotIn('usuario_id', $onlyCitizenUserIds)
                   ->orWhereNull('usuario_id');
         })->orderBy('nombre')
@@ -180,7 +180,7 @@ class TransferController extends Controller
                     return Redirect::back()->with('error', 'El hallazgo no está aprobado.');
                 }
                 // Evitar duplicado de primer traslado
-                $exists = \App\Models\Transfer::where('primer_traslado', true)
+                $exists = \Modules\Rescate\Models\Transfer::where('primer_traslado', true)
                     ->where('reporte_id', $report->id)
                     ->exists();
                 if ($exists) {
@@ -212,7 +212,7 @@ class TransferController extends Controller
             // Modo traslado interno (entre centros) usando animal_id
             // Derivar animal_id desde animal_file_id si corresponde
             if (empty($data['animal_id']) && !empty($data['animal_file_id'])) {
-                $data['animal_id'] = \App\Models\AnimalFile::where('id', $data['animal_file_id'])->value('animal_id');
+                $data['animal_id'] = \Modules\Rescate\Models\AnimalFile::where('id', $data['animal_file_id'])->value('animal_id');
             }
             $personId = $data['persona_id'] ?? Person::where('usuario_id', Auth::id())->value('id');
             $payload = array_merge($data, [
@@ -257,14 +257,14 @@ class TransferController extends Controller
         
         // Filtrar personas: excluir a los que son solo ciudadanos
         // Obtener IDs de usuarios que son solo ciudadanos
-        $onlyCitizenUserIds = \App\Models\User::whereHas('roles', function ($query) {
+        $onlyCitizenUserIds = \Modules\Rescate\Models\User::whereHas('roles', function ($query) {
             $query->where('name', 'ciudadano');
         })->whereDoesntHave('roles', function ($query) {
             $query->whereIn('name', ['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
         })->pluck('id');
         
         // Obtener personas que NO tienen usuarios solo ciudadanos
-        $people = \App\Models\Person::where(function ($query) use ($onlyCitizenUserIds) {
+        $people = \Modules\Rescate\Models\Person::where(function ($query) use ($onlyCitizenUserIds) {
             $query->whereNotIn('usuario_id', $onlyCitizenUserIds)
                   ->orWhereNull('usuario_id');
         })->orderBy('nombre')

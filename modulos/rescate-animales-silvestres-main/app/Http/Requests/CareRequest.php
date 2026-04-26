@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Modules\Rescate\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +26,7 @@ class CareRequest extends FormRequest
 			'tipo_cuidado_id' => 'required',
 			'descripcion' => 'string',
             // fecha se asigna automáticamente por el sistema
-            'imagen' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:5120', 'dimensions:min_width=64,min_height=64', new \App\Rules\NotWebpImage()],
+            'imagen' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:5120', 'dimensions:min_width=64,min_height=64', new \Modules\Rescate\Rules\NotWebpImage()],
         ];
     }
 }

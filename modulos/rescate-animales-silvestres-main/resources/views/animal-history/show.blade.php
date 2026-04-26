@@ -69,7 +69,7 @@
                                 // Buscar el último AnimalHistory real para este animal_file_id
                                 // (similar a como se hace en el index y en el controlador)
                                 $animalFileId = $animalHistory->animal_file_id;
-                                $lastHistory = \App\Models\AnimalHistory::where('animal_file_id', $animalFileId)
+                                $lastHistory = \Modules\Rescate\Models\AnimalHistory::where('animal_file_id', $animalFileId)
                                     ->orderByDesc('id')
                                     ->first();
                                 

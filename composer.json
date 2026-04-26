@@ -32,6 +32,7 @@
             "App\\": "app/",
             "Modules\\Inventario\\": "modulos/donacion-recepcion-inventario-main/app/",
             "Modules\\Incendios\\": "modulos/monitoreo-incendios-simulacion-main/app/",
+            "Modules\\Rescate\\": "modulos/rescate-animales-silvestres-main/app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Rescuer;
-use App\Models\Person;
+use Modules\Rescate\Models\Rescuer;
+use Modules\Rescate\Models\Person;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\RescuerRequest;
+use Modules\Rescate\Http\Requests\RescuerRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
-use App\Mail\RescuerApplicationResponse;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Mail\RescuerApplicationResponse;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class RescuerController extends Controller
 {

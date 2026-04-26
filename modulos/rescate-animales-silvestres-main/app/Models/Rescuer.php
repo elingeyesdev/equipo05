@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,7 +45,7 @@ class Rescuer extends Model
      */
     public function person()
     {
-        return $this->belongsTo(\App\Models\Person::class, 'persona_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Person::class, 'persona_id', 'id');
     }
     
     /**
@@ -53,7 +53,7 @@ class Rescuer extends Model
      */
     public function transfers()
     {
-        return $this->hasMany(\App\Models\Transfer::class, 'id', 'rescatista_id');
+        return $this->hasMany(\Modules\Rescate\Models\Transfer::class, 'id', 'rescatista_id');
     }
     
 }

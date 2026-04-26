@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\CareFeeding;
-use App\Models\Care;
-use App\Models\FeedingType;
-use App\Models\FeedingFrequency;
-use App\Models\FeedingPortion;
+use Modules\Rescate\Models\CareFeeding;
+use Modules\Rescate\Models\Care;
+use Modules\Rescate\Models\FeedingType;
+use Modules\Rescate\Models\FeedingFrequency;
+use Modules\Rescate\Models\FeedingPortion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CareFeedingRequest;
+use Modules\Rescate\Http\Requests\CareFeedingRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Carbon;

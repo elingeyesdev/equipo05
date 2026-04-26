@@ -23,7 +23,7 @@ Proyecto nuevo para unificar de forma gradual:
 - Accesos iniciales agregados en el sistema principal:
   - Web: `/incendios` y `/rescate`
   - API activa de incendios: `/api/incendios/*`
-  - API de estado de rescate: `/api/rescate/status`
+  - API activa de rescate: `/api/rescate/*`
 
 ## Arranque local
 1. Instalar dependencias:

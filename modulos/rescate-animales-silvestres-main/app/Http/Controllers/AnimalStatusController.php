@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\AnimalStatus;
+use Modules\Rescate\Models\AnimalStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\AnimalStatusRequest;
+use Modules\Rescate\Http\Requests\AnimalStatusRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

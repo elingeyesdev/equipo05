@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Veterinarian;
-use App\Models\Person;
+use Modules\Rescate\Models\Veterinarian;
+use Modules\Rescate\Models\Person;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\VeterinarianRequest;
+use Modules\Rescate\Http\Requests\VeterinarianRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
-use App\Mail\VeterinarianApplicationResponse;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Mail\VeterinarianApplicationResponse;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class VeterinarianController extends Controller
 {

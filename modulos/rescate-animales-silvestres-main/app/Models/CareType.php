@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,7 +35,7 @@ class CareType extends Model
      */
     public function cares()
     {
-        return $this->hasMany(\App\Models\Care::class, 'id', 'tipo_cuidado_id');
+        return $this->hasMany(\Modules\Rescate\Models\Care::class, 'id', 'tipo_cuidado_id');
     }
     
 }

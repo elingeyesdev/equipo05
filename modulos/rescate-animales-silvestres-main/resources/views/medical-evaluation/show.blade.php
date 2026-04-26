@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="form-group mb-2 mb20">
                                     <strong>Estado de salud anterior:</strong>
-                                    @php($prev = \App\Models\AnimalHistory::where('animal_file_id', $medicalEvaluation->animal_file_id ?? null)
+                                    @php($prev = \Modules\Rescate\Models\AnimalHistory::where('animal_file_id', $medicalEvaluation->animal_file_id ?? null)
                                         ->whereNotNull('valores_nuevos')
                                         ->whereRaw("(valores_nuevos->'evaluacion_medica'->>'id')::text = ?", [(string)($medicalEvaluation->id ?? '')])
                                         ->first())

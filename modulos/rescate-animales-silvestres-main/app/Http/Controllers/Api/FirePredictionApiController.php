@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Services\Fire\FirePredictionService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Services\Fire\FirePredictionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

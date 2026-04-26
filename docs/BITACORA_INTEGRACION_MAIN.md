@@ -81,3 +81,22 @@ Cambios:
 Resultado esperado:
 
 - El modulo de incendios deja de estar en modo placeholder y pasa a un montaje real dentro del sistema principal, con base tecnica lista para ajuste de login unico por entidad de usuario.
+
+### Hito 4 - Integracion tecnica real del modulo Rescate de Animales Silvestres
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se migra el namespace del modulo de rescate a `Modules\\Rescate\\*`.
+- Se registra autoload PSR-4 para rescate en `composer.json`.
+- Se montan rutas web reales del modulo con prefijo:
+  - `/rescate/*` y nombres `rescate.*`
+- Se montan rutas API reales del modulo con prefijo:
+  - `/api/rescate/*`
+- Se desactiva `Auth::routes()` interno del modulo para respetar autenticacion centralizada.
+- El menu lateral apunta ahora a `rescate.home`.
+
+Resultado esperado:
+
+- El modulo de rescate queda montado estructuralmente dentro del sistema principal, compartiendo el login central y preparado para normalizacion de modelo de usuario/roles.

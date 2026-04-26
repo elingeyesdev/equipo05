@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Services\History;
+namespace Modules\Rescate\Services\History;
 
-use App\Models\AnimalHistory;
-use App\Models\AnimalStatus;
-use App\Models\CareType;
-use App\Models\FeedingFrequency;
-use App\Models\FeedingPortion;
-use App\Models\FeedingType;
-use App\Models\TreatmentType;
-use App\Models\Veterinarian;
-use App\Models\Care;
-use App\Models\MedicalEvaluation;
-use App\Models\Person;
-use App\Models\Center;
-use App\Models\Species;
-use App\Models\Report;
-use App\Models\Transfer;
-use App\Models\Release;
-use App\Models\AnimalFile as AnimalFileModel;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Models\CareType;
+use Modules\Rescate\Models\FeedingFrequency;
+use Modules\Rescate\Models\FeedingPortion;
+use Modules\Rescate\Models\FeedingType;
+use Modules\Rescate\Models\TreatmentType;
+use Modules\Rescate\Models\Veterinarian;
+use Modules\Rescate\Models\Care;
+use Modules\Rescate\Models\MedicalEvaluation;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\Center;
+use Modules\Rescate\Models\Species;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Transfer;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\AnimalFile as AnimalFileModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -125,12 +125,12 @@ class AnimalHistoryTimelineService
                 // Resolver catálogos si llegan por JSON
                 $condText = null;
                 if (!empty($rp['condicion_inicial_id'])) {
-                    $condModel = \App\Models\AnimalCondition::find($rp['condicion_inicial_id']);
+                    $condModel = \Modules\Rescate\Models\AnimalCondition::find($rp['condicion_inicial_id']);
                     $condText = $condModel?->nombre;
                 }
                 $incText = null;
                 if (!empty($rp['tipo_incidente_id'])) {
-                    $incModel = \App\Models\IncidentType::find($rp['tipo_incidente_id']);
+                    $incModel = \Modules\Rescate\Models\IncidentType::find($rp['tipo_incidente_id']);
                     $incText = $incModel?->nombre;
                 }
 				$item['details'][] = [

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Report;
+namespace Modules\Rescate\Services\Report;
 
-use App\Models\AnimalCondition;
-use App\Models\IncidentType;
+use Modules\Rescate\Models\AnimalCondition;
+use Modules\Rescate\Models\IncidentType;
 
 class ReportUrgencyService
 {

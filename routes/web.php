@@ -202,3 +202,10 @@ Route::prefix('incendios')
     ->group(function () {
         require base_path('modulos/monitoreo-incendios-simulacion-main/routes/web.php');
     });
+
+Route::prefix('rescate')
+    ->as('rescate.')
+    ->middleware(['auth'])
+    ->group(function () {
+        require base_path('modulos/rescate-animales-silvestres-main/routes/web.php');
+    });

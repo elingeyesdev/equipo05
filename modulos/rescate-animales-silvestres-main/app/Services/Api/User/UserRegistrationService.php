@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\Api\User;
+namespace Modules\Rescate\Services\Api\User;
 
-use App\Models\User;
-use App\Models\Person;
+use Modules\Rescate\Models\User;
+use Modules\Rescate\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class UserRegistrationService
 {

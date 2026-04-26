@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,7 +40,7 @@ class CareFeeding extends Model
      */
     public function care()
     {
-        return $this->belongsTo(\App\Models\Care::class, 'care_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Care::class, 'care_id', 'id');
     }
     
     /**
@@ -48,7 +48,7 @@ class CareFeeding extends Model
      */
     public function feedingFrequency()
     {
-        return $this->belongsTo(\App\Models\FeedingFrequency::class, 'feeding_frequency_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\FeedingFrequency::class, 'feeding_frequency_id', 'id');
     }
     
     /**
@@ -56,7 +56,7 @@ class CareFeeding extends Model
      */
     public function feedingPortion()
     {
-        return $this->belongsTo(\App\Models\FeedingPortion::class, 'feeding_portion_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\FeedingPortion::class, 'feeding_portion_id', 'id');
     }
     
     /**
@@ -64,7 +64,7 @@ class CareFeeding extends Model
      */
     public function feedingType()
     {
-        return $this->belongsTo(\App\Models\FeedingType::class, 'feeding_type_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\FeedingType::class, 'feeding_type_id', 'id');
     }
     
 }

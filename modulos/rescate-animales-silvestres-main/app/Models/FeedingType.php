@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,7 +35,7 @@ class FeedingType extends Model
      */
     public function careFeedings()
     {
-        return $this->hasMany(\App\Models\CareFeeding::class, 'id', 'feeding_type_id');
+        return $this->hasMany(\Modules\Rescate\Models\CareFeeding::class, 'id', 'feeding_type_id');
     }
     
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Fire;
+namespace Modules\Rescate\Services\Fire;
 
-use App\Models\Report;
+use Modules\Rescate\Models\Report;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 

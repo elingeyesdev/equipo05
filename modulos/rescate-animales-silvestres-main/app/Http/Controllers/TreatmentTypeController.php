@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\TreatmentType;
+use Modules\Rescate\Models\TreatmentType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\TreatmentTypeRequest;
+use Modules\Rescate\Http\Requests\TreatmentTypeRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

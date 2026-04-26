@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ReleaseRequest;
-use App\Models\Release;
-use App\Models\AnimalFile;
-use App\Services\Animal\AnimalReleaseTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\ReleaseRequest;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Services\Animal\AnimalReleaseTransactionalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Rescate\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
-use App\Services\Fire\FocosCalorService;
+use Modules\Rescate\Services\Fire\FocosCalorService;
 use Carbon\Carbon;
 
 class ImportNasaFirms extends Command

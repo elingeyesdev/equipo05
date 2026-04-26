@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Report;
-use App\Models\Person;
-use App\Models\AnimalHistory;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\AnimalHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\ReportRequest;
-use App\Services\Animal\AnimalTransferTransactionalService;
-use App\Services\Report\ReportUrgencyService;
+use Modules\Rescate\Http\Requests\ReportRequest;
+use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
+use Modules\Rescate\Services\Report\ReportUrgencyService;
 
 class ReportApiController extends Controller
 {

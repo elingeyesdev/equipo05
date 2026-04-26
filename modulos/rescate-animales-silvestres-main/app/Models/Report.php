@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Transfer;
+use Modules\Rescate\Models\Transfer;
 
 /**
  * Class Report
@@ -54,7 +54,7 @@ class Report extends Model
      */
     public function person()
     {
-        return $this->belongsTo(\App\Models\Person::class, 'persona_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Person::class, 'persona_id', 'id');
     }
     
     /**
@@ -64,8 +64,8 @@ class Report extends Model
     {
         // Compatibilidad: obtener animal_files a través de animals (report -> animals -> animal_files)
         return $this->hasManyThrough(
-            \App\Models\AnimalFile::class,
-            \App\Models\Animal::class,
+            \Modules\Rescate\Models\AnimalFile::class,
+            \Modules\Rescate\Models\Animal::class,
             'reporte_id',   // Foreign key on animals referencing reports.id
             'animal_id',    // Foreign key on animal_files referencing animals.id
             'id',           // Local key on reports
@@ -78,7 +78,7 @@ class Report extends Model
      */
     public function animals()
     {
-        return $this->hasMany(\App\Models\Animal::class, 'reporte_id', 'id');
+        return $this->hasMany(\Modules\Rescate\Models\Animal::class, 'reporte_id', 'id');
     }
 
     /**
@@ -86,7 +86,7 @@ class Report extends Model
      */
     public function condicionInicial()
     {
-        return $this->belongsTo(\App\Models\AnimalCondition::class, 'condicion_inicial_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\AnimalCondition::class, 'condicion_inicial_id', 'id');
     }
 
     /**
@@ -94,7 +94,7 @@ class Report extends Model
      */
     public function incidentType()
     {
-        return $this->belongsTo(\App\Models\IncidentType::class, 'tipo_incidente_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\IncidentType::class, 'tipo_incidente_id', 'id');
     }
 
     /**
@@ -130,7 +130,7 @@ class Report extends Model
             return collect();
         }
 
-        $service = app(\App\Services\Fire\FocosCalorService::class);
+        $service = app(\Modules\Rescate\Services\Fire\FocosCalorService::class);
         return $service->getNearbyHotspots(
             (float) $this->latitud,
             (float) $this->longitud,

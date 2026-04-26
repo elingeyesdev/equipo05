@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Transactions;
+namespace Modules\Rescate\Http\Controllers\Transactions;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Transactions\AnimalWithFileRequest;
-use App\Models\Animal;
-use App\Models\AnimalFile;
-use App\Models\AnimalStatus;
-use App\Models\Report;
-use App\Models\Species;
-use App\Models\AnimalHistory;
-use App\Services\Animal\AnimalTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\Transactions\AnimalWithFileRequest;
+use Modules\Rescate\Models\Animal;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Species;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Services\Animal\AnimalTransactionalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;

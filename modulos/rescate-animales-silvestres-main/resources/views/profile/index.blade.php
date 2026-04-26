@@ -666,7 +666,7 @@
                                                             </td>
                                                             <td>
                                                                 <span class="badge badge-info">
-                                                                    {{ \App\Models\ContactMessage::getMotivos()[$message->motivo] ?? $message->motivo }}
+                                                                    {{ \Modules\Rescate\Models\ContactMessage::getMotivos()[$message->motivo] ?? $message->motivo }}
                                                                 </span>
                                                             </td>
                                                             <td>
@@ -716,7 +716,7 @@
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         <p><strong>Fecha:</strong> {{ $message->created_at->format('d/m/Y H:i') }}</p>
-                                                                        <p><strong>Motivo:</strong> {{ \App\Models\ContactMessage::getMotivos()[$message->motivo] ?? $message->motivo }}</p>
+                                                                        <p><strong>Motivo:</strong> {{ \Modules\Rescate\Models\ContactMessage::getMotivos()[$message->motivo] ?? $message->motivo }}</p>
                                                                         <p><strong>Usuario:</strong> {{ $message->user->person->nombre ?? $message->user->email }} ({{ $message->user->email }})</p>
                                                                         <hr>
                                                                         <p><strong>Mensaje:</strong></p>
@@ -768,7 +768,7 @@
                                             <label for="motivo">Motivo del contacto <span class="text-danger">*</span></label>
                                             <select name="motivo" id="motivo" class="form-control @error('motivo') is-invalid @enderror" required>
                                                 <option value="">Selecciona un motivo</option>
-                                                @foreach(\App\Models\ContactMessage::getMotivos() as $key => $label)
+                                                @foreach(\Modules\Rescate\Models\ContactMessage::getMotivos() as $key => $label)
                                                     <option value="{{ $key }}" {{ old('motivo') === $key ? 'selected' : '' }}>
                                                         {{ $label }}
                                                     </option>

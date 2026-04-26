@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Release;
-use App\Models\Report;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\Report;
 use Illuminate\View\View;
 
 class LandingController extends Controller

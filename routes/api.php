@@ -13,11 +13,6 @@ Route::prefix('incendios')
     });
 
 Route::prefix('rescate')
-    ->middleware('auth:sanctum')
     ->group(function () {
-        Route::get('/status', fn () => response()->json([
-            'modulo' => 'rescate-animales-silvestres-main',
-            'estado' => 'integrado_en_repositorio',
-            'siguiente_paso' => 'adaptacion_de_controladores_a_login_unico',
-        ]));
+        require base_path('modulos/rescate-animales-silvestres-main/routes/api.php');
     });

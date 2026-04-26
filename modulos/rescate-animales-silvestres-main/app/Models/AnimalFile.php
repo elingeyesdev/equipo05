@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -41,7 +41,7 @@ class AnimalFile extends Model
      */
     public function species()
     {
-        return $this->belongsTo(\App\Models\Species::class, 'especie_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Species::class, 'especie_id', 'id');
     }
     
     /**
@@ -49,7 +49,7 @@ class AnimalFile extends Model
      */
     public function animalStatus()
     {
-        return $this->belongsTo(\App\Models\AnimalStatus::class, 'estado_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\AnimalStatus::class, 'estado_id', 'id');
     }
     
     /**
@@ -57,7 +57,7 @@ class AnimalFile extends Model
      */
     public function animal()
     {
-        return $this->belongsTo(\App\Models\Animal::class, 'animal_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Animal::class, 'animal_id', 'id');
     }
         
     /**
@@ -65,7 +65,7 @@ class AnimalFile extends Model
      */
     public function center()
     {
-        return $this->belongsTo(\App\Models\Center::class, 'centro_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Center::class, 'centro_id', 'id');
     }
     
     /**
@@ -73,7 +73,7 @@ class AnimalFile extends Model
      */
     public function cares()
     {
-        return $this->hasMany(\App\Models\Care::class, 'hoja_animal_id', 'id');
+        return $this->hasMany(\Modules\Rescate\Models\Care::class, 'hoja_animal_id', 'id');
     }
     
     /**
@@ -81,7 +81,7 @@ class AnimalFile extends Model
      */
     public function release()
     {
-        return $this->hasOne(\App\Models\Release::class, 'animal_file_id', 'id');
+        return $this->hasOne(\Modules\Rescate\Models\Release::class, 'animal_file_id', 'id');
     }
     
     /**
@@ -89,7 +89,7 @@ class AnimalFile extends Model
      */
     public function medicalEvaluations()
     {
-        return $this->hasMany(\App\Models\MedicalEvaluation::class, 'animal_file_id', 'id');
+        return $this->hasMany(\Modules\Rescate\Models\MedicalEvaluation::class, 'animal_file_id', 'id');
     }
 
     /**

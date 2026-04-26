@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Transactions\AnimalWithFileRequest;
-use App\Models\AnimalFile;
-use App\Models\AnimalStatus;
-use App\Models\Report;
-use App\Services\Animal\AnimalTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\Transactions\AnimalWithFileRequest;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Services\Animal\AnimalTransactionalService;
 use Illuminate\Http\JsonResponse;
 
 class AnimalFileApiController extends Controller

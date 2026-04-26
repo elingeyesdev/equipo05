@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Modules\Rescate\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -33,7 +33,7 @@ class ReleaseRequest extends FormRequest
                 'exists:animal_files,id',
                 Rule::unique('releases', 'animal_file_id')->ignore($id),
             ],
-            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \App\Rules\NotWebpImage()],
+            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
         ];
         // Las liberaciones siempre están aprobadas (solo administradores pueden crearlas)
         return $rules;

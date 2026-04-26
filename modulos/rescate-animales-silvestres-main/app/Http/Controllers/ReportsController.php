@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Report;
-use App\Models\Transfer;
-use App\Models\AnimalFile;
-use App\Models\Center;
-use App\Models\Release;
-use App\Models\MedicalEvaluation;
-use App\Models\AnimalStatus;
-use App\Models\Rescuer;
-use App\Models\Veterinarian;
-use App\Models\UserTracking;
-use App\Models\AnimalHistory;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Transfer;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\Center;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\MedicalEvaluation;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Models\Rescuer;
+use Modules\Rescate\Models\Veterinarian;
+use Modules\Rescate\Models\UserTracking;
+use Modules\Rescate\Models\AnimalHistory;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;

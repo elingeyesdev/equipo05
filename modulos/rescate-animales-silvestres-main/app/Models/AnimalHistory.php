@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,7 +28,7 @@ class AnimalHistory extends Model
      */
     public function animalFile()
     {
-        return $this->belongsTo(\App\Models\AnimalFile::class, 'animal_file_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\AnimalFile::class, 'animal_file_id', 'id');
     }
 }
 

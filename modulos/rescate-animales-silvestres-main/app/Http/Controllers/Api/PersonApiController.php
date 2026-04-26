@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\PersonResource;
-use App\Models\Person;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Resources\PersonResource;
+use Modules\Rescate\Models\Person;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

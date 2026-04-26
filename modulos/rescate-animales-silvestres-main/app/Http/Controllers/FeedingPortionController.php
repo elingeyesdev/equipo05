@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\FeedingPortion;
+use Modules\Rescate\Models\FeedingPortion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\FeedingPortionRequest;
+use Modules\Rescate\Http\Requests\FeedingPortionRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

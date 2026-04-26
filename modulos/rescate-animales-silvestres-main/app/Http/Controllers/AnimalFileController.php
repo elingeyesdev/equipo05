@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\AnimalFile;
-use App\Models\AnimalHistory;
-use App\Models\Species;
-use App\Models\AnimalStatus;
-use App\Models\Report;
-use App\Models\Animal;
-use App\Models\Center;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\Species;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Animal;
+use Modules\Rescate\Models\Center;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\AnimalFileRequest;
+use Modules\Rescate\Http\Requests\AnimalFileRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;

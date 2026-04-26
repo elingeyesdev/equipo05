@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Care;
-use App\Models\AnimalFile;
-use App\Models\CareType;
+use Modules\Rescate\Models\Care;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\CareType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CareRequest;
+use Modules\Rescate\Http\Requests\CareRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;

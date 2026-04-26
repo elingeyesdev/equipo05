@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Release;
-use App\Models\AnimalFile;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\AnimalFile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\ReleaseRequest;
+use Modules\Rescate\Http\Requests\ReleaseRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use App\Services\Animal\AnimalReleaseTransactionalService;
+use Modules\Rescate\Services\Animal\AnimalReleaseTransactionalService;
 
 class ReleaseController extends Controller
 {
@@ -54,7 +54,7 @@ class ReleaseController extends Controller
         $releases = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
 
         // Datos para filtros
-        $species = \App\Models\Species::orderBy('nombre')->get();
+        $species = \Modules\Rescate\Models\Species::orderBy('nombre')->get();
 
         return view('release.index', compact('releases', 'species'))
             ->with('i', ($request->input('page', 1) - 1) * $releases->perPage());

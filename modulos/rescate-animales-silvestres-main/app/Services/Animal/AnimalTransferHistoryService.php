@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Animal;
+namespace Modules\Rescate\Services\Animal;
 
-use App\Models\AnimalFile;
-use App\Models\AnimalHistory;
-use App\Models\Center;
-use App\Models\Transfer;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\Center;
+use Modules\Rescate\Models\Transfer;
 
 class AnimalTransferHistoryService
 {

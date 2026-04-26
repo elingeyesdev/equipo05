@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,7 +37,7 @@ class Transfer extends Model
      */
     public function center()
     {
-        return $this->belongsTo(\App\Models\Center::class, 'centro_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Center::class, 'centro_id', 'id');
     }
     
     /**
@@ -45,7 +45,7 @@ class Transfer extends Model
      */
     public function person()
     {
-        return $this->belongsTo(\App\Models\Person::class, 'persona_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Person::class, 'persona_id', 'id');
     }
     
     /**
@@ -53,7 +53,7 @@ class Transfer extends Model
      */
     public function report()
     {
-        return $this->belongsTo(\App\Models\Report::class, 'reporte_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Report::class, 'reporte_id', 'id');
     }
     
 }

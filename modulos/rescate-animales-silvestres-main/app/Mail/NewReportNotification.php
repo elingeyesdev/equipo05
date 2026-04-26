@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Mail;
+namespace Modules\Rescate\Mail;
 
-use App\Models\Report;
+use Modules\Rescate\Models\Report;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;

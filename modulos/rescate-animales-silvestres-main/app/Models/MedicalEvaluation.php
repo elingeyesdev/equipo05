@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -57,7 +57,7 @@ class MedicalEvaluation extends Model
      */
     public function treatmentType()
     {
-        return $this->belongsTo(\App\Models\TreatmentType::class, 'tratamiento_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\TreatmentType::class, 'tratamiento_id', 'id');
     }
     
     /**
@@ -65,7 +65,7 @@ class MedicalEvaluation extends Model
      */
     public function veterinarian()
     {
-        return $this->belongsTo(\App\Models\Veterinarian::class, 'veterinario_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\Veterinarian::class, 'veterinario_id', 'id');
     }
     
     /**
@@ -73,7 +73,7 @@ class MedicalEvaluation extends Model
      */
     public function animalFile()
     {
-        return $this->belongsTo(\App\Models\AnimalFile::class, 'animal_file_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\AnimalFile::class, 'animal_file_id', 'id');
     }
     
     // Nota: no se define relación directa de FK para animal_file_id por decisión de negocio.

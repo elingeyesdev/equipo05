@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Transactions;
+namespace Modules\Rescate\Http\Controllers\Transactions;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Transactions\FeedingProcessRequest;
-use App\Models\AnimalFile;
-use App\Models\FeedingFrequency;
-use App\Models\FeedingPortion;
-use App\Models\FeedingType;
-use App\Services\Animal\AnimalFeedingTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\Transactions\FeedingProcessRequest;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\FeedingFrequency;
+use Modules\Rescate\Models\FeedingPortion;
+use Modules\Rescate\Models\FeedingType;
+use Modules\Rescate\Services\Animal\AnimalFeedingTransactionalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;

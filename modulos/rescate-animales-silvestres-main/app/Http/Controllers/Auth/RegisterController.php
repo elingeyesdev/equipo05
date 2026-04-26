@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Modules\Rescate\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Person;
-use App\Models\Report;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\Report;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class RegisterController extends Controller
 {
@@ -59,7 +59,7 @@ class RegisterController extends Controller
             'telefono' => ['nullable', 'string', 'max:50'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'foto' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120', new \App\Rules\NotWebpImage()],
+            'foto' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage()],
         ];
 
         $messages = [
@@ -87,7 +87,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Models\User
+     * @return \Modules\Rescate\Models\User
      */
     protected function create(array $data)
     {

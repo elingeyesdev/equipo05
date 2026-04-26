@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Mail;
+namespace Modules\Rescate\Mail;
 
-use App\Models\Rescuer;
+use Modules\Rescate\Models\Rescuer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;

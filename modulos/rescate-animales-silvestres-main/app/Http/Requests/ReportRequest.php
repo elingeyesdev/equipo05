@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Modules\Rescate\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,7 +24,7 @@ class ReportRequest extends FormRequest
         $isUpdate = in_array($this->method(), ['PUT', 'PATCH']);
         $rules = [
             // persona_id and aprobado are set server-side (aprobado solo en update)
-            'imagen' => [($isUpdate ? 'nullable' : 'required'), 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \App\Rules\NotWebpImage()],
+            'imagen' => [($isUpdate ? 'nullable' : 'required'), 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
             'observaciones' => 'nullable|string',
             // ubicación solo se exige en creación
             'latitud' => $isUpdate ? 'nullable|numeric' : 'required|numeric',
@@ -53,8 +53,8 @@ class ReportRequest extends FormRequest
     {
         $validator->after(function ($v) {
             try {
-                $condDesconocidoId = \App\Models\AnimalCondition::where('nombre', 'Desconocido')->value('id');
-                $incOtroId = \App\Models\IncidentType::where('nombre', 'Otro')->value('id');
+                $condDesconocidoId = \Modules\Rescate\Models\AnimalCondition::where('nombre', 'Desconocido')->value('id');
+                $incOtroId = \Modules\Rescate\Models\IncidentType::where('nombre', 'Otro')->value('id');
             } catch (\Throwable $e) {
                 $condDesconocidoId = null;
                 $incOtroId = null;

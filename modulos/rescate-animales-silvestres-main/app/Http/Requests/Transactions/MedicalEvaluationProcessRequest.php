@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Transactions;
+namespace Modules\Rescate\Http\Requests\Transactions;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -30,7 +30,7 @@ class MedicalEvaluationProcessRequest extends FormRequest
             'apto_traslado' => 'required|string|in:si,no,con_restricciones',
             'fecha' => 'nullable|date',
             'observaciones' => 'nullable|string',
-            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120', new \App\Rules\NotWebpImage()],
+            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage()],
         ];
     }
 }

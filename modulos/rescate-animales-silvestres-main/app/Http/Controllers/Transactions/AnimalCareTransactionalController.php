@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Transactions;
+namespace Modules\Rescate\Http\Controllers\Transactions;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Transactions\CareProcessRequest;
-use App\Models\AnimalFile;
-use App\Models\AnimalHistory;
-use App\Models\CareType;
-use App\Models\Center;
-use App\Services\Animal\AnimalCareTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\Transactions\CareProcessRequest;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\CareType;
+use Modules\Rescate\Models\Center;
+use Modules\Rescate\Services\Animal\AnimalCareTransactionalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;

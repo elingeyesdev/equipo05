@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Menu\Filters;
+namespace Modules\Rescate\Menu\Filters;
 
 use JeroenNoten\LaravelAdminLte\Menu\Filters\FilterInterface;
 use Illuminate\Support\Facades\Auth;

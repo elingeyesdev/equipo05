@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Services\Dashboard\DashboardService;
-use App\Services\Fire\FocosCalorService;
-use App\Services\Fire\ExternalFireReportsService;
-use App\Models\Species;
+use Modules\Rescate\Services\Dashboard\DashboardService;
+use Modules\Rescate\Services\Fire\FocosCalorService;
+use Modules\Rescate\Services\Fire\ExternalFireReportsService;
+use Modules\Rescate\Models\Species;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
@@ -50,14 +50,14 @@ class HomeController extends Controller
     private function getMapaCampoData(): array
     {
         // Obtener reportes/hallazgos aprobados
-        $reports = \App\Models\Report::with(['person', 'condicionInicial', 'incidentType'])
+        $reports = \Modules\Rescate\Models\Report::with(['person', 'condicionInicial', 'incidentType'])
             ->where('aprobado', 1)
             ->whereNotNull('latitud')
             ->whereNotNull('longitud')
             ->orderByDesc('id')
             ->get()
             ->map(function ($report) {
-                $hasAnimalFiles = \App\Models\AnimalFile::whereHas('animal', function ($q) use ($report) {
+                $hasAnimalFiles = \Modules\Rescate\Models\AnimalFile::whereHas('animal', function ($q) use ($report) {
                     $q->where('reporte_id', $report->id);
                 })->exists();
                 
@@ -100,7 +100,7 @@ class HomeController extends Controller
         $focosCalorFormatted = $this->focosCalorService->formatForMap($focosCalor);
 
         // Obtener liberaciones
-        $releases = \App\Models\Release::with(['animalFile.species', 'animalFile.animal', 'animalFile.animalStatus'])
+        $releases = \Modules\Rescate\Models\Release::with(['animalFile.species', 'animalFile.animal', 'animalFile.animalStatus'])
             ->whereNotNull('latitud')
             ->whereNotNull('longitud')
             ->orderByDesc('created_at')

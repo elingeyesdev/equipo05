@@ -139,7 +139,7 @@
                             </label>
                             <select name="cuidador_center_id" id="cuidador_center_id" class="form-control @error('cuidador_center_id') is-invalid @enderror">
                                 <option value="">Seleccione un centro</option>
-                                @foreach(\App\Models\Center::orderBy('nombre')->get() as $center)
+                                @foreach(\Modules\Rescate\Models\Center::orderBy('nombre')->get() as $center)
                                     <option value="{{ $center->id }}" {{ old('cuidador_center_id', $person?->cuidador_center_id) == $center->id ? 'selected' : '' }}>
                                         {{ $center->nombre }}
                                     </option>

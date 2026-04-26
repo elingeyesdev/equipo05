@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Rescate\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,7 +34,7 @@ class TreatmentType extends Model
      */
     public function medicalEvaluations()
     {
-        return $this->hasMany(\App\Models\MedicalEvaluation::class, 'id', 'tratamiento_id');
+        return $this->hasMany(\Modules\Rescate\Models\MedicalEvaluation::class, 'id', 'tratamiento_id');
     }
     
 }

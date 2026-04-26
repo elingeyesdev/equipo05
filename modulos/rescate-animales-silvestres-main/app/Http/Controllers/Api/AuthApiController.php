@@ -1,9 +1,9 @@
 <?php
  
-namespace App\Http\Controllers\Api;
+namespace Modules\Rescate\Http\Controllers\Api;
  
-use App\Http\Controllers\Controller;
-use App\Models\User;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
  
@@ -25,7 +25,7 @@ class AuthApiController extends Controller
             ], 401);
         }
  
-        /** @var \App\Models\User $user */
+        /** @var \Modules\Rescate\Models\User $user */
         $user = User::where('email', $request->email)->firstOrFail();
  
         // Crea el token para uso desde otro dispositivo (por ejemplo, app móvil)

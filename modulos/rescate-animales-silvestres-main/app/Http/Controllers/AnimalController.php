@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\Animal;
+use Modules\Rescate\Models\Animal;
 use Illuminate\Support\Facades\DB;
-use App\Models\Report;
+use Modules\Rescate\Models\Report;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\AnimalRequest;
+use Modules\Rescate\Http\Requests\AnimalRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\UserTracking;
-use App\Models\User;
-use App\Models\Report;
-use App\Models\Release;
-use App\Models\AnimalFile;
-use App\Models\Species;
-use App\Models\AnimalStatus;
-use App\Services\History\AnimalHistoryTimelineService;
+use Modules\Rescate\Models\UserTracking;
+use Modules\Rescate\Models\User;
+use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Release;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\Species;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Services\History\AnimalHistoryTimelineService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

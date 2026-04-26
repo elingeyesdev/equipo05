@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Fire;
+namespace Modules\Rescate\Services\Fire;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

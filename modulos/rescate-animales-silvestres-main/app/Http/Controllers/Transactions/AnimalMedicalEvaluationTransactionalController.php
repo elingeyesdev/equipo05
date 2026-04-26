@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Transactions;
+namespace Modules\Rescate\Http\Controllers\Transactions;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Transactions\MedicalEvaluationProcessRequest;
-use App\Models\AnimalFile;
-use App\Models\AnimalStatus;
-use App\Models\TreatmentType;
-use App\Models\Veterinarian;
-use App\Services\Animal\AnimalMedicalEvaluationTransactionalService;
+use Modules\Rescate\Http\Controllers\Controller;
+use Modules\Rescate\Http\Requests\Transactions\MedicalEvaluationProcessRequest;
+use Modules\Rescate\Models\AnimalFile;
+use Modules\Rescate\Models\AnimalStatus;
+use Modules\Rescate\Models\TreatmentType;
+use Modules\Rescate\Models\Veterinarian;
+use Modules\Rescate\Services\Animal\AnimalMedicalEvaluationTransactionalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
@@ -35,7 +35,7 @@ class AnimalMedicalEvaluationTransactionalController extends Controller
 		// Pre-evaluación: últimas 3 evaluaciones y último historial (no médico)
 		$lastDataByAnimalFile = [];
 		foreach ($animalFiles as $af) {
-			$lastEvals = \App\Models\MedicalEvaluation::with('treatmentType')
+			$lastEvals = \Modules\Rescate\Models\MedicalEvaluation::with('treatmentType')
 				->where('animal_file_id', $af->id)
 				->orderByDesc('fecha')->orderByDesc('id')->limit(3)
 				->get(['id','fecha','descripcion','diagnostico','tratamiento_id','tratamiento_texto','peso','temperatura','imagen_url'])
@@ -54,7 +54,7 @@ class AnimalMedicalEvaluationTransactionalController extends Controller
 					];
 				});
 
-			$lastNonMedHistory = \App\Models\AnimalHistory::where('animal_file_id', $af->id)
+			$lastNonMedHistory = \Modules\Rescate\Models\AnimalHistory::where('animal_file_id', $af->id)
 				->where(function($q){ $q->whereNull('valores_nuevos->evaluacion_medica'); })
 				->orderByDesc('changed_at')->orderByDesc('id')->first(['id','changed_at','valores_nuevos','observaciones']);
 

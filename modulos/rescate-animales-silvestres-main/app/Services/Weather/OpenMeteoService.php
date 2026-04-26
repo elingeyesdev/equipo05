@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Weather;
+namespace Modules\Rescate\Services\Weather;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

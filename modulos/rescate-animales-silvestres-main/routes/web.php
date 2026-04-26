@@ -1,39 +1,39 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\CenterController;
-use App\Http\Controllers\AnimalController;
-use App\Http\Controllers\AnimalProfileController;
-use App\Http\Controllers\DispositionController;
-use App\Http\Controllers\HealthRecordController;
-use App\Http\Controllers\AnimalStatusController;
-use App\Http\Controllers\CareTypeController;
-use App\Http\Controllers\CareController;
-use App\Http\Controllers\AnimalFileController;
-use App\Http\Controllers\PersonController;
-use App\Http\Controllers\SpeciesController;
-use App\Http\Controllers\ReleaseController;
-use App\Http\Controllers\VeterinarianController;
-use App\Http\Controllers\MedicalEvaluationController;
-use App\Http\Controllers\TreatmentTypeController;
-use App\Http\Controllers\RescuerController;
-use App\Http\Controllers\TransferController;
-use App\Http\Controllers\CareFeedingController;
-use App\Http\Controllers\FeedingTypeController;
-use App\Http\Controllers\FeedingFrequencyController;
-use App\Http\Controllers\FeedingPortionController;
-use App\Http\Controllers\IncidentTypeController;
-use App\Http\Controllers\AnimalConditionController;
-use App\Http\Controllers\Transactions\AnimalTransactionalController;
-use App\Http\Controllers\Transactions\AnimalFeedingTransactionalController;
-use App\Http\Controllers\Transactions\AnimalMedicalEvaluationTransactionalController;
-use App\Http\Controllers\Transactions\AnimalCareTransactionalController;
+use Modules\Rescate\Http\Controllers\ReportController;
+use Modules\Rescate\Http\Controllers\CenterController;
+use Modules\Rescate\Http\Controllers\AnimalController;
+use Modules\Rescate\Http\Controllers\AnimalProfileController;
+use Modules\Rescate\Http\Controllers\DispositionController;
+use Modules\Rescate\Http\Controllers\HealthRecordController;
+use Modules\Rescate\Http\Controllers\AnimalStatusController;
+use Modules\Rescate\Http\Controllers\CareTypeController;
+use Modules\Rescate\Http\Controllers\CareController;
+use Modules\Rescate\Http\Controllers\AnimalFileController;
+use Modules\Rescate\Http\Controllers\PersonController;
+use Modules\Rescate\Http\Controllers\SpeciesController;
+use Modules\Rescate\Http\Controllers\ReleaseController;
+use Modules\Rescate\Http\Controllers\VeterinarianController;
+use Modules\Rescate\Http\Controllers\MedicalEvaluationController;
+use Modules\Rescate\Http\Controllers\TreatmentTypeController;
+use Modules\Rescate\Http\Controllers\RescuerController;
+use Modules\Rescate\Http\Controllers\TransferController;
+use Modules\Rescate\Http\Controllers\CareFeedingController;
+use Modules\Rescate\Http\Controllers\FeedingTypeController;
+use Modules\Rescate\Http\Controllers\FeedingFrequencyController;
+use Modules\Rescate\Http\Controllers\FeedingPortionController;
+use Modules\Rescate\Http\Controllers\IncidentTypeController;
+use Modules\Rescate\Http\Controllers\AnimalConditionController;
+use Modules\Rescate\Http\Controllers\Transactions\AnimalTransactionalController;
+use Modules\Rescate\Http\Controllers\Transactions\AnimalFeedingTransactionalController;
+use Modules\Rescate\Http\Controllers\Transactions\AnimalMedicalEvaluationTransactionalController;
+use Modules\Rescate\Http\Controllers\Transactions\AnimalCareTransactionalController;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\AnimalHistoryController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ContactMessageController;
-use App\Http\Controllers\ReportsController;
+use Modules\Rescate\Http\Controllers\AnimalHistoryController;
+use Modules\Rescate\Http\Controllers\ProfileController;
+use Modules\Rescate\Http\Controllers\ContactMessageController;
+use Modules\Rescate\Http\Controllers\ReportsController;
 
 Route::get('/', function () {
 if (Auth::check()) {
@@ -42,7 +42,7 @@ if (Auth::check()) {
     return redirect('landing');
 });
 
-Auth::routes();
+// Authentication is centralized in the main application.
 
 // Ruta para refrescar token CSRF (sin middleware CSRF)
 Route::get('/refresh-csrf', function () {

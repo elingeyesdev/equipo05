@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Rescate\Http\Controllers;
 
-use App\Models\MedicalEvaluation;
+use Modules\Rescate\Models\MedicalEvaluation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\MedicalEvaluationRequest;
+use Modules\Rescate\Http\Requests\MedicalEvaluationRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use App\Models\TreatmentType;
-use App\Models\Veterinarian;
-use App\Services\User\UserTrackingService;
+use Modules\Rescate\Models\TreatmentType;
+use Modules\Rescate\Models\Veterinarian;
+use Modules\Rescate\Services\User\UserTrackingService;
 
 class MedicalEvaluationController extends Controller
 {
