@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Models\Biomasa;
-use App\Models\FocoIncendio;
-use App\Models\Prediction;
-use App\Models\Simulacione;
-use App\Models\User;
-use App\Services\OpenMeteoService;
-use App\Services\FirmsDataService;
-use App\Services\DashboardMetricsService;
-use App\Exports\FiresActivityExport;
-use App\Exports\FiresActivityPdfExport;
-use App\Exports\BiomasasManagementExport;
-use App\Exports\BiomasasManagementPdfExport;
-use App\Exports\SimulationsEffectivenessExport;
-use App\Exports\SimulationsEffectivenessPdfExport;
-use App\Exports\PredictionsReportExport;
-use App\Exports\PredictionsReportPdfExport;
+use Modules\Incendios\Models\Biomasa;
+use Modules\Incendios\Models\FocoIncendio;
+use Modules\Incendios\Models\Prediction;
+use Modules\Incendios\Models\Simulacione;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Services\OpenMeteoService;
+use Modules\Incendios\Services\FirmsDataService;
+use Modules\Incendios\Services\DashboardMetricsService;
+use Modules\Incendios\Exports\FiresActivityExport;
+use Modules\Incendios\Exports\FiresActivityPdfExport;
+use Modules\Incendios\Exports\BiomasasManagementExport;
+use Modules\Incendios\Exports\BiomasasManagementPdfExport;
+use Modules\Incendios\Exports\SimulationsEffectivenessExport;
+use Modules\Incendios\Exports\SimulationsEffectivenessPdfExport;
+use Modules\Incendios\Exports\PredictionsReportExport;
+use Modules\Incendios\Exports\PredictionsReportPdfExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -493,7 +493,7 @@ class DashboardController extends Controller
         $biomasas = $query->orderBy('created_at', 'desc')->get();
 
         $filters = compact('estado', 'tipoBiomasaId', 'fechaInicio', 'fechaFin');
-        $export = new \App\Exports\BiomasasManagementExport($biomasas, $filters);
+        $export = new \Modules\Incendios\Exports\BiomasasManagementExport($biomasas, $filters);
         return $export->export();
     }
 
@@ -561,7 +561,7 @@ class DashboardController extends Controller
         $simulations = $query->orderBy('fecha', 'desc')->get();
 
         $filters = compact('fechaInicio', 'fechaFin', 'fireRiskMin', 'fireRiskMax');
-        $export = new \App\Exports\SimulationsEffectivenessExport($simulations, $filters);
+        $export = new \Modules\Incendios\Exports\SimulationsEffectivenessExport($simulations, $filters);
         return $export->export();
     }
 

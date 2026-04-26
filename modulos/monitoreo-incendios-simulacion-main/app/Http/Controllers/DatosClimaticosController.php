@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Services\OpenMeteoService;
+use Modules\Incendios\Services\OpenMeteoService;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 

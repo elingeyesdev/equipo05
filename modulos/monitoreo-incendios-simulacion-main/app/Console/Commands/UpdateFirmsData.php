@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Incendios\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\FirmsDataService;
-use App\Models\FocoIncendio;
+use Modules\Incendios\Services\FirmsDataService;
+use Modules\Incendios\Models\FocoIncendio;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 

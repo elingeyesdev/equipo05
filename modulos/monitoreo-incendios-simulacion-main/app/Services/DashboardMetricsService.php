@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace Modules\Incendios\Services;
 
-use App\Models\Biomasa;
-use App\Models\FocoIncendio;
-use App\Models\Simulacione;
-use App\Models\User;
+use Modules\Incendios\Models\Biomasa;
+use Modules\Incendios\Models\FocoIncendio;
+use Modules\Incendios\Models\Simulacione;
+use Modules\Incendios\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 

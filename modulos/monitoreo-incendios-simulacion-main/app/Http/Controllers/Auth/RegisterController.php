@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Modules\Incendios\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Voluntario;
+use Modules\Incendios\Http\Controllers\Controller;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Models\Voluntario;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -67,7 +67,7 @@ class RegisterController extends Controller
      * Creates user as VOLUNTARIO by default.
      *
      * @param  array  $data
-     * @return \App\Models\User
+     * @return \Modules\Incendios\Models\User
      */
     protected function create(array $data)
     {

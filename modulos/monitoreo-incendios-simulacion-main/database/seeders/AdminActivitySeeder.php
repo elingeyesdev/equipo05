@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\Incendios\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Biomasa;
-use App\Models\Simulacione;
-use App\Models\Prediction;
-use App\Models\TipoBiomasa;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Models\Biomasa;
+use Modules\Incendios\Models\Simulacione;
+use Modules\Incendios\Models\Prediction;
+use Modules\Incendios\Models\TipoBiomasa;
 
 class AdminActivitySeeder extends Seeder
 {

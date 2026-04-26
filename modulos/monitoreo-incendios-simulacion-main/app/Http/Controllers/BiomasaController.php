@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Models\Biomasa;
-use App\Models\TipoBiomasa;
+use Modules\Incendios\Models\Biomasa;
+use Modules\Incendios\Models\TipoBiomasa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\BiomasaRequest;
+use Modules\Incendios\Http\Requests\BiomasaRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

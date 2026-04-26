@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Incendios\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\BiomasaResource;
-use App\Models\Biomasa;
+use Modules\Incendios\Http\Controllers\Controller;
+use Modules\Incendios\Http\Resources\BiomasaResource;
+use Modules\Incendios\Models\Biomasa;
 use Illuminate\Http\Request;
 
 class BiomasaController extends Controller

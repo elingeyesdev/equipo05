@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Models\User;
+use Modules\Incendios\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\UserRequest;
+use Modules\Incendios\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 

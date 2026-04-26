@@ -2,15 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Authentication routes
-Auth::routes();
+// Authentication is centralized in the main application.
 
 // Google OAuth routes
-Route::get('/auth/google', [\App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle'])
+Route::get('/auth/google', [\Modules\Incendios\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle'])
     ->name('google.redirect')
     ->middleware('guest');
 
-Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback'])
+Route::get('/auth/google/callback', [\Modules\Incendios\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback'])
     ->name('google.callback')
     ->middleware('guest');
 
@@ -27,57 +26,57 @@ Route::get('simulaciones/public/{id}', [App\Http\Controllers\SimulacioneControll
 Route::middleware('auth')->group(function () {
     
     // Dashboard - accessible to all authenticated users
-    Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])
+    Route::get('/', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'index'])
         ->name('dashboard');
     
     // Datos Climáticos - históricos de la última semana
-    Route::get('/datos-climaticos', [\App\Http\Controllers\DatosClimaticosController::class, 'index'])
+    Route::get('/datos-climaticos', [\Modules\Incendios\Http\Controllers\DatosClimaticosController::class, 'index'])
         ->name('datos-climaticos.index');
     
     // Biomasas GeoJSON endpoint for map
-    Route::get('/dashboard/biomasas', [\App\Http\Controllers\DashboardController::class, 'getBiomasas'])
+    Route::get('/dashboard/biomasas', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'getBiomasas'])
         ->name('dashboard.biomasas');
     
     // Clear dashboard cache
-    Route::post('/dashboard/clear-cache', [\App\Http\Controllers\DashboardController::class, 'clearCache'])
+    Route::post('/dashboard/clear-cache', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'clearCache'])
         ->name('dashboard.clear-cache');
     
     // Reports - accessible to all authenticated users
-    Route::get('/reports/fires', [\App\Http\Controllers\DashboardController::class, 'firesActivityReport'])
+    Route::get('/reports/fires', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'firesActivityReport'])
         ->name('reports.fires');
-    Route::get('/reports/fires/export-excel', [\App\Http\Controllers\DashboardController::class, 'firesActivityExportExcel'])
+    Route::get('/reports/fires/export-excel', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'firesActivityExportExcel'])
         ->name('reports.fires.export-excel');
-    Route::get('/reports/fires/export-pdf', [\App\Http\Controllers\DashboardController::class, 'firesActivityExportPdf'])
+    Route::get('/reports/fires/export-pdf', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'firesActivityExportPdf'])
         ->name('reports.fires.export-pdf');
     
-    Route::get('/reports/biomasas', [\App\Http\Controllers\DashboardController::class, 'biomasasManagementReport'])
+    Route::get('/reports/biomasas', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'biomasasManagementReport'])
         ->name('reports.biomasas');
-    Route::get('/reports/biomasas/export-excel', [\App\Http\Controllers\DashboardController::class, 'biomasasManagementExportExcel'])
+    Route::get('/reports/biomasas/export-excel', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'biomasasManagementExportExcel'])
         ->name('reports.biomasas.export-excel');
-    Route::get('/reports/biomasas/export-pdf', [\App\Http\Controllers\DashboardController::class, 'biomasasManagementExportPdf'])
+    Route::get('/reports/biomasas/export-pdf', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'biomasasManagementExportPdf'])
         ->name('reports.biomasas.export-pdf');
     
-    Route::get('/reports/simulations', [\App\Http\Controllers\DashboardController::class, 'simulationsEffectivenessReport'])
+    Route::get('/reports/simulations', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'simulationsEffectivenessReport'])
         ->name('reports.simulations');
-    Route::get('/reports/simulations/export-excel', [\App\Http\Controllers\DashboardController::class, 'simulationsEffectivenessExportExcel'])
+    Route::get('/reports/simulations/export-excel', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'simulationsEffectivenessExportExcel'])
         ->name('reports.simulations.export-excel');
-    Route::get('/reports/simulations/export-pdf', [\App\Http\Controllers\DashboardController::class, 'simulationsEffectivenessExportPdf'])
+    Route::get('/reports/simulations/export-pdf', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'simulationsEffectivenessExportPdf'])
         ->name('reports.simulations.export-pdf');
     
-    Route::get('/reports/predictions', [\App\Http\Controllers\DashboardController::class, 'predictionsReport'])
+    Route::get('/reports/predictions', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'predictionsReport'])
         ->name('reports.predictions');
-    Route::get('/reports/predictions/export-excel', [\App\Http\Controllers\DashboardController::class, 'predictionsReportExportExcel'])
+    Route::get('/reports/predictions/export-excel', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'predictionsReportExportExcel'])
         ->name('reports.predictions.export-excel');
-    Route::get('/reports/predictions/export-pdf', [\App\Http\Controllers\DashboardController::class, 'predictionsReportExportPdf'])
+    Route::get('/reports/predictions/export-pdf', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'predictionsReportExportPdf'])
         ->name('reports.predictions.export-pdf');
 
     // Test endpoint to preview OpenWeather and FIRMS data
-    Route::get('/test', [\App\Http\Controllers\TestController::class, 'index'])
+    Route::get('/test', [\Modules\Incendios\Http\Controllers\TestController::class, 'index'])
         ->name('test.index');
     
     // Debug endpoint para ver biomasas
     Route::get('/debug/biomasas', function() {
-        $biomasas = \App\Models\Biomasa::with('tipoBiomasa')->get();
+        $biomasas = \Modules\Incendios\Models\Biomasa::with('tipoBiomasa')->get();
         return response()->json([
             'total' => $biomasas->count(),
             'aprobadas' => $biomasas->where('estado', 'aprobada')->count(),
@@ -104,7 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:voluntario|administrador')->group(function () {
         // RUTA DE TEST
         Route::get('biomasas/test-create', function() {
-            $tipoBiomasas = \App\Models\TipoBiomasa::all();
+            $tipoBiomasas = \Modules\Incendios\Models\TipoBiomasa::all();
             return view('biomasa.test-create', compact('tipoBiomasas'));
         })->name('biomasas.test-create');
         

@@ -34,7 +34,7 @@
                     <label>Tipo de Biomasa</label>
                     <select name="tipo_biomasa_id" class="form-control">
                         <option value="">Todos</option>
-                        @foreach(\App\Models\TipoBiomasa::all() as $tipo)
+                        @foreach(\Modules\Incendios\Models\TipoBiomasa::all() as $tipo)
                             <option value="{{ $tipo->id }}" {{ ($filters['tipoBiomasaId'] ?? '') == $tipo->id ? 'selected' : '' }}>
                                 {{ $tipo->tipo_biomasa }}
                             </option>

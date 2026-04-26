@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +31,6 @@ class Prediction extends Model
      */
     public function focoIncendio()
     {
-        return $this->belongsTo(\App\Models\FocosIncendio::class, 'foco_incendio_id');
+        return $this->belongsTo(\Modules\Incendios\Models\FocosIncendio::class, 'foco_incendio_id');
     }
 }

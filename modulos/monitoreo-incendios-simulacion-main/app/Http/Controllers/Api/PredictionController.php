@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Incendios\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\PredictionResource;
-use App\Models\Prediction;
+use Modules\Incendios\Http\Controllers\Controller;
+use Modules\Incendios\Http\Resources\PredictionResource;
+use Modules\Incendios\Models\Prediction;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 

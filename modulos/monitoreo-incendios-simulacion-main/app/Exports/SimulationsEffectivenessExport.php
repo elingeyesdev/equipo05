@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace Modules\Incendios\Exports;
 
 class SimulationsEffectivenessExport
 {

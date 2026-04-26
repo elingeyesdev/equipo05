@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Services\WeatherService;
-use App\Services\FirmsService;
+use Modules\Incendios\Services\WeatherService;
+use Modules\Incendios\Services\FirmsService;
 use Illuminate\Http\Request;
 
 class TestController extends Controller

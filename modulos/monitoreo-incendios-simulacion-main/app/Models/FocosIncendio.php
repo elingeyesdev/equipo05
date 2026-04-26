@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,7 +42,7 @@ class FocosIncendio extends Model
      */
     public function simulaciones()
     {
-        return $this->belongsToMany(\App\Models\Simulacione::class, 'foco_simulacion', 'foco_incendio_id', 'simulacion_id')
+        return $this->belongsToMany(\Modules\Incendios\Models\Simulacione::class, 'foco_simulacion', 'foco_incendio_id', 'simulacion_id')
                     ->withPivot(['agregado_at', 'activo'])
                     ->withTimestamps();
     }
@@ -52,7 +52,7 @@ class FocosIncendio extends Model
      */
     public function predictions()
     {
-        return $this->hasMany(\App\Models\Prediction::class, 'foco_incendio_id');
+        return $this->hasMany(\Modules\Incendios\Models\Prediction::class, 'foco_incendio_id');
     }
 
     /**
@@ -60,6 +60,6 @@ class FocosIncendio extends Model
      */
     public function tracks()
     {
-        return $this->hasMany(\App\Models\FocoTrack::class, 'foco_incendio_id');
+        return $this->hasMany(\Modules\Incendios\Models\FocoTrack::class, 'foco_incendio_id');
     }
 }

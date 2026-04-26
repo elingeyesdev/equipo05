@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Providers;
+namespace Modules\Incendios\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use App\Models\User;
-use App\Observers\UserObserver;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
 {

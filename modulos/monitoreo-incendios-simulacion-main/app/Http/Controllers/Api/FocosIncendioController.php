@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Incendios\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\FocosIncendioResource;
-use App\Models\FocosIncendio;
+use Modules\Incendios\Http\Controllers\Controller;
+use Modules\Incendios\Http\Resources\FocosIncendioResource;
+use Modules\Incendios\Models\FocosIncendio;
 use Illuminate\Http\Request;
 
 class FocosIncendioController extends Controller

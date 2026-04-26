@@ -8,13 +8,8 @@ Route::prefix('inventario')
     });
 
 Route::prefix('incendios')
-    ->middleware('auth:sanctum')
     ->group(function () {
-        Route::get('/status', fn () => response()->json([
-            'modulo' => 'monitoreo-incendios-simulacion-main',
-            'estado' => 'integrado_en_repositorio',
-            'siguiente_paso' => 'adaptacion_de_controladores_a_login_unico',
-        ]));
+        require base_path('modulos/monitoreo-incendios-simulacion-main/routes/api.php');
     });
 
 Route::prefix('rescate')

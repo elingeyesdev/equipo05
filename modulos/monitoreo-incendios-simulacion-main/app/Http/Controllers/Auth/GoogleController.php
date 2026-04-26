@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Modules\Incendios\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Voluntario;
+use Modules\Incendios\Http\Controllers\Controller;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Models\Voluntario;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Exception;

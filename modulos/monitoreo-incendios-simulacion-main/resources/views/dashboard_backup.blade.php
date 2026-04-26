@@ -31,7 +31,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownFiltros" style="padding: 10px;">
                             @php
-                                $tiposBiomasa = \App\Models\TipoBiomasa::select('id', 'tipo_biomasa', 'color')->get();
+                                $tiposBiomasa = \Modules\Incendios\Models\TipoBiomasa::select('id', 'tipo_biomasa', 'color')->get();
                             @endphp
                             @foreach($tiposBiomasa as $tipo)
                                 <div class="custom-control custom-checkbox">

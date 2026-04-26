@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Models\Simulacione;
-use App\Models\SimulationFireHistory;
-use App\Models\Administrador;
-use App\Models\Biomasa;
+use Modules\Incendios\Models\Simulacione;
+use Modules\Incendios\Models\SimulationFireHistory;
+use Modules\Incendios\Models\Administrador;
+use Modules\Incendios\Models\Biomasa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\SimulacioneRequest;
+use Modules\Incendios\Http\Requests\SimulacioneRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;

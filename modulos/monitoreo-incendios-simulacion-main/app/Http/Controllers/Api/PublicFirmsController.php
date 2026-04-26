@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Incendios\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\FocoIncendio;
-use App\Services\FirmsDataService;
+use Modules\Incendios\Http\Controllers\Controller;
+use Modules\Incendios\Models\FocoIncendio;
+use Modules\Incendios\Services\FirmsDataService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;

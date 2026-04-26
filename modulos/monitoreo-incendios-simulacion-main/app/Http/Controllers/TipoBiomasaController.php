@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Models\TipoBiomasa;
-use App\Http\Requests\TipoBiomasaRequest;
+use Modules\Incendios\Models\TipoBiomasa;
+use Modules\Incendios\Http\Requests\TipoBiomasaRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;

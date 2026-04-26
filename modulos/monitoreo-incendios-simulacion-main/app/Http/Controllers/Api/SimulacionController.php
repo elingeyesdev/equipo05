@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Incendios\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\SimulacioneResource;
-use App\Models\Simulacione;
+use Modules\Incendios\Http\Controllers\Controller;
+use Modules\Incendios\Http\Resources\SimulacioneResource;
+use Modules\Incendios\Models\Simulacione;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 

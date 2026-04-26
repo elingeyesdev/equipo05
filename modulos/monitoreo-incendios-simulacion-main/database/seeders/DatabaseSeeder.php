@@ -1,10 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\Incendios\Database\Seeders;
 
-use App\Models\User;
-use App\Models\Administrador;
-use App\Models\Voluntario;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Models\Administrador;
+use Modules\Incendios\Models\Voluntario;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,6 +35,6 @@ class Administrador extends Model
      */
     public function simulaciones()
     {
-        return $this->hasMany(\App\Models\Simulacione::class, 'admin_id');
+        return $this->hasMany(\Modules\Incendios\Models\Simulacione::class, 'admin_id');
     }
 }

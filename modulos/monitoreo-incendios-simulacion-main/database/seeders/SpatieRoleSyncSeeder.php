@@ -1,10 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\Incendios\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
+use Modules\Incendios\Models\User;
 
 class SpatieRoleSyncSeeder extends Seeder
 {

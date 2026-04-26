@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\Incendios\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\TipoBiomasa;
+use Modules\Incendios\Models\TipoBiomasa;
 
 class TipoBiomasaSeeder extends Seeder
 {

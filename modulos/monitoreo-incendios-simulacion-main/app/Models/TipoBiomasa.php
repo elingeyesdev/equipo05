@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +29,6 @@ class TipoBiomasa extends Model
      */
     public function biomasas()
     {
-        return $this->hasMany(\App\Models\Biomasa::class, 'tipo_biomasa_id');
+        return $this->hasMany(\Modules\Incendios\Models\Biomasa::class, 'tipo_biomasa_id');
     }
 }

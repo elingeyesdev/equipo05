@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use App\Models\Simulacione;
-use App\Models\FocosIncendio;
-use App\Models\Voluntario;
-use App\Models\Administrador;
+use Modules\Incendios\Models\Simulacione;
+use Modules\Incendios\Models\FocosIncendio;
+use Modules\Incendios\Models\Voluntario;
+use Modules\Incendios\Models\Administrador;
 
 /**
  * Class User
@@ -50,7 +50,7 @@ class User extends Authenticatable
      */
     public function biomasas()
     {
-        return $this->hasMany(\App\Models\Biomasa::class, 'user_id');
+        return $this->hasMany(\Modules\Incendios\Models\Biomasa::class, 'user_id');
     }
 
     /**

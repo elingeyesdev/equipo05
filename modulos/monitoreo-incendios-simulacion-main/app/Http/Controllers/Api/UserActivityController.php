@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Incendios\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use Modules\Incendios\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Biomasa;
-use App\Models\Simulacione;
-use App\Models\Prediction;
-use App\Models\User;
+use Modules\Incendios\Models\Biomasa;
+use Modules\Incendios\Models\Simulacione;
+use Modules\Incendios\Models\Prediction;
+use Modules\Incendios\Models\User;
 
 class UserActivityController extends Controller
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Observers;
+namespace Modules\Incendios\Observers;
 
-use App\Models\User;
-use App\Models\Voluntario;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Models\Voluntario;
 use Illuminate\Support\Facades\Log;
 
 class UserObserver

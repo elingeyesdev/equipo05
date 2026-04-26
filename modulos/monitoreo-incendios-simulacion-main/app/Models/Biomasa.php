@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -142,7 +142,7 @@ class Biomasa extends Model
      */
     public function tipoBiomasa()
     {
-        return $this->belongsTo(\App\Models\TipoBiomasa::class, 'tipo_biomasa_id');
+        return $this->belongsTo(\Modules\Incendios\Models\TipoBiomasa::class, 'tipo_biomasa_id');
     }
     
     /**
@@ -150,7 +150,7 @@ class Biomasa extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_id');
+        return $this->belongsTo(\Modules\Incendios\Models\User::class, 'user_id');
     }
     
     /**
@@ -158,7 +158,7 @@ class Biomasa extends Model
      */
     public function aprobadaPor()
     {
-        return $this->belongsTo(\App\Models\User::class, 'aprobada_por');
+        return $this->belongsTo(\Modules\Incendios\Models\User::class, 'aprobada_por');
     }
     
     /**

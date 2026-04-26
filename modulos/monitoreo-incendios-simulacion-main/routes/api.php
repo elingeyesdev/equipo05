@@ -1,17 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\BiomasaController;
-use App\Http\Controllers\Api\FocosIncendioController;
-use App\Http\Controllers\Api\TipoBiomasaController;
-use App\Http\Controllers\Api\SimulacionController;
-use App\Http\Controllers\Api\PredictionController;
-use App\Http\Controllers\Api\WeatherController;
-use App\Http\Controllers\Api\FiresController;
-use App\Http\Controllers\Api\PublicFirmsController;
-use App\Http\Controllers\Api\PublicPredictionsController;
-use App\Http\Controllers\Api\UserActivityController;
+use Modules\Incendios\Http\Controllers\Api\AuthController;
+use Modules\Incendios\Http\Controllers\Api\BiomasaController;
+use Modules\Incendios\Http\Controllers\Api\FocosIncendioController;
+use Modules\Incendios\Http\Controllers\Api\TipoBiomasaController;
+use Modules\Incendios\Http\Controllers\Api\SimulacionController;
+use Modules\Incendios\Http\Controllers\Api\PredictionController;
+use Modules\Incendios\Http\Controllers\Api\WeatherController;
+use Modules\Incendios\Http\Controllers\Api\FiresController;
+use Modules\Incendios\Http\Controllers\Api\PublicFirmsController;
+use Modules\Incendios\Http\Controllers\Api\PublicPredictionsController;
+use Modules\Incendios\Http\Controllers\Api\UserActivityController;
 
 /*
 |--------------------------------------------------------------------------

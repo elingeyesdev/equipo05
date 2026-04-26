@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,6 +54,6 @@ class Simulacion extends Model
      */
     public function predictions()
     {
-        return $this->hasMany(\App\Models\Prediction::class);
+        return $this->hasMany(\Modules\Incendios\Models\Prediction::class);
     }
 }

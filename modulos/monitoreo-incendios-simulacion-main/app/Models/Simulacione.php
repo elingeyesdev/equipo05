@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Incendios\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -68,7 +68,7 @@ class Simulacione extends Model
      */
     public function admin()
     {
-        return $this->belongsTo(\App\Models\Administrador::class, 'admin_id');
+        return $this->belongsTo(\Modules\Incendios\Models\Administrador::class, 'admin_id');
     }
 
     /**
@@ -76,7 +76,7 @@ class Simulacione extends Model
      */
     public function focos()
     {
-        return $this->belongsToMany(\App\Models\FocosIncendio::class, 'foco_simulacion', 'simulacion_id', 'foco_incendio_id')
+        return $this->belongsToMany(\Modules\Incendios\Models\FocosIncendio::class, 'foco_simulacion', 'simulacion_id', 'foco_incendio_id')
                     ->withPivot(['agregado_at', 'activo'])
                     ->withTimestamps();
     }
@@ -86,6 +86,6 @@ class Simulacione extends Model
      */
     public function fireHistory()
     {
-        return $this->hasMany(\App\Models\SimulationFireHistory::class, 'simulacion_id');
+        return $this->hasMany(\Modules\Incendios\Models\SimulationFireHistory::class, 'simulacion_id');
     }
 }

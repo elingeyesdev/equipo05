@@ -22,7 +22,8 @@ Proyecto nuevo para unificar de forma gradual:
   - `modulos/rescate-animales-silvestres-main`
 - Accesos iniciales agregados en el sistema principal:
   - Web: `/incendios` y `/rescate`
-  - API de estado: `/api/incendios/status` y `/api/rescate/status`
+  - API activa de incendios: `/api/incendios/*`
+  - API de estado de rescate: `/api/rescate/status`
 
 ## Arranque local
 1. Instalar dependencias:

@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         
         // Agregar middleware global para loggear todos los requests
-        $middleware->append(\App\Http\Middleware\LogAllRequests::class);
+        $middleware->append(\Modules\Incendios\Http\Middleware\LogAllRequests::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

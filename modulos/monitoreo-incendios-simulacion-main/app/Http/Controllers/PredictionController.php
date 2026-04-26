@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Models\Prediction;
-use App\Models\FocosIncendio;
-use App\Models\Biomasa;
-use App\Http\Requests\PredictionRequest;
+use Modules\Incendios\Models\Prediction;
+use Modules\Incendios\Models\FocosIncendio;
+use Modules\Incendios\Models\Biomasa;
+use Modules\Incendios\Http\Requests\PredictionRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;

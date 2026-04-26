@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Incendios\Http\Controllers;
 
-use App\Models\FocosIncendio;
+use Modules\Incendios\Models\FocosIncendio;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\FocosIncendioRequest;
+use Modules\Incendios\Http\Requests\FocosIncendioRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use App\Services\FirmsDataService;
+use Modules\Incendios\Services\FirmsDataService;
 
 class FocosIncendioController extends Controller
 {

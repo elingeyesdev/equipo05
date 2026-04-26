@@ -62,3 +62,22 @@ Cambios:
 Resultado esperado:
 
 - Los dos nuevos sistemas ya aparecen dentro del sistema principal y son navegables desde el panel, dejando lista la siguiente etapa de adaptacion de controladores/modelos para login unico completo.
+
+### Hito 3 - Integracion tecnica real del modulo Monitoreo de Incendios
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se migra el namespace del modulo de incendios a `Modules\\Incendios\\*`.
+- Se registra autoload PSR-4 para incendios en `composer.json`.
+- Se montan rutas web reales del modulo con prefijo:
+  - `/incendios/*` y nombres `incendios.*`
+- Se montan rutas API reales del modulo con prefijo:
+  - `/api/incendios/*`
+- Se desactiva `Auth::routes()` interno del modulo para respetar autenticacion centralizada.
+- El menu lateral apunta ahora a `incendios.dashboard`.
+
+Resultado esperado:
+
+- El modulo de incendios deja de estar en modo placeholder y pasa a un montaje real dentro del sistema principal, con base tecnica lista para ajuste de login unico por entidad de usuario.

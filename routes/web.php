@@ -70,8 +70,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('home');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/fusion/fase1', [Fase1IntegracionController::class, 'index'])->name('fusion.fase1.index');
-    Route::get('/incendios', [ModulosIntegradosController::class, 'incendios'])->name('fusion.modulos.incendios');
-    Route::get('/rescate', [ModulosIntegradosController::class, 'rescate'])->name('fusion.modulos.rescate');
+    Route::get('/fusion/modulos/incendios', [ModulosIntegradosController::class, 'incendios'])->name('fusion.modulos.incendios');
+    Route::get('/fusion/modulos/rescate', [ModulosIntegradosController::class, 'rescate'])->name('fusion.modulos.rescate');
 
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
@@ -194,4 +194,11 @@ Route::prefix('inventario')
     ->as('inventario.')
     ->group(function () {
         require base_path('modulos/donacion-recepcion-inventario-main/routes/web.php');
+    });
+
+Route::prefix('incendios')
+    ->as('incendios.')
+    ->middleware(['auth'])
+    ->group(function () {
+        require base_path('modulos/monitoreo-incendios-simulacion-main/routes/web.php');
     });
