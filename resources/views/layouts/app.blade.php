@@ -280,6 +280,20 @@
                             </ul>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('fusion.modulos.incendios') }}" class="nav-link {{ request()->routeIs('fusion.modulos.incendios') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-fire"></i>
+                                <p>Monitoreo de Incendios</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('fusion.modulos.rescate') }}" class="nav-link {{ request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-paw"></i>
+                                <p>Rescate de Animales Silvestres</p>
+                            </a>
+                        </li>
+
                         <li class="nav-header">SISTEMA</li>
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link">

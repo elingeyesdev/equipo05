@@ -36,3 +36,29 @@ Cambios:
 Resultado esperado:
 
 - Ambos sistemas quedan versionados dentro del proyecto principal para iniciar su adaptacion modular (rutas, auth unica, conexiones de BD y menu unificado).
+
+### Hito 2 - Enrutamiento base y navegacion inicial
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se agregan conexiones SQLite dedicadas en configuracion:
+  - `incendios` -> `database/incendios.sqlite`
+  - `rescate` -> `database/rescate.sqlite`
+- Se agregan variables de entorno en `.env.example`:
+  - `INCENDIOS_DB_DATABASE`
+  - `RESCATE_DB_DATABASE`
+- Se habilitan rutas web protegidas en el sistema principal:
+  - `/incendios`
+  - `/rescate`
+- Se habilitan endpoints API de estado:
+  - `/api/incendios/status`
+  - `/api/rescate/status`
+- Se agrega navegacion en el menu lateral:
+  - `Monitoreo de Incendios`
+  - `Rescate de Animales Silvestres`
+
+Resultado esperado:
+
+- Los dos nuevos sistemas ya aparecen dentro del sistema principal y son navegables desde el panel, dejando lista la siguiente etapa de adaptacion de controladores/modelos para login unico completo.

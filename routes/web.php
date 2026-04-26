@@ -48,6 +48,7 @@ use App\Http\Controllers\Ext\{
     TrazabilidadController // Alias para el nuevo módulo
 };
 use App\Http\Controllers\Fusion\Fase1IntegracionController;
+use App\Http\Controllers\Fusion\ModulosIntegradosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +70,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('home');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/fusion/fase1', [Fase1IntegracionController::class, 'index'])->name('fusion.fase1.index');
+    Route::get('/incendios', [ModulosIntegradosController::class, 'incendios'])->name('fusion.modulos.incendios');
+    Route::get('/rescate', [ModulosIntegradosController::class, 'rescate'])->name('fusion.modulos.rescate');
 
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)

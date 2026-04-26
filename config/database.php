@@ -55,6 +55,30 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
+        'incendios' => [
+            'driver' => 'sqlite',
+            'url' => env('INCENDIOS_DB_URL'),
+            'database' => env('INCENDIOS_DB_DATABASE', database_path('incendios.sqlite')),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+            'busy_timeout' => null,
+            'journal_mode' => null,
+            'synchronous' => null,
+            'transaction_mode' => 'DEFERRED',
+        ],
+
+        'rescate' => [
+            'driver' => 'sqlite',
+            'url' => env('RESCATE_DB_URL'),
+            'database' => env('RESCATE_DB_DATABASE', database_path('rescate.sqlite')),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+            'busy_timeout' => null,
+            'journal_mode' => null,
+            'synchronous' => null,
+            'transaction_mode' => 'DEFERRED',
+        ],
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),

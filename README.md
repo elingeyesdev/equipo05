@@ -20,6 +20,9 @@ Proyecto nuevo para unificar de forma gradual:
 - Codigo fuente incorporado para proxima integracion modular:
   - `modulos/monitoreo-incendios-simulacion-main`
   - `modulos/rescate-animales-silvestres-main`
+- Accesos iniciales agregados en el sistema principal:
+  - Web: `/incendios` y `/rescate`
+  - API de estado: `/api/incendios/status` y `/api/rescate/status`
 
 ## Arranque local
 1. Instalar dependencias:
