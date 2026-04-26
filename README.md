@@ -64,6 +64,7 @@ Proyecto nuevo para unificar de forma gradual:
     - Creacion de animal en `/rescate/modulo/animals` exitosa (con reporte aprobado).
     - Edicion/eliminacion E2E validadas en biomasa, focos-incendios, centers y animals.
     - Aprobacion de reportes en Rescate corregida y operativa en SQLite (`/rescate/modulo/reports/{id}/approve`).
+    - Barrido completo de rutas estaticas de ambos modulos (`106` endpoints GET sin parametros) sin errores `500/419`.
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local

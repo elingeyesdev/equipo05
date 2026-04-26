@@ -374,3 +374,34 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - Los flujos principales CRUD y aprobacion quedan operativos en entorno integrado con SQLite, sin bloqueos por diferencias de dialecto SQL ni por validaciones de rol inconsistentes.
+
+### Hito 16 - Cierre de 500 en rutas estaticas de modulos
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se agrega el componente faltante `resources/views/components/helpdesk-widget.blade.php` para evitar error `Unable to locate a class or view for component [helpdesk-widget]` en:
+  - `/incendios/modulo/helpdesk`
+  - `/rescate/modulo/helpdesk`
+- Se corrige exportacion PDF de Incendios cuando no hay datos:
+  - `fires_activity_pdf.blade.php`: proteccion para `max()` sobre coleccion vacia.
+  - `simulations_effectiveness_pdf.blade.php`: proteccion para `max()` sobre coleccion vacia.
+- Se agregan metodos `index()` de redireccion a `create` en controladores transaccionales de Rescate para rutas resource ya registradas:
+  - `AnimalTransactionalController`
+  - `AnimalFeedingTransactionalController`
+  - `AnimalMedicalEvaluationTransactionalController`
+  - `AnimalCareTransactionalController`
+- Se implementan endpoints faltantes en `ReportController` usados por rutas existentes:
+  - `getExternalFireReportsApi()`
+  - `getExternalFireReportDetails($externalId)`
+
+Verificacion ejecutada:
+
+- Barrido autenticado de rutas `GET|HEAD` no parametrizadas de modulos (`incendios/modulo/*`, `rescate/modulo/*`):
+  - `TOTAL_TARGETS=106`
+  - `NO_500_419`
+
+Resultado esperado:
+
+- Las rutas estaticas de los dos modulos cargan sin errores `500` y mantienen comportamiento integrado estable bajo autenticacion central.
