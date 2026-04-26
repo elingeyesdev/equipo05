@@ -4,7 +4,10 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class UseRescateConnection
@@ -13,7 +16,71 @@ class UseRescateConnection
     {
         DB::purge('rescate');
         DB::reconnect('rescate');
+        $this->syncAuthenticatedUser();
 
         return $next($request);
+    }
+
+    private function syncAuthenticatedUser(): void
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return;
+        }
+        $authId = Auth::id();
+        if (!$authId) {
+            return;
+        }
+
+        $connection = DB::connection('rescate');
+        $existingUser = $connection->table('users')->where('id', $authId)->first();
+
+        $email = $user->email ?? $user->correo_electronico ?? $user->correo ?? ('usuario' . $authId . '@local.invalid');
+        $emailTaken = $connection->table('users')
+            ->where('email', $email)
+            ->where('id', '!=', $authId)
+            ->exists();
+        if ($emailTaken) {
+            $email = 'rescate_user_' . $authId . '@local.invalid';
+        }
+
+        if ($existingUser) {
+            $connection->table('users')
+                ->where('id', $authId)
+                ->update([
+                    'email' => $email,
+                    'updated_at' => now(),
+                ]);
+        } else {
+            $connection->table('users')->insert([
+                'id' => $authId,
+                'email' => $email,
+                'password' => $user->password ?? Hash::make(Str::random(40)),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $personExists = $connection->table('people')->where('usuario_id', $authId)->exists();
+        if ($personExists) {
+            return;
+        }
+
+        $nombre = trim((string) ($user->name ?? $user->nombre ?? $user->usuario ?? ''));
+        if ($nombre === '') {
+            $nombre = 'Usuario ' . $authId;
+        }
+
+        $ci = (string) ($user->cedula_identidad ?? $user->ci ?? ('AUTO-' . $authId));
+
+        $connection->table('people')->insert([
+            'usuario_id' => $authId,
+            'nombre' => $nombre,
+            'ci' => $ci,
+            'telefono' => $user->telefono ?? null,
+            'es_cuidador' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

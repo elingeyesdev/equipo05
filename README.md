@@ -56,6 +56,12 @@ Proyecto nuevo para unificar de forma gradual:
     - Incendios: `exists:incendios.tipo_biomasa,id`
     - Rescate: `exists:rescate.*`
   - Se normalizaron redirecciones internas de controladores de Incendios a rutas `incendios.*` para evitar fallos tras crear/editar/eliminar.
+  - Se agrega sincronizacion automatica del usuario autenticado hacia las tablas `users` de `incendios` y `rescate` para evitar errores de FK entre modulo y core.
+  - Se agrega provision automatica de `people` en Rescate para que flujos autenticados de reportes/animales no fallen por falta de persona asociada.
+  - Verificacion funcional real en servidor local:
+    - Creacion de biomasa en `/incendios/modulo/biomasas` exitosa (insercion en `incendios.sqlite`).
+    - Creacion de centro en `/rescate/modulo/centers` exitosa.
+    - Creacion de animal en `/rescate/modulo/animals` exitosa (con reporte aprobado).
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
 
 ## Arranque local

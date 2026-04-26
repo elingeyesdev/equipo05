@@ -318,3 +318,30 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - Las altas/ediciones dejan de romper por validaciones contra la BD equivocada y los flujos de retorno de Incendios permanecen dentro del prefijo integrado del modulo.
+
+### Hito 14 - Sincronizacion de usuario core hacia modulos para evitar fallos FK
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se refuerza `UseIncendiosConnection` para sincronizar automaticamente el usuario autenticado del sistema principal en `incendios.users` usando `Auth::id()` (compatible con modelo `Usuario` del core).
+- Se refuerza `UseRescateConnection` para sincronizar automaticamente el usuario autenticado en `rescate.users` y crear registro en `rescate.people` cuando no exista.
+- Se manejan conflictos de `email` unico en ambas tablas de usuarios de modulo con fallback seguro (`incendios_user_{id}@local.invalid` y `rescate_user_{id}@local.invalid`).
+
+Problema corregido:
+
+- Antes: crear biomasa desde `/incendios/modulo/biomasas` podia fallar con `SQLSTATE[23000] FOREIGN KEY constraint failed` porque `biomasas.user_id` referenciaba `incendios.users` y el usuario autenticado solo existia en la BD del core.
+- Antes: algunos flujos de rescate dependian de `people` y podian fallar si el usuario autenticado no tenia persona vinculada en la BD del modulo.
+
+Verificacion ejecutada:
+
+- `php artisan test` exitoso (`5` pruebas aprobadas, `0` fallos).
+- Smoke test autenticado real:
+  - `POST /incendios/modulo/biomasas` => `302` a listado y registro insertado (`biomasas > 0`).
+  - `POST /rescate/modulo/centers` => `302` a listado y registro insertado.
+  - `POST /rescate/modulo/animals` (con reporte aprobado) => `302` a listado y registro insertado.
+
+Resultado esperado:
+
+- Los flujos CRUD autenticados de modulos funcionan con usuario unico del core sin romper por integridad referencial entre bases separadas.
