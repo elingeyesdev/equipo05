@@ -24,6 +24,9 @@ Proyecto nuevo para unificar de forma gradual:
   - Web: `/incendios` y `/rescate`
   - API activa de incendios: `/api/incendios/*`
   - API activa de rescate: `/api/rescate/*`
+- Estado de estabilidad actual:
+  - El enrutamiento integrado de los tres sistemas se registra correctamente (`php artisan route:list`).
+  - Se aplicaron correcciones de compatibilidad en servicios y rutas del modulo rescate para evitar errores fatales de arranque.
 
 ## Arranque local
 1. Instalar dependencias:

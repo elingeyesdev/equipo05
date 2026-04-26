@@ -19,7 +19,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Ruta pública para compartir simulaciones (no requiere autenticación)
-Route::get('simulaciones/public/{id}', [App\Http\Controllers\SimulacioneController::class, 'publicSimulation'])
+Route::get('simulaciones/public/{id}', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'publicSimulation'])
     ->name('simulaciones.public');
 
 // Authenticated routes
@@ -108,7 +108,7 @@ Route::middleware('auth')->group(function () {
         })->name('biomasas.test-create');
         
         // CRUD de biomasas (voluntarios y administradores)
-        Route::resource('biomasas', App\Http\Controllers\BiomasaController::class);
+        Route::resource('biomasas', Modules\Incendios\Http\Controllers\BiomasaController::class);
     });
 
     // ============================================
@@ -116,25 +116,25 @@ Route::middleware('auth')->group(function () {
     // ============================================
     Route::middleware('role:voluntario|administrador')->group(function () {
         // Simulador avanzado - Voluntarios pueden usar pero NO guardar
-        Route::get('simulaciones/simulator', [App\Http\Controllers\SimulacioneController::class, 'simulator'])
+        Route::get('simulaciones/simulator', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'simulator'])
             ->name('simulaciones.simulator');
             // Historial accesible para usuarios autenticados (propias + públicas)
-            Route::get('simulaciones/history-public', [App\Http\Controllers\SimulacioneController::class, 'getHistory'])
+            Route::get('simulaciones/history-public', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'getHistory'])
                 ->name('simulaciones.history.public');
         
         // Predictions - Voluntarios pueden ver
-        Route::get('predictions', [App\Http\Controllers\PredictionController::class, 'index'])
+        Route::get('predictions', [Modules\Incendios\Http\Controllers\PredictionController::class, 'index'])
             ->name('predictions.index');
         // IMPORTANTE: create debe ir ANTES que {prediction} para evitar conflictos
-        Route::get('predictions/create', [App\Http\Controllers\PredictionController::class, 'create'])
+        Route::get('predictions/create', [Modules\Incendios\Http\Controllers\PredictionController::class, 'create'])
             ->name('predictions.create');
-        Route::get('predictions/{prediction}', [App\Http\Controllers\PredictionController::class, 'show'])
+        Route::get('predictions/{prediction}', [Modules\Incendios\Http\Controllers\PredictionController::class, 'show'])
             ->name('predictions.show');
         
         // PDF Reports - Accesible para todos los usuarios autenticados
-        Route::get('predictions/{prediction}/pdf', [App\Http\Controllers\PredictionController::class, 'showPdf'])
+        Route::get('predictions/{prediction}/pdf', [Modules\Incendios\Http\Controllers\PredictionController::class, 'showPdf'])
             ->name('predictions.pdf');
-        Route::get('simulaciones/{simulacione}/pdf', [App\Http\Controllers\SimulacioneController::class, 'showPdf'])
+        Route::get('simulaciones/{simulacione}/pdf', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'showPdf'])
             ->name('simulaciones.pdf');
     });
 
@@ -144,47 +144,47 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:administrador')->group(function () {
         
         // Biomasas - Moderación (aprobar/rechazar)
-        Route::post('biomasas/{id}/aprobar', [App\Http\Controllers\BiomasaController::class, 'aprobar'])
+        Route::post('biomasas/{id}/aprobar', [Modules\Incendios\Http\Controllers\BiomasaController::class, 'aprobar'])
             ->name('biomasas.aprobar');
-        Route::post('biomasas/{id}/rechazar', [App\Http\Controllers\BiomasaController::class, 'rechazar'])
+        Route::post('biomasas/{id}/rechazar', [Modules\Incendios\Http\Controllers\BiomasaController::class, 'rechazar'])
             ->name('biomasas.rechazar');
         
         // Users management
-        Route::resource('users', App\Http\Controllers\UserController::class);
+        Route::resource('users', Modules\Incendios\Http\Controllers\UserController::class);
         
         // Tipo Biomasas catalog
-        Route::resource('tipo-biomasas', App\Http\Controllers\TipoBiomasaController::class);
+        Route::resource('tipo-biomasas', Modules\Incendios\Http\Controllers\TipoBiomasaController::class);
         
         // Administradores management
-        Route::resource('administradores', App\Http\Controllers\AdministradorController::class);
+        Route::resource('administradores', Modules\Incendios\Http\Controllers\AdministradorController::class);
         
         // Voluntarios management
-        Route::resource('voluntarios', App\Http\Controllers\VoluntarioController::class);
+        Route::resource('voluntarios', Modules\Incendios\Http\Controllers\VoluntarioController::class);
         
         // Simulaciones - Full CRUD (save, edit, delete)
-        Route::post('simulaciones/save-simulation', [App\Http\Controllers\SimulacioneController::class, 'saveSimulation'])
+        Route::post('simulaciones/save-simulation', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'saveSimulation'])
             ->name('simulaciones.save');
-        Route::get('simulaciones/history', [App\Http\Controllers\SimulacioneController::class, 'getHistory'])
+        Route::get('simulaciones/history', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'getHistory'])
             ->name('simulaciones.history');
-        Route::delete('simulaciones/delete/{id}', [App\Http\Controllers\SimulacioneController::class, 'deleteSimulation'])
+        Route::delete('simulaciones/delete/{id}', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'deleteSimulation'])
             ->name('simulaciones.delete');
-        Route::resource('simulaciones', App\Http\Controllers\SimulacioneController::class);
+        Route::resource('simulaciones', Modules\Incendios\Http\Controllers\SimulacioneController::class);
         
         // Focos de incendio - Full CRUD
-        Route::resource('focos-incendios', App\Http\Controllers\FocosIncendioController::class);
+        Route::resource('focos-incendios', Modules\Incendios\Http\Controllers\FocosIncendioController::class);
         
         // Importar focos desde FIRMS (ruta web para evitar problemas de autenticación)
-        Route::post('focos-incendios/import/firms', [App\Http\Controllers\FocosIncendioController::class, 'importFromFirms'])
+        Route::post('focos-incendios/import/firms', [Modules\Incendios\Http\Controllers\FocosIncendioController::class, 'importFromFirms'])
             ->name('focos-incendios.import-firms');
         
         // Predictions - Full CRUD (solo edit, update, delete ya que create está arriba para todos)
-        Route::post('predictions', [App\Http\Controllers\PredictionController::class, 'store'])
+        Route::post('predictions', [Modules\Incendios\Http\Controllers\PredictionController::class, 'store'])
             ->name('predictions.store');
-        Route::get('predictions/{prediction}/edit', [App\Http\Controllers\PredictionController::class, 'edit'])
+        Route::get('predictions/{prediction}/edit', [Modules\Incendios\Http\Controllers\PredictionController::class, 'edit'])
             ->name('predictions.edit');
-        Route::patch('predictions/{prediction}', [App\Http\Controllers\PredictionController::class, 'update'])
+        Route::patch('predictions/{prediction}', [Modules\Incendios\Http\Controllers\PredictionController::class, 'update'])
             ->name('predictions.update');
-        Route::delete('predictions/{prediction}', [App\Http\Controllers\PredictionController::class, 'destroy'])
+        Route::delete('predictions/{prediction}', [Modules\Incendios\Http\Controllers\PredictionController::class, 'destroy'])
             ->name('predictions.destroy');
     });
 });

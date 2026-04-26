@@ -15,7 +15,7 @@ class OpenMeteoService
     /**
      * URL base de la API de SIPI Weather
      */
-    protected string $sipiApiUrl;
+    protected ?string $sipiApiUrl;
 
     public function __construct()
     {
@@ -60,6 +60,10 @@ class OpenMeteoService
      */
     protected function getWeatherFromSipi(float $latitude, float $longitude): ?array
     {
+        if (empty($this->sipiApiUrl)) {
+            return null;
+        }
+
         try {
             $response = Http::timeout(10)->get($this->sipiApiUrl, [
                 'latitude' => $latitude,

@@ -4,9 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Modules\Rescate\Http\Controllers\ReportController;
 use Modules\Rescate\Http\Controllers\CenterController;
 use Modules\Rescate\Http\Controllers\AnimalController;
-use Modules\Rescate\Http\Controllers\AnimalProfileController;
-use Modules\Rescate\Http\Controllers\DispositionController;
-use Modules\Rescate\Http\Controllers\HealthRecordController;
 use Modules\Rescate\Http\Controllers\AnimalStatusController;
 use Modules\Rescate\Http\Controllers\CareTypeController;
 use Modules\Rescate\Http\Controllers\CareController;
@@ -51,10 +48,10 @@ Route::get('/refresh-csrf', function () {
     ]);
 })->middleware('web');
 
-Route::get('/landing', [App\Http\Controllers\LandingController::class, 'index'])->name('landing');
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('home');
-Route::get('/dashboard/export-pdf', [App\Http\Controllers\HomeController::class, 'exportPdf'])->middleware('auth')->name('dashboard.export-pdf');
-Route::get('/dashboard/export-excel', [App\Http\Controllers\HomeController::class, 'exportExcel'])->middleware('auth')->name('dashboard.export-excel');
+Route::get('/landing', [Modules\Rescate\Http\Controllers\LandingController::class, 'index'])->name('landing');
+Route::get('/home', [Modules\Rescate\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('home');
+Route::get('/dashboard/export-pdf', [Modules\Rescate\Http\Controllers\HomeController::class, 'exportPdf'])->middleware('auth')->name('dashboard.export-pdf');
+Route::get('/dashboard/export-excel', [Modules\Rescate\Http\Controllers\HomeController::class, 'exportExcel'])->middleware('auth')->name('dashboard.export-excel');
 Route::get('animal-histories/{animal_history}/pdf', [AnimalHistoryController::class, 'pdf'])->name('animal-histories.pdf')->middleware('auth');
 Route::prefix('reports')->name('reports.')->group(function () {
     Route::put('{report}/approve', [ReportController::class, 'approve'])->name('approve')->middleware('auth');
@@ -69,9 +66,6 @@ Route::resource('profile', ProfileController::class)->only(['index', 'update'])-
 Route::resource('contact-messages', ContactMessageController::class)->only(['store', 'update'])->middleware('auth');
 Route::resource('centers', CenterController::class)->middleware('auth');
 Route::resource('animals', AnimalController::class)->middleware('auth');
-Route::resource('animal-profiles', AnimalProfileController::class)->middleware('auth');
-Route::resource('dispositions', DispositionController::class)->middleware('auth');
-Route::resource('health-records', HealthRecordController::class)->middleware('auth');
 // Rutas de reports: create y store sin autenticación (para registro rápido desde landing)
 Route::get('reports/create', [ReportController::class, 'create'])->name('reports.create');
 Route::post('reports', [ReportController::class, 'store'])->name('reports.store');

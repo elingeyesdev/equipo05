@@ -100,3 +100,18 @@ Cambios:
 Resultado esperado:
 
 - El modulo de rescate queda montado estructuralmente dentro del sistema principal, compartiendo el login central y preparado para normalizacion de modelo de usuario/roles.
+
+### Hito 5 - Estabilizacion de arranque y rutas integradas
+
+Fecha: 2026-04-26
+
+Cambios:
+
+- Se corrige null-safety en `OpenMeteoService` de rescate para evitar fallo por configuracion incompleta de `sipi_weather.api_url`.
+- Se corrigen referencias de rutas en rescate que apuntaban por error a controladores de incendios.
+- Se eliminan rutas de rescate que referenciaban controladores inexistentes (`AnimalProfileController`, `DispositionController`, `HealthRecordController`) para recuperar consistencia del enrutador.
+- Se confirma registro completo de rutas con `php artisan route:list` sin excepciones fatales.
+
+Resultado esperado:
+
+- La aplicacion vuelve a arrancar y registrar rutas de los tres sistemas sin romper por clases faltantes o configuraciones nulas.
