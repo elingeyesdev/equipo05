@@ -221,7 +221,7 @@ Route::prefix('rescate/modulo')
 
 Route::prefix('logistica/modulo')
     ->as('logistica.')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'logistica.db'])
     ->group(function () {
         require base_path('modulos/logistica-transportacion-donaciones-main/routes/web.php');
     });

@@ -80,6 +80,7 @@ Proyecto nuevo para unificar de forma gradual:
 4. Ejecutar migraciones:
    - `php artisan migrate`
    - `php artisan migrate --database=inventario --path=modulos/donacion-recepcion-inventario-main/database/migrations`
+  - `php artisan migrate --database=logistica --path=modulos/logistica-transportacion-donaciones-main/database/migrations`
 5. Levantar entorno:
    - `php artisan serve`
    - `npm run dev`

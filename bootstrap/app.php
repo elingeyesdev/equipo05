@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'inventario.db' => \App\Http\Middleware\UseInventarioConnection::class,
             'incendios.db' => \App\Http\Middleware\UseIncendiosConnection::class,
             'rescate.db' => \App\Http\Middleware\UseRescateConnection::class,
+            'logistica.db' => \App\Http\Middleware\UseLogisticaConnection::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
