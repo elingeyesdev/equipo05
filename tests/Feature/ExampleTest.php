@@ -23,3 +23,15 @@ test('rescate module requires authentication', function () {
 
     $response->assertRedirect('/login');
 });
+
+test('logistica module requires authentication', function () {
+    $response = $this->get('/logistica');
+
+    $response->assertRedirect('/login');
+});
+
+test('logistica internal module route requires authentication', function () {
+    $response = $this->get('/logistica/modulo');
+
+    $response->assertRedirect('/login');
+});
