@@ -78,6 +78,10 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('rescate.home');
     })->name('fusion.modulos.rescate');
 
+    Route::get('/logistica', function () {
+        return redirect()->route('logistica.dashboard');
+    })->name('fusion.modulos.logistica');
+
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
     // ====================================================
@@ -213,4 +217,11 @@ Route::prefix('rescate/modulo')
     ->middleware(['auth', 'rescate.db'])
     ->group(function () {
         require base_path('modulos/rescate-animales-silvestres-main/routes/web.php');
+    });
+
+Route::prefix('logistica/modulo')
+    ->as('logistica.')
+    ->middleware(['auth'])
+    ->group(function () {
+        require base_path('modulos/logistica-transportacion-donaciones-main/routes/web.php');
     });

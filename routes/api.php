@@ -16,3 +16,8 @@ Route::prefix('rescate')
     ->group(function () {
         require base_path('modulos/rescate-animales-silvestres-main/routes/api.php');
     });
+
+Route::prefix('logistica')
+    ->group(function () {
+        require base_path('modulos/logistica-transportacion-donaciones-main/routes/api.php');
+    });
