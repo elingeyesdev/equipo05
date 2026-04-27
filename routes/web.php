@@ -82,6 +82,10 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('logistica.dashboard');
     })->name('fusion.modulos.logistica');
 
+    Route::get('/seguimiento', function () {
+        return redirect()->route('seguimiento.dashboard');
+    })->name('fusion.modulos.seguimiento');
+
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
     // ====================================================
@@ -224,4 +228,11 @@ Route::prefix('logistica/modulo')
     ->middleware(['auth', 'logistica.db'])
     ->group(function () {
         require base_path('modulos/logistica-transportacion-donaciones-main/routes/web.php');
+    });
+
+Route::prefix('seguimiento/modulo')
+    ->as('seguimiento.')
+    ->middleware(['auth'])
+    ->group(function () {
+        require base_path('modulos/seguimiento-voluntarios-comunarios-main/routes/web.php');
     });

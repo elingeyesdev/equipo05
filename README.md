@@ -17,6 +17,9 @@ Proyecto nuevo para unificar de forma gradual:
 - Modulo Donacion/Recepcion/Inventario integrado bajo prefijos:
   - Web: `/inventario/*`
   - API: `/api/inventario/*`
+- Modulo Seguimiento Voluntarios Comunitarios integrado bajo prefijos:
+  - Web: `/seguimiento/modulo/*`
+  - API: `/api/seguimiento/*`
 - Codigo fuente incorporado para proxima integracion modular:
   - `modulos/monitoreo-incendios-simulacion-main`
   - `modulos/rescate-animales-silvestres-main`
@@ -24,6 +27,8 @@ Proyecto nuevo para unificar de forma gradual:
   - Web: `/incendios` y `/rescate`
   - API activa de incendios: `/api/incendios/*`
   - API activa de rescate: `/api/rescate/*`
+  - Web de seguimiento: `/seguimiento`
+  - API activa de seguimiento: `/api/seguimiento/*`
 - Estado de estabilidad actual:
   - El enrutamiento integrado de los tres sistemas se registra correctamente (`php artisan route:list`).
   - Se aplicaron correcciones de compatibilidad en servicios y rutas del modulo rescate para evitar errores fatales de arranque.
@@ -71,6 +76,9 @@ Proyecto nuevo para unificar de forma gradual:
   - Modulo `Logistica Transportacion Donaciones` integrado en sidebar y rutas internas bajo:
     - `/logistica`
     - `/logistica/modulo/*`
+  - Modulo `Seguimiento Voluntarios Comunitarios` integrado en sidebar y rutas internas bajo:
+    - `/seguimiento`
+    - `/seguimiento/modulo/*`
   - Pantalla de inicio de sesion del proyecto base ajustada para replicar la entrada publica de `@web`:
     - Boton `Solicitar ayuda` (acceso a `logistica.solicitud.create`).
     - Boton `Galeria de paquetes entregados` (acceso a `logistica.galeria`).

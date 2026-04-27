@@ -21,3 +21,8 @@ Route::prefix('logistica')
     ->group(function () {
         require base_path('modulos/logistica-transportacion-donaciones-main/routes/api.php');
     });
+
+Route::prefix('seguimiento')
+    ->group(function () {
+        require base_path('modulos/seguimiento-voluntarios-comunarios-main/routes/api.php');
+    });

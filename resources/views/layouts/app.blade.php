@@ -509,6 +509,75 @@
                             </ul>
                         </li>
 
+                        <li class="nav-item {{ request()->routeIs('seguimiento.*') || request()->routeIs('fusion.modulos.seguimiento') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('seguimiento.*') || request()->routeIs('fusion.modulos.seguimiento') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Seguimiento Voluntarios Comunitarios <i class="fas fa-angle-left right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.estadisticas') }}" class="nav-link {{ request()->routeIs('seguimiento.estadisticas') || request()->routeIs('seguimiento.dashboard') ? 'active' : '' }}">
+                                        <i class="fas fa-chart-bar nav-icon"></i><p>Estadisticas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.voluntarios') }}" class="nav-link {{ request()->routeIs('seguimiento.voluntarios') ? 'active' : '' }}">
+                                        <i class="fas fa-user-friends nav-icon"></i><p>Voluntarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.voluntarios-inactivos') }}" class="nav-link {{ request()->routeIs('seguimiento.voluntarios-inactivos') ? 'active' : '' }}">
+                                        <i class="fas fa-user-clock nav-icon"></i><p>Voluntarios Inactivos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.evaluacion') }}" class="nav-link {{ request()->routeIs('seguimiento.evaluacion') ? 'active' : '' }}">
+                                        <i class="fas fa-check-circle nav-icon"></i><p>Evaluacion</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.evaluacion-pruebas') }}" class="nav-link {{ request()->routeIs('seguimiento.evaluacion-pruebas') ? 'active' : '' }}">
+                                        <i class="fas fa-user-check nav-icon"></i><p>Evaluacion Voluntarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.capacitaciones') }}" class="nav-link {{ request()->routeIs('seguimiento.capacitaciones') ? 'active' : '' }}">
+                                        <i class="fas fa-chalkboard-teacher nav-icon"></i><p>Capacitaciones</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.necesidades') }}" class="nav-link {{ request()->routeIs('seguimiento.necesidades') ? 'active' : '' }}">
+                                        <i class="fas fa-plus-square nav-icon"></i><p>Necesidades</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.ayudas-solicitadas') }}" class="nav-link {{ request()->routeIs('seguimiento.ayudas-solicitadas') ? 'active' : '' }}">
+                                        <i class="fas fa-hand-holding-heart nav-icon"></i><p>Ayudas Solicitadas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.administradores') }}" class="nav-link {{ request()->routeIs('seguimiento.administradores') ? 'active' : '' }}">
+                                        <i class="fas fa-user-shield nav-icon"></i><p>Administradores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.universidades') }}" class="nav-link {{ request()->routeIs('seguimiento.universidades') ? 'active' : '' }}">
+                                        <i class="fas fa-graduation-cap nav-icon"></i><p>Universidades</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.chat-consulta') }}" class="nav-link {{ request()->routeIs('seguimiento.chat-consulta') ? 'active' : '' }}">
+                                        <i class="fas fa-comments nav-icon"></i><p>Chat de Voluntarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('seguimiento.helpdesk') }}" class="nav-link {{ request()->routeIs('seguimiento.helpdesk') ? 'active' : '' }}">
+                                        <i class="fas fa-headset nav-icon"></i><p>Centro de Soporte</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
                         <li class="nav-header">SISTEMA</li>
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link">
