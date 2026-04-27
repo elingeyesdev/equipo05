@@ -60,6 +60,12 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 // Accesos públicos previos al login para módulos con flujo invitado.
+Route::get('/publico/logistica/solicitar-ayuda', [AccesoPublicoController::class, 'logisticaSolicitud'])
+    ->name('publico.logistica.solicitud');
+Route::post('/publico/logistica/solicitar-ayuda', [AccesoPublicoController::class, 'logisticaSolicitudStore'])
+    ->name('publico.logistica.solicitud.store');
+Route::get('/publico/logistica/galeria', [AccesoPublicoController::class, 'logisticaGaleria'])
+    ->name('publico.logistica.galeria');
 Route::get('/publico/cuadrillas/mapa', [AccesoPublicoController::class, 'cuadrillasMapa'])
     ->name('publico.cuadrillas.mapa');
 Route::get('/publico/cuadrillas/reporte', [AccesoPublicoController::class, 'cuadrillasReporte'])

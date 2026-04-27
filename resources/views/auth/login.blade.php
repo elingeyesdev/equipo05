@@ -65,14 +65,14 @@
     <div class="login-box">
         <div class="row mb-3">
             <div class="col-12 col-lg-6 mb-2 mb-lg-0">
-                <a href="{{ route('logistica.solicitud.create') }}"
+                <a href="{{ route('publico.logistica.solicitud') }}"
                    class="btn btn-outline-primary btn-lg btn-block landing-access-btn">
                     <i class="fas fa-hands-helping mr-2"></i>
                     Solicitar ayuda
                 </a>
             </div>
             <div class="col-12 col-lg-6">
-                <a href="{{ route('logistica.galeria') }}"
+                <a href="{{ route('publico.logistica.galeria') }}"
                    class="btn btn-outline-primary btn-lg btn-block landing-access-btn">
                     <i class="fas fa-images mr-2"></i>
                     Galería de paquetes entregados

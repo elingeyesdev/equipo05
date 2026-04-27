@@ -3,21 +3,115 @@
 namespace App\Http\Controllers\Fusion;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class AccesoPublicoController extends Controller
 {
+    public function logisticaSolicitud(): View
+    {
+        return view('fusion.modulos.publico-logistica-solicitud');
+    }
+
+    public function logisticaSolicitudStore(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:120'],
+            'apellido' => ['nullable', 'string', 'max:120'],
+            'ci' => ['required', 'string', 'max:40'],
+            'telefono' => ['nullable', 'string', 'max:40'],
+            'comunidad' => ['required', 'string', 'max:120'],
+            'provincia' => ['required', 'string', 'max:120'],
+            'direccion' => ['nullable', 'string', 'max:255'],
+            'tipo_emergencia' => ['required', 'string', 'max:120'],
+            'cantidad_personas' => ['required', 'integer', 'min:1'],
+            'fecha_inicio' => ['required', 'date'],
+            'fecha_necesidad' => ['nullable', 'date'],
+            'insumos_necesarios' => ['nullable', 'string'],
+        ]);
+
+        $conn = DB::connection('logistica');
+
+        $solicitanteId = $conn->table('solicitante')->insertGetId([
+            'nombre' => $data['nombre'],
+            'apellido' => $data['apellido'] ?? null,
+            'ci' => $data['ci'],
+            'telefono' => $data['telefono'] ?? null,
+            'email' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $destinoId = $conn->table('destino')->insertGetId([
+            'comunidad' => $data['comunidad'],
+            'provincia' => $data['provincia'],
+            'direccion' => $data['direccion'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $codigo = 'SOL-' . now()->format('YmdHis');
+
+        $conn->table('solicitud')->insert([
+            'estado' => 'pendiente',
+            'codigo_seguimiento' => $codigo,
+            'cantidad_personas' => $data['cantidad_personas'],
+            'fecha_inicio' => $data['fecha_inicio'],
+            'tipo_emergencia' => $data['tipo_emergencia'],
+            'insumos_necesarios' => $data['insumos_necesarios'] ?? null,
+            'id_solicitante' => $solicitanteId,
+            'id_destino' => $destinoId,
+            'fecha_solicitud' => now()->toDateString(),
+            'aprobada' => 0,
+            'apoyoaceptado' => 0,
+            'fecha_necesidad' => $data['fecha_necesidad'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->route('publico.logistica.solicitud')
+            ->with('success', 'Solicitud enviada correctamente.');
+    }
+
+    public function logisticaGaleria(): View
+    {
+        $conn = DB::connection('logistica');
+        $schema = $conn->getSchemaBuilder();
+        $paquetes = collect();
+
+        if ($schema->hasTable('paquete')) {
+            $query = $conn->table('paquete')
+                ->leftJoin('solicitud', 'paquete.id_solicitud', '=', 'solicitud.id_solicitud')
+                ->leftJoin('destino', 'solicitud.id_destino', '=', 'destino.id_destino')
+                ->select([
+                    'paquete.id_paquete',
+                    'paquete.codigo',
+                    'paquete.fecha_entrega',
+                    'destino.comunidad',
+                ]);
+
+            if ($schema->hasColumn('paquete', 'imagen')) {
+                $query->addSelect('paquete.imagen');
+            }
+
+            if ($schema->hasColumn('paquete', 'updated_at')) {
+                $query->orderByDesc('paquete.updated_at');
+            } elseif ($schema->hasColumn('paquete', 'id_paquete')) {
+                $query->orderByDesc('paquete.id_paquete');
+            }
+
+            $paquetes = $query->limit(24)->get();
+        }
+
+        return view('fusion.modulos.publico-logistica-galeria', compact('paquetes'));
+    }
+
     public function cuadrillasMapa(): View
     {
-        return $this->renderPublicTable(
-            'Cuadrillas - Mapa en Tiempo Real',
-            'Datos públicos de focos de calor y monitoreo',
-            'cuadrillas',
-            'foco_calor',
-            'id_foco_calor'
-        );
+        return view('fusion.modulos.publico-cuadrillas-mapa');
     }
 
     public function cuadrillasReporte(): View
