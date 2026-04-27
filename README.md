@@ -68,6 +68,12 @@ Proyecto nuevo para unificar de forma gradual:
     - Aprobacion de reportes en Rescate corregida y operativa en SQLite (`/rescate/modulo/reports/{id}/approve`).
     - Barrido completo de rutas estaticas de ambos modulos (`106` endpoints GET sin parametros) sin errores `500/419`.
   - Suite de pruebas actual en verde (`php artisan test`: 5 pruebas, 0 fallos).
+  - Modulo `Logistica Transportacion Donaciones` integrado en sidebar y rutas internas bajo:
+    - `/logistica`
+    - `/logistica/modulo/*`
+  - Pantalla de inicio de sesion del proyecto base ajustada para replicar la entrada publica de `@web`:
+    - Boton `Solicitar ayuda` (acceso a `logistica.solicitud.create`).
+    - Boton `Galeria de paquetes entregados` (acceso a `logistica.galeria`).
 
 ## Arranque local
 1. Instalar dependencias:
@@ -84,6 +90,12 @@ Proyecto nuevo para unificar de forma gradual:
 5. Levantar entorno:
    - `php artisan serve`
    - `npm run dev`
+
+## Acceso rapido previo al login
+- En la pantalla de login del proyecto base se muestran botones publicos para flujo logistico:
+  - `Solicitar ayuda`
+  - `Galeria de paquetes entregados`
+- Estos accesos permiten iniciar el flujo de logistica antes de autenticarse, manteniendo el mismo estilo visual del modulo `@web`.
 
 ## Punto de seguimiento de integracion
 - Ruta: `/fusion/fase1`

@@ -17,13 +17,48 @@
         .login-box {
             width: 400px; /* Un poco más ancho para mejor lectura */
         }
+        @media (min-width: 992px) {
+            .login-box {
+                width: 920px;
+            }
+        }
         .card-primary.card-outline {
             border-top: 3px solid #007bff;
+        }
+        .landing-access-btn {
+            border-width: 2px;
+            border-color: #007bff;
+            color: #007bff;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+        .landing-access-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.25);
+            background-color: #007bff;
+            color: #fff;
         }
     </style>
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
+        <div class="row mb-3">
+            <div class="col-12 col-lg-6 mb-2 mb-lg-0">
+                <a href="{{ route('logistica.solicitud.create') }}"
+                   class="btn btn-outline-primary btn-lg btn-block landing-access-btn">
+                    <i class="fas fa-hands-helping mr-2"></i>
+                    Solicitar ayuda
+                </a>
+            </div>
+            <div class="col-12 col-lg-6">
+                <a href="{{ route('logistica.galeria') }}"
+                   class="btn btn-outline-primary btn-lg btn-block landing-access-btn">
+                    <i class="fas fa-images mr-2"></i>
+                    Galería de paquetes entregados
+                </a>
+            </div>
+        </div>
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
                 <a href="#" class="h1"><b>Sistema</b>Donaciones</a>
