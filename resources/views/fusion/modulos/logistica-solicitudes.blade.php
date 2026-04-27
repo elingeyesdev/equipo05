@@ -23,7 +23,12 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span style="font-size: larger; font-weight: bolder;">Solicitudes</span>
-            <span class="badge badge-info">{{ $solicitudes->count() }} registros</span>
+            <div class="d-flex align-items-center" style="gap: .5rem;">
+                <span class="badge badge-info">{{ $solicitudes->count() }} registros</span>
+                <a href="{{ route('logistica.solicitud.create') }}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-plus"></i> Crear nueva
+                </a>
+            </div>
         </div>
         <div class="px-4 pt-3">
             <div class="btn-group btn-group-sm" role="group">
@@ -34,6 +39,9 @@
             </div>
         </div>
         <div class="card-body bg-white">
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
             <div class="row solicitudes-grid">
                 @forelse($solicitudes as $solicitud)
                     @php

@@ -3,12 +3,78 @@
 namespace App\Http\Controllers\LogisticaTransportacion;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class SeccionesController extends Controller
 {
+    public function solicitudCreate(): View
+    {
+        return view('fusion.modulos.logistica-solicitud-create');
+    }
+
+    public function solicitudStore(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:120'],
+            'apellido' => ['nullable', 'string', 'max:120'],
+            'ci' => ['required', 'string', 'max:40'],
+            'telefono' => ['nullable', 'string', 'max:40'],
+            'comunidad' => ['required', 'string', 'max:120'],
+            'provincia' => ['required', 'string', 'max:120'],
+            'direccion' => ['nullable', 'string', 'max:255'],
+            'tipo_emergencia' => ['required', 'string', 'max:120'],
+            'cantidad_personas' => ['required', 'integer', 'min:1'],
+            'fecha_inicio' => ['required', 'date'],
+            'fecha_necesidad' => ['nullable', 'date'],
+            'insumos_necesarios' => ['nullable', 'string'],
+        ]);
+
+        $conn = DB::connection('logistica');
+
+        $solicitanteId = $conn->table('solicitante')->insertGetId([
+            'nombre' => $data['nombre'],
+            'apellido' => $data['apellido'] ?? null,
+            'ci' => $data['ci'],
+            'telefono' => $data['telefono'] ?? null,
+            'email' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $destinoId = $conn->table('destino')->insertGetId([
+            'comunidad' => $data['comunidad'],
+            'provincia' => $data['provincia'],
+            'direccion' => $data['direccion'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $codigo = 'SOL-' . now()->format('YmdHis');
+
+        $conn->table('solicitud')->insert([
+            'estado' => 'pendiente',
+            'codigo_seguimiento' => $codigo,
+            'cantidad_personas' => $data['cantidad_personas'],
+            'fecha_inicio' => $data['fecha_inicio'],
+            'tipo_emergencia' => $data['tipo_emergencia'],
+            'insumos_necesarios' => $data['insumos_necesarios'] ?? null,
+            'id_solicitante' => $solicitanteId,
+            'id_destino' => $destinoId,
+            'fecha_solicitud' => now()->toDateString(),
+            'aprobada' => 0,
+            'apoyoaceptado' => 0,
+            'fecha_necesidad' => $data['fecha_necesidad'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->route('logistica.solicitud')->with('success', 'Solicitud creada correctamente.');
+    }
+
     public function solicitudes(): View
     {
         $solicitudes = DB::connection('logistica')

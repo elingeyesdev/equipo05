@@ -8,6 +8,8 @@ Route::get('/', [ModuloController::class, 'index'])->name('dashboard');
 Route::get('/estadisticas', [ModuloController::class, 'index'])->name('estadisticas');
 
 Route::get('/solicitud', [SeccionesController::class, 'solicitudes'])->name('solicitud');
+Route::get('/solicitud/create', [SeccionesController::class, 'solicitudCreate'])->name('solicitud.create');
+Route::post('/solicitud', [SeccionesController::class, 'solicitudStore'])->name('solicitud.store');
 Route::get('/paquete', [SeccionesController::class, 'paquetes'])->name('paquete');
 Route::get('/seguimiento', [SeccionesController::class, 'seguimiento'])->name('seguimiento');
 Route::get('/vehiculo', [SeccionesController::class, 'show'])->defaults('seccion', 'vehiculo')->name('vehiculo');
