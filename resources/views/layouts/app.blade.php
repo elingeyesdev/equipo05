@@ -399,6 +399,86 @@
                                         <i class="far fa-circle nav-icon"></i><p>Dashboard</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.solicitudes') }}" class="nav-link {{ request()->routeIs('logistica.solicitudes') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Solicitudes</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.paquetes') }}" class="nav-link {{ request()->routeIs('logistica.paquetes') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Paquetes</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.seguimiento') }}" class="nav-link {{ request()->routeIs('logistica.seguimiento') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Seguimiento</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.solicitantes') }}" class="nav-link {{ request()->routeIs('logistica.solicitantes') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Solicitantes</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.destinos') }}" class="nav-link {{ request()->routeIs('logistica.destinos') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Destinos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.ubicaciones') }}" class="nav-link {{ request()->routeIs('logistica.ubicaciones') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Ubicaciones</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.vehiculos') }}" class="nav-link {{ request()->routeIs('logistica.vehiculos') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Vehiculos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.conductores') }}" class="nav-link {{ request()->routeIs('logistica.conductores') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Conductores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.tipos-vehiculo') }}" class="nav-link {{ request()->routeIs('logistica.tipos-vehiculo') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de Vehiculo</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.tipos-licencia') }}" class="nav-link {{ request()->routeIs('logistica.tipos-licencia') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de Licencia</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.tipos-emergencia') }}" class="nav-link {{ request()->routeIs('logistica.tipos-emergencia') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de Emergencia</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.marcas') }}" class="nav-link {{ request()->routeIs('logistica.marcas') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Marcas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.reportes') }}" class="nav-link {{ request()->routeIs('logistica.reportes') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Reportes</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.usuarios') }}" class="nav-link {{ request()->routeIs('logistica.usuarios') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Usuarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.roles') }}" class="nav-link {{ request()->routeIs('logistica.roles') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Roles</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.estados') }}" class="nav-link {{ request()->routeIs('logistica.estados') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Estados</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
 
