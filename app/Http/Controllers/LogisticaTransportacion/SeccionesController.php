@@ -9,6 +9,89 @@ use Illuminate\View\View;
 
 class SeccionesController extends Controller
 {
+    public function solicitudes(): View
+    {
+        $solicitudes = DB::connection('logistica')
+            ->table('solicitud')
+            ->leftJoin('solicitante', 'solicitud.id_solicitante', '=', 'solicitante.id_solicitante')
+            ->leftJoin('destino', 'solicitud.id_destino', '=', 'destino.id_destino')
+            ->select([
+                'solicitud.id_solicitud',
+                'solicitud.codigo_seguimiento',
+                'solicitud.estado',
+                'solicitud.aprobada',
+                'solicitud.tipo_emergencia',
+                'solicitud.cantidad_personas',
+                'solicitud.fecha_inicio',
+                'solicitud.fecha_necesidad',
+                'solicitud.created_at',
+                'solicitante.nombre as solicitante_nombre',
+                'solicitante.apellido as solicitante_apellido',
+                'solicitante.ci as solicitante_ci',
+                'solicitante.telefono as solicitante_telefono',
+                'destino.comunidad as destino_comunidad',
+                'destino.provincia as destino_provincia',
+                'destino.direccion as destino_direccion',
+            ])
+            ->orderByDesc('solicitud.created_at')
+            ->limit(30)
+            ->get();
+
+        return view('fusion.modulos.logistica-solicitudes', compact('solicitudes'));
+    }
+
+    public function paquetes(): View
+    {
+        $paquetes = DB::connection('logistica')
+            ->table('paquete')
+            ->leftJoin('solicitud', 'paquete.id_solicitud', '=', 'solicitud.id_solicitud')
+            ->leftJoin('solicitante', 'solicitud.id_solicitante', '=', 'solicitante.id_solicitante')
+            ->leftJoin('estado', 'paquete.estado_id', '=', 'estado.id_estado')
+            ->select([
+                'paquete.id_paquete',
+                'paquete.codigo',
+                'paquete.ubicacion_actual',
+                'paquete.fecha_creacion',
+                'paquete.fecha_entrega',
+                'paquete.updated_at',
+                'solicitud.tipo_emergencia',
+                'solicitud.codigo_seguimiento',
+                'solicitante.nombre as solicitante_nombre',
+                'solicitante.apellido as solicitante_apellido',
+                'solicitante.ci as solicitante_ci',
+                'estado.nombre_estado as estado_nombre',
+            ])
+            ->orderByDesc('paquete.updated_at')
+            ->limit(30)
+            ->get();
+
+        return view('fusion.modulos.logistica-paquetes', compact('paquetes'));
+    }
+
+    public function seguimiento(): View
+    {
+        $seguimientos = DB::connection('logistica')
+            ->table('historial_seguimiento_donaciones')
+            ->leftJoin('paquete', 'historial_seguimiento_donaciones.id_paquete', '=', 'paquete.id_paquete')
+            ->leftJoin('solicitud', 'paquete.id_solicitud', '=', 'solicitud.id_solicitud')
+            ->select([
+                'historial_seguimiento_donaciones.id_historial',
+                'historial_seguimiento_donaciones.id_paquete',
+                'historial_seguimiento_donaciones.estado',
+                'historial_seguimiento_donaciones.fecha_actualizacion',
+                'historial_seguimiento_donaciones.vehiculo_placa',
+                'historial_seguimiento_donaciones.conductor_nombre',
+                'historial_seguimiento_donaciones.conductor_ci',
+                'paquete.codigo as paquete_codigo',
+                'solicitud.codigo_seguimiento',
+            ])
+            ->orderByDesc('historial_seguimiento_donaciones.fecha_actualizacion')
+            ->limit(30)
+            ->get();
+
+        return view('fusion.modulos.logistica-seguimiento', compact('seguimientos'));
+    }
+
     public function show(string $seccion): View
     {
         $secciones = [

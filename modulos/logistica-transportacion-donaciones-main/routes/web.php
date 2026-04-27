@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ModuloController::class, 'index'])->name('dashboard');
 
-Route::get('/solicitudes', [SeccionesController::class, 'show'])->defaults('seccion', 'solicitudes')->name('solicitudes');
-Route::get('/paquetes', [SeccionesController::class, 'show'])->defaults('seccion', 'paquetes')->name('paquetes');
-Route::get('/seguimiento', [SeccionesController::class, 'show'])->defaults('seccion', 'seguimiento')->name('seguimiento');
+Route::get('/solicitudes', [SeccionesController::class, 'solicitudes'])->name('solicitudes');
+Route::get('/paquetes', [SeccionesController::class, 'paquetes'])->name('paquetes');
+Route::get('/seguimiento', [SeccionesController::class, 'seguimiento'])->name('seguimiento');
 Route::get('/solicitantes', [SeccionesController::class, 'show'])->defaults('seccion', 'solicitantes')->name('solicitantes');
 Route::get('/destinos', [SeccionesController::class, 'show'])->defaults('seccion', 'destinos')->name('destinos');
 Route::get('/ubicaciones', [SeccionesController::class, 'show'])->defaults('seccion', 'ubicaciones')->name('ubicaciones');
