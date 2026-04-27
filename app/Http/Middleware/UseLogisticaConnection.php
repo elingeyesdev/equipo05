@@ -31,18 +31,31 @@ class UseLogisticaConnection
         }
 
         $connection = DB::connection('logistica');
+        $schema = $connection->getSchemaBuilder();
 
         // Evita fallos mientras el módulo aún no tenga migraciones aplicadas.
-        if (!$connection->getSchemaBuilder()->hasTable('users')) {
+        if (!$schema->hasTable('users')) {
             return;
         }
 
+        $emailColumn = $schema->hasColumn('users', 'correo_electronico') ? 'correo_electronico' : 'email';
+        if (!$schema->hasColumn('users', $emailColumn)) {
+            return;
+        }
+
+        $hasNombre = $schema->hasColumn('users', 'nombre');
+        $hasApellido = $schema->hasColumn('users', 'apellido');
+        $nameColumn = $schema->hasColumn('users', 'name') ? 'name' : null;
+
         $existing = $connection->table('users')->where('id', $authId)->first();
-        $displayName = $user->name ?? $user->nombre ?? $user->usuario ?? ('Usuario ' . $authId);
-        $email = $user->email ?? $user->correo_electronico ?? $user->correo ?? ('usuario' . $authId . '@local.invalid');
+        $fullName = trim((string) ($user->name ?? $user->nombre ?? $user->usuario ?? ('Usuario ' . $authId)));
+        $nameParts = preg_split('/\s+/', $fullName, 2);
+        $nombre = $nameParts[0] ?? ('Usuario' . $authId);
+        $apellido = $nameParts[1] ?? 'Logistica';
+        $email = (string) ($user->email ?? $user->correo_electronico ?? $user->correo ?? ('usuario' . $authId . '@local.invalid'));
 
         $emailTaken = $connection->table('users')
-            ->where('email', $email)
+            ->where($emailColumn, $email)
             ->where('id', '!=', $authId)
             ->exists();
 
@@ -50,24 +63,44 @@ class UseLogisticaConnection
             $email = 'logistica_user_' . $authId . '@local.invalid';
         }
 
+        $payload = [
+            $emailColumn => $email,
+            'updated_at' => now(),
+        ];
+        if ($nameColumn) {
+            $payload[$nameColumn] = $fullName;
+        }
+        if ($hasNombre) {
+            $payload['nombre'] = $nombre;
+        }
+        if ($hasApellido) {
+            $payload['apellido'] = $apellido;
+        }
+
         if ($existing) {
             $connection->table('users')
                 ->where('id', $authId)
-                ->update([
-                    'email' => $email,
-                    'name' => $displayName,
-                    'updated_at' => now(),
-                ]);
+                ->update($payload);
             return;
         }
 
-        $connection->table('users')->insert([
+        $insertPayload = [
             'id' => $authId,
-            'name' => $displayName,
-            'email' => $email,
+            $emailColumn => $email,
             'password' => $user->password ?? Hash::make(Str::random(40)),
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ];
+        if ($nameColumn) {
+            $insertPayload[$nameColumn] = $fullName;
+        }
+        if ($hasNombre) {
+            $insertPayload['nombre'] = $nombre;
+        }
+        if ($hasApellido) {
+            $insertPayload['apellido'] = $apellido;
+        }
+
+        $connection->table('users')->insert($insertPayload);
     }
 }
