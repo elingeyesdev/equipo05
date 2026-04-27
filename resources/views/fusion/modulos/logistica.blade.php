@@ -2,9 +2,41 @@
 
 @section('content')
 <div class="container-fluid">
+    <style>
+        .logistica-kpi .small-box {
+            border-radius: 14px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        .logistica-kpi .small-box .inner {
+            padding: 1rem 1rem 0.85rem;
+        }
+        .logistica-kpi .small-box h4 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+        .logistica-kpi .small-box p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+        }
+        .logistica-card {
+            border-radius: 14px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+            border: 0;
+        }
+        .logistica-card .card-header {
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, rgba(13, 110, 253, 0.07) 0%, rgba(32, 201, 151, 0.08) 100%);
+            border-radius: 14px 14px 0 0;
+        }
+    </style>
+
     <div class="row mb-3">
         @foreach($resumen as $item)
-        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3 logistica-kpi">
             <div class="small-box bg-info">
                 <div class="inner">
                     <h4>{{ $item['total'] }}</h4>
@@ -17,7 +49,7 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card logistica-card">
                 <div class="card-header">
                     <h3 class="card-title mb-0">Logistica Transportacion Donaciones</h3>
                 </div>

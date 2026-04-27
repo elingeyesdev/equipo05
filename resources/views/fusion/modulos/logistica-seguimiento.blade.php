@@ -2,20 +2,39 @@
 
 @section('content')
 <div class="container-fluid">
+    <style>
+        .seguimiento-grid .col-md-3 { display: flex; }
+        .seguimiento-card {
+            width: 100%;
+            border-radius: 12px;
+            border-top: 5px solid transparent;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .seguimiento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+        }
+        .seguimiento-card.estado-entregado { border-top-color: #28a745; }
+        .seguimiento-card.estado-camino { border-top-color: #17a2b8; }
+        .seguimiento-card.estado-otro { border-top-color: #ffc107; }
+    </style>
+
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span style="font-size: larger; font-weight: bolder;">Historial Seguimiento de Paquetes</span>
             <span class="badge badge-info">{{ $seguimientos->count() }} registros</span>
         </div>
         <div class="card-body bg-white">
-            <div class="row">
+            <div class="row seguimiento-grid">
                 @forelse($seguimientos as $item)
                     @php
                         $estado = strtolower((string) ($item->estado ?? ''));
                         $badgeClass = str_contains($estado, 'entreg') ? 'badge-success' : (str_contains($estado, 'camino') ? 'badge-info' : 'badge-warning');
+                        $estadoClass = str_contains($estado, 'entreg') ? 'entregado' : (str_contains($estado, 'camino') ? 'camino' : 'otro');
                     @endphp
-                    <div class="col-md-3 d-flex">
-                        <div class="card mb-3 shadow-sm bg-white w-100">
+                    <div class="col-md-3">
+                        <div class="card mb-3 shadow-sm bg-white seguimiento-card estado-{{ $estadoClass }}">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <strong>Paquete {{ $item->paquete_codigo ?? $item->codigo_seguimiento ?? $item->id_paquete }}</strong>
                                 <span class="badge {{ $badgeClass }} text-uppercase">{{ $item->estado ?? '-' }}</span>

@@ -2,20 +2,49 @@
 
 @section('content')
 <div class="container-fluid">
+    <style>
+        .paquetes-grid .col-md-3 { display: flex; }
+        .paquete-card {
+            width: 100%;
+            border-radius: 12px;
+            border-top: 5px solid transparent;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .paquete-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+        }
+        .paquete-card.estado-entregado { border-top-color: #28a745; }
+        .paquete-card.estado-camino { border-top-color: #17a2b8; }
+        .paquete-card.estado-armado { border-top-color: #007bff; }
+        .paquete-card.estado-pendiente { border-top-color: #ffc107; }
+    </style>
+
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span style="font-size: larger; font-weight: bolder;">Paquetes</span>
             <span class="badge badge-info">{{ $paquetes->count() }} registros</span>
         </div>
+        <div class="px-4 pt-3">
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-secondary btn-paquete-filter active" data-filter="todos">Todos</button>
+                <button type="button" class="btn btn-outline-secondary btn-paquete-filter" data-filter="pendiente">Pendientes</button>
+                <button type="button" class="btn btn-outline-secondary btn-paquete-filter" data-filter="armado">Armados</button>
+                <button type="button" class="btn btn-outline-secondary btn-paquete-filter" data-filter="camino">En camino</button>
+                <button type="button" class="btn btn-outline-secondary btn-paquete-filter" data-filter="entregado">Entregados</button>
+            </div>
+        </div>
         <div class="card-body bg-white">
-            <div class="row">
+            <div class="row paquetes-grid">
                 @forelse($paquetes as $paquete)
                     @php
                         $estado = strtolower((string) ($paquete->estado_nombre ?? 'pendiente'));
                         $badgeClass = str_contains($estado, 'entreg') ? 'badge-success' : (str_contains($estado, 'camino') ? 'badge-info' : (str_contains($estado, 'armad') ? 'badge-primary' : 'badge-warning'));
+                        $estadoFilter = str_contains($estado, 'entreg') ? 'entregado' : (str_contains($estado, 'camino') ? 'camino' : (str_contains($estado, 'armad') ? 'armado' : 'pendiente'));
                     @endphp
-                    <div class="col-md-3 d-flex">
-                        <div class="card mb-3 shadow-sm bg-white w-100">
+                    <div class="col-md-3 paquete-item" data-estado="{{ $estadoFilter }}">
+                        <div class="card mb-3 shadow-sm bg-white paquete-card estado-{{ $estadoFilter }}">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <strong>Paquete {{ $paquete->codigo ?? $paquete->id_paquete }}</strong>
                                 <span class="badge {{ $badgeClass }} text-uppercase">{{ $paquete->estado_nombre ?? 'Pendiente' }}</span>
@@ -37,4 +66,23 @@
         </div>
     </div>
 </div>
+
+@push('js')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.btn-paquete-filter');
+    const items = document.querySelectorAll('.paquete-item');
+    buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            buttons.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const value = btn.dataset.filter;
+            items.forEach((item) => {
+                item.style.display = (value === 'todos' || item.dataset.estado === value) ? '' : 'none';
+            });
+        });
+    });
+});
+</script>
+@endpush
 @endsection

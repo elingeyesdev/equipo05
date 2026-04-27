@@ -95,22 +95,21 @@ class SeccionesController extends Controller
     public function show(string $seccion): View
     {
         $secciones = [
-            'solicitudes' => ['titulo' => 'Solicitudes', 'tabla' => 'solicitud', 'pk' => 'id_solicitud'],
-            'paquetes' => ['titulo' => 'Paquetes', 'tabla' => 'paquete', 'pk' => 'id_paquete'],
-            'seguimiento' => ['titulo' => 'Seguimiento', 'tabla' => 'historial_seguimiento_donaciones', 'pk' => 'id_historial'],
-            'solicitantes' => ['titulo' => 'Solicitantes', 'tabla' => 'solicitante', 'pk' => 'id_solicitante'],
-            'destinos' => ['titulo' => 'Destinos', 'tabla' => 'destino', 'pk' => 'id_destino'],
-            'ubicaciones' => ['titulo' => 'Ubicaciones', 'tabla' => 'ubicacion', 'pk' => 'id_ubicacion'],
-            'vehiculos' => ['titulo' => 'Vehiculos', 'tabla' => 'vehiculo', 'pk' => 'id_vehiculo'],
-            'conductores' => ['titulo' => 'Conductores', 'tabla' => 'conductor', 'pk' => 'id_conductor'],
-            'tipos-vehiculo' => ['titulo' => 'Tipos de Vehiculo', 'tabla' => 'tipo_vehiculo', 'pk' => 'id_tipo_vehiculo'],
-            'tipos-licencia' => ['titulo' => 'Tipos de Licencia', 'tabla' => 'tipo_licencia', 'pk' => 'id_tipo_licencia'],
-            'tipos-emergencia' => ['titulo' => 'Tipos de Emergencia', 'tabla' => 'tipo_emergencia', 'pk' => 'id_tipo_emergencia'],
-            'marcas' => ['titulo' => 'Marcas', 'tabla' => 'marca', 'pk' => 'id_marca'],
-            'reportes' => ['titulo' => 'Reportes', 'tabla' => 'reporte', 'pk' => 'id_reporte'],
-            'usuarios' => ['titulo' => 'Usuarios', 'tabla' => 'usuario', 'pk' => 'id'],
-            'roles' => ['titulo' => 'Roles', 'tabla' => 'rol', 'pk' => 'id'],
-            'estados' => ['titulo' => 'Estados', 'tabla' => 'estado', 'pk' => 'id_estado'],
+            'solicitante' => ['titulo' => 'Solicitantes', 'tabla' => 'solicitante', 'pk' => 'id_solicitante'],
+            'destino' => ['titulo' => 'Destinos', 'tabla' => 'destino', 'pk' => 'id_destino'],
+            'ubicacion' => ['titulo' => 'Ubicaciones', 'tabla' => 'ubicacion', 'pk' => 'id_ubicacion'],
+            'vehiculo' => ['titulo' => 'Vehículos', 'tabla' => 'vehiculo', 'pk' => 'id_vehiculo'],
+            'conductor' => ['titulo' => 'Conductores', 'tabla' => 'conductor', 'pk' => 'id_conductor'],
+            'tipo-vehiculo' => ['titulo' => 'Tipo de Vehículo', 'tabla' => 'tipo_vehiculo', 'pk' => 'id_tipo_vehiculo'],
+            'tipo-licencia' => ['titulo' => 'Licencias', 'tabla' => 'tipo_licencia', 'pk' => 'id_tipo_licencia'],
+            'tipo-emergencia' => ['titulo' => 'Tipo de Emergencia', 'tabla' => 'tipo_emergencia', 'pk' => 'id_tipo_emergencia'],
+            'marca' => ['titulo' => 'Marcas', 'tabla' => 'marca', 'pk' => 'id_marca'],
+            'reporte' => ['titulo' => 'Reportes', 'tabla' => 'reporte', 'pk' => 'id_reporte'],
+            'usuario' => ['titulo' => 'Voluntarios', 'tabla' => 'usuario', 'pk' => 'id'],
+            'rol' => ['titulo' => 'Roles', 'tabla' => 'rol', 'pk' => 'id'],
+            'estado' => ['titulo' => 'Estados', 'tabla' => 'estado', 'pk' => 'id_estado'],
+            'galeria' => ['titulo' => 'Galería de Agradecimiento', 'tabla' => 'paquete', 'pk' => 'id_paquete'],
+            'helpdesk' => ['titulo' => 'Centro de Soporte', 'tabla' => 'solicitud', 'pk' => 'id_solicitud'],
         ];
 
         abort_unless(isset($secciones[$seccion]), 404);
