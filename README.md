@@ -20,6 +20,9 @@ Proyecto nuevo para unificar de forma gradual:
 - Modulo Seguimiento Voluntarios Comunitarios integrado bajo prefijos:
   - Web: `/seguimiento/modulo/*`
   - API: `/api/seguimiento/*`
+- Modulo Cuadrillas Incendios Kardex Cursos integrado bajo prefijos:
+  - Web: `/cuadrillas/modulo/*`
+  - API: `/api/cuadrillas/*`
 - Codigo fuente incorporado para proxima integracion modular:
   - `modulos/monitoreo-incendios-simulacion-main`
   - `modulos/rescate-animales-silvestres-main`
@@ -29,6 +32,8 @@ Proyecto nuevo para unificar de forma gradual:
   - API activa de rescate: `/api/rescate/*`
   - Web de seguimiento: `/seguimiento`
   - API activa de seguimiento: `/api/seguimiento/*`
+  - Web de cuadrillas: `/cuadrillas`
+  - API activa de cuadrillas: `/api/cuadrillas/*`
 - Estado de estabilidad actual:
   - El enrutamiento integrado de los tres sistemas se registra correctamente (`php artisan route:list`).
   - Se aplicaron correcciones de compatibilidad en servicios y rutas del modulo rescate para evitar errores fatales de arranque.
@@ -79,6 +84,9 @@ Proyecto nuevo para unificar de forma gradual:
   - Modulo `Seguimiento Voluntarios Comunitarios` integrado en sidebar y rutas internas bajo:
     - `/seguimiento`
     - `/seguimiento/modulo/*`
+  - Modulo `Cuadrillas Incendios Kardex Cursos` integrado en sidebar y rutas internas bajo:
+    - `/cuadrillas`
+    - `/cuadrillas/modulo/*`
   - Pantalla de inicio de sesion del proyecto base ajustada para replicar la entrada publica de `@web`:
     - Boton `Solicitar ayuda` (acceso a `logistica.solicitud.create`).
     - Boton `Galeria de paquetes entregados` (acceso a `logistica.galeria`).

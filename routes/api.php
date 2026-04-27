@@ -26,3 +26,8 @@ Route::prefix('seguimiento')
     ->group(function () {
         require base_path('modulos/seguimiento-voluntarios-comunarios-main/routes/api.php');
     });
+
+Route::prefix('cuadrillas')
+    ->group(function () {
+        require base_path('modulos/cuadrillas-incendios-kardex-cursos-Alas-Chiquitanas/routes/api.php');
+    });

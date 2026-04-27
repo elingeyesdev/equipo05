@@ -86,6 +86,10 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('seguimiento.dashboard');
     })->name('fusion.modulos.seguimiento');
 
+    Route::get('/cuadrillas', function () {
+        return redirect()->route('cuadrillas.dashboard');
+    })->name('fusion.modulos.cuadrillas');
+
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
     // ====================================================
@@ -235,4 +239,11 @@ Route::prefix('seguimiento/modulo')
     ->middleware(['auth'])
     ->group(function () {
         require base_path('modulos/seguimiento-voluntarios-comunarios-main/routes/web.php');
+    });
+
+Route::prefix('cuadrillas/modulo')
+    ->as('cuadrillas.')
+    ->middleware(['auth'])
+    ->group(function () {
+        require base_path('modulos/cuadrillas-incendios-kardex-cursos-Alas-Chiquitanas/routes/web.php');
     });
