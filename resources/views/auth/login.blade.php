@@ -39,6 +39,26 @@
             background-color: #007bff;
             color: #fff;
         }
+        .landing-access-btn.btn-cuadrillas {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .landing-access-btn.btn-cuadrillas:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.25);
+        }
+        .landing-access-btn.btn-seguimiento {
+            border-color: #17a2b8;
+            color: #17a2b8;
+        }
+        .landing-access-btn.btn-seguimiento:hover {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(23, 162, 184, 0.25);
+        }
     </style>
 </head>
 <body class="hold-transition login-page">
@@ -56,6 +76,29 @@
                    class="btn btn-outline-primary btn-lg btn-block landing-access-btn">
                     <i class="fas fa-images mr-2"></i>
                     Galería de paquetes entregados
+                </a>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+                <a href="{{ route('publico.cuadrillas.reporte') }}"
+                   class="btn btn-outline-danger btn-lg btn-block landing-access-btn btn-cuadrillas">
+                    <i class="fas fa-bullhorn mr-2"></i>
+                    Reporte Público
+                </a>
+            </div>
+            <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+                <a href="{{ route('publico.cuadrillas.mapa') }}"
+                   class="btn btn-outline-danger btn-lg btn-block landing-access-btn btn-cuadrillas">
+                    <i class="fas fa-fire mr-2"></i>
+                    Mapa en Tiempo Real
+                </a>
+            </div>
+            <div class="col-12 col-lg-4">
+                <a href="{{ route('publico.seguimiento.info') }}"
+                   class="btn btn-outline-info btn-lg btn-block landing-access-btn btn-seguimiento">
+                    <i class="fas fa-user-friends mr-2"></i>
+                    Seguimiento Voluntarios
                 </a>
             </div>
         </div>

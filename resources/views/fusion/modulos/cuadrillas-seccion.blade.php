@@ -2,10 +2,20 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h2 class="m-0">{{ $tituloSeccion }}</h2>
+        </div>
+        <div class="col-sm-6 text-sm-right">
+            <a href="{{ route('cuadrillas.dashboard') }}" class="btn btn-danger btn-sm">
+                <i class="fas fa-arrow-left mr-1"></i> Volver al dashboard
+            </a>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card card-outline card-danger">
+                <div class="card-header bg-danger text-white">
                     <h3 class="card-title mb-0">{{ $tituloSeccion }} - Cuadrillas Incendios Kardex Cursos</h3>
                 </div>
                 <div class="card-body">

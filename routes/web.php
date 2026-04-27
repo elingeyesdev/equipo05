@@ -49,6 +49,7 @@ use App\Http\Controllers\Ext\{
 };
 use App\Http\Controllers\Fusion\Fase1IntegracionController;
 use App\Http\Controllers\Fusion\ModulosIntegradosController;
+use App\Http\Controllers\Fusion\AccesoPublicoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,14 @@ use App\Http\Controllers\Fusion\ModulosIntegradosController;
 */
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+
+// Accesos públicos previos al login para módulos con flujo invitado.
+Route::get('/publico/cuadrillas/mapa', [AccesoPublicoController::class, 'cuadrillasMapa'])
+    ->name('publico.cuadrillas.mapa');
+Route::get('/publico/cuadrillas/reporte', [AccesoPublicoController::class, 'cuadrillasReporte'])
+    ->name('publico.cuadrillas.reporte');
+Route::get('/publico/seguimiento/info', [AccesoPublicoController::class, 'seguimientoInfo'])
+    ->name('publico.seguimiento.info');
 
 /*
 |--------------------------------------------------------------------------

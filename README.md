@@ -111,6 +111,10 @@ Proyecto nuevo para unificar de forma gradual:
 - En la pantalla de login del proyecto base se muestran botones publicos para flujo logistico:
   - `Solicitar ayuda`
   - `Galeria de paquetes entregados`
+- Tambien se agregaron accesos publicos para modulos nuevos integrados:
+  - `publico.cuadrillas.reporte` (`/publico/cuadrillas/reporte`)
+  - `publico.cuadrillas.mapa` (`/publico/cuadrillas/mapa`)
+  - `publico.seguimiento.info` (`/publico/seguimiento/info`)
 - Estos accesos permiten iniciar el flujo de logistica antes de autenticarse, manteniendo el mismo estilo visual del modulo `@web`.
 
 ## Punto de seguimiento de integracion
