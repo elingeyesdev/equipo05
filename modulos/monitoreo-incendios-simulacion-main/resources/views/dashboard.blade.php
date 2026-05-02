@@ -254,14 +254,16 @@
                     </div>
                     
                     <div class="col-12">
-                        <div class="alert alert-info mb-0">
-                            <h5><i class="icon fas fa-info-circle"></i> Estado del Sistema</h5>
-                            <p class="mb-1">
-                                <i class="fas fa-check-circle text-success"></i> 
-                                <strong>Monitoreo activo</strong> - Datos actualizados automáticamente
+                        <div class="callout callout-info mb-0 shadow-sm incendios-system-status">
+                            <h5 class="mb-2 text-dark font-weight-bold">
+                                <i class="fas fa-info-circle text-info mr-1"></i> Estado del Sistema
+                            </h5>
+                            <p class="mb-2 text-dark">
+                                <i class="fas fa-check-circle text-success mr-1"></i>
+                                <strong>Monitoreo activo</strong> — Datos actualizados automáticamente
                             </p>
-                            <p class="mb-0">
-                                <i class="fas fa-clock text-warning"></i> 
+                            <p class="mb-0 text-muted small">
+                                <i class="fas fa-clock text-secondary mr-1"></i>
                                 Última actualización: {{ now()->format('d/m/Y H:i') }}
                             </p>
                         </div>
@@ -269,34 +271,30 @@
                 </div>
 
                 {{-- Accesos Rápidos a Reportes --}}
-                <x-adminlte-card title="Accesos Rápidos" theme="primary" icon="fas fa-bolt" class="mt-3">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <a href="{{ route('incendios.reports.fires') }}" class="btn btn-danger btn-block btn-lg">
-                                <i class="fas fa-fire"></i>
-                                <br>
-                                <span class="small">Reporte de Focos de Incendio</span>
+                <x-adminlte-card title="Accesos Rápidos" theme="primary" icon="fas fa-bolt" class="mt-3 incendios-quick-access-card">
+                    <div class="row incendios-quick-links justify-content-center">
+                        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                            <a href="{{ route('incendios.reports.fires') }}" class="btn btn-danger btn-lg btn-incendios-quick w-100">
+                                <i class="fas fa-fire d-block mb-1" style="font-size: 1.35rem;"></i>
+                                <span>Reporte de focos de incendio</span>
                             </a>
                         </div>
-                        <div class="col-md-3">
-                            <a href="{{ route('incendios.reports.biomasas') }}" class="btn btn-success btn-block btn-lg">
-                                <i class="fas fa-leaf"></i>
-                                <br>
-                                <span class="small">Reporte de Biomasas</span>
+                        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                            <a href="{{ route('incendios.reports.biomasas') }}" class="btn btn-success btn-lg btn-incendios-quick w-100">
+                                <i class="fas fa-leaf d-block mb-1" style="font-size: 1.35rem;"></i>
+                                <span>Reporte de biomasas</span>
                             </a>
                         </div>
-                        <div class="col-md-3">
-                            <a href="{{ route('incendios.reports.simulations') }}" class="btn btn-primary btn-block btn-lg">
-                                <i class="fas fa-chart-bar"></i>
-                                <br>
-                                <span class="small">Reporte de Simulaciones</span>
+                        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                            <a href="{{ route('incendios.reports.simulations') }}" class="btn btn-primary btn-lg btn-incendios-quick w-100">
+                                <i class="fas fa-chart-bar d-block mb-1" style="font-size: 1.35rem;"></i>
+                                <span>Reporte de simulaciones</span>
                             </a>
                         </div>
-                        <div class="col-md-3">
-                            <a href="{{ route('incendios.reports.predictions') }}" class="btn btn-purple btn-block btn-lg">
-                                <i class="fas fa-chart-line"></i>
-                                <br>
-                                <span class="small">Reporte de Predicciones</span>
+                        <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                            <a href="{{ route('incendios.reports.predictions') }}" class="btn btn-incendios-purple btn-lg btn-incendios-quick w-100">
+                                <i class="fas fa-chart-line d-block mb-1" style="font-size: 1.35rem;"></i>
+                                <span>Reporte de predicciones</span>
                             </a>
                         </div>
                     </div>
@@ -549,6 +547,51 @@
         font-size: 24px;
         font-weight: bold;
         color: #007bff;
+    }
+
+    /* Estado del sistema: contraste y lectura */
+    .incendios-system-status.callout-info {
+        background-color: #e8f6fb;
+        border-left: 4px solid #17a2b8;
+        color: #1f2937;
+    }
+    .incendios-system-status.callout-info h5,
+    .incendios-system-status.callout-info p {
+        color: inherit;
+    }
+
+    /* Accesos rápidos: texto completo sin recortes */
+    .incendios-quick-links .btn-incendios-quick {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 5.5rem;
+        padding: 0.85rem 0.5rem;
+        white-space: normal;
+        line-height: 1.25;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        word-break: break-word;
+        hyphens: auto;
+    }
+    .incendios-quick-links .btn-incendios-quick span {
+        max-width: 100%;
+        display: block;
+    }
+    .btn-incendios-purple {
+        color: #fff;
+        background-color: #6f42c1;
+        border-color: #643ab0;
+    }
+    .btn-incendios-purple:hover {
+        color: #fff;
+        background-color: #5a32a3;
+        border-color: #512f92;
+    }
+    .incendios-quick-access-card .card-body {
+        padding-bottom: 1.25rem;
     }
     
     /* Estilos para marcadores de fuego personalizados */

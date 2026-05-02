@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title','Sistema de Donaciones')</title>
+    <title>@yield('title','Plataforma de gestión territorial')</title>
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -917,7 +917,7 @@
         </div>
 
         <footer class="main-footer">
-            <strong>© {{ date('Y') }} Sistema de Donaciones</strong>
+            <strong>© {{ date('Y') }} Plataforma de gestión territorial e incendios</strong>
             <div class="float-right d-none d-sm-inline-block">
                 <b>Versión</b> 1.0.0
             </div>
