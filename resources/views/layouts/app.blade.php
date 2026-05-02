@@ -112,6 +112,38 @@
             </ul>
         </nav>
 
+        @auth
+        @if(!empty($showModuleContextBar) && $showModuleContextBar)
+        <div class="px-3 py-2 border-bottom bg-light d-flex flex-wrap align-items-center" style="gap: .5rem; font-size: 0.9rem;">
+            <span class="text-secondary mb-0">Rol de referencia en el módulo (no restringe el acceso; el login del sistema basta):</span>
+            @if(!empty($moduleContextIsRescate) && $moduleContextIsRescate)
+            <form method="post" action="{{ route('modulos.contexto.rescate') }}" class="d-inline m-0">
+                @csrf
+                <label class="sr-only" for="ctx-rescate-rol">Rol rescate</label>
+                <select id="ctx-rescate-rol" name="rol" class="custom-select custom-select-sm" style="min-width: 12rem;" onchange="this.form.submit()">
+                    <option value="__default__" {{ !session('modulo_rescate_rol') ? 'selected' : '' }}>Usar roles de mi cuenta</option>
+                    @foreach($contextModuleRoles ?? [] as $r)
+                    <option value="{{ $r }}" {{ session('modulo_rescate_rol') === $r ? 'selected' : '' }}>{{ $r }}</option>
+                    @endforeach
+                </select>
+            </form>
+            @endif
+            @if(!empty($moduleContextIsIncendios) && $moduleContextIsIncendios)
+            <form method="post" action="{{ route('modulos.contexto.incendios') }}" class="d-inline m-0">
+                @csrf
+                <label class="sr-only" for="ctx-inc-rol">Rol incendios</label>
+                <select id="ctx-inc-rol" name="rol" class="custom-select custom-select-sm" style="min-width: 12rem;" onchange="this.form.submit()">
+                    <option value="__default__" {{ !session('modulo_incendios_rol') ? 'selected' : '' }}>Usar roles de mi cuenta</option>
+                    @foreach($contextModuleRoles ?? [] as $r)
+                    <option value="{{ $r }}" {{ session('modulo_incendios_rol') === $r ? 'selected' : '' }}>{{ $r }}</option>
+                    @endforeach
+                </select>
+            </form>
+            @endif
+        </div>
+        @endif
+        @endauth
+
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="{{ route('home') }}" class="brand-link text-center">
                 <i class="fas fa-hand-holding-heart fa-lg"></i>
@@ -321,6 +353,36 @@
                                         <i class="far fa-circle nav-icon"></i><p>Reportes</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.datos-climaticos.index') }}" class="nav-link {{ request()->routeIs('incendios.datos-climaticos.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Datos climáticos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.simulaciones.simulator') }}" class="nav-link {{ request()->routeIs('incendios.simulaciones.simulator') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Simulador</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.users.index') }}" class="nav-link {{ request()->routeIs('incendios.users.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Usuarios (módulo)</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.voluntarios.index') }}" class="nav-link {{ request()->routeIs('incendios.voluntarios.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Voluntarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.administradores.index') }}" class="nav-link {{ request()->routeIs('incendios.administradores.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Administradores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.helpdesk') }}" class="nav-link {{ request()->routeIs('incendios.helpdesk') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Helpdesk</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
 
@@ -383,6 +445,109 @@
                                 <li class="nav-item">
                                     <a href="{{ route('rescate.species.index') }}" class="nav-link {{ request()->routeIs('rescate.species.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i><p>Especies</p>
+                                    </a>
+                                </li>
+                                <li class="nav-header text-uppercase small">Registros y operación</li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animal-records.index') }}" class="nav-link {{ request()->routeIs('rescate.animal-records.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Registros de animales</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animal-feeding-records.index') }}" class="nav-link {{ request()->routeIs('rescate.animal-feeding-records.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Registros de alimentación</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.medical-evaluation-transactions.index') }}" class="nav-link {{ request()->routeIs('rescate.medical-evaluation-transactions.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Registros eval. médica</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animal-care-records.index') }}" class="nav-link {{ request()->routeIs('rescate.animal-care-records.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Registros de cuidados</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animal-histories.index') }}" class="nav-link {{ request()->routeIs('rescate.animal-histories.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Historial de cambios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.cares.index') }}" class="nav-link {{ request()->routeIs('rescate.cares.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Cuidados</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.care-feedings.index') }}" class="nav-link {{ request()->routeIs('rescate.care-feedings.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Alim. y cuidados</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.people.index') }}" class="nav-link {{ request()->routeIs('rescate.people.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Personas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.profile.index') }}" class="nav-link {{ request()->routeIs('rescate.profile.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Perfil (módulo)</p>
+                                    </a>
+                                </li>
+                                <li class="nav-header text-uppercase small">Catálogos</li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.medical-evaluations.index') }}" class="nav-link {{ request()->routeIs('rescate.medical-evaluations.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Evaluaciones médicas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animal-statuses.index') }}" class="nav-link {{ request()->routeIs('rescate.animal-statuses.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Estados de animal</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.animal-conditions.index') }}" class="nav-link {{ request()->routeIs('rescate.animal-conditions.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Condiciones iniciales</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.incident-types.index') }}" class="nav-link {{ request()->routeIs('rescate.incident-types.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de incidente</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.care-types.index') }}" class="nav-link {{ request()->routeIs('rescate.care-types.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de cuidado</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.feeding-types.index') }}" class="nav-link {{ request()->routeIs('rescate.feeding-types.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de alimento</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.feeding-frequencies.index') }}" class="nav-link {{ request()->routeIs('rescate.feeding-frequencies.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Frecuencias alimentación</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.feeding-portions.index') }}" class="nav-link {{ request()->routeIs('rescate.feeding-portions.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Porciones alimentación</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.treatment-types.index') }}" class="nav-link {{ request()->routeIs('rescate.treatment-types.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Tipos de tratamiento</p>
+                                    </a>
+                                </li>
+                                <li class="nav-header text-uppercase small">Reportes y soporte</li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.reportes.index') }}" class="nav-link {{ request()->routeIs('rescate.reportes.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Reportes internos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.helpdesk') }}" class="nav-link {{ request()->routeIs('rescate.helpdesk') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Helpdesk</p>
                                     </a>
                                 </li>
                             </ul>
@@ -721,7 +886,32 @@
             </div>
             <section class="content">
                 <div class="container-fluid">
-                    @yield('content')
+                    @hasSection('content_header_title')
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h1 class="m-0 text-dark">@yield('content_header_title')
+                                    @hasSection('content_header_subtitle')
+                                        <small class="text-muted"> @yield('content_header_subtitle')</small>
+                                    @endif
+                                </h1>
+                                @hasSection('subtitle')
+                                    <p class="text-muted mb-0 small">@yield('subtitle')</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
+                    @hasSection('content_header')
+                        <div class="mb-3">
+                            @yield('content_header')
+                        </div>
+                    @endif
+
+                    @hasSection('content_body')
+                        @yield('content_body')
+                    @else
+                        @yield('content')
+                    @endif
                 </div>
             </section>
         </div>
@@ -745,6 +935,8 @@
             const REFRESH_MS = 60000; 
             function autoRefreshEnabled() {
                 if (document.body.classList.contains('no-auto-refresh')) return false;
+                const p = window.location.pathname || '';
+                if (p.includes('incendios/modulo') || p.includes('rescate/modulo')) return false;
                 if (document.querySelector('.modal.show')) return false;
                 return true;
             }
