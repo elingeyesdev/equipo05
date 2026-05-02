@@ -50,6 +50,7 @@ use App\Http\Controllers\Ext\{
 use App\Http\Controllers\Fusion\Fase1IntegracionController;
 use App\Http\Controllers\Fusion\ModulosIntegradosController;
 use App\Http\Controllers\Fusion\AccesoPublicoController;
+use App\Http\Controllers\ModuleViewContextController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cuadrillas', function () {
         return redirect()->route('cuadrillas.dashboard');
     })->name('fusion.modulos.cuadrillas');
+
+    Route::post('/modulos/contexto/rescate', [ModuleViewContextController::class, 'setRescate'])->name('modulos.contexto.rescate');
+    Route::post('/modulos/contexto/incendios', [ModuleViewContextController::class, 'setIncendios'])->name('modulos.contexto.incendios');
 
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
