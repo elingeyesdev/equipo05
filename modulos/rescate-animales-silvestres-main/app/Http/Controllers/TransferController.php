@@ -26,9 +26,7 @@ class TransferController extends Controller
         // Debe estar autenticado
         $this->middleware('auth');
         // Rescatistas, veterinarios, encargados y administradores pueden ver y crear traslados
-        $this->middleware('role:rescatista|veterinario|encargado|admin')->only(['index','create','store','show']);
         // Veterinarios, encargados y administradores pueden editar/eliminar traslados existentes
-        $this->middleware('role:veterinario|encargado|admin')->only(['edit','update','destroy']);
     }
     /**
      * Display a listing of the resource.

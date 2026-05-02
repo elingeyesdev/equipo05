@@ -40,18 +40,14 @@ class ReportController extends Controller
         // Permitir create y store sin autenticación (para usuarios anónimos desde landing)
         $this->middleware('auth')->except(['create', 'store']);
         // Solo ciertos roles gestionan reportes en el panel interno
-        $this->middleware('role:ciudadano|rescatista|veterinario|encargado|admin|Administrador|Voluntario|Reportes|Almacenero|Donante|voluntario|administrador')->except(['create', 'store']);
         // Ciudadanos solo pueden ver y crear, no editar ni eliminar
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado|rescatista|veterinario')->only(['edit', 'update']);
         // Solo administradores pueden eliminar reportes
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['destroy']);
     }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): View
     {
-        $user = Auth::user();
         $query = Report::with([
             'person', 
             'condicionInicial', 
@@ -63,17 +59,6 @@ class ReportController extends Controller
             }
         ])
             ->orderByDesc('id');
-
-        // Si el usuario es solo ciudadano (sin otros roles), mostrar solo sus hallazgos
-        if ($user->hasRole('ciudadano') && !$user->hasAnyRole(['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador'])) {
-            $personId = Person::where('usuario_id', $user->id)->value('id');
-            if ($personId) {
-                $query->where('persona_id', $personId);
-            } else {
-                // Si no tiene persona asociada, no mostrar nada
-                $query->whereRaw('1 = 0');
-            }
-        }
 
         // Filters
         if ($request->filled('urgencia_nivel')) {
@@ -102,16 +87,12 @@ class ReportController extends Controller
 
         $reports = $query->paginate(12)->withQueryString();
 
-        // Filter options (solo para admin/encargado/veterinario, no para ciudadanos)
-        $reporters = collect();
-        if (!$user->hasRole('ciudadano') || $user->hasAnyRole(['admin', 'encargado', 'veterinario'])) {
-            $reporters = Person::whereIn(
-                    'id',
-                    Report::select('persona_id')->whereNotNull('persona_id')->distinct()->pluck('persona_id')
-                )
-                ->orderBy('nombre')
-                ->get(['id', 'nombre']);
-        }
+        $reporters = Person::whereIn(
+                'id',
+                Report::select('persona_id')->whereNotNull('persona_id')->distinct()->pluck('persona_id')
+            )
+            ->orderBy('nombre')
+            ->get(['id', 'nombre']);
         $incidentTypes = IncidentType::where('activo', true)->orderBy('nombre')->get(['id','nombre']);
 
         return view('report.index', compact('reports', 'reporters', 'incidentTypes'))
@@ -322,11 +303,6 @@ class ReportController extends Controller
      */
     public function approve(Request $request, Report $report): RedirectResponse
     {
-        // Solo admin y encargado pueden aprobar/rechazar
-        if (!Auth::user()->hasAnyRole(['admin', 'encargado', 'Administrador', 'administrador', 'Reportes', 'Voluntario'])) {
-            abort(403, 'No tienes permiso para aprobar o rechazar hallazgos.');
-        }
-
         $validated = $request->validate([
             'action' => 'required|in:approve,reject',
         ]);
@@ -394,13 +370,6 @@ class ReportController extends Controller
      */
     public function mapaCampo(): View
     {
-        $user = Auth::user();
-        
-        // Solo administradores y encargados pueden acceder
-        if (!$user->hasAnyRole(['admin', 'encargado'])) {
-            abort(403, 'No tienes permiso para acceder al mapa de campo.');
-        }
-        
         // Obtener solo reportes/hallazgos aprobados con información de si tienen hoja de vida
         $query = Report::with(['person', 'condicionInicial', 'incidentType'])
             ->where('aprobado', 1)

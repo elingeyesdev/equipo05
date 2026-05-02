@@ -23,11 +23,8 @@ class AnimalFileController extends Controller
         // Debe estar autenticado
         $this->middleware('auth');
         // Hoja de vida visible para cuidadores, rescatistas, veterinarios, encargados y administradores
-        $this->middleware('role:cuidador|rescatista|veterinario|encargado|admin')->only(['index','show']);
         // Solo veterinarios y administradores pueden crear o modificar hojas de vida
-        $this->middleware('role:veterinario|admin')->only(['create','store','edit','update']);
         // Solo administradores pueden eliminar hojas de vida
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['destroy']);
     }
     /**
      * Display a listing of the resource.

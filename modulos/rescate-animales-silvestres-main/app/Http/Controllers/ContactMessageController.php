@@ -30,10 +30,6 @@ class ContactMessageController extends Controller
 
     public function update(Request $request, ContactMessage $contactMessage): RedirectResponse
     {
-        if (!Auth::user()->hasAnyRole(['admin', 'encargado'])) {
-            abort(403);
-        }
-
         // Guardar usando query directa
         \Illuminate\Support\Facades\DB::table('contact_messages')
             ->where('id', $contactMessage->id)

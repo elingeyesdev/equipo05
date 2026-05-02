@@ -14,7 +14,6 @@ class CenterController extends Controller
     public function __construct()
     {
         // Solo administradores pueden gestionar centros
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.

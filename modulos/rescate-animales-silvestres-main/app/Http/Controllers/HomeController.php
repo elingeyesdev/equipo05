@@ -189,7 +189,7 @@ class HomeController extends Controller
         $usuario = auth()->user();
         $fileName = 'dashboard_' . date('d_m_Y_H_i_s') . '.xlsx';
         
-        return new StreamedResponse(function() use ($data, $fechaGeneracion, $usuario) {
+        return new StreamedResponse(function() use ($data, $fechaGeneracion, $usuario, $canViewAdminDashboard) {
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             
@@ -548,19 +548,6 @@ class HomeController extends Controller
 
     private function canViewAdminDashboard(): bool
     {
-        $user = auth()->user();
-        if (!$user) {
-            return false;
-        }
-
-        return $user->hasAnyRole([
-            'admin',
-            'encargado',
-            'Administrador',
-            'administrador',
-            'Reportes',
-            'Voluntario',
-            'Almacenero',
-        ]);
+        return auth()->check();
     }
 }

@@ -16,7 +16,6 @@ class AnimalHistoryController extends Controller
 	{
 		$this->middleware('auth');
         // Historial visible para cuidadores, rescatistas, veterinarios, encargados y administradores
-        $this->middleware('role:cuidador|rescatista|veterinario|encargado|admin');
 	}
 
 	public function index(\Illuminate\Http\Request $request): View

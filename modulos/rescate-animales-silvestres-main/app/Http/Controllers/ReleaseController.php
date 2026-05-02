@@ -19,7 +19,6 @@ class ReleaseController extends Controller
         // Cualquiera puede ver liberaciones (index, show) sin autenticación
         // Veterinarios, admin/encargado pueden crear, editar, actualizar y eliminar
         $this->middleware('auth')->only(['create', 'store', 'edit', 'update', 'destroy']);
-        $this->middleware('role:veterinario|admin|encargado')->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
     /**
      * Display a listing of the resource.

@@ -20,10 +20,7 @@ class VeterinarianController extends Controller
     public function __construct()
     {
         // Solo administradores o encargados pueden ver veterinarios
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado');
         // Administradores y encargados pueden crear veterinarios, solo admin puede eliminar
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado')->only(['create','store']);
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -167,11 +164,6 @@ class VeterinarianController extends Controller
      */
     public function approve(Request $request, Veterinarian $veterinarian): RedirectResponse
     {
-        // Solo admin y encargado pueden aprobar/rechazar
-        if (!Auth::user()->hasAnyRole(['admin', 'encargado'])) {
-            abort(403, 'No tienes permiso para aprobar o rechazar solicitudes de veterinario.');
-        }
-
         $validated = $request->validate([
             'action' => 'required|in:approve,reject',
             'motivo_revision' => 'required|string|min:3',

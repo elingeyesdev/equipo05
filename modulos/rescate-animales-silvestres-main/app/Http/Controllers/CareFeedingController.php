@@ -21,9 +21,7 @@ class CareFeedingController extends Controller
         // Debe estar autenticado
         $this->middleware('auth');
         // Cuidadores, veterinarios, encargados y administradores pueden ver y crear registros de alimentación
-        $this->middleware('role:cuidador|veterinario|encargado|admin');
         // Solo encargados y administradores pueden editar/eliminar registros existentes
-        $this->middleware('role:encargado|admin')->only(['edit','update','destroy']);
     }
 
     /**

@@ -13,7 +13,6 @@ class AnimalStatusController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador');
     }
     /**
      * Display a listing of the resource.

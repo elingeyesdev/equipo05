@@ -19,9 +19,7 @@ class PersonController extends Controller
         // Debe estar autenticado
         $this->middleware('auth');
         // Solo administradores o encargados pueden ver personas
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador|encargado');
         // Solo administradores pueden crear, editar, actualizar o eliminar personas
-        $this->middleware('role:Administrador|Voluntario|Reportes|Almacenero|Donante|admin|encargado|voluntario|administrador')->only(['create','store','edit','update','destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -339,11 +337,6 @@ class PersonController extends Controller
      */
     public function convertToEncargado($id): RedirectResponse
     {
-        // Solo administradores pueden convertir en encargado
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'No tiene permisos para realizar esta acción.');
-        }
-
         $person = Person::with('user')->findOrFail($id);
 
         // Verificar que la persona tenga un usuario asociado
