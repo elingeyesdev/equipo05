@@ -27,7 +27,7 @@ class FallbackHotspotsService
      */
     public function __construct()
     {
-        $this->baseUrl = config('services.fallback_hotspots.url', 'http://cambiarurl');
+        $this->baseUrl = (string) config('services.fallback_hotspots.url', '');
         $this->timeout = config('services.fallback_hotspots.timeout', 15);
     }
 
@@ -45,6 +45,12 @@ class FallbackHotspotsService
         ?array $boundingBox = null,
         ?string $minConfidence = null
     ): array {
+        $base = (string) $this->baseUrl;
+        if ($base === '' || $base === 'http://cambiarurl' || $base === 'https://cambiarurl') {
+            Log::info('Fallback de hotspots: URL no configurada (FALLBACK_HOTSPOTS_URL), se omite la petición HTTP.');
+
+            return [];
+        }
         try {
             Log::info('🔄 Intentando obtener hotspots de API alternativa (fallback)', [
                 'url' => $this->baseUrl,

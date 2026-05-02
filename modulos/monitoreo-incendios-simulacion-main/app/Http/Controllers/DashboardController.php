@@ -55,9 +55,8 @@ class DashboardController extends Controller
 
         // Get user info for permission checks
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador')
-            ? (bool) $user->isAdministrador()
-            : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        // Sistema unificado: con sesión en el main, todas las pestañas/acciones del panel están visibles; el "rol de contexto" es solo UI (sesión).
+        $isAdmin = true;
         $userId = $user->id ?? $user->usuarioid ?? null;
 
         // Get dashboard metrics with caching
@@ -164,7 +163,7 @@ class DashboardController extends Controller
     public function firesActivityReport(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $isAdmin = true;
 
         // Filtros
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
@@ -229,7 +228,7 @@ class DashboardController extends Controller
     {
         // Reutilizar la misma lógica del reporte
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $isAdmin = true;
 
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
         $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
@@ -270,7 +269,7 @@ class DashboardController extends Controller
     {
         // Reutilizar la misma lógica del reporte
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $isAdmin = true;
 
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
         $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
@@ -310,7 +309,7 @@ class DashboardController extends Controller
     public function biomasasManagementReport(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $isAdmin = true;
 
         // Filtros
         $estado = $request->input('estado');
@@ -375,7 +374,7 @@ class DashboardController extends Controller
     public function simulationsEffectivenessReport(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $isAdmin = true;
 
         // Filtros
         $fechaInicio = $request->input('fecha_inicio');
@@ -488,7 +487,7 @@ class DashboardController extends Controller
     public function biomasasManagementExportExcel(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $isAdmin = true;
 
         // Filtros
         $estado = $request->input('estado');
@@ -528,7 +527,7 @@ class DashboardController extends Controller
     public function biomasasManagementExportPdf(Request $request)
     {
         $user = auth()->user();
-        $isAdmin = method_exists($user, 'isAdministrador') ? (bool) $user->isAdministrador() : ($user->hasRole('Administrador') || $user->hasRole('admin'));
+        $isAdmin = true;
 
         $estado = $request->input('estado');
         $tipoBiomasaId = $request->input('tipo_biomasa_id');

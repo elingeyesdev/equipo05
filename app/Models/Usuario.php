@@ -25,7 +25,28 @@ class Usuario extends Authenticatable
     {
         return $this->contrasena;
     }
-    
+
+    /**
+     * CI para el módulo de incendios (columna ci_usuario / trazabilidad).
+     * El modelo del core no tiene cedula_identidad: derivamos un valor estable.
+     */
+    public function getCedulaIdentidadAttribute(): ?string
+    {
+        if (array_key_exists('cedula_identidad', $this->attributes)) {
+            $raw = $this->attributes['cedula_identidad'];
+            if ($raw !== null && $raw !== '') {
+                return (string) $raw;
+            }
+        }
+        if (! empty($this->telefono)) {
+            $digits = preg_replace('/\D+/', '', (string) $this->telefono);
+
+            return $digits !== '' ? $digits : null;
+        }
+
+        return 'CORE-' . (string) $this->getKey();
+    }
+
     // NOTA: Borramos la función roles() manual y hasRole() manual. 
     // El Trait 'HasRoles' ya se encarga de todo eso internamente.
 

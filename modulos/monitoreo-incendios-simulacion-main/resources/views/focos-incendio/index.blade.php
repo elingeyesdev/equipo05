@@ -420,7 +420,7 @@ async function loadFirmsData() {
     
     try {
         // Obtener focos de NASA FIRMS
-        const response = await fetch('/api/fires?cluster=true&radius=20&days=2');
+        const response = await fetch(@json(url('api/incendios/fires')) + '?cluster=true&radius=20&days=2');
         
         if (!response.ok) {
             throw new Error('Error al obtener datos de NASA FIRMS');

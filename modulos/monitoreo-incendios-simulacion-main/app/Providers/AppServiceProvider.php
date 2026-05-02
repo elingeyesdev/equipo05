@@ -25,10 +25,9 @@ class AppServiceProvider extends ServiceProvider
         // Register User Observer to auto-assign 'voluntario' role
         User::observe(UserObserver::class);
         
-        // Gate para verificar si el usuario es administrador
-        // Usa Spatie roles internamente
+        // Integración: un solo login; no ocultar menús admin por Spatie en este módulo.
         Gate::define('viewAdmin', function ($user) {
-            return $user->hasRole('administrador');
+            return $user !== null;
         });
     }
 }

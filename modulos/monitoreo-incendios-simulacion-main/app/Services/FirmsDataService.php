@@ -38,13 +38,14 @@ class FirmsDataService
         bool $cluster = true,
         float $clusterRadius = 20.0
     ): array {
-        if (!$this->apiKey || trim($this->apiKey) === '') {
-            return [
-                'ok' => false,
-                'status' => 401,
-                'data' => [],
-                'error' => 'Missing FIRMS_API_KEY. Set it in .env.',
-            ];
+        if (! $this->apiKey || trim($this->apiKey) === '') {
+            Log::info('FIRMS_API_KEY no configurada: se intenta fallback o datos de demostración.');
+            $fallback = $this->tryFallbackApi($days, $area, $cluster, $clusterRadius);
+            if ($fallback['ok'] ?? false) {
+                return $fallback;
+            }
+
+            return $this->demoFiresResponse($area, $days, $cluster, $clusterRadius, 'FIRMS_API_KEY no configurada; mostrando puntos de demostración (Chiquitanía).');
         }
 
         // Cache key for this specific request (include cluster params)
@@ -86,18 +87,27 @@ class FirmsDataService
                 ->withHeaders(['User-Agent' => 'SIPII-Laravel/1.0'])
                 ->get($url);
 
-            if (!$response->ok()) {
+            if (! $response->ok()) {
                 Log::warning('⚠️ FIRMS API falló, intentando fallback', [
                     'status' => $response->status(),
                     'error' => $response->body()
                 ]);
 
-                // Intentar fallback
                 return $this->tryFallbackApi($days, $area, $cluster, $clusterRadius);
             }
 
             $csv = $response->body();
             $fires = $this->parseCsv($csv);
+
+            if (count($fires) === 0) {
+                Log::info('FIRMS devolvió 0 detecciones; se intenta fallback o demo');
+                $fb = $this->tryFallbackApi($days, $area, $cluster, $clusterRadius);
+                if ($fb['ok'] ?? false) {
+                    return $fb;
+                }
+
+                return $this->demoFiresResponse($area, $days, $cluster, $clusterRadius, 'FIRMS sin detecciones en el área; datos de demostración.');
+            }
 
             // Apply clustering if requested
             if ($cluster && count($fires) > 0) {
@@ -125,9 +135,79 @@ class FirmsDataService
                 'error' => $e->getMessage()
             ]);
 
-            // Intentar fallback
-            return $this->tryFallbackApi($days, $area, $cluster, $clusterRadius);
+            $fallback = $this->tryFallbackApi($days, $area, $cluster, $clusterRadius);
+            if ($fallback['ok'] ?? false) {
+                return $fallback;
+            }
+
+            return $this->demoFiresResponse($area, $days, $cluster, $clusterRadius, 'Error en FIRMS: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Puntos fijos de demostración (Chiquitanía / Santa Cruz) para entornos sin clave o sin red.
+     */
+    protected function buildDemoFiresInArea(string $area): array
+    {
+        $base = [
+            ['lat' => -16.48, 'lng' => -60.12, 'confidence' => 'h'],
+            ['lat' => -16.20, 'lng' => -59.85, 'confidence' => 'n'],
+            ['lat' => -17.10, 'lng' => -60.50, 'confidence' => 'l'],
+            ['lat' => -16.00, 'lng' => -59.20, 'confidence' => 'n'],
+            ['lat' => -17.35, 'lng' => -59.10, 'confidence' => 'h'],
+        ];
+        if ($area === 'world') {
+            $base = array_merge($base, [
+                ['lat' => -19.0, 'lng' => -63.5, 'confidence' => 'l'],
+            ]);
+        } else {
+            $coords = array_map('floatval', explode(',', $area));
+            if (count($coords) === 4) {
+                [$w, $s, $e, $n] = $coords;
+                foreach ($base as $i => $row) {
+                    $base[$i]['lat'] = $s + (($n - $s) * (0.2 + $i * 0.12));
+                    $base[$i]['lng'] = $w + (($e - $w) * (0.15 + $i * 0.1));
+                }
+            }
+        }
+
+        $today = now()->toDateString();
+
+        return array_map(static function (array $row) use ($today) {
+            return [
+                'lat' => (float) $row['lat'],
+                'lng' => (float) $row['lng'],
+                'date' => $today,
+                'time' => '1200',
+                'confidence' => $row['confidence'],
+                'frp' => 12.5,
+                '_source' => 'demo',
+            ];
+        }, $base);
+    }
+
+    protected function demoFiresResponse(
+        string $area,
+        int $days,
+        bool $cluster,
+        float $clusterRadius,
+        string $note = ''
+    ): array {
+        $fires = $this->buildDemoFiresInArea($area);
+        if ($cluster && count($fires) > 0) {
+            $fires = $this->clusterFires($fires, $clusterRadius);
+        }
+
+        return [
+            'ok' => true,
+            'status' => 200,
+            'data' => $fires,
+            'count' => count($fires),
+            'cached' => false,
+            'source' => 'demo',
+            'demo' => true,
+            'message' => $note !== '' ? $note : 'Datos de demostración: configure FIRMS_API_KEY para datos reales de NASA.',
+        ];
     }
 
     /**
@@ -163,14 +243,8 @@ class FirmsDataService
             $hotspots = $this->fallbackService->getHotspots($days, $boundingBox);
 
             if (empty($hotspots)) {
-                Log::warning('⚠️ Fallback API no devolvió datos');
-                return [
-                    'ok' => false,
-                    'status' => 503,
-                    'data' => [],
-                    'error' => 'No data available from FIRMS or fallback API',
-                    'source' => 'none',
-                ];
+                Log::warning('⚠️ Fallback API no devolvió datos; se usan puntos de demostración');
+                return $this->demoFiresResponse($area, $days, $cluster, $clusterRadius, 'Fallback vacío: datos de demostración.');
             }
 
             // Convertir a formato FIRMS
@@ -200,17 +274,11 @@ class FirmsDataService
             ];
 
         } catch (\Exception $e) {
-            Log::error('❌ Fallback API también falló', [
+            Log::error('❌ Fallback API también falló; demostración local', [
                 'error' => $e->getMessage()
             ]);
 
-            return [
-                'ok' => false,
-                'status' => 503,
-                'data' => [],
-                'error' => 'Both FIRMS and fallback API failed: ' . $e->getMessage(),
-                'source' => 'none',
-            ];
+            return $this->demoFiresResponse($area, $days, $cluster, $clusterRadius, 'Fallback no disponible: ' . $e->getMessage());
         }
     }
 

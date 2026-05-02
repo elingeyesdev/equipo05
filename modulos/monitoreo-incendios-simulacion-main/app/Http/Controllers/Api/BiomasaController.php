@@ -38,14 +38,9 @@ class BiomasaController extends Controller
         $validated['user_id'] = auth()->id(); // Usuario autenticado
         $validated['ci_usuario'] = auth()->user()->cedula_identidad;
 
-        // Si el usuario es administrador, aprobar automáticamente
-        if (auth()->user()->hasRole('administrador')) {
-            $validated['estado'] = 'aprobada';
-            $validated['aprobada_por'] = auth()->id();
-            $validated['fecha_revision'] = now();
-        } else {
-            $validated['estado'] = 'pendiente';
-        }
+        $validated['estado'] = 'aprobada';
+        $validated['aprobada_por'] = auth()->id();
+        $validated['fecha_revision'] = now();
 
         $biomasa = Biomasa::create($validated);
         

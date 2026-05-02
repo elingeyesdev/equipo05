@@ -19,26 +19,12 @@ class BiomasaController extends Controller
      */
     public function index(Request $request): View
     {
-        $user = auth()->user();
-        
-        if ($user->hasRole('administrador')) {
-            // Administradores ven todas las biomasas para moderar
-            $biomasas = Biomasa::with(['tipoBiomasa', 'user'])
-                ->latest()
-                ->paginate(15);
-                
-            return view('biomasa.admin-index', compact('biomasas'))
-                ->with('i', ($request->input('page', 1) - 1) * 15);
-        } else {
-            // Voluntarios solo ven sus propias biomasas
-            $biomasas = Biomasa::with('tipoBiomasa')
-                ->where('user_id', $user->id)
-                ->latest()
-                ->paginate(10);
-                
-            return view('biomasa.index', compact('biomasas'))
-                ->with('i', ($request->input('page', 1) - 1) * 10);
-        }
+        $biomasas = Biomasa::with(['tipoBiomasa', 'user'])
+            ->latest()
+            ->paginate(15);
+
+        return view('biomasa.admin-index', compact('biomasas'))
+            ->with('i', ($request->input('page', 1) - 1) * 15);
     }
 
     /**
@@ -92,17 +78,10 @@ class BiomasaController extends Controller
                 $data['fecha_reporte'] = now()->toDateString();
             }
             
-            // Si el usuario es administrador, aprobar automáticamente
-            if (auth()->user()->hasRole('administrador')) {
-                $data['estado'] = 'aprobada';
-                $data['aprobada_por'] = auth()->id();
-                $data['fecha_revision'] = now();
-                $successMessage = 'Biomasa creada y aprobada exitosamente.';
-            } else {
-                // Voluntarios: biomasa pendiente de revisión
-                $data['estado'] = 'pendiente';
-                $successMessage = 'Biomasa enviada para revisión. Un administrador la revisará pronto.';
-            }
+            $data['estado'] = 'aprobada';
+            $data['aprobada_por'] = auth()->id();
+            $data['fecha_revision'] = now();
+            $successMessage = 'Biomasa creada y aprobada exitosamente.';
             
             $biomasa = Biomasa::create($data);
             

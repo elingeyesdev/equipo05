@@ -606,6 +606,7 @@
 @push('js')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+    window.SIPII_INC = { mod: @json(rtrim(url('incendios/modulo'), '/')), api: @json(rtrim(url('api/incendios'), '/')) };
     // Esperar a que todo esté cargado (Leaflet incluido)
     function initDashboard() {
         // Verificar que Leaflet esté disponible
@@ -713,10 +714,9 @@
         const intensity = Math.min(5, Math.max(1, Math.round(frp / 50)));
         
         // Crear URL para el simulador con parámetros del foco
-        const simulatorUrl = `/incendios/modulo/simulaciones/simulator?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
-        
-        // Crear URL para predicción con parámetros del foco
-        const predictionUrl = `/incendios/modulo/predictions/create?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
+        const simulatorUrl = `${window.SIPII_INC.mod}/simulaciones/simulator?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
+
+        const predictionUrl = `${window.SIPII_INC.mod}/predictions/create?fire_lat=${fire.lat}&fire_lng=${fire.lng}&fire_intensity=${intensity}&fire_frp=${frp}`;
         
         return `
             <div style="min-width: 250px; font-family: system-ui, -apple-system, sans-serif;">
@@ -864,7 +864,7 @@
     }
 
     // Load fire hotspots con visualización mejorada
-    fetch('/api/incendios/fires')
+    fetch(window.SIPII_INC.api + '/fires')
         .then(res => res.json())
         .then(result => {
             if (result.ok && result.data && result.data.length > 0) {
@@ -893,7 +893,7 @@
 
     // Load biomasas
     console.log('Intentando cargar biomasas desde /dashboard/biomasas...');
-    fetch('/incendios/modulo/dashboard/biomasas', {
+    fetch(window.SIPII_INC.mod + '/dashboard/biomasas', {
         credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',

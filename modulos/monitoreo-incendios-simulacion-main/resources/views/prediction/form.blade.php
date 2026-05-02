@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Cargar focos de FIRMS
-    fetch('/api/fires')
+    fetch(@json(url('api/incendios/fires')))
         .then(res => res.json())
         .then(result => {
             if (result.ok && result.data && result.data.length > 0) {

@@ -34,7 +34,20 @@ class SimulacioneController extends Controller
     public function simulator(): View
     {
         $administradores = Administrador::with('user')->where('activo', true)->get();
-        
+
+        if ($administradores->isEmpty() && auth()->check()) {
+            $incUser = \Modules\Incendios\Models\User::find(auth()->id());
+            if ($incUser && ! Administrador::where('user_id', $incUser->id)->exists()) {
+                Administrador::create([
+                    'user_id' => $incUser->id,
+                    'departamento' => 'Integración Sistema',
+                    'nivel_acceso' => 'completo',
+                    'activo' => true,
+                ]);
+            }
+            $administradores = Administrador::with('user')->where('activo', true)->get();
+        }
+
         // Cargar biomasas para el mapa
         $biomasas = Biomasa::with('tipoBiomasa')
             ->whereNotNull('coordenadas')
@@ -134,12 +147,7 @@ class SimulacioneController extends Controller
                 'admin_id' => $validated['admin_id'],
             ];
 
-            // Simulaciones creadas por administradores son públicas por defecto
-            if (auth()->user()?->hasRole('administrador')) {
-                $simulationData['public'] = true;
-            } else {
-                $simulationData['public'] = false;
-            }
+            $simulationData['public'] = true;
 
             $simulacion = Simulacione::create($simulationData);
 
@@ -187,19 +195,7 @@ class SimulacioneController extends Controller
      */
     public function getHistory(): JsonResponse
     {
-        $user = auth()->user();
-
-        // Admins see recent simulations; regular users see their own + public admin simulations
-        if ($user && $user->hasRole('administrador')) {
-            $collection = Simulacione::with('admin.user')->latest()->take(50)->get();
-        } else {
-            $ci = $user?->cedula_identidad ?? null;
-            $collection = Simulacione::with('admin.user')
-                ->where(function ($q) use ($ci) {
-                    $q->where('ci_usuario', $ci)
-                      ->orWhere('public', true);
-                })->latest()->take(50)->get();
-        }
+        $collection = Simulacione::with('admin.user')->latest()->take(50)->get();
 
         $simulaciones = $collection->map(function ($sim) {
             return [

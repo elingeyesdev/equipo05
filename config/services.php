@@ -42,4 +42,17 @@ return [
         'gateway_url'    => env('API_GATEWAY_URL', 'http://gatealas.dasalas.shop'),
     ],
 
+    /*
+    | NASA FIRMS: clave de mapa en https://firms.modaps.eosdis.nasa.gov/
+    | Sin clave, el módulo usa API alternativa (si está configurada) o datos demo.
+    */
+    'firms' => [
+        'key' => env('FIRMS_API_KEY'),
+    ],
+
+    'fallback_hotspots' => [
+        'url' => env('FALLBACK_HOTSPOTS_URL', ''),
+        'timeout' => (int) env('FALLBACK_HOTSPOTS_TIMEOUT', 15),
+    ],
+
 ];

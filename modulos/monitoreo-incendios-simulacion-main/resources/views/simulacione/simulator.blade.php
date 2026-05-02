@@ -7,6 +7,9 @@
 @stop
 
 @section('content')
+<script>
+    window.SIPII_INC = { mod: @json(rtrim(url('incendios/modulo'), '/')), api: @json(rtrim(url('api/incendios'), '/')) };
+</script>
 <div x-data="fireSimulator()" x-init="init()">
     <!-- Controles principales debajo de estadísticas -->
     <div class="card">
@@ -1489,7 +1492,7 @@ function fireSimulator() {
         async loadHistory() {
             try {
                 // Use history-public which returns user's own + public admin simulations
-                const response = await fetch('/simulaciones/history-public');
+                const response = await fetch(window.SIPII_INC.mod + '/simulaciones/history-public');
                 this.historyData = await response.json();
                 // Partition into own and public lists
                 this.myHistory = (this.historyData || []).filter(s => !s.public);
@@ -1541,7 +1544,7 @@ function fireSimulator() {
             this.loadingFires = true;
             try {
                 // Llamar a la API de focos de calor
-                const response = await fetch('/api/fires?cluster=true&radius=20&days=2');
+                const response = await fetch(window.SIPII_INC.api + '/fires?cluster=true&radius=20&days=2');
                 
                 if (!response.ok) {
                     throw new Error('Error al obtener datos de focos de calor');
@@ -1640,7 +1643,7 @@ function fireSimulator() {
 
         async loadSharedSimulation(id) {
             try {
-                const resp = await fetch(`/simulaciones/public/${id}`);
+                const resp = await fetch(`${window.SIPII_INC.mod}/simulaciones/public/${id}`);
                 if (!resp.ok) throw new Error('No se pudo obtener la simulación compartida');
                 const sim = await resp.json();
 
@@ -1666,7 +1669,7 @@ function fireSimulator() {
 
         copyShareLink(sim) {
             try {
-                const url = `${window.location.origin}/simulaciones/simulator?replay=${sim.id}`;
+                const url = `${window.SIPII_INC.mod}/simulaciones/simulator?replay=${sim.id}`;
                 navigator.clipboard.writeText(url).then(() => {
                     showSuccess('Enlace copiado al portapapeles');
                 }).catch(() => {
@@ -1694,7 +1697,7 @@ function fireSimulator() {
             if (!result.isConfirmed) return;
             
             try {
-                const response = await fetch(`/simulaciones/delete/${id}`, {
+                const response = await fetch(`${window.SIPII_INC.mod}/simulaciones/delete/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
