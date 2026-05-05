@@ -56,6 +56,25 @@ class SimulacionController extends Controller
     }
 
     /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Simulacione $simulacione)
+    {
+        $validated = $request->validate([
+            'nombre' => 'sometimes|string|max:255',
+            'parameters' => 'sometimes|array',
+            'initial_fires' => 'sometimes|array',
+            'history' => 'nullable|array',
+            'estado' => 'sometimes|string|max:50',
+        ]);
+
+        $simulacione->update($validated);
+        $simulacione->load('administrador');
+
+        return new SimulacioneResource($simulacione);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Simulacione $simulacione)

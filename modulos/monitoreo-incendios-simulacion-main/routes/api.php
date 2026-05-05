@@ -125,10 +125,13 @@ Route::middleware('auth:sanctum')->group(function () {
         'destroy' => 'api.tipos-biomasa.destroy',
     ]);
 
-    Route::get('/simulaciones', [SimulacionController::class, 'index']);
-    Route::post('/simulaciones', [SimulacionController::class, 'store']);
-    Route::get('/simulaciones/{simulacione}', [SimulacionController::class, 'show']);
-    Route::delete('/simulaciones/{simulacione}', [SimulacionController::class, 'destroy']);
+    Route::apiResource('simulaciones', SimulacionController::class)->names([
+        'index' => 'api.simulaciones.index',
+        'store' => 'api.simulaciones.store',
+        'show' => 'api.simulaciones.show',
+        'update' => 'api.simulaciones.update',
+        'destroy' => 'api.simulaciones.destroy',
+    ]);
 });
 
 // ============================================================================
