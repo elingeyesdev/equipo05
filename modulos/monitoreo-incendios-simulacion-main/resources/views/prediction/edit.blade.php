@@ -14,7 +14,7 @@
                     </x-slot>
 
                     <form method="POST" action="{{ route('incendios.predictions.update', $prediction->id) }}" role="form" enctype="multipart/form-data">
-                        {{ method_field('PATCH') }}
+                        @method('PATCH')
                         @csrf
                         @include('prediction.form')
                     </form>
