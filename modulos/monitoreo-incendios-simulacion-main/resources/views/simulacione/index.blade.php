@@ -16,12 +16,18 @@
 
                 <x-adminlte-card title="Simulaciones" theme="orange" icon="fas fa-play-circle">
                     <x-slot name="toolsSlot">
+                        <a href="{{ route('incendios.simulaciones.create') }}" class="btn btn-success btn-sm mr-1">
+                            <i class="fas fa-plus"></i> Nueva simulación
+                        </a>
                         <a href="{{ route('incendios.simulaciones.simulator') }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-fire"></i> Simulador Avanzado
                         </a>
                     </x-slot>
 
                     <div class="mb-3">
+                        <a href="{{ route('incendios.simulaciones.create') }}" class="btn btn-success btn-sm mr-1">
+                            <i class="fas fa-plus"></i> Nueva simulación
+                        </a>
                         <a href="{{ route('incendios.simulaciones.simulator') }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-fire"></i> Simulador Avanzado
                         </a>
@@ -79,6 +85,9 @@
                                     <tr>
                                         <td colspan="6" class="text-center text-muted py-4">
                                             No hay simulaciones registradas.
+                                            <a href="{{ route('incendios.simulaciones.create') }}" class="btn btn-success btn-sm ml-2">
+                                                <i class="fas fa-plus"></i> Crear manual
+                                            </a>
                                             <a href="{{ route('incendios.simulaciones.simulator') }}" class="btn btn-warning btn-sm ml-2">
                                                 <i class="fas fa-fire"></i> Crear simulación
                                             </a>
