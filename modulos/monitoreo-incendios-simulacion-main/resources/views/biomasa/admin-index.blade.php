@@ -112,7 +112,7 @@
             </div>
         </div>
     </div>
-@stop
+@endsection
 
 @section('js')
 <script>
@@ -129,4 +129,4 @@
         document.getElementById('formRechazar').reset();
     });
 </script>
-@stop
+@endsection
