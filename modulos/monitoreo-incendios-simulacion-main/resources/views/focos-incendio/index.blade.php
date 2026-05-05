@@ -62,18 +62,6 @@
                         </a>
                     </x-slot>
 
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        <a href="{{ route('incendios.focos-incendios.create') }}" class="btn btn-success btn-sm mr-2 mb-2">
-                            <i class="fas fa-plus"></i> Crear Nuevo
-                        </a>
-                        <button type="button" class="btn btn-info btn-sm mr-2 mb-2" data-toggle="modal" data-target="#mapModal">
-                            <i class="fas fa-map-marked-alt"></i> Agregar desde Mapa
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm mb-2" onclick="loadFirmsData()">
-                            <i class="fas fa-satellite"></i> Cargar desde NASA FIRMS
-                        </button>
-                    </div>
-
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
