@@ -5,7 +5,7 @@
 @section('title')
     {{ config('adminlte.title') }}
     @hasSection('subtitle') | @yield('subtitle') @endif
-@stop
+@endsection
 
 {{-- Extend and customize the page content header --}}
 
@@ -21,13 +21,13 @@
             @endif
         </h1>
     @endif
-@stop
+@endsection
 
 {{-- Rename section content to content_body --}}
 
 @section('content')
     @yield('content_body')
-@stop
+@endsection
 
 {{-- Create a common footer --}}
 
@@ -42,7 +42,7 @@
             SIPII - Sistema de Prevención de Incendios
         </a>
     </strong>
-@stop
+@endsection
 
 {{-- Add common Javascript/Jquery code --}}
 

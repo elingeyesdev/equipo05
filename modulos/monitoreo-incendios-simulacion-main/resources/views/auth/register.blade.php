@@ -2,7 +2,7 @@
 
 @section('adminlte_css_pre')
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-@stop
+@endsection
 
 @php
     $loginUrl = View::getSection('login_url') ?? config('adminlte.login_url', 'login');
@@ -182,7 +182,7 @@
         <i class="fab fa-google mr-2"></i> Registrarse con Google
     </a>
 </div>
-@stop
+@endsection
 
 @section('auth_footer')
     <p class="my-0">
@@ -190,4 +190,4 @@
             {{ __('adminlte::adminlte.i_already_have_a_membership') }}
         </a>
     </p>
-@stop
+@endsection

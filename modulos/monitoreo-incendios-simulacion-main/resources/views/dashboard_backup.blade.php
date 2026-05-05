@@ -233,7 +233,7 @@
             </x-adminlte-card>
         </div>
     </div>
-@stop
+@endsection
 
 @push('css')
 <style>

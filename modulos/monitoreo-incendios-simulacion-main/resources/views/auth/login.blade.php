@@ -2,7 +2,7 @@
 
 @section('adminlte_css_pre')
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-@stop
+@endsection
 
 @php
     $loginUrl = View::getSection('login_url') ?? config('adminlte.login_url', 'login');
