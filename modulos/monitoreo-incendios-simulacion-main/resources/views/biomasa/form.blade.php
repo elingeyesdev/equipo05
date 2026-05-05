@@ -208,8 +208,8 @@
         <button type="submit" class="btn btn-success btn-lg btn-block">
             <i class="fas fa-save"></i> Guardar Zona de Biomasa
         </button>
-        <a href="{{ route('incendios.biomasas.index') }}" class="btn btn-danger btn-lg btn-block mt-2">
-            <i class="fas fa-arrow-left"></i> Cancelar y Volver
+        <a href="{{ route('incendios.biomasas.index') }}" class="btn btn-secondary btn-lg btn-block mt-2">
+            <i class="fas fa-times"></i> Cancelar y Volver
         </a>
     </div>
 </div>

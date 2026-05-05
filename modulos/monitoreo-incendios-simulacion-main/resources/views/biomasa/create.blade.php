@@ -1,14 +1,13 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ __('Crear') }} Biomasa
-@endsection
+@section('subtitle', 'Crear Biomasa')
+@section('content_header_title', 'Biomasas')
+@section('content_header_subtitle', 'Crear Nuevo')
 
-@section('content')
-    <section class="content container-fluid">
+@section('content_body')
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                
                 @if ($message = Session::get('error'))
                     <div class="alert alert-danger alert-dismissible fade show">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -16,20 +15,17 @@
                     </div>
                 @endif
 
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Biomasa</span>
-                    </div>
-                    <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('incendios.biomasas.store') }}"  role="form" enctype="multipart/form-data">
-                            @csrf
+                <x-adminlte-card title="Crear Biomasa" theme="success" icon="fas fa-leaf">
+                    <x-slot name="toolsSlot">
+                        <a href="{{ route('incendios.biomasas.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                    </x-slot>
 
-                            @include('biomasa.form')
-
-                        </form>
-                    </div>
-                </div>
+                    <form method="POST" action="{{ route('incendios.biomasas.store') }}" role="form" enctype="multipart/form-data">
+                        @csrf
+                        @include('biomasa.form')
+                    </form>
+                </x-adminlte-card>
             </div>
         </div>
-    </section>
+    </div>
 @endsection
