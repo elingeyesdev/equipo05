@@ -209,7 +209,7 @@
             <i class="fas fa-save"></i> Guardar Zona de Biomasa
         </button>
         <a href="{{ route('incendios.biomasas.index') }}" class="btn btn-secondary btn-lg btn-block mt-2">
-            <i class="fas fa-times"></i> Cancelar y Volver
+            <i class="fas fa-times"></i> Cancelar
         </a>
     </div>
 </div>
