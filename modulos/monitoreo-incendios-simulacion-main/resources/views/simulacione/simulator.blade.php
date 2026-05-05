@@ -1,12 +1,11 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
 @section('title', 'Simulador de Incendios')
+@section('subtitle', 'Simulador Avanzado')
+@section('content_header_title', 'Simulaciones')
+@section('content_header_subtitle', 'Simulador Avanzado de Incendios')
 
-@section('content_header')
-    <h1>Simulador Avanzado de Incendios</h1>
-@stop
-
-@section('content')
+@section('content_body')
 <script>
     window.SIPII_INC = { mod: @json(rtrim(url('incendios/modulo'), '/')), api: @json(rtrim(url('api/incendios'), '/')) };
 </script>
@@ -408,7 +407,7 @@
         </div>
     </div>
 </div>
-@stop
+@endsection
 
 @section('css')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -462,7 +461,7 @@
         margin: 15px 20px !important;
     }
 </style>
-@stop
+@endsection
 
 @section('js')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1799,4 +1798,4 @@ function fireSimulator() {
     }
 }
 </script>
-@stop
+@endsection
