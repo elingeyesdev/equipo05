@@ -1,29 +1,25 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ __('Update') }} Simulaciones
-@endsection
+@section('subtitle', 'Editar Simulación')
+@section('content_header_title', 'Simulaciones')
+@section('content_header_subtitle', 'Editar')
 
-@section('content')
-    <section class="content container-fluid">
-        <div class="">
+@section('content_body')
+    <div class="container-fluid">
+        <div class="row">
             <div class="col-md-12">
+                <x-adminlte-card title="Editar Simulación: {{ $simulacione->nombre }}" theme="warning" icon="fas fa-edit">
+                    <x-slot name="toolsSlot">
+                        <a href="{{ route('incendios.simulaciones.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                    </x-slot>
 
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Editar') }} Simulaciones</span>
-                    </div>
-                    <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('incendios.simulaciones.update', $simulacione->id) }}"  role="form" enctype="multipart/form-data">
-                            {{ method_field('PATCH') }}
-                            @csrf
-
-                            @include('simulacione.form')
-
-                        </form>
-                    </div>
-                </div>
+                    <form method="POST" action="{{ route('incendios.simulaciones.update', $simulacione->id) }}" role="form" enctype="multipart/form-data">
+                        @method('PATCH')
+                        @csrf
+                        @include('simulacione.form')
+                    </form>
+                </x-adminlte-card>
             </div>
         </div>
-    </section>
+    </div>
 @endsection

@@ -50,6 +50,7 @@
     </div>
 
     <div class="col-md-12 mt20 mt-2">
-        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+        <a href="{{ route('incendios.simulaciones.index') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
     </div>
 </div>
