@@ -14,7 +14,7 @@
                     </x-slot>
 
                     <form method="POST" action="{{ route('incendios.administradores.update', $administrador->id) }}" role="form" enctype="multipart/form-data">
-                        {{ method_field('PATCH') }}
+                        @method('PATCH')
                         @csrf
                         @include('administrador.form')
                     </form>
