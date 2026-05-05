@@ -35,7 +35,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($voluntarios as $voluntario)
+                                @forelse ($voluntarios as $voluntario)
                                     <tr>
                                         <td>{{ ++$i }}</td>
                                         <td>{{ $voluntario->user->name }}</td>
@@ -62,7 +62,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            No hay voluntarios registrados.
+                                            <a href="{{ route('incendios.voluntarios.create') }}" class="btn btn-success btn-sm ml-2">
+                                                <i class="fas fa-plus"></i> Crear primero
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
