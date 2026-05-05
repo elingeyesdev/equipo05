@@ -1,47 +1,39 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $simulacione->name ?? __('Show') . " " . __('Simulaciones') }}
-@endsection
+@section('subtitle', 'Ver Simulación')
+@section('content_header_title', 'Simulaciones')
+@section('content_header_subtitle', 'Detalle')
 
-@section('content')
-    <section class="content container-fluid">
+@section('content_body')
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} Simulaciones</span>
-                        </div>
-                        <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('incendios.simulaciones.index') }}"> {{ __('Back') }}</a>
-                        </div>
-                    </div>
+                <x-adminlte-card title="Detalle de Simulación #{{ $simulacione->id }}" theme="info" icon="fas fa-project-diagram">
+                    <x-slot name="toolsSlot">
+                        <a href="{{ route('incendios.simulaciones.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                    </x-slot>
 
-                    <div class="card-body bg-white">
-                        <dl class="row mb-0">
-                            <dt class="col-sm-3">Nombre</dt>
-                            <dd class="col-sm-9">{{ $simulacione->nombre }}</dd>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Nombre</dt>
+                        <dd class="col-sm-9">{{ $simulacione->nombre }}</dd>
 
-                            <dt class="col-sm-3">Fecha</dt>
-                            <dd class="col-sm-9">{{ optional($simulacione->fecha)->format('Y-m-d H:i') }}</dd>
+                        <dt class="col-sm-3">Fecha</dt>
+                        <dd class="col-sm-9">{{ optional($simulacione->fecha)->format('Y-m-d H:i') }}</dd>
 
-                            <dt class="col-sm-3">Duración (min)</dt>
-                            <dd class="col-sm-9">{{ $simulacione->duracion }}</dd>
+                        <dt class="col-sm-3">Duración (min)</dt>
+                        <dd class="col-sm-9">{{ $simulacione->duracion }}</dd>
 
-                            <dt class="col-sm-3">Estado</dt>
-                            <dd class="col-sm-9">{{ $simulacione->estado }}</dd>
+                        <dt class="col-sm-3">Estado</dt>
+                        <dd class="col-sm-9">{{ $simulacione->estado }}</dd>
 
-                            <dt class="col-sm-3">Focos activos</dt>
-                            <dd class="col-sm-9">{{ $simulacione->focos_activos }}</dd>
+                        <dt class="col-sm-3">Focos activos</dt>
+                        <dd class="col-sm-9">{{ $simulacione->focos_activos }}</dd>
 
-                            <dt class="col-sm-3">Voluntarios enviados</dt>
-                            <dd class="col-sm-9">{{ $simulacione->num_voluntarios_enviados }}</dd>
-                            
-                        </dl>
-                    </div>
-                </div>
+                        <dt class="col-sm-3">Voluntarios enviados</dt>
+                        <dd class="col-sm-9">{{ $simulacione->num_voluntarios_enviados }}</dd>
+                    </dl>
+                </x-adminlte-card>
             </div>
         </div>
-    </section>
+    </div>
 @endsection
