@@ -24,6 +24,11 @@
 
                 <!-- Tabs para filtrar por estado -->
                 <x-adminlte-card title="Biomasas Reportadas" theme="primary" icon="fas fa-leaf">
+                    <x-slot name="toolsSlot">
+                        <a href="{{ route('incendios.biomasas.create') }}" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus"></i> Crear Nueva Biomasa
+                        </a>
+                    </x-slot>
                     
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
@@ -114,7 +119,7 @@
     function abrirModalRechazo(biomasaId) {
         console.log('Abriendo modal para biomasa ID:', biomasaId);
         const form = document.getElementById('formRechazar');
-        form.action = `/biomasas/${biomasaId}/rechazar`;
+        form.action = '{{ route('incendios.biomasas.rechazar', ['id' => '__ID__']) }}'.replace('__ID__', biomasaId);
         console.log('Form action establecida a:', form.action);
         $('#modalRechazar').modal('show');
     }
