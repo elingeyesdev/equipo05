@@ -21,6 +21,12 @@
                         </a>
                     </x-slot>
 
+                    <div class="mb-3">
+                        <a href="{{ route('incendios.predictions.create') }}" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus"></i> Generar Predicción
+                        </a>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -36,7 +42,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($predictions as $prediction)
+                                @forelse ($predictions as $prediction)
                                     @php
                                         $meta = $prediction->meta ?? [];
                                         $riesgo = $meta['fire_risk_index'] ?? 0;
@@ -82,7 +88,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted py-4">
+                                            No hay predicciones registradas.
+                                            <a href="{{ route('incendios.predictions.create') }}" class="btn btn-success btn-sm ml-2">
+                                                <i class="fas fa-plus"></i> Generar primera
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

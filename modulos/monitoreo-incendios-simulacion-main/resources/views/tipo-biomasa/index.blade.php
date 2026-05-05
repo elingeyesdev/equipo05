@@ -21,6 +21,12 @@
                         </a>
                     </x-slot>
 
+                    <div class="mb-3">
+                        <a href="{{ route('incendios.tipo-biomasas.create') }}" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus"></i> Crear Nuevo
+                        </a>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -33,7 +39,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($tipoBiomasas as $tipoBiomasa)
+                                @forelse ($tipoBiomasas as $tipoBiomasa)
                                     <tr>
                                         <td>{{ ++$i }}</td>
                                         <td>{{ $tipoBiomasa->tipo_biomasa }}</td>
@@ -64,7 +70,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            No hay tipos de biomasa registrados.
+                                            <a href="{{ route('incendios.tipo-biomasas.create') }}" class="btn btn-success btn-sm ml-2">
+                                                <i class="fas fa-plus"></i> Crear primero
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

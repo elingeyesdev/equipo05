@@ -52,14 +52,14 @@ Route::name('api.')->group(function () {
     Route::apiResource('people', PersonApiController::class)->only(['index', 'show']);
     Route::apiResource('centers', CenterApiController::class)->only(['index', 'show']);
     Route::apiResource('species', SpeciesApiController::class)->only(['show']);
-    Route::apiResource('animal-statuses', AnimalStatusApiController::class)->only(['index', 'show']);
+    Route::apiResource('animal-statuses', AnimalStatusApiController::class);
     Route::apiResource('veterinarians', VeterinarianApiController::class)->only(['index', 'show']);
     Route::apiResource('rescuers', RescuerApiController::class)->only(['index', 'show']);
-    Route::apiResource('treatment-types', TreatmentTypeApiController::class)->only(['index', 'show']);
-    Route::apiResource('care-types', CareTypeApiController::class)->only(['index', 'show']);
+    Route::apiResource('treatment-types', TreatmentTypeApiController::class);
+    Route::apiResource('care-types', CareTypeApiController::class);
     Route::apiResource('fire-predictions', FirePredictionApiController::class)->only(['index']);
-    Route::apiResource('animal-conditions', AnimalConditionApiController::class)->only(['index', 'show']);
-    Route::apiResource('incident-types', IncidentTypeApiController::class)->only(['index', 'show']);
+    Route::apiResource('animal-conditions', AnimalConditionApiController::class);
+    Route::apiResource('incident-types', IncidentTypeApiController::class);
     
     Route::get('weather', [WeatherApiController::class, 'index'])->name('weather');
 });

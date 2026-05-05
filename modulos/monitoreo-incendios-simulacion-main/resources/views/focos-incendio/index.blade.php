@@ -62,6 +62,18 @@
                         </a>
                     </x-slot>
 
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <a href="{{ route('incendios.focos-incendios.create') }}" class="btn btn-success btn-sm mr-2 mb-2">
+                            <i class="fas fa-plus"></i> Crear Nuevo
+                        </a>
+                        <button type="button" class="btn btn-info btn-sm mr-2 mb-2" data-toggle="modal" data-target="#mapModal">
+                            <i class="fas fa-map-marked-alt"></i> Agregar desde Mapa
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm mb-2" onclick="loadFirmsData()">
+                            <i class="fas fa-satellite"></i> Cargar desde NASA FIRMS
+                        </button>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -75,7 +87,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($focosIncendios as $focosIncendio)
+                                @forelse ($focosIncendios as $focosIncendio)
                                     <tr>
                                         <td>{{ ++$i }}</td>
                                         <td>{{ optional($focosIncendio->fecha)->format('d/m/Y H:i') }}</td>
@@ -128,7 +140,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            No hay focos registrados.
+                                            <a href="{{ route('incendios.focos-incendios.create') }}" class="btn btn-success btn-sm ml-2">
+                                                <i class="fas fa-plus"></i> Crear primer foco
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -202,6 +223,11 @@
 let map;
 let markers = [];
 let fires = [];
+
+function getCsrfToken() {
+    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+    return tokenMeta ? tokenMeta.getAttribute('content') : '';
+}
 
 // Inicializar mapa cuando se abre el modal
 $('#mapModal').on('shown.bs.modal', function () {
@@ -379,7 +405,7 @@ async function saveFires() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-CSRF-TOKEN': getCsrfToken(),
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
@@ -414,9 +440,11 @@ async function saveFires() {
 
 async function loadFirmsData() {
     const btn = document.getElementById('loadFirmsBtn');
-    const originalHtml = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+    const originalHtml = btn ? btn.innerHTML : null;
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+    }
     
     try {
         // Obtener focos de NASA FIRMS
@@ -474,8 +502,10 @@ async function loadFirmsData() {
             
             // Actualizar progreso
             const progress = Math.round(((i + 1) / firmsData.length) * 100);
-            document.getElementById('progressText').textContent = 
-                `Obteniendo ubicaciones... ${progress}% (${i + 1}/${firmsData.length})`;
+            const progressEl = document.getElementById('progressText');
+            if (progressEl) {
+                progressEl.textContent = `Obteniendo ubicaciones... ${progress}% (${i + 1}/${firmsData.length})`;
+            }
             
             const ubicacion = await getLocationName(fire.lat, fire.lng);
             
@@ -496,13 +526,16 @@ async function loadFirmsData() {
         }
         
         // Guardar en base de datos
-        document.getElementById('progressText').textContent = 'Guardando en base de datos...';
+        const progressEl = document.getElementById('progressText');
+        if (progressEl) {
+            progressEl.textContent = 'Guardando en base de datos...';
+        }
         
         const saveResponse = await fetch('{{ route('incendios.focos-incendios.import-firms') }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-CSRF-TOKEN': getCsrfToken(),
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
@@ -534,8 +567,12 @@ async function loadFirmsData() {
         console.error('Error:', error);
         Swal.fire('Error', error.message || 'Error al cargar datos de NASA FIRMS', 'error');
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalHtml;
+        if (btn) {
+            btn.disabled = false;
+            if (originalHtml !== null) {
+                btn.innerHTML = originalHtml;
+            }
+        }
     }
 }
 

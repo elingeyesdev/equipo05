@@ -40,5 +40,47 @@ class AnimalConditionApiController extends Controller
     {
         return new AnimalConditionResource($animalCondition);
     }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): AnimalConditionResource
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', 'unique:animal_conditions,nombre'],
+            'severidad' => ['required', 'integer', 'between:1,5'],
+            'activo' => ['sometimes', 'boolean'],
+        ]);
+
+        $animalCondition = AnimalCondition::create($data);
+
+        return new AnimalConditionResource($animalCondition);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, AnimalCondition $animalCondition): AnimalConditionResource
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', 'unique:animal_conditions,nombre,' . $animalCondition->id],
+            'severidad' => ['required', 'integer', 'between:1,5'],
+            'activo' => ['sometimes', 'boolean'],
+        ]);
+
+        $animalCondition->update($data);
+
+        return new AnimalConditionResource($animalCondition->fresh());
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(AnimalCondition $animalCondition): JsonResponse
+    {
+        $animalCondition->delete();
+
+        return response()->json([], 204);
+    }
 }
 

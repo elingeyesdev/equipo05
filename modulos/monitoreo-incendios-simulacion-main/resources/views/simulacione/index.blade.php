@@ -21,6 +21,12 @@
                         </a>
                     </x-slot>
 
+                    <div class="mb-3">
+                        <a href="{{ route('incendios.simulaciones.simulator') }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-fire"></i> Simulador Avanzado
+                        </a>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -34,7 +40,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($simulaciones as $simulacione)
+                                @forelse ($simulaciones as $simulacione)
                                     <tr>
                                         <td>{{ ++$i }}</td>
                                         <td>{{ $simulacione->nombre }}</td>
@@ -69,7 +75,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            No hay simulaciones registradas.
+                                            <a href="{{ route('incendios.simulaciones.simulator') }}" class="btn btn-warning btn-sm ml-2">
+                                                <i class="fas fa-fire"></i> Crear simulación
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

@@ -25,4 +25,35 @@ class CareTypeApiController extends Controller
     {
         return response()->json($careType->only(['id','nombre']));
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', 'unique:care_types,nombre'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $careType = CareType::create($data);
+
+        return response()->json($careType, 201);
+    }
+
+    public function update(Request $request, CareType $careType): JsonResponse
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', 'unique:care_types,nombre,' . $careType->id],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $careType->update($data);
+
+        return response()->json($careType);
+    }
+
+    public function destroy(CareType $careType): JsonResponse
+    {
+        $careType->delete();
+
+        return response()->json([], 204);
+    }
 }

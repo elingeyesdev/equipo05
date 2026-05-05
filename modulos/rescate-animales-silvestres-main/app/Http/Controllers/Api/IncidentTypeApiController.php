@@ -40,5 +40,47 @@ class IncidentTypeApiController extends Controller
     {
         return new IncidentTypeResource($incidentType);
     }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): IncidentTypeResource
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', 'unique:incident_types,nombre'],
+            'riesgo' => ['required', 'integer', 'between:0,2'],
+            'activo' => ['sometimes', 'boolean'],
+        ]);
+
+        $incidentType = IncidentType::create($data);
+
+        return new IncidentTypeResource($incidentType);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, IncidentType $incidentType): IncidentTypeResource
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:255', 'unique:incident_types,nombre,' . $incidentType->id],
+            'riesgo' => ['required', 'integer', 'between:0,2'],
+            'activo' => ['sometimes', 'boolean'],
+        ]);
+
+        $incidentType->update($data);
+
+        return new IncidentTypeResource($incidentType->fresh());
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(IncidentType $incidentType): JsonResponse
+    {
+        $incidentType->delete();
+
+        return response()->json([], 204);
+    }
 }
 
