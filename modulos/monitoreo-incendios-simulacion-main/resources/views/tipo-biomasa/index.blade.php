@@ -21,12 +21,6 @@
                         </a>
                     </x-slot>
 
-                    <div class="mb-3">
-                        <a href="{{ route('incendios.tipo-biomasas.create') }}" class="btn btn-success btn-sm">
-                            <i class="fas fa-plus"></i> Crear Nuevo
-                        </a>
-                    </div>
-
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
