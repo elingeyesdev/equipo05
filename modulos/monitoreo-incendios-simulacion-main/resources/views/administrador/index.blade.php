@@ -35,7 +35,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($administradores as $administrador)
+                                @forelse ($administradores as $administrador)
                                     <tr>
                                         <td>{{ ++$i }}</td>
                                         <td>{{ $administrador->user->name }}</td>
@@ -68,7 +68,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            No hay administradores registrados.
+                                            <a href="{{ route('incendios.administradores.create') }}" class="btn btn-success btn-sm ml-2">
+                                                <i class="fas fa-plus"></i> Crear primero
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
