@@ -1,6 +1,11 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('content')
+@section('title', 'Test Crear Biomasa')
+@section('subtitle', 'Formulario de prueba')
+@section('content_header_title', 'Biomasas')
+@section('content_header_subtitle', 'Test Create')
+
+@section('content_body')
 <div class="container">
     <h2>TEST - Crear Biomasa (Formulario Minimalista)</h2>
     
