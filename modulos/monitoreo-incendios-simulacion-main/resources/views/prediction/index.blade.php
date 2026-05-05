@@ -74,6 +74,9 @@
                                                 <a href="{{ route('incendios.predictions.show', $prediction->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
+                                                <a href="{{ route('incendios.predictions.edit', $prediction->id) }}" class="btn btn-success btn-sm" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
                                                 <a href="{{ route('incendios.predictions.pdf', $prediction->id) }}" class="btn btn-primary btn-sm" title="Ver Informe" target="_blank">
                                                     <i class="fas fa-file-pdf"></i>
                                                 </a>
