@@ -34,7 +34,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($users as $user)
+                                @forelse ($users as $user)
                                     <tr>
                                         <td>{{ ++$i }}</td>
                                         <td>{{ $user->name }}</td>
@@ -60,7 +60,16 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            No hay usuarios registrados.
+                                            <a href="{{ route('incendios.users.create') }}" class="btn btn-success btn-sm ml-2">
+                                                <i class="fas fa-plus"></i> Crear primero
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
