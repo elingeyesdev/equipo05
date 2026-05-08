@@ -24,23 +24,23 @@ Route::get('simulaciones/public/{id}', [Modules\Incendios\Http\Controllers\Simul
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-    
+
     // Dashboard - accessible to all authenticated users
     Route::get('/', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'index'])
         ->name('dashboard');
-    
+
     // Datos Climáticos - históricos de la última semana
     Route::get('/datos-climaticos', [\Modules\Incendios\Http\Controllers\DatosClimaticosController::class, 'index'])
         ->name('datos-climaticos.index');
-    
+
     // Biomasas GeoJSON endpoint for map
     Route::get('/dashboard/biomasas', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'getBiomasas'])
         ->name('dashboard.biomasas');
-    
+
     // Clear dashboard cache
     Route::post('/dashboard/clear-cache', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'clearCache'])
         ->name('dashboard.clear-cache');
-    
+
     // Reports - accessible to all authenticated users
     Route::get('/reports/fires', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'firesActivityReport'])
         ->name('reports.fires');
@@ -48,21 +48,21 @@ Route::middleware('auth')->group(function () {
         ->name('reports.fires.export-excel');
     Route::get('/reports/fires/export-pdf', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'firesActivityExportPdf'])
         ->name('reports.fires.export-pdf');
-    
+
     Route::get('/reports/biomasas', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'biomasasManagementReport'])
         ->name('reports.biomasas');
     Route::get('/reports/biomasas/export-excel', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'biomasasManagementExportExcel'])
         ->name('reports.biomasas.export-excel');
     Route::get('/reports/biomasas/export-pdf', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'biomasasManagementExportPdf'])
         ->name('reports.biomasas.export-pdf');
-    
+
     Route::get('/reports/simulations', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'simulationsEffectivenessReport'])
         ->name('reports.simulations');
     Route::get('/reports/simulations/export-excel', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'simulationsEffectivenessExportExcel'])
         ->name('reports.simulations.export-excel');
     Route::get('/reports/simulations/export-pdf', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'simulationsEffectivenessExportPdf'])
         ->name('reports.simulations.export-pdf');
-    
+
     Route::get('/reports/predictions', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'predictionsReport'])
         ->name('reports.predictions');
     Route::get('/reports/predictions/export-excel', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'predictionsReportExportExcel'])
@@ -73,14 +73,15 @@ Route::middleware('auth')->group(function () {
     // Test endpoint to preview OpenWeather and FIRMS data
     Route::get('/test', [\Modules\Incendios\Http\Controllers\TestController::class, 'index'])
         ->name('test.index');
-    
+
     // Debug endpoint para ver biomasas
-    Route::get('/debug/biomasas', function() {
+    Route::get('/debug/biomasas', function () {
         $biomasas = \Modules\Incendios\Models\Biomasa::with('tipoBiomasa')->get();
+
         return response()->json([
             'total' => $biomasas->count(),
             'aprobadas' => $biomasas->where('estado', 'aprobada')->count(),
-            'biomasas' => $biomasas->map(function($b) {
+            'biomasas' => $biomasas->map(function ($b) {
                 return [
                     'id' => $b->id,
                     'tipo' => $b->tipoBiomasa->tipo_biomasa ?? 'N/A',
@@ -89,20 +90,21 @@ Route::middleware('auth')->group(function () {
                     'coordenadas_type' => gettype($b->coordenadas),
                     'area_m2' => $b->area_m2,
                 ];
-            })
+            }),
         ]);
     });
-    
+
     Route::get('/home', function () {
-        return redirect('/');
+        return redirect()->route('incendios.dashboard');
     });
 
     // Integración central: un solo login; el rol de trabajo se elige con la barra de contexto (sesión), no con Spatie en estas rutas.
     // ============================================
     // BIOMASAS
     // ============================================
-    Route::get('biomasas/test-create', function() {
+    Route::get('biomasas/test-create', function () {
         $tipoBiomasas = \Modules\Incendios\Models\TipoBiomasa::all();
+
         return view('biomasa.test-create', compact('tipoBiomasas'));
     })->name('biomasas.test-create');
 
@@ -161,7 +163,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('predictions/{prediction}', [Modules\Incendios\Http\Controllers\PredictionController::class, 'destroy'])
         ->name('predictions.destroy');
 });
-
 
 // ========== HELPDESK WIDGET ==========
 // Ruta generada por: php artisan helpdeskwidget:install
