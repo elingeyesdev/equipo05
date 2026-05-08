@@ -31,6 +31,7 @@ use Modules\Rescate\Http\Controllers\AnimalHistoryController;
 use Modules\Rescate\Http\Controllers\ProfileController;
 use Modules\Rescate\Http\Controllers\ContactMessageController;
 use Modules\Rescate\Http\Controllers\ReportsController;
+use Modules\Rescate\Http\Controllers\UserController;
 
 Route::get('/', function () {
 if (Auth::check()) {
@@ -92,6 +93,7 @@ Route::resource('feeding-frequencies', FeedingFrequencyController::class)->middl
 Route::resource('feeding-portions', FeedingPortionController::class)->middleware('auth');
 Route::resource('incident-types', IncidentTypeController::class)->middleware('auth');
 Route::resource('animal-conditions', AnimalConditionController::class)->middleware('auth');
+Route::resource('users', UserController::class)->middleware('auth');
 
 //Transaccionales
 Route::resource('animal-records', AnimalTransactionalController::class)->middleware('auth');

@@ -48,7 +48,7 @@ class UserController extends Controller
      */
     public function show($id): View
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
         return view('user.show', compact('user'));
     }
@@ -58,7 +58,7 @@ class UserController extends Controller
      */
     public function edit($id): View
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
         return view('user.edit', compact('user'));
     }
@@ -76,7 +76,7 @@ class UserController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        User::find($id)->delete();
+        User::findOrFail($id)->delete();
 
         return Redirect::route('rescate.users.index')
             ->with('success', 'Usuario eliminado correctamente');
