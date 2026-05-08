@@ -1,29 +1,28 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Create') }} {{ __('Veterinarian') }}
-@endsection
+@section('title', 'Nuevo veterinario — Rescate')
+@section('subtitle', 'Registrar postulación de veterinario.')
+@section('content_header_title', 'Veterinarios')
+@section('content_header_subtitle', 'Crear')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} {{ __('Veterinarian') }}</span>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card card-outline card-success shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-user-md text-success"></i> Nuevo veterinario</h3>
+                        <a href="{{ route('rescate.veterinarians.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Listado</a>
                     </div>
-                    <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('rescate.veterinarians.store') }}"  role="form" enctype="multipart/form-data">
+                    <div class="card-body">
+                        <form method="POST" action="{{ route('rescate.veterinarians.store') }}" role="form" enctype="multipart/form-data">
                             @csrf
-
                             @include('veterinarian.form')
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
 @endsection
