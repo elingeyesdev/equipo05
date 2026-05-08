@@ -54,8 +54,10 @@ return Application::configure(basePath: dirname(__DIR__))
             $isModulePath = $request->is('incendios/modulo/*') || $request->is('rescate/modulo/*');
             $message = (string) $e->getMessage();
             $isSchemaProblem = str_contains($message, 'no such table')
+                || str_contains($message, 'no such column')
                 || str_contains($message, 'has no column named')
-                || str_contains($message, 'Base table or view not found');
+                || str_contains($message, 'Base table or view not found')
+                || str_contains($message, 'FOREIGN KEY constraint failed');
 
             if ((! $isWriteMethod && ! $isReadMethod) || ! $isModulePath || ! $isSchemaProblem) {
                 return null;
