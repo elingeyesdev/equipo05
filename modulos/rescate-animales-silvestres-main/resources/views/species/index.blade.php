@@ -1,26 +1,25 @@
 @extends('layouts.app')
 
-@section('title')
-Species
-@endsection
+@section('title', 'Especies — Rescate')
+@section('subtitle', 'Catálogo taxonómico para reportes y fichas de animales.')
+@section('content_header_title', 'Especies')
+@section('content_header_subtitle', 'Catálogo')
 
-@section('content')
+@section('content_body')
     <section class="content container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                            <span id="card_title">
-                                {{ __('Species') }}
+                        <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: .5rem;">
+                            <span id="card_title" class="font-weight-bold mb-0">
+                                Especies registradas
                             </span>
-
-                             <div class="float-right">
-                                <a href="{{ route('rescate.species.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                            <div>
+                                <a href="{{ route('rescate.species.create') }}" class="btn btn-primary btn-sm" data-placement="left">
+                                    <i class="fas fa-plus"></i> Nueva especie
                                 </a>
-                              </div>
+                            </div>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -35,29 +34,33 @@ Species
                                 <thead class="thead">
                                     <tr>
                                         <th>No</th>
-                                        
-									<th >Nombre</th>
-
-                                        <th></th>
+                                        <th>Nombre</th>
+                                        <th style="width: 220px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($species as $item)
+                                    @forelse ($species as $item)
                                         <tr>
                                             <td>{{ ++$i }}</td>
                                             <td>{{ $item->nombre }}</td>
-
                                             <td>
-                                                <form action="{{ route('rescate.species.destroy', $item->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('rescate.species.show', $item->id) }}"><i class="fa fa-fw fa-eye"></i> <span class="d-none d-md-inline">{{ __('Ver') }}</span></a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('rescate.species.edit', $item->id) }}"><i class="fa fa-fw fa-edit"></i> <span class="d-none d-md-inline">{{ __('Editar') }}</span></a>
+                                                <form action="{{ route('rescate.species.destroy', $item->id) }}" method="POST" class="d-inline-flex flex-wrap" style="gap: .25rem;">
+                                                    <a class="btn btn-sm btn-primary" href="{{ route('rescate.species.show', $item->id) }}"><i class="fa fa-fw fa-eye"></i> <span class="d-none d-md-inline">Ver</span></a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('rescate.species.edit', $item->id) }}"><i class="fa fa-fw fa-edit"></i> <span class="d-none d-md-inline">Editar</span></a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> <span class="d-none d-md-inline">{{ __('Eliminar') }}</span></button>
+                                                    <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> <span class="d-none d-md-inline">Eliminar</span></button>
                                                 </form>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted py-4">
+                                                No hay especies en el catálogo.
+                                                <a href="{{ route('rescate.species.create') }}" class="d-inline-block mt-2">Registrar la primera</a>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
