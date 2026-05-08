@@ -48,8 +48,9 @@
         <input type="hidden" name="reporte_id" id="reporte_id" value="{{ old('reporte_id', $animal?->reporte_id) }}">
     @endif
     @if(($showSubmit ?? true))
-        <div class="mt-2">
-            <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+        <div class="mt-2 d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('Guardar') }}</button>
+            <a href="{{ route('rescate.animals.index') }}" class="btn btn-outline-secondary">Cancelar</a>
         </div>
     @endif
 </div>
