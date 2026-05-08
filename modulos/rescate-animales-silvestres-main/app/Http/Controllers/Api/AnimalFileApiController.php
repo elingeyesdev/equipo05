@@ -82,7 +82,9 @@ class AnimalFileApiController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'No se pudo registrar la Hoja de Vida.',
-                'error'   => $e->getMessage(),
+                'errors'  => [
+                    'general' => ['Operación no disponible en este momento.'],
+                ],
             ], 422);
         }
     }
