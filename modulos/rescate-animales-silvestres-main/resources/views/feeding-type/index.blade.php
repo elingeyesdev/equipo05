@@ -1,66 +1,66 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Feeding Types') }}
-@endsection
+@section('title', 'Tipos de alimento — Rescate')
+@section('subtitle', 'Catálogo para registros de alimentación.')
+@section('content_header_title', 'Tipos de alimento')
+@section('content_header_subtitle', 'Catálogo')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card">
+                <div class="card card-outline card-success shadow-sm">
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                            <span id="card_title">
-                                {{ __('Feeding Types') }}
-                            </span>
-
-                             <div class="float-right">
-                                <a href="{{ route('rescate.feeding-types.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                        <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: .5rem;">
+                            <span id="card_title" class="font-weight-bold mb-0">Tipos de alimento</span>
+                            <div>
+                                <a href="{{ route('rescate.feeding-types.create') }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-plus"></i> Nuevo tipo
                                 </a>
-                              </div>
+                            </div>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
+                        <div class="alert alert-success m-4 mb-0">
+                            <p class="mb-0">{{ $message }}</p>
                         </div>
                     @endif
 
                     <div class="card-body bg-white">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="thead">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="thead-light">
                                     <tr>
                                         <th>No</th>
-                                        
-									<th >Nombre</th>
-									<th >Descripcion</th>
-
-                                        <th></th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th style="width: 220px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($feedingTypes as $feedingType)
+                                    @forelse ($feedingTypes as $feedingType)
                                         <tr>
                                             <td>{{ ++$i }}</td>
-                                            
-										<td >{{ $feedingType->nombre }}</td>
-										<td >{{ $feedingType->descripcion }}</td>
-
+                                            <td>{{ $feedingType->nombre }}</td>
+                                            <td>{{ $feedingType->descripcion ?: '—' }}</td>
                                             <td>
-                                                <form action="{{ route('rescate.feeding-types.destroy', $feedingType->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('rescate.feeding-types.show', $feedingType->id) }}"><i class="fa fa-fw fa-eye"></i> <span class="d-none d-md-inline">{{ __('Ver') }}</span></a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('rescate.feeding-types.edit', $feedingType->id) }}"><i class="fa fa-fw fa-edit"></i> <span class="d-none d-md-inline">{{ __('Editar') }}</span></a>
+                                                <form action="{{ route('rescate.feeding-types.destroy', $feedingType->id) }}" method="POST" class="d-inline-flex flex-wrap" style="gap: .25rem;">
+                                                    <a class="btn btn-sm btn-primary" href="{{ route('rescate.feeding-types.show', $feedingType->id) }}"><i class="fa fa-fw fa-eye"></i> Ver</a>
+                                                    <a class="btn btn-sm btn-outline-secondary" href="{{ route('rescate.feeding-types.edit', $feedingType->id) }}"><i class="fa fa-fw fa-edit"></i> Editar</a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> <span class="d-none d-md-inline">{{ __('Eliminar') }}</span></button>
+                                                    <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> Eliminar</button>
                                                 </form>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted py-4">
+                                                Sin tipos de alimento.
+                                                <a href="{{ route('rescate.feeding-types.create') }}" class="d-inline-block mt-2">Registrar uno</a>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

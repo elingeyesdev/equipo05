@@ -4,7 +4,7 @@
 {{ __('Mapa de Campo') }}
 @endsection
 
-@section('content')
+@section('content_body')
     <section class="content container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">

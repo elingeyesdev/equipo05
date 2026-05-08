@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-Veterinarians
-@endsection
+@section('title', 'Veterinarios — Rescate')
+@section('subtitle', 'Profesionales, solicitudes y aprobaciones.')
+@section('content_header_title', 'Veterinarios')
+@section('content_header_subtitle', 'Listado')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -15,8 +16,8 @@ Veterinarians
                                 {{ __('Veterinarians') }}
                             </span>
                             <div class="float-right">
-                                <a href="{{ route('rescate.veterinarians.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
-                                    {{ __('Create New') }}
+                                <a href="{{ route('rescate.veterinarians.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
+                                    <i class="fas fa-plus"></i> Nuevo veterinario
                                 </a>
                             </div>
                         </div>
@@ -98,10 +99,10 @@ Veterinarians
                                         <div class="card-footer">
                                             <div class="d-flex w-100">
                                                 <a class="btn btn-sm btn-primary" href="{{ route('rescate.veterinarians.show', $veterinarian->id) }}" style="flex: 1 1 0;">
-                                                    <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
+                                                    <i class="fa fa-fw fa-eye"></i> Ver
                                                 </a>
                                                 <a class="btn btn-sm btn-success" href="{{ route('rescate.veterinarians.edit', $veterinarian->id) }}" style="flex: 1 1 0; margin-left: 0.5rem;">
-                                                    <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
+                                                    <i class="fa fa-fw fa-edit"></i> Editar
                                                 </a>
                                                 @if($isPending)
                                                 <button type="button" 

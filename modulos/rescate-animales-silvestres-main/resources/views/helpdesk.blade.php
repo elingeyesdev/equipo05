@@ -14,7 +14,7 @@
     <h1><i class="fas fa-headset mr-2"></i>HelpDesk SaaS - Centro de Soporte</h1>
 @endsection
 
-@section('content')
+@section('content_body')
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">

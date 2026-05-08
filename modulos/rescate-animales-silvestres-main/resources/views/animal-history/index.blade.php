@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Historial de Animales') }}
-@endsection
+@section('title', 'Historial de cambios — Rescate')
+@section('subtitle', 'Trazabilidad de modificaciones por animal.')
+@section('content_header_title', 'Historial de animales')
+@section('content_header_subtitle', 'Línea de tiempo')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">

@@ -15,7 +15,7 @@
 @endpush
 @endif
 
-@section('content')
+@section('content_body')
     <section class="content container-fluid page-pad">
         <div class="row">
             @if(isset($useFullFormat) && $useFullFormat)

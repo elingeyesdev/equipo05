@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Care Feedings') }}
-@endsection
+@section('title', 'Alimentación y cuidados — Rescate')
+@section('subtitle', 'Registros de alimentación agrupados por animal.')
+@section('content_header_title', 'Alimentación')
+@section('content_header_subtitle', 'Vista agrupada')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -12,13 +13,13 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
-                            <span id="card_title">
-                                {{ __('Care Feedings') }}
+                            <span id="card_title" class="font-weight-bold mb-0">
+                                Registro de alimentación
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('rescate.animal-feeding-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <a href="{{ route('rescate.animal-feeding-records.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
+                                  <i class="fas fa-plus"></i> Nuevo registro
                                 </a>
                               </div>
                         </div>

@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Animal Files') }}
-@endsection
+@section('title', 'Hojas de vida — Rescate')
+@section('subtitle', 'Fichas de animales en custodia con filtros por especie, estado y centro.')
+@section('content_header_title', 'Hojas de vida')
+@section('content_header_subtitle', 'Listado')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -12,13 +13,13 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
-                            <span id="card_title">
-                                {{ __('Animal Files') }}
+                            <span id="card_title" class="font-weight-bold mb-0">
+                                Animales en custodia
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('rescate.animal-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <a href="{{ route('rescate.animal-records.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
+                                  <i class="fas fa-plus"></i> Nueva hoja de vida
                                 </a>
                               </div>
                         </div>

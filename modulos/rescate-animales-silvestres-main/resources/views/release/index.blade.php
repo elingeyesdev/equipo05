@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Liberaciones') }}
-@endsection
+@section('title', 'Liberaciones — Rescate')
+@section('subtitle', 'Animales liberados con filtros por especie y fechas.')
+@section('content_header_title', 'Liberaciones')
+@section('content_header_subtitle', 'Listado')
 
-@section('content')
+@section('content_body')
     <section class="content container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">

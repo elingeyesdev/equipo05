@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-People
-@endsection
+@section('title', 'Personas — Rescate')
+@section('subtitle', 'Voluntarios, roles internos del módulo y solicitudes.')
+@section('content_header_title', 'Personas')
+@section('content_header_subtitle', 'Directorio')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -12,14 +13,14 @@ People
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
-                            <span id="card_title">
-                                {{ __('People') }}
+                            <span id="card_title" class="font-weight-bold mb-0">
+                                Directorio de personas
                             </span>
 
                              <div class="float-right">
                                 @if(Auth::user()->hasRole('admin'))
-                                <a href="{{ route('rescate.people.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <a href="{{ route('rescate.people.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
+                                  <i class="fas fa-plus"></i> Nueva persona
                                 </a>
                                 @endif
                               </div>
@@ -159,20 +160,20 @@ People
                                             @if(Auth::user()->hasRole('admin'))
                                             <form action="{{ route('rescate.people.destroy', $person->id) }}" method="POST" class="mb-0 d-flex w-100">
                                                 <a class="btn btn-sm btn-primary" href="{{ route('rescate.people.show', $person->id) }}">
-                                                    <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
+                                                    <i class="fa fa-fw fa-eye"></i> Ver
                                                 </a>
-                                                <a class="btn btn-sm btn-success" href="{{ route('rescate.people.edit', $person->id) }}">
-                                                    <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
+                                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('rescate.people.edit', $person->id) }}">
+                                                    <i class="fa fa-fw fa-edit"></i> Editar
                                                 </a>
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-sm btn-danger js-confirm-delete">
-                                                    <i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}
+                                                    <i class="fa fa-fw fa-trash"></i> Eliminar
                                                 </button>
                                             </form>
                                             @else
                                             <a class="btn btn-sm btn-primary w-100" href="{{ route('rescate.people.show', $person->id) }}">
-                                                <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
+                                                <i class="fa fa-fw fa-eye"></i> Ver
                                             </a>
                                             @endif
                                         </div>

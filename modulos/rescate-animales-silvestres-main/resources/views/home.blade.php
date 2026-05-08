@@ -115,7 +115,7 @@
 </style>
 @endsection
 
-@section('content')
+@section('content_body')
 <div class="container-fluid pb-4">
 
     {{-- =========================================================== --}}

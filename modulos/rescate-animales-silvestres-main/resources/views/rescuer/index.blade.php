@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-Rescuers
-@endsection
+@section('title', 'Rescatistas — Rescate')
+@section('subtitle', 'Voluntarios, solicitudes y aprobaciones.')
+@section('content_header_title', 'Rescatistas')
+@section('content_header_subtitle', 'Listado')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -15,8 +16,8 @@ Rescuers
                                 {{ __('Rescuers') }}
                             </span>
                             <div class="float-right">
-                                <a href="{{ route('rescate.rescuers.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
-                                    {{ __('Create New') }}
+                                <a href="{{ route('rescate.rescuers.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
+                                    <i class="fas fa-plus"></i> Nuevo rescatista
                                 </a>
                             </div>
                         </div>
@@ -95,10 +96,10 @@ Rescuers
                                         <div class="card-footer">
                                             <div class="d-flex w-100">
                                                 <a class="btn btn-sm btn-primary" href="{{ route('rescate.rescuers.show', $rescuer->id) }}" style="flex: 1 1 0;">
-                                                    <i class="fa fa-fw fa-eye"></i> {{ __('Show') }}
+                                                    <i class="fa fa-fw fa-eye"></i> Ver
                                                 </a>
-                                                <a class="btn btn-sm btn-success" href="{{ route('rescate.rescuers.edit', $rescuer->id) }}" style="flex: 1 1 0; margin-left: 0.5rem;">
-                                                    <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
+                                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('rescate.rescuers.edit', $rescuer->id) }}" style="flex: 1 1 0; margin-left: 0.5rem;">
+                                                    <i class="fa fa-fw fa-edit"></i> Editar
                                                 </a>
                                                 @if($isPending)
                                                 <button type="button" 

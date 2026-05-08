@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Cares') }}
-@endsection
+@section('title', 'Cuidados — Rescate')
+@section('subtitle', 'Historial de cuidados agrupados por hoja de vida.')
+@section('content_header_title', 'Cuidados registrados')
+@section('content_header_subtitle', 'Vista agrupada')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -12,13 +13,13 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
-                            <span id="card_title">
-                                {{ __('Cares') }}
+                            <span id="card_title" class="font-weight-bold mb-0">
+                                Registro de cuidados
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
+                                  <i class="fas fa-plus"></i> Nuevo registro
                                 </a>
                               </div>
                         </div>

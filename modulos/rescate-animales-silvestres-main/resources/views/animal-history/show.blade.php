@@ -4,7 +4,7 @@
 {{ __('Historial de Animal ') . $animalHistory->animal_file_id }}
 @endsection
 
-@section('content')
+@section('content_body')
     <section class="content container-fluid page-pad">
         <div class="row">
             <div class="col-md-12">

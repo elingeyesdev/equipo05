@@ -4,7 +4,7 @@
 {{ __('Update') }} {{ __('Treatment Type') }}
 @endsection
 
-@section('content')
+@section('content_body')
     <section class="content container-fluid page-pad">
         <div class="">
             <div class="col-md-12">

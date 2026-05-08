@@ -16,7 +16,7 @@
     </div>
 @endsection
 
-@section('content')
+@section('content_body')
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3">

@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-Transfers
-@endsection
+@section('title', 'Traslados — Rescate')
+@section('subtitle', 'Primer traslado desde hallazgos y traslados entre centros.')
+@section('content_header_title', 'Traslados')
+@section('content_header_subtitle', 'Operación')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -12,8 +13,8 @@ Transfers
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
-                            <span id="card_title">
-                                {{ __('Transfers') }}
+                            <span id="card_title" class="font-weight-bold mb-0">
+                                Gestión de traslados
                             </span>
 
                              <!--<div class="float-right">

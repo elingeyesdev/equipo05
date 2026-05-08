@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-Medical Evaluations
-@endsection
+@section('title', 'Evaluaciones médicas — Rescate')
+@section('subtitle', 'Historial clínico agrupado por hoja de vida.')
+@section('content_header_title', 'Evaluaciones médicas')
+@section('content_header_subtitle', 'Vista agrupada')
 
-@section('content')
+@section('content_body')
     <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
@@ -12,13 +13,13 @@ Medical Evaluations
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
-                            <span id="card_title">
-                                {{ __('Medical Evaluations') }}
+                            <span id="card_title" class="font-weight-bold mb-0">
+                                Evaluaciones registradas
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('rescate.medical-evaluation-transactions.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <a href="{{ route('rescate.medical-evaluation-transactions.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
+                                  <i class="fas fa-plus"></i> Nueva evaluación
                                 </a>
                               </div>
                         </div>

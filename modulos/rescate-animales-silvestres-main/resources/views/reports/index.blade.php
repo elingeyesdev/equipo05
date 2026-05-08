@@ -8,7 +8,7 @@
     </div>
 @endsection
 
-@section('content')
+@section('content_body')
 <div class="container-fluid">
     <!-- Pestañas -->
     <div class="d-flex justify-content-between align-items-center mb-2">

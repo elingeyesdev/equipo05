@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Reports') }}
-@endsection
+@section('title', 'Hallazgos — Rescate')
+@section('subtitle', 'Reportes de campo, filtros y seguimiento.')
+@section('content_header_title', 'Hallazgos / reportes')
+@section('content_header_subtitle', 'Listado')
 
-@section('content')
+@section('content_body')
     <section class="content container-fluid page-pad">
         <div class="row">
             <div class="col-sm-12">
