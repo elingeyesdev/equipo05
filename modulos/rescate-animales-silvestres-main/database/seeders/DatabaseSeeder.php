@@ -2,11 +2,10 @@
 
 namespace Modules\Rescate\Database\Seeders;
 
-use Modules\Rescate\Models\User;
-use Modules\Rescate\Models\Person;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
+use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -38,5 +37,8 @@ class DatabaseSeeder extends Seeder
                 'telefono' => '74412589',
             ]
         );
+
+        // Datos demo funcionales para poblar CRUDs y submódulos
+        $this->call(\Modules\Rescate\Seeders\ShowcaseDataSeeder::class);
     }
 }
