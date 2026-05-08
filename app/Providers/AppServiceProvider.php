@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
             if (! \Illuminate\Support\Facades\Auth::check()) {
                 $view->with('contextModuleRoles', collect());
                 $view->with('showModuleContextBar', false);
+                $view->with('bodyModuleClass', '');
 
                 return;
             }
@@ -33,9 +34,12 @@ class AppServiceProvider extends ServiceProvider
             if (! $inRescate && ! $inIncendios) {
                 $view->with('contextModuleRoles', collect());
                 $view->with('showModuleContextBar', false);
+                $view->with('bodyModuleClass', '');
 
                 return;
             }
+
+            $view->with('bodyModuleClass', $inRescate ? 'module-rescate' : 'module-incendios');
             try {
                 $view->with(
                     'contextModuleRoles',

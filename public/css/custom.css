@@ -1098,3 +1098,17 @@ input[type="file"] {
     border: 3px solid;
     border-image: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%) 1;
 }
+
+/* Acento por módulo activo (rescate / incendios) en barra lateral principal */
+body.module-rescate .brand-link {
+    background-color: #157347 !important;
+}
+body.module-rescate .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #198754 !important;
+}
+body.module-incendios .brand-link {
+    background-color: #c2410c !important;
+}
+body.module-incendios .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #ea580c !important;
+}

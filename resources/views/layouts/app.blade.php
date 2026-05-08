@@ -55,7 +55,7 @@
         .user-avatar-circle { width: 40px; height: 40px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; background: linear-gradient(135deg, #6366f1, #3b82f6); color: white; }
     </style>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed {{ trim($bodyModuleClass ?? '') }}">
     <div class="wrapper">
         
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -492,6 +492,11 @@
                                 <li class="nav-item">
                                     <a href="{{ route('rescate.profile.index') }}" class="nav-link {{ request()->routeIs('rescate.profile.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i><p>Perfil (módulo)</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.users.index') }}" class="nav-link {{ request()->routeIs('rescate.users.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Usuarios (BD rescate)</p>
                                     </a>
                                 </li>
                                 <li class="nav-header text-uppercase small">Catálogos</li>
