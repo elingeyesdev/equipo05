@@ -2,16 +2,15 @@
 
 namespace Modules\Rescate\Http\Controllers\Auth;
 
-use Modules\Rescate\Http\Controllers\Controller;
-use Modules\Rescate\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Modules\Rescate\Http\Controllers\Controller;
 use Modules\Rescate\Models\Person;
-use Modules\Rescate\Models\Report;
-use Spatie\Permission\Models\Role;
-use Illuminate\Http\Request;
+use Modules\Rescate\Models\User;
 use Modules\Rescate\Services\User\UserTrackingService;
+use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
 {
@@ -48,7 +47,6 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -59,7 +57,7 @@ class RegisterController extends Controller
             'telefono' => ['nullable', 'string', 'max:50'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'foto' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage()],
+            'foto' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage],
         ];
 
         $messages = [
@@ -86,7 +84,6 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
      * @return \Modules\Rescate\Models\User
      */
     protected function create(array $data)
@@ -128,7 +125,7 @@ class RegisterController extends Controller
             ]);
         } catch (\Exception $e) {
             // No fallar el registro si el tracking falla
-            \Log::warning('Error registrando tracking de usuario: ' . $e->getMessage());
+            \Log::warning('Error registrando tracking de usuario: '.$e->getMessage());
         }
 
         return $user;
@@ -144,17 +141,17 @@ class RegisterController extends Controller
         // Guardar el reporte pendiente en sesión antes de hacer logout
         // Esto es importante porque el logout puede limpiar la sesión
         $reportId = $request->session()->get('pending_report_id');
-        
+
         // Hacer logout del usuario recién registrado
         $this->guard()->logout();
-        
+
         // Restaurar el pending_report_id en la sesión después del logout
         // La sesión web se mantiene aunque el usuario se desautentique
         if ($reportId) {
             $request->session()->put('pending_report_id', $reportId);
         }
-        
-        return redirect('/login')
+
+        return redirect()->route('login')
             ->with('info', 'Registro exitoso. Por favor inicia sesión para asociar tu reporte.');
     }
 }
