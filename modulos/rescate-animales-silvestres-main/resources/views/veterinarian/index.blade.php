@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    Veterinarians
+@section('title')
+Veterinarians
 @endsection
 
 @section('content')

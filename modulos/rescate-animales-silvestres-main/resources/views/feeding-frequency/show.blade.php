@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $feedingFrequency->name ?? __('Show') . " " . __('Feeding Frequency') }}
+@section('title')
+{{ $feedingFrequency->name ?? __('Show') . " " . __('Feeding Frequency') }}
 @endsection
 
 @section('content')

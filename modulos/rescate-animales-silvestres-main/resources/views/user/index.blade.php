@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    Users
+@section('title')
+Users
 @endsection
 
 @section('content')

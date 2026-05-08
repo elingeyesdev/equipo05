@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ __('Historial de Animal ') . $animalHistory->animal_file_id }}
+@section('title')
+{{ __('Historial de Animal ') . $animalHistory->animal_file_id }}
 @endsection
 
 @section('content')

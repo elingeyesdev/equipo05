@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
 @section('title', 'Reportes')
 
@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="text-dark">Reportes</h1>
     </div>
-@stop
+@endsection
 
 @section('content')
 <div class="container-fluid">
@@ -622,8 +622,8 @@
         </div>
     </div>
 </div>
-@stop
+@endsection
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-@stop
+@endsection

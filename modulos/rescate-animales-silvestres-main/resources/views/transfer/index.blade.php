@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    Transfers
+@section('title')
+Transfers
 @endsection
 
 @section('content')

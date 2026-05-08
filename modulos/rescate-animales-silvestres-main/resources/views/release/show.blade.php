@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $release->name ?? __('Show') . ' ' . __('Release') }}
+@section('title')
+{{ $release->name ?? __('Show') . ' ' . __('Release') }}
 @endsection
 
 @section('content')

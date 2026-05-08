@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    Medical Evaluations
+@section('title')
+Medical Evaluations
 @endsection
 
 @section('content')

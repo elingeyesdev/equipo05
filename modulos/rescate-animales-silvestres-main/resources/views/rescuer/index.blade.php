@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    Rescuers
+@section('title')
+Rescuers
 @endsection
 
 @section('content')

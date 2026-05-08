@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $feedingType->name ?? __('Show') . " " . __('Feeding Type') }}
+@section('title')
+{{ $feedingType->name ?? __('Show') . " " . __('Feeding Type') }}
 @endsection
 
 @section('content')

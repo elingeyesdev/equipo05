@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $treatmentType->name ?? __('Show') . ' ' . __('Treatment Type') }}
+@section('title')
+{{ $treatmentType->name ?? __('Show') . ' ' . __('Treatment Type') }}
 @endsection
 
 @section('content')

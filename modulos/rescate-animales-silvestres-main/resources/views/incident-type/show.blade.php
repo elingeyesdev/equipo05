@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $incidentType->name ?? __('Show') . ' ' . __('Incident Type') }}
+@section('title')
+{{ $incidentType->name ?? __('Show') . ' ' . __('Incident Type') }}
 @endsection
 
 @section('content')

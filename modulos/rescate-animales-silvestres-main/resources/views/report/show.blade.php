@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $report->name ?? __('Show') . " " . __('Report') }}
+@section('title')
+{{ $report->name ?? __('Show') . " " . __('Report') }}
 @endsection
 
 @section('content')

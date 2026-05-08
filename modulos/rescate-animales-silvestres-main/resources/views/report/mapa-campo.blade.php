@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ __('Mapa de Campo') }}
+@section('title')
+{{ __('Mapa de Campo') }}
 @endsection
 
 @section('content')

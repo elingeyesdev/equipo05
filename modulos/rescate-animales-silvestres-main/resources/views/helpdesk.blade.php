@@ -6,7 +6,7 @@
     Personaliza esta vista según las necesidades de tu proyecto.
     Compatible con AdminLTE v3.
 --}}
-@extends('adminlte::page')
+@extends('layouts.app')
 
 @section('title', 'Centro de Soporte')
 

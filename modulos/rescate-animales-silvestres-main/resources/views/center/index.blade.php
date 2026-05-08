@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    Centers
+@section('title')
+Centers
 @endsection
 
 @section('content')

@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $transfer->name ?? __('Show') . ' ' . __('Transfer') }}
+@section('title')
+{{ $transfer->name ?? __('Show') . ' ' . __('Transfer') }}
 @endsection
 
 @section('content')

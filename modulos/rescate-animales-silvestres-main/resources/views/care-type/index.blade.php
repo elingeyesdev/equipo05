@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    Care Types
+@section('title')
+Care Types
 @endsection
 
 @section('content')

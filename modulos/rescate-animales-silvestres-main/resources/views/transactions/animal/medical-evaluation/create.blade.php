@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ __('Registrar Evaluación Médica') }}
+@section('title')
+{{ __('Registrar Evaluación Médica') }}
 @endsection
 
 @section('content')

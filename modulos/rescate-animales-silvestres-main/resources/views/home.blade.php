@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
 @section('title', 'Inicio')
 
@@ -17,7 +17,7 @@
             <small class="text-muted"><i class="fas fa-calendar-alt mr-1"></i> {{ date('d/m/Y') }}</small>
         </div>
     </div>
-@stop
+@endsection
 
 @section('css')
 <style>
@@ -113,7 +113,7 @@
         display: none !important;
     }
 </style>
-@stop
+@endsection
 
 @section('content')
 <div class="container-fluid pb-4">

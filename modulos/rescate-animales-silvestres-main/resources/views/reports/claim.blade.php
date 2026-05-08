@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ __('Conservar Reporte') }}
+@section('title')
+{{ __('Conservar Reporte') }}
 @endsection
 
 @if (!Auth::check())

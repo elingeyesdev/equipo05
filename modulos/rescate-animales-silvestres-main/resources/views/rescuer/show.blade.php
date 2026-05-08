@@ -1,7 +1,7 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('template_title')
-    {{ $rescuer->name ?? __('Show') . ' ' . __('Rescuer') }}
+@section('title')
+{{ $rescuer->name ?? __('Show') . ' ' . __('Rescuer') }}
 @endsection
 
 @section('content')
