@@ -104,4 +104,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\ErrorException $e, Request $request) use ($handleDemoDbFallback) {
             return $handleDemoDbFallback((string) $e->getMessage(), $request);
         });
+
+        $exceptions->render(function (\Throwable $e, Request $request) use ($handleDemoDbFallback) {
+            return $handleDemoDbFallback((string) $e->getMessage(), $request);
+        });
     })->create();
