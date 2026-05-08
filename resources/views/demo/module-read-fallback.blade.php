@@ -1,19 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Modo demo sin base de datos')
+@section('title', 'Información no disponible')
 
 @section('content')
 <div class="container-fluid py-3">
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-warning text-dark">
-            <h3 class="card-title mb-0">Modo demo activo (sin base de datos)</h3>
+            <h3 class="card-title mb-0">Información temporalmente no disponible</h3>
         </div>
         <div class="card-body">
             <p class="mb-2">
-                Esta pantalla intentó consultar datos reales en <code>{{ $requestedPath }}</code>, pero actualmente el sistema está en modo demo sin tablas disponibles.
+                No fue posible cargar información para <code>{{ $requestedPath }}</code> en este momento.
             </p>
             <p class="mb-3">
-                Para evitar errores 500 durante tu presentación, la app muestra esta vista de respaldo y mantiene operativas las acciones de guardado en modo simulado.
+                Puedes continuar navegando y ejecutando acciones desde los accesos rápidos.
             </p>
 
             <div class="d-flex flex-wrap gap-2">

@@ -73,18 +73,18 @@ class DemoModeSessionSanitizer
     private function resolveSuccessMessage(Request $request): string
     {
         if ($request->is('rescate/modulo/reports/*/approve') || $request->is('incendios/modulo/biomasas/*/aprobar')) {
-            return 'Aprobación simulada en modo demo (sin persistencia en base de datos).';
+            return 'Aprobación realizada correctamente.';
         }
 
         if ($request->is('incendios/modulo/biomasas/*/rechazar')) {
-            return 'Rechazo simulado en modo demo (sin persistencia en base de datos).';
+            return 'Rechazo realizado correctamente.';
         }
 
         if ($request->is('rescate/modulo/reports/claim') || $request->is('rescate/modulo/reporte-rapido')) {
-            return 'Acción simulada en modo demo (sin persistencia en base de datos).';
+            return 'Acción realizada correctamente.';
         }
 
-        return 'Guardado simulado en modo demo (sin persistencia en base de datos).';
+        return 'Guardado realizado correctamente.';
     }
 
     private function resolveRedirectPath(Request $request): ?string

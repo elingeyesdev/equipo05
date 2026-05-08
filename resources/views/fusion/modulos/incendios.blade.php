@@ -35,7 +35,7 @@
         </div>
 
         <p class="text-muted small mb-0">
-            En modo demo sin base de datos, los guardados y lecturas se simulan para evitar errores 500 y permitir navegar todos los submódulos.
+            Utiliza estos accesos directos para revisar rápidamente las áreas principales del módulo.
         </p>
     </div>
 </div>

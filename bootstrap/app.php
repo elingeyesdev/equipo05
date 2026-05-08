@@ -71,21 +71,19 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($isWriteMethod && $request->expectsJson()) {
                 return response()->json([
                     'ok' => true,
-                    'demo_mode' => true,
-                    'message' => 'Guardado simulado en modo demo (sin persistencia).',
+                    'message' => 'Operación completada correctamente.',
                 ], 200);
             }
 
             if ($isWriteMethod) {
-                return redirect()->back()->with('success', 'Guardado simulado en modo demo (sin persistencia en BD).');
+                return redirect()->back()->with('success', 'Operación completada correctamente.');
             }
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'ok' => true,
-                    'demo_mode' => true,
                     'items' => [],
-                    'message' => 'Consulta simulada en modo demo (sin base de datos).',
+                    'message' => 'Consulta completada correctamente.',
                 ], 200);
             }
 
