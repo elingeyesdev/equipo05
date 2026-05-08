@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Create') }} {{ __('Report') }}
-@endsection
+@section('title', 'Registrar hallazgo — Rescate')
+@section('subtitle', 'Reporte de animal en situación de riesgo.')
 
 @if (!Auth::check())
 @push('css')
