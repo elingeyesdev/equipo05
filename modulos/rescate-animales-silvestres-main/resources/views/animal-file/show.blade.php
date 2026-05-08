@@ -1,36 +1,36 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $animalFile->name ?? __('Show') . ' ' . __('Animal File') }}
-@endsection
+@section('title', ($animalFile->animal?->nombre ?? 'Hoja de vida') . ' — Rescate')
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Hojas de vida')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
+    <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-info d-flex align-items-center">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info d-flex align-items-center flex-wrap" style="gap:.35rem;">
                         <div class="flex-grow-1">
                             <h3 class="card-title mb-0">
                                 <i class="fas fa-paw mr-1"></i>
                                 {{ __('Información del Animal') }}
                             </h3>
                         </div>
-                        <div>
+                        <div class="d-flex flex-wrap align-items-center" style="gap:.35rem;">
                             @php
-                                // Buscar el AnimalHistory más antiguo para este animal_file_id
                                 $oldestHistory = \Modules\Rescate\Models\AnimalHistory::where('animal_file_id', $animalFile->id)
-                                    ->orderBy('id', 'asc') // El más antiguo (menor ID)
+                                    ->orderBy('id', 'asc')
                                     ->first();
-                                
-                                // Si existe un historial, usar su ID; si no, usar el animal_file_id
-                                // (el controlador puede manejar ambos casos)
                                 $historyId = $oldestHistory ? $oldestHistory->id : $animalFile->id;
                             @endphp
-                            <a class="btn btn-info btn-sm mr-2" href="{{ route('rescate.animal-histories.show', $historyId) }}">
+                            <a class="btn btn-outline-light btn-sm border-light" href="{{ route('rescate.animal-histories.show', $historyId) }}">
                                 <i class="fas fa-history"></i> {{ __('Ver historial') }}
                             </a>
-                            <a class="btn btn-info btn-sm" href="{{ route('rescate.animal-files.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.animal-files.edit', $animalFile->id) }}">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a class="btn btn-outline-light btn-sm border-light" href="{{ route('rescate.animal-files.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
                         </div>
                     </div>
                     <div class="card-body bg-white">
@@ -178,7 +178,7 @@
                 @endif
             </div>
         </div>
-    </section>
+    </div>
     @if($animalFile->animal?->report && !is_null($animalFile->animal->report->latitud) && !is_null($animalFile->animal->report->longitud))
         @include('partials.leaflet')
         <script>
