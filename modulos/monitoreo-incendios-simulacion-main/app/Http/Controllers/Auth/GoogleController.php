@@ -2,12 +2,12 @@
 
 namespace Modules\Incendios\Http\Controllers\Auth;
 
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 use Modules\Incendios\Http\Controllers\Controller;
 use Modules\Incendios\Models\User;
 use Modules\Incendios\Models\Voluntario;
-use Illuminate\Support\Facades\Auth;
-use Laravel\Socialite\Facades\Socialite;
-use Exception;
 
 class GoogleController extends Controller
 {
@@ -33,7 +33,8 @@ class GoogleController extends Controller
             if ($existingUser) {
                 // Login existing user
                 Auth::login($existingUser, true);
-                return redirect('/');
+
+                return redirect()->route('incendios.dashboard');
             }
 
             // Check if email already exists
@@ -43,7 +44,8 @@ class GoogleController extends Controller
                 // Link Google ID to existing user
                 $emailUser->update(['google_id' => $user->getId()]);
                 Auth::login($emailUser, true);
-                return redirect('/');
+
+                return redirect()->route('incendios.dashboard');
             }
 
             // Create new user
@@ -51,7 +53,7 @@ class GoogleController extends Controller
                 'name' => $user->getName(),
                 'email' => $user->getEmail(),
                 'google_id' => $user->getId(),
-                'password' => bcrypt('google_oauth_' . uniqid()), // Random password since it's OAuth
+                'password' => bcrypt('google_oauth_'.uniqid()), // Random password since it's OAuth
             ]);
 
             // Create Voluntario profile (default role)
@@ -69,10 +71,10 @@ class GoogleController extends Controller
             // Login new user
             Auth::login($newUser, true);
 
-            return redirect('/');
+            return redirect()->route('incendios.dashboard');
 
         } catch (Exception $e) {
-            return redirect('/login')->with('error', 'Error al autenticarse con Google: ' . $e->getMessage());
+            return redirect('/login')->with('error', 'Error al autenticarse con Google: '.$e->getMessage());
         }
     }
 }
