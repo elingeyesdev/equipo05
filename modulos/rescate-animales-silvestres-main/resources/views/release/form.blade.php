@@ -123,8 +123,11 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12 mt20 mt-2 d-flex flex-wrap gap-2">
+        <a href="{{ route('rescate.releases.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
     <div class="col-md-12 mt20 mt-2" id="submit_wrap" style="display:none;">
-        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
     </div>
 </div>
 
