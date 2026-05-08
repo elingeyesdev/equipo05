@@ -1,19 +1,21 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Registrar Animal') }}
-@endsection
+@section('title', 'Registrar hoja de vida — Flujo guiado')
+@section('subtitle', 'Asociar un hallazgo aprobado con animal y ficha.')
+@section('content_header_title', 'Hojas de vida')
+@section('content_header_subtitle', 'Registro transaccional')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-11">
 
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Registrar Hoja de Vida del Animal') }}</span>
+                <div class="card card-outline card-success shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-clipboard-check text-success"></i> Registrar hoja de vida</h3>
+                        <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Listado</a>
                     </div>
-                    <div class="card-body bg-white">
+                    <div class="card-body">
                         @if ($errors->any())
                             <div class="alert alert-danger">
                                 <div class="font-weight-bold mb-1">{{ __('No se pudo registrar la hoja. Revisa los errores:') }}</div>
@@ -101,16 +103,16 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3" id="save_wrap" style="display:none;">
-                                <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-secondary">{{ __('Cancelar') }}</a>
-                                <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                            <div class="mt-3 d-flex flex-wrap gap-2" id="save_wrap" style="display:none;">
+                                <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
 
     <style>

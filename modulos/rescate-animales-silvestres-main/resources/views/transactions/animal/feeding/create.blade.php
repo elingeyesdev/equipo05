@@ -1,17 +1,19 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Registrar Alimentación') }}
-@endsection
+@section('title', 'Registrar alimentación — Flujo guiado')
+@section('subtitle', 'Seleccionar hoja de vida y datos de alimentación.')
+@section('content_header_title', 'Alimentación')
+@section('content_header_subtitle', 'Registro transaccional')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-11">
 
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Registrar Alimentación') }}</span>
+                <div class="card card-outline card-success shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-utensils text-success"></i> Registrar alimentación</h3>
+                        <a href="{{ route('rescate.care-feedings.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Listado</a>
                     </div>
                     <form method="POST" action="{{ route('rescate.animal-feeding-records.store') }}" role="form">
                         @csrf
@@ -160,15 +162,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer" id="submit_wrap" style="display:none;">
-                            <a href="{{ route('rescate.care-feedings.index') }}" class="btn btn-secondary">{{ __('Cancelar') }}</a>
-                            <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                        <div class="card-footer d-flex flex-wrap gap-2" id="submit_wrap" style="display:none;">
+                            <a href="{{ route('rescate.care-feedings.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
     <script>
     document.addEventListener('DOMContentLoaded', function () {

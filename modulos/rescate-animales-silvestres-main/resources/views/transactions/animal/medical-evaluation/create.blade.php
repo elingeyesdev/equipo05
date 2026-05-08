@@ -1,18 +1,20 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Registrar Evaluación Médica') }}
-@endsection
+@section('title', 'Registrar evaluación médica — Flujo guiado')
+@section('subtitle', 'Seleccionar hoja de vida y completar la evaluación clínica.')
+@section('content_header_title', 'Evaluaciones médicas')
+@section('content_header_subtitle', 'Registro transaccional')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Registrar Evaluación Médica') }}</span>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-11">
+                <div class="card card-outline card-success shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-notes-medical text-success"></i> Registrar evaluación médica</h3>
+                        <a href="{{ route('rescate.medical-evaluations.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Listado</a>
                     </div>
-                    <div class="card-body bg-white">
+                    <div class="card-body">
                         <form method="POST" action="{{ route('rescate.medical-evaluation-transactions.store') }}" role="form" enctype="multipart/form-data">
                             @csrf
 
@@ -431,8 +433,9 @@
                                     <!-- Observaciones: no necesarias en transaccional -->
                                 </div> {{-- /.col-12 --}}
 
-                                <div class="col-md-12 mt20 mt-2" id="submit_wrap" style="display:none;">
-                                    <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                                <div class="col-md-12 mt20 mt-2 d-flex flex-wrap gap-2" id="submit_wrap" style="display:none;">
+                                    <a href="{{ route('rescate.medical-evaluations.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
                                 </div>
                             </div>
                         </form>
@@ -440,7 +443,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.custom-file')
     @include('partials.page-pad')
     <style>

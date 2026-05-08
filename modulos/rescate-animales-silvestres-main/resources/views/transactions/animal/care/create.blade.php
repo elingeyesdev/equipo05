@@ -1,16 +1,18 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Registrar Cuidado') }}
-@endsection
+@section('title', 'Registrar cuidado — Flujo guiado')
+@section('subtitle', 'Seleccionar hoja de vida y registrar el cuidado.')
+@section('content_header_title', 'Cuidados registrados')
+@section('content_header_subtitle', 'Registro transaccional')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Registrar Cuidado') }}</span>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-11">
+                <div class="card card-outline card-success shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-hand-holding-medical text-success"></i> Registrar cuidado</h3>
+                        <a href="{{ route('rescate.cares.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Listado</a>
                     </div>
                     <form method="POST" action="{{ route('rescate.animal-care-records.store') }}" role="form" enctype="multipart/form-data">
                         @csrf
@@ -141,15 +143,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer" id="submit_wrap" style="display:none;">
-                            <a href="{{ route('rescate.cares.index') }}" class="btn btn-secondary">{{ __('Cancelar') }}</a>
-                            <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                        <div class="card-footer d-flex flex-wrap gap-2" id="submit_wrap" style="display:none;">
+                            <a href="{{ route('rescate.cares.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
     <script>
     document.addEventListener('DOMContentLoaded', function () {
