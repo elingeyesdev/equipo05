@@ -51,7 +51,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (QueryException $e, Request $request) {
             $isWriteMethod = in_array(strtoupper($request->method()), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
             $isReadMethod = strtoupper($request->method()) === 'GET';
-            $isModulePath = $request->is('incendios/modulo/*') || $request->is('rescate/modulo/*');
+            $isModulePath = $request->is('incendios/modulo')
+                || $request->is('incendios/modulo/*')
+                || $request->is('rescate/modulo')
+                || $request->is('rescate/modulo/*');
             $message = (string) $e->getMessage();
             $isSchemaProblem = str_contains($message, 'no such table')
                 || str_contains($message, 'no such column')
