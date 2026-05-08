@@ -182,9 +182,9 @@
             </div>
         </div>
 
-        <div class="form-group mt-3">
+        <div class="form-group mt-3 d-flex flex-wrap gap-2">
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
-            <a href="{{ route('rescate.people.index') }}" class="btn btn-secondary ml-2">{{ __('Cancelar') }}</a>
+            <a href="{{ route('rescate.people.index') }}" class="btn btn-outline-secondary">Cancelar</a>
         </div>
     </div>
 </div>
