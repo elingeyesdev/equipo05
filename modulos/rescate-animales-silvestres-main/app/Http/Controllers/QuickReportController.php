@@ -138,9 +138,7 @@ class QuickReportController extends Controller
                 'exception' => $e,
             ]);
 
-            $msg = config('app.debug')
-                ? 'No se pudo registrar el hallazgo: '.$e->getMessage()
-                : 'No se pudo registrar el hallazgo. Intente nuevamente o contacte al administrador.';
+            $msg = 'No se pudo registrar el hallazgo en este momento. Intente nuevamente o contacte al administrador.';
 
             return Redirect::back()
                 ->withInput()

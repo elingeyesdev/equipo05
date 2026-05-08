@@ -242,7 +242,7 @@ class ReportController extends Controller
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
-                ->withErrors(['general' => 'No se pudo registrar el hallazgo: ' . $e->getMessage()]);
+                ->withErrors(['general' => 'No se pudo registrar el hallazgo en este momento.']);
         }
     }
 

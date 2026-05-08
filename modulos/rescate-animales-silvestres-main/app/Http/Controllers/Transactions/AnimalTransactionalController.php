@@ -139,7 +139,7 @@ class AnimalTransactionalController extends Controller
 		} catch (\Throwable $e) {
 			return Redirect::back()
 				->withInput()
-				->withErrors(['general' => 'No se pudo registrar la hoja del animal: ' . $e->getMessage()]);
+				->withErrors(['general' => 'No se pudo registrar la hoja del animal en este momento.']);
 		}
 	}
 }

@@ -112,7 +112,7 @@ class AnimalFileController extends Controller
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
-                ->withErrors(['general' => 'No se pudo crear la hoja del animal: ' . $e->getMessage()]);
+                ->withErrors(['general' => 'No se pudo crear la hoja del animal en este momento.']);
         }
     }
 
@@ -189,7 +189,7 @@ class AnimalFileController extends Controller
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
-                ->withErrors(['general' => 'No se pudo actualizar la hoja del animal: ' . $e->getMessage()]);
+                ->withErrors(['general' => 'No se pudo actualizar la hoja del animal en este momento.']);
         }
     }
 
