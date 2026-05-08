@@ -322,7 +322,7 @@ class SimulacioneController extends Controller
         $simulacione->update($request->validated());
 
         return Redirect::route('incendios.simulaciones.index')
-            ->with('success', 'Simulacione updated successfully');
+            ->with('success', 'Simulación actualizada correctamente.');
     }
 
     public function destroy($id): RedirectResponse
@@ -330,7 +330,7 @@ class SimulacioneController extends Controller
         Simulacione::find($id)->delete();
 
         return Redirect::route('incendios.simulaciones.index')
-            ->with('success', 'Simulacione deleted successfully');
+            ->with('success', 'Simulación eliminada correctamente.');
     }
 }
 

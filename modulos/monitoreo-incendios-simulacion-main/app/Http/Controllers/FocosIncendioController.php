@@ -41,7 +41,7 @@ class FocosIncendioController extends Controller
         FocosIncendio::create($request->validated());
 
         return Redirect::route('incendios.focos-incendios.index')
-            ->with('success', 'FocosIncendio created successfully.');
+            ->with('success', 'Foco de incendio creado correctamente.');
     }
 
     /**
@@ -72,7 +72,7 @@ class FocosIncendioController extends Controller
         $focosIncendio->update($request->validated());
 
         return Redirect::route('incendios.focos-incendios.index')
-            ->with('success', 'FocosIncendio updated successfully');
+            ->with('success', 'Foco de incendio actualizado correctamente.');
     }
 
     public function destroy($id): RedirectResponse
@@ -80,7 +80,7 @@ class FocosIncendioController extends Controller
         FocosIncendio::findOrFail($id)->delete();
 
         return Redirect::route('incendios.focos-incendios.index')
-            ->with('success', 'FocosIncendio deleted successfully');
+            ->with('success', 'Foco de incendio eliminado correctamente.');
     }
 
     /**
@@ -112,7 +112,7 @@ class FocosIncendioController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al importar focos: ' . $e->getMessage()
+                'message' => 'No se pudo importar la información de focos en este momento.'
             ], 500);
         }
     }

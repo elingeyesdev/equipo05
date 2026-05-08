@@ -136,7 +136,7 @@ class BiomasaController extends Controller
         $biomasa->update($request->validated());
 
         return Redirect::route('incendios.biomasas.index')
-            ->with('success', 'Biomasa updated successfully');
+            ->with('success', 'Biomasa actualizada correctamente.');
     }
 
     public function destroy($id): RedirectResponse
@@ -144,7 +144,7 @@ class BiomasaController extends Controller
         Biomasa::findOrFail($id)->delete();
 
         return Redirect::route('incendios.biomasas.index')
-            ->with('success', 'Biomasa deleted successfully');
+            ->with('success', 'Biomasa eliminada correctamente.');
     }
     
     /**
