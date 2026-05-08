@@ -100,7 +100,7 @@ class ReleaseController extends Controller
         } catch (\DomainException $e) {
             return Redirect::back()->withInput()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return Redirect::back()->withInput()->with('error', 'No se pudo registrar la liberación: '.$e->getMessage());
+            return Redirect::back()->withInput()->with('error', 'No se pudo registrar la liberación en este momento.');
         }
 
         return Redirect::route('rescate.releases.index')

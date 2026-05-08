@@ -185,7 +185,7 @@ class AnimalFileController extends Controller
             }
 
             return Redirect::route('rescate.animal-files.index')
-                ->with('success', 'Hoja del Animal actualizada exitosamente');
+                ->with('success', 'Hoja del animal actualizada correctamente.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()

@@ -74,7 +74,7 @@ class AnimalStatusController extends Controller
         $animalStatus->update($request->validated());
 
         return Redirect::route('rescate.animal-statuses.index')
-            ->with('success', 'Estado de Animal actualizado exitosamente');
+            ->with('success', 'Estado del animal actualizado correctamente.');
     }
 
     public function destroy($id): RedirectResponse

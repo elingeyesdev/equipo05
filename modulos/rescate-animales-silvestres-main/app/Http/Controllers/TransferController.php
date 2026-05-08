@@ -226,7 +226,7 @@ class TransferController extends Controller
                 \Log::warning('Error registrando tracking de traslado: ' . $e->getMessage());
             }
         } catch (\Throwable $e) {
-            return Redirect::back()->withInput()->with('error', 'No se pudo registrar el traslado: '.$e->getMessage());
+            return Redirect::back()->withInput()->with('error', 'No se pudo registrar el traslado en este momento.');
         }
 
         return Redirect::route('rescate.transfers.index')
