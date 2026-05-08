@@ -15,7 +15,7 @@
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('rescate.care-feedings.update', $careFeeding->id) }}"  role="form" enctype="multipart/form-data">
-                            {{ method_field('PATCH') }}
+                            @method('PATCH')
                             @csrf
 
                             @include('care-feeding.form')

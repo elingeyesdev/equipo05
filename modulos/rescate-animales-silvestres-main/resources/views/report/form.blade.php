@@ -479,4 +479,3 @@ document.addEventListener('DOMContentLoaded', function () {
   font-weight: 600;
 }
 </style>
-</style>

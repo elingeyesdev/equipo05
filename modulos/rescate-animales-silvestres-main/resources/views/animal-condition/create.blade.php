@@ -1,31 +1,28 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Create') }} {{ __('Animal Condition') }}
-@endsection
+@section('title', 'Nuevo registro — Condición inicial')
+@section('subtitle', 'Alta en el catálogo del módulo rescate.')
+@section('content_header_title', 'Condición inicial')
+@section('content_header_subtitle', 'Crear')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} {{ __('Animal Condition') }}</span>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-outline card-success shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-notes-medical text-success"></i> Nuevo</h3>
+                        <a href="{{ route('rescate.animal-conditions.index') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Ir al listado</a>
                     </div>
-                    <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('rescate.animal-conditions.store') }}"  role="form" enctype="multipart/form-data">
+                    <div class="card-body">
+                        <form method="POST" action="{{ route('rescate.animal-conditions.store') }}" role="form" enctype="multipart/form-data">
                             @csrf
-
                             @include('animal-condition.form')
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
 @endsection
-
-

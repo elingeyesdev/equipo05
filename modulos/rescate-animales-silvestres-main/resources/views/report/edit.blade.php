@@ -25,7 +25,7 @@
                             </div>
                         @endif
                         <form method="POST" action="{{ route('rescate.reports.update', $report->id) }}"  role="form" enctype="multipart/form-data">
-                            {{ method_field('PATCH') }}
+                            @method('PATCH')
                             @csrf
 
                             @include('report.form')

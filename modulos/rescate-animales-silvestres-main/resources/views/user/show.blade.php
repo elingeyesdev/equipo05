@@ -1,38 +1,29 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $user->name ?? __('Show') . ' ' . __('User') }}
-@endsection
+@section('title', 'Usuario — BD rescate')
+@section('subtitle', 'Detalle de cuenta del submódulo.')
+@section('content_header_title', 'Usuario (rescate)')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <div>
-                            <span class="card-title">{{ __('Show') }} {{ __('User') }}</span>
-                        </div>
-                        <div class="ml-auto">
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.users.index') }}"> {{ __('Back') }}</a>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-outline card-secondary shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-user"></i> {{ $user->name }}</h3>
+                        <div class="d-flex flex-wrap" style="gap:.35rem;">
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.users.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.users.edit', $user->id) }}"><i class="fas fa-edit"></i> Editar</a>
                         </div>
                     </div>
-
-                    <div class="card-body bg-white">
-                        
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Name:</strong>
-                                    {{ $user->name }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Email:</strong>
-                                    {{ $user->email }}
-                                </div>
-
+                    <div class="card-body">
+                        <div class="form-group mb-3"><strong>Nombre mostrado:</strong> {{ $user->name }}</div>
+                        <div class="form-group mb-3"><strong>Correo:</strong> {{ $user->email }}</div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
 @endsection
