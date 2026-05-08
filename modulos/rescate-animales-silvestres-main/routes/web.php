@@ -60,6 +60,7 @@ Route::get('/reporte-rapido', [QuickReportController::class, 'create'])
     ->withoutMiddleware(['auth']);
 Route::post('/reporte-rapido', [QuickReportController::class, 'store'])
     ->name('reporte-rapido.store')
+    ->middleware('throttle:10,1')
     ->withoutMiddleware(['auth']);
 Route::get('/home', [Modules\Rescate\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('home');
 Route::get('/dashboard/export-pdf', [Modules\Rescate\Http\Controllers\HomeController::class, 'exportPdf'])->middleware('auth')->name('dashboard.export-pdf');
@@ -68,7 +69,7 @@ Route::get('animal-histories/{animal_history}/pdf', [AnimalHistoryController::cl
 Route::prefix('reports')->name('reports.')->group(function () {
     Route::put('{report}/approve', [ReportController::class, 'approve'])->name('approve')->middleware('auth');
     Route::get('claim', [ReportController::class, 'claim'])->name('claim')->withoutMiddleware(['auth']);
-    Route::post('claim', [ReportController::class, 'claimStore'])->name('claim.store')->withoutMiddleware(['auth']);
+    Route::post('claim', [ReportController::class, 'claimStore'])->name('claim.store')->middleware('throttle:15,1')->withoutMiddleware(['auth']);
     Route::get('mapa-campo', [ReportController::class, 'mapaCampo'])->name('mapa-campo')->middleware('auth');
     Route::get('external-fire-reports', [ReportController::class, 'getExternalFireReportsApi'])->name('external-fire-reports.api')->middleware('auth');
     Route::get('external-fire-report/{externalId}', [ReportController::class, 'getExternalFireReportDetails'])->name('external-fire-report.details')->middleware('auth');
@@ -84,6 +85,7 @@ Route::get('reports/create', [ReportController::class, 'create'])
     ->withoutMiddleware(['auth']);
 Route::post('reports', [ReportController::class, 'store'])
     ->name('reports.store')
+    ->middleware('throttle:10,1')
     ->withoutMiddleware(['auth']);
 // Resto de rutas de reports con autenticación
 Route::resource('reports', ReportController::class)->except(['create', 'store'])->middleware('auth');
