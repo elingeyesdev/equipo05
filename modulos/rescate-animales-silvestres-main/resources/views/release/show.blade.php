@@ -1,24 +1,26 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $release->name ?? __('Show') . ' ' . __('Release') }}
-@endsection
+@section('title', 'Detalle de liberación — Rescate')
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Liberaciones')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
+    <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-md-12">
                 @if($release->animalFile)
-                <div class="card">
-                    <div class="card-header bg-info d-flex align-items-center">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-info d-flex align-items-center flex-wrap" style="gap:.35rem;">
                         <div class="flex-grow-1">
                             <h3 class="card-title mb-0">
                                 <i class="fas fa-paw mr-1"></i>
                                 {{ __('Información del Animal') }}
                             </h3>
                         </div>
-                        <div>
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.releases.index') }}"> {{ __('Back') }}</a>
+                        <div class="d-flex flex-wrap" style="gap:.35rem;">
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.releases.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.releases.edit', $release->id) }}"><i class="fas fa-edit"></i> Editar</a>
                         </div>
                     </div>
                     <div class="card-body bg-white">
@@ -26,17 +28,17 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-2 mb20">
                                     <strong>{{ __('Nombre') }}:</strong>
-                                    {{ $release->animalFile->animal?->nombre ?? '-' }}
+                                    {{ $release->animalFile->animal?->nombre ?? '—' }}
                                 </div>
                                 <div class="form-group mb-2 mb20">
                                     <strong>{{ __('Especie') }}:</strong>
-                                    {{ $release->animalFile->species?->nombre ?? '-' }}
+                                    {{ $release->animalFile->species?->nombre ?? '—' }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-2 mb20">
                                     <strong>{{ __('Estado') }}:</strong>
-                                    {{ $release->animalFile->animalStatus?->nombre ?? '-' }}
+                                    {{ $release->animalFile->animalStatus?->nombre ?? '—' }}
                                 </div>
                                 <div class="form-group mb-2 mb20">
                                     <strong>{{ __('Imagen') }}:</strong>
@@ -45,7 +47,7 @@
                                             <img src="{{ asset('storage/' . $release->animalFile->imagen_url) }}" alt="img" style="max-width: 100%; max-height: 180px; height: auto; width: auto; object-fit: contain; border-radius: 4px;">
                                         </div>
                                     @else
-                                        <span>-</span>
+                                        <span>—</span>
                                     @endif
                                 </div>
                             </div>
@@ -54,8 +56,8 @@
                 </div>
                 @endif
 
-                <div class="card">
-                    <div class="card-header bg-success d-flex align-items-center">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success d-flex align-items-center flex-wrap" style="gap:.35rem;">
                         <div class="flex-grow-1">
                             <h3 class="card-title mb-0">
                                 <i class="fas fa-dove mr-1"></i>
@@ -63,8 +65,9 @@
                             </h3>
                         </div>
                         @if(!$release->animalFile)
-                        <div>
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.releases.index') }}"> {{ __('Back') }}</a>
+                        <div class="d-flex flex-wrap" style="gap:.35rem;">
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.releases.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.releases.edit', $release->id) }}"><i class="fas fa-edit"></i> Editar</a>
                         </div>
                         @endif
                     </div>
@@ -73,7 +76,7 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-2 mb20">
                                     <strong>{{ __('Dirección') }}:</strong>
-                                    {{ $release->direccion ?: '-' }}
+                                    {{ $release->direccion ?: '—' }}
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -103,26 +106,26 @@
                 </div>
             </div>
         </div>
-    </section>
-@include('partials.leaflet')
-@include('partials.page-pad')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var rawLat = @json($release->latitud);
-    var rawLon = @json($release->longitud);
-    var lat = parseFloat(rawLat);
-    var lon = parseFloat(rawLon);
-    var hasLat = rawLat !== null && rawLat !== '' && Number.isFinite(lat);
-    var hasLon = rawLon !== null && rawLon !== '' && Number.isFinite(lon);
-    if (hasLat && hasLon) {
-        window.initStaticMap({
-            mapId: 'release_map',
-            lat: lat,
-            lon: lon,
-            zoom: 16,
-            popup: @json($release->direccion ?? null),
-        });
-    }
-});
-</script>
+    </div>
+    @include('partials.leaflet')
+    @include('partials.page-pad')
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rawLat = @json($release->latitud);
+        var rawLon = @json($release->longitud);
+        var lat = parseFloat(rawLat);
+        var lon = parseFloat(rawLon);
+        var hasLat = rawLat !== null && rawLat !== '' && Number.isFinite(lat);
+        var hasLon = rawLon !== null && rawLon !== '' && Number.isFinite(lon);
+        if (hasLat && hasLon) {
+            window.initStaticMap({
+                mapId: 'release_map',
+                lat: lat,
+                lon: lon,
+                zoom: 16,
+                popup: @json($release->direccion ?? null),
+            });
+        }
+    });
+    </script>
 @endsection
