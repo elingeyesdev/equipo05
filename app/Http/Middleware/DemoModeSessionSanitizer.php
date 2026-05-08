@@ -47,8 +47,29 @@ class DemoModeSessionSanitizer
         }
 
         $session->forget('errors');
-        $session->flash('success', 'Guardado simulado en modo demo (sin persistencia en base de datos).');
+        $successMsg = 'Guardado simulado en modo demo (sin persistencia en base de datos).';
 
-        return $response;
+        if ($request->expectsJson()) {
+            $session->flash('success', $successMsg);
+
+            return $response;
+        }
+
+        $isWriteMethod = in_array(strtoupper($request->method()), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+        if (! $isWriteMethod) {
+            $session->flash('success', $successMsg);
+
+            return $response;
+        }
+
+        $segments = $request->segments();
+        if (count($segments) < 3) {
+            return redirect()->back()->with('success', $successMsg);
+        }
+
+        // /{modulo}/modulo/{recurso}[/{id|accion}] -> redirigir al índice del recurso.
+        $targetPath = '/'.implode('/', array_slice($segments, 0, 3));
+
+        return redirect($targetPath)->with('success', $successMsg);
     }
 }
