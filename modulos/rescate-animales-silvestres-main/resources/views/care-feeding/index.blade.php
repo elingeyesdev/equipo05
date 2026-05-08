@@ -109,7 +109,7 @@
                                                                     </td>
                                                                     <td class="text-center">
                                                                         <div class="btn-group btn-group-sm" role="group">
-                                                                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.care-feedings.show', $careFeeding->id) }}" title="{{ __('Show') }}">
+                                                                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.care-feedings.show', $careFeeding->id) }}" title="Ver detalle">
                                                                                 <i class="fa fa-fw fa-eye"></i> Ver
                                                                             </a>
                                                                         </div>

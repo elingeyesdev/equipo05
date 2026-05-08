@@ -114,7 +114,7 @@
                                                                     <td class="text-center">{{ $care->fecha ? \Carbon\Carbon::parse($care->fecha)->format('d/m/Y') : '-' }}</td>
                                                                     <td class="text-center">
                                                                         <div class="btn-group btn-group-sm" role="group">
-                                                                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.cares.show', $care->id) }}" title="{{ __('Show') }}">
+                                                                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.cares.show', $care->id) }}" title="Ver detalle">
                                                                                 <i class="fa fa-fw fa-eye"></i> Ver
                                                                             </a>
                                                                         </div>
