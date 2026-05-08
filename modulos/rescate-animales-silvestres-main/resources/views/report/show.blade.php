@@ -1,32 +1,34 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $report->name ?? __('Show') . " " . __('Report') }}
-@endsection
+@section('title', 'Hallazgo #' . ($report->id ?? '') . ' — Rescate')
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Hallazgos / reportes')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
+    <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-success d-flex align-items-center">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success d-flex align-items-center flex-wrap" style="gap:.35rem;">
                         <div class="flex-grow-1">
                             <h3 class="card-title mb-0">
                                 <i class="fas fa-clipboard-list mr-1"></i>
                                 {{ __('Información del Hallazgo') }}
                             </h3>
                         </div>
-                        <div>
+                        <div class="d-flex flex-wrap align-items-center" style="gap:.35rem;">
                             @if(Auth::user()->hasAnyRole(['admin', 'encargado']) && (int)$report->aprobado !== 1)
-                            <button type="button" 
-                                    class="btn btn-success btn-sm mr-2" 
-                                    data-toggle="modal" 
+                            <button type="button"
+                                    class="btn btn-outline-light btn-sm border-white mr-0"
+                                    data-toggle="modal"
                                     data-target="#modalAprobarReport{{ $report->id }}"
                                     title="{{ __('Aprobar o rechazar este hallazgo') }}">
                                 <i class="fa fa-check"></i> {{ __('Aprobar/Rechazar') }}
                             </button>
                             @endif
-                            <a class="btn btn-success btn-sm" href="{{ route('rescate.reports.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-outline-light btn-sm border-white" href="{{ route('rescate.reports.edit', $report->id) }}"><i class="fas fa-edit"></i> Editar</a>
+                            <a class="btn btn-outline-light btn-sm border-white" href="{{ route('rescate.reports.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
                         </div>
                     </div>
 
@@ -128,7 +130,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 @include('partials.leaflet')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
