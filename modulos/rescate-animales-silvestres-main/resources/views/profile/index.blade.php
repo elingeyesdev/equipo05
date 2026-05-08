@@ -1,23 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Perfil de usuario')
-
-@section('content_header')
-    <div class="row mb-2">
-        <div class="col-sm-6">
-            <h1>Perfil de usuario</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('rescate.home') }}">Inicio</a></li>
-                <li class="breadcrumb-item active">Perfil de usuario</li>
-            </ol>
-        </div>
-    </div>
-@endsection
+@section('title', 'Mi perfil — Rescate')
+@section('subtitle', 'Datos personales, colaboración y mensajes a administración.')
+@section('content_header_title', 'Mi perfil')
+@section('content_header_subtitle', 'Cuenta y voluntariado')
 
 @section('content_body')
-    <div class="container-fluid">
+    <div class="container-fluid page-pad">
+        <nav aria-label="Migas de pan" class="mb-3">
+            <ol class="breadcrumb mb-0 bg-transparent px-0 pt-0">
+                <li class="breadcrumb-item"><a href="{{ route('rescate.home') }}">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Perfil</li>
+            </ol>
+        </nav>
         <div class="row">
             <div class="col-md-3">
                 {{-- Columna izquierda: resumen de la persona --}}
@@ -116,7 +111,7 @@
             </div>
 
             <div class="col-md-9">
-                <div class="card">
+                <div class="card shadow-sm">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
                             <li class="nav-item">
@@ -248,10 +243,11 @@
                                     </div>
 
                                     <div class="form-group row mt-4">
-                                        <div class="offset-sm-3 col-sm-9">
+                                        <div class="offset-sm-3 col-sm-9 d-flex flex-wrap gap-2">
                                             <button type="submit" class="btn btn-primary">
-                                                Guardar datos personales
+                                                <i class="fas fa-save mr-1"></i>Guardar datos personales
                                             </button>
+                                            <a href="{{ route('rescate.home') }}" class="btn btn-outline-secondary">Volver al inicio</a>
                                         </div>
                                     </div>
                                 </form>

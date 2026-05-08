@@ -1,15 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Reportes')
-
-@section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="text-dark">Reportes</h1>
-    </div>
-@endsection
+@section('title', 'Reportes — Rescate')
+@section('subtitle', 'Actividad, gestión y exportaciones del módulo.')
+@section('content_header_title', 'Reportes')
+@section('content_header_subtitle', 'Rescate')
 
 @section('content_body')
-<div class="container-fluid">
+<div class="container-fluid page-pad">
     <!-- Pestañas -->
     <div class="d-flex justify-content-between align-items-center mb-2">
         <ul class="nav nav-tabs" id="reportsTabs" role="tablist">
