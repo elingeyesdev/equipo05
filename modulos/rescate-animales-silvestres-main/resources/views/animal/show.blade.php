@@ -1,46 +1,43 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $animal->name ?? __('Show') . " " . __('Animal') }}
-@endsection
+@section('title', ($animal->nombre ?? 'Animal') . ' — Rescate')
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Animales')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} Animal</span>
-                        </div>
-                        <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.animals.index') }}"> {{ __('Back') }}</a>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card card-outline card-secondary shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-paw"></i> {{ $animal->nombre ?? 'Animal' }}</h3>
+                        <div class="d-flex flex-wrap" style="gap:.35rem;">
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.animals.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.animals.edit', $animal->id) }}"><i class="fas fa-edit"></i> Editar</a>
                         </div>
                     </div>
-
-                    <div class="card-body bg-white">
-                        
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Nombre:</strong>
-                                    {{ $animal->nombre }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Sexo:</strong>
-                                    {{ $animal->sexo }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Descripcion:</strong>
-                                    {{ $animal->descripcion }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Número de reporte:</strong>
-                                    {{ $animal->reporte_id ? ('#' . $animal->reporte_id) : '-' }}
-                                </div>
-
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <strong>Nombre:</strong>
+                            {{ $animal->nombre }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Sexo:</strong>
+                            {{ $animal->sexo }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Descripción:</strong>
+                            {{ $animal->descripcion ?: '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Número de reporte:</strong>
+                            {{ $animal->reporte_id ? ('#'.$animal->reporte_id) : '—' }}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
 @endsection
