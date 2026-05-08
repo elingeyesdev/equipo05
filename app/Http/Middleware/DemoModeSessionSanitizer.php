@@ -47,7 +47,7 @@ class DemoModeSessionSanitizer
         }
 
         $session->forget('errors');
-        $successMsg = 'Guardado simulado en modo demo (sin persistencia en base de datos).';
+        $successMsg = $this->resolveSuccessMessage($request);
 
         if ($request->expectsJson()) {
             $session->flash('success', $successMsg);
@@ -62,14 +62,59 @@ class DemoModeSessionSanitizer
             return $response;
         }
 
-        $segments = $request->segments();
-        if (count($segments) < 3) {
+        $targetPath = $this->resolveRedirectPath($request);
+        if ($targetPath === null) {
             return redirect()->back()->with('success', $successMsg);
         }
 
-        // /{modulo}/modulo/{recurso}[/{id|accion}] -> redirigir al índice del recurso.
-        $targetPath = '/'.implode('/', array_slice($segments, 0, 3));
-
         return redirect($targetPath)->with('success', $successMsg);
+    }
+
+    private function resolveSuccessMessage(Request $request): string
+    {
+        if ($request->is('rescate/modulo/reports/*/approve') || $request->is('incendios/modulo/biomasas/*/aprobar')) {
+            return 'Aprobación simulada en modo demo (sin persistencia en base de datos).';
+        }
+
+        if ($request->is('incendios/modulo/biomasas/*/rechazar')) {
+            return 'Rechazo simulado en modo demo (sin persistencia en base de datos).';
+        }
+
+        if ($request->is('rescate/modulo/reports/claim') || $request->is('rescate/modulo/reporte-rapido')) {
+            return 'Acción simulada en modo demo (sin persistencia en base de datos).';
+        }
+
+        return 'Guardado simulado en modo demo (sin persistencia en base de datos).';
+    }
+
+    private function resolveRedirectPath(Request $request): ?string
+    {
+        // Flujos especiales con destino más natural en demo
+        if ($request->is('rescate/modulo/reports/claim')) {
+            return '/rescate/modulo/landing';
+        }
+        if ($request->is('rescate/modulo/reporte-rapido')) {
+            return '/rescate/modulo/reporte-rapido';
+        }
+        if ($request->is('rescate/modulo/reports/*/approve')) {
+            return '/rescate/modulo/reports';
+        }
+        if ($request->is('incendios/modulo/biomasas/*/aprobar') || $request->is('incendios/modulo/biomasas/*/rechazar')) {
+            return '/incendios/modulo/biomasas';
+        }
+        if ($request->is('incendios/modulo/simulaciones/save-simulation')) {
+            return '/incendios/modulo/simulaciones';
+        }
+        if ($request->is('incendios/modulo/focos-incendios/import/firms')) {
+            return '/incendios/modulo/focos-incendios';
+        }
+
+        $segments = $request->segments();
+        if (count($segments) < 3) {
+            return null;
+        }
+
+        // /{modulo}/modulo/{recurso}[/{id|accion}] -> índice del recurso.
+        return '/'.implode('/', array_slice($segments, 0, 3));
     }
 }
