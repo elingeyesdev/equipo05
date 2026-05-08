@@ -43,7 +43,8 @@
         </div>
 
     </div>
-    <div class="col-md-12 mt20 mt-2">
-        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+    <div class="col-md-12 mt20 mt-2 d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+        <a href="{{ route('rescate.care-feedings.index') }}" class="btn btn-outline-secondary">Cancelar</a>
     </div>
 </div>
