@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Portal de rescate de fauna silvestre: hallazgos geolocalizados, atención veterinaria y liberaciones documentadas.">
     <title>{{ config('app.name') }} — Bienvenido</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -45,7 +46,26 @@
         .title { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.05; margin: 0; }
         .subtitle { font-size: clamp(1rem, 2vw, 1.25rem); color: #4b5563; margin-top: 1rem; }
         .actions { margin-top: 1.75rem; display: flex; gap: .75rem; flex-wrap: wrap; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 1rem; }
+        .landing-feature-tile {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem 1.15rem;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+        }
+        .landing-feature-tile strong { display: block; margin-bottom: .35rem; font-weight: 700; color: #111827; }
+        .landing-feature-tile .lf-muted { color: #6b7280; font-size: .95rem; margin-top: .25rem; }
+        .landing-map-shell {
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            height: 100%;
+            min-height: 400px;
+            box-shadow: 0 10px 28px rgba(17, 24, 39, 0.1);
+            background: #fff;
+        }
+        .landing-map-inner { height: 100%; min-height: 400px; width: 100%; border-radius: 8px; }
         .features { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.25rem; }
         .feature { padding: 1rem; border-radius: 14px; background: #ffffff; border: 1px dashed var(--border); }
         .hero-visual { position: relative; height: 100%; min-height: 320px; }
@@ -60,7 +80,8 @@
         .carousel-track { display:flex; gap:1rem; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:.5rem; }
         .carousel-track::-webkit-scrollbar { height: 8px; }
         .carousel-track::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 6px; }
-        .release-card { scroll-snap-align:start; flex: 0 0 280px; border:1px solid var(--border); border-radius: 14px; background:#fff; overflow:hidden; }
+        .release-card { scroll-snap-align:start; flex: 0 0 280px; border:1px solid var(--border); border-radius: 14px; background:#fff; overflow:hidden; box-shadow: 0 4px 14px rgba(17,24,39,.06); }
+        .release-card.release-live { border-left: 4px solid var(--success); }
         .release-card-img { height:160px; background:#f3f4f6; display:flex; align-items:center; justify-content:center; }
         .release-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
         .release-card-body { padding: .75rem; }
@@ -88,8 +109,9 @@
                     <div class="brand-badge"><i class="fas fa-paw"></i></div>
                     <div>Rescate Animales</div>
                 </div>
-                <div class="cta">
+                <div class="cta flex-wrap">
                     <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Ingresar</a>
+                    <a href="{{ route('rescate.reporte-rapido.create') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-heartbeat"></i> Emergencia rápida</a>
                     <a href="{{ route('rescate.reports.create', ['from' => 'landing']) }}" class="btn btn-warning btn-sm btn-pulse"><i class="fas fa-bolt"></i> Registro hallazgo</a>
                 </div>
             </div>
@@ -100,38 +122,28 @@
                     <p class="subtitle">Conecta hallazgos, traslados, evaluaciones y liberaciones en un solo lugar. Tu participación ayuda a devolver a cada animal a su hábitat.</p>
                     
                     <div class="features">
-                        <div class="card card-outline card-primary">
-                            <div class="card-body">
-                                <strong><i class="fas fa-map-marked-alt"></i> Hallazgos geolocalizados</strong>
-                                <div class="text-muted">Registra ubicaciones y sigue el proceso de rescate.</div>
-                            </div>
+                        <div class="landing-feature-tile">
+                            <strong><i class="fas fa-map-marked-alt"></i> Hallazgos geolocalizados</strong>
+                            <div class="lf-muted">Registra ubicaciones y sigue el proceso de rescate.</div>
                         </div>
-                        <div class="card card-outline card-primary">
-                            <div class="card-body">
-                                <strong><i class="fas fa-user-md"></i> Atención integral</strong>
-                                <div class="text-muted">Evaluaciones médicas, cuidados y alimentación.</div>
-                            </div>
+                        <div class="landing-feature-tile">
+                            <strong><i class="fas fa-user-md"></i> Atención integral</strong>
+                            <div class="lf-muted">Evaluaciones médicas, cuidados y alimentación.</div>
                         </div>
-                        <div class="card card-outline card-primary">
-                            <div class="card-body">
-                                <strong><i class="fas fa-dove"></i> Liberaciones</strong>
-                                <div class="text-muted">Coordina y documenta devoluciones al hábitat.</div>
-                            </div>
+                        <div class="landing-feature-tile">
+                            <strong><i class="fas fa-dove"></i> Liberaciones</strong>
+                            <div class="lf-muted">Coordina y documenta devoluciones al hábitat.</div>
                         </div>
-                        <div class="card card-outline card-primary">
-                            <div class="card-body">
-                                <strong><i class="fas fa-shield-alt"></i> Comunidad segura</strong>
-                                <div class="text-muted">Accesos por rol y revisión de solicitudes.</div>
-                            </div>
+                        <div class="landing-feature-tile">
+                            <strong><i class="fas fa-shield-alt"></i> Comunidad segura</strong>
+                            <div class="lf-muted">Accesos por rol y revisión de solicitudes.</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="hero-visual animate__animated animate__fadeIn">
-                    <div class="card card-outline card-primary h-100" style="position: relative; overflow: hidden;">
-                        <div class="card-body p-0" style="height: 100%; min-height: 400px;">
-                            <div id="landingMap" style="height: 100%; width: 100%; border-radius: 6px;"></div>
-                        </div>
+                    <div class="landing-map-shell" style="position: relative;">
+                        <div id="landingMap" class="landing-map-inner"></div>
                     </div>
                     <div class="blob one"></div>
                     <div class="blob two"></div>
@@ -149,15 +161,15 @@
                     @if(isset($recentReleases) && $recentReleases->count() > 0)
                         @foreach($recentReleases as $rel)
                             @php($af = $rel->animalFile)
-                            <div class="release-card card card-outline card-success">
-                                <div class="release-card-img card-img-top">
+                            <div class="release-card release-live">
+                                <div class="release-card-img">
                                     @if(!empty($af?->imagen_url))
                                         <img src="{{ asset('storage/' . $af->imagen_url) }}" alt="animal">
                                     @else
                                         <i class="fas fa-paw" style="font-size: 28px; color:#9ca3af"></i>
                                     @endif
                                 </div>
-                                <div class="release-card-body card-body">
+                                <div class="release-card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="font-weight-bold">{{ $af?->animal?->nombre ?? $af?->species?->nombre ?? 'Animal' }}</div>
                                         <span class="badge badge-success">Liberado</span>
@@ -177,11 +189,11 @@
                     @else
                         @php($slots = 8)
                         @for($i = 0; $i < $slots; $i++)
-                            <div class="release-card empty card card-outline card-warning">
-                                <div class="release-card-img card-img-top">
+                            <div class="release-card empty">
+                                <div class="release-card-img">
                                     <i class="fas fa-dove" style="font-size: 28px; color:#9ca3af"></i>
                                 </div>
-                                <div class="release-card-body card-body">
+                                <div class="release-card-body">
                                     <div class="font-weight-bold">Aún no hay animales liberados</div>
                                     <div class="release-meta">Pronto verás liberaciones aquí</div>
                                 </div>
