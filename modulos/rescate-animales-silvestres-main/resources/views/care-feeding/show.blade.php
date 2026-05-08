@@ -1,46 +1,51 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $careFeeding->name ?? __('Show') . " " . __('Care Feeding') }}
-@endsection
+@section('title', 'Detalle de alimentación — Rescate')
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Alimentación')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} {{ __('Care Feeding') }}</span>
-                        </div>
-                        <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.care-feedings.index') }}"> {{ __('Back') }}</a>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card card-outline card-secondary shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-utensils"></i> Alimentación #{{ $careFeeding->id }}</h3>
+                        <div class="d-flex flex-wrap" style="gap:.35rem;">
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.care-feedings.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.care-feedings.edit', $careFeeding->id) }}"><i class="fas fa-edit"></i> Editar</a>
                         </div>
                     </div>
-
-                    <div class="card-body bg-white">
-                        
-                                <div class="form-group mb-2 mb20">
-                                    <strong>{{ __('Care Id') }}:</strong>
-                                    {{ $careFeeding->care_id }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>{{ __('Feeding Type Id') }}:</strong>
-                                    {{ $careFeeding->feeding_type_id }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>{{ __('Feeding Frequency Id') }}:</strong>
-                                    {{ $careFeeding->feeding_frequency_id }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>{{ __('Feeding Portion Id') }}:</strong>
-                                    {{ $careFeeding->feeding_portion_id }}
-                                </div>
-
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <strong>Cuidado:</strong>
+                            #{{ $careFeeding->care_id }}
+                            @if($careFeeding->care)
+                                <span class="text-muted">({{ $careFeeding->care->animalFile?->animal?->nombre ?? 'animal' }})</span>
+                            @endif
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Tipo de alimento:</strong>
+                            {{ $careFeeding->feedingType?->nombre ?? ('#'.$careFeeding->feeding_type_id) }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Frecuencia:</strong>
+                            {{ $careFeeding->feedingFrequency?->nombre ?? ('#'.$careFeeding->feeding_frequency_id) }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Porción:</strong>
+                            @php($fp = $careFeeding->feedingPortion)
+                            @if($fp)
+                                {{ trim(trim(($fp->cantidad ?? '').' '.($fp->unidad ?? ''))) ?: ('#'.$careFeeding->feeding_portion_id) }}
+                            @else
+                                #{{ $careFeeding->feeding_portion_id }}
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
 @endsection
