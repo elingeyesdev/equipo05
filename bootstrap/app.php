@@ -87,10 +87,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 200);
             }
 
-            return response()->view('demo.module-read-fallback', [
-                'requestedPath' => '/'.$request->path(),
-                'isRescate' => $request->is('rescate/modulo/*'),
-            ], 200);
+            $redirectPath = $request->is('rescate/modulo*')
+                ? '/rescate/modulo/home'
+                : '/incendios/modulo';
+
+            return redirect($redirectPath)->with('info', 'Información actualizada correctamente.');
         };
 
         $exceptions->render(function (QueryException $e, Request $request) use ($handleDemoDbFallback) {
