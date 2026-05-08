@@ -51,8 +51,9 @@
     @endif
 
     @if(($showSubmit ?? true))
-        <div class="mt-2">
-            <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+        <div class="mt-2 d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('Guardar') }}</button>
+            <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-outline-secondary">Cancelar</a>
         </div>
     @endif
 </div>
