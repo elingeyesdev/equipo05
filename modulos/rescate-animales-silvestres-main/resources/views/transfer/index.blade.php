@@ -202,7 +202,7 @@
                                                     <td>{{ $transfer->observaciones }}</td>
                                                     <td>
                                                         <form action="{{ route('rescate.transfers.destroy', $transfer->id) }}" method="POST">
-                                                            <a class="btn btn-sm btn-primary" href="{{ route('rescate.transfers.show', $transfer->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
+                                                            <a class="btn btn-sm btn-primary" href="{{ route('rescate.transfers.show', $transfer->id) }}"><i class="fa fa-fw fa-eye"></i> Ver</a>
                                                             <a class="btn btn-sm btn-success" href="{{ route('rescate.transfers.edit', $transfer->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
                                                             @csrf
                                                             @method('DELETE')
