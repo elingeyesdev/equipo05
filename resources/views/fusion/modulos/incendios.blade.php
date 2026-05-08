@@ -32,6 +32,21 @@
             <a href="{{ route('incendios.predictions.index') }}" class="btn btn-outline-info btn-sm">
                 <i class="fas fa-chart-line"></i> Predicciones
             </a>
+            <a href="{{ route('incendios.simulaciones.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-flask"></i> Simulaciones
+            </a>
+            <a href="{{ route('incendios.tipo-biomasas.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-list"></i> Tipos de biomasa
+            </a>
+            <a href="{{ route('incendios.users.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-users"></i> Usuarios
+            </a>
+            <a href="{{ route('incendios.voluntarios.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-user-friends"></i> Voluntarios
+            </a>
+            <a href="{{ route('incendios.administradores.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-user-shield"></i> Administradores
+            </a>
         </div>
 
         <p class="text-muted small mb-0">

@@ -35,6 +35,30 @@
                     <i class="fas fa-sign-in-alt"></i> Iniciar sesión para el panel
                 </a>
             @endauth
+            <a href="{{ route('rescate.reports.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-clipboard-list"></i> Hallazgos
+            </a>
+            <a href="{{ route('rescate.animals.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-paw"></i> Animales
+            </a>
+            <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-file-medical"></i> Hojas de vida
+            </a>
+            <a href="{{ route('rescate.transfers.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-route"></i> Traslados
+            </a>
+            <a href="{{ route('rescate.medical-evaluations.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-stethoscope"></i> Eval. médicas
+            </a>
+            <a href="{{ route('rescate.releases.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-dove"></i> Liberaciones
+            </a>
+            <a href="{{ route('rescate.people.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-users"></i> Personas
+            </a>
+            <a href="{{ route('rescate.users.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-user-cog"></i> Usuarios
+            </a>
         </div>
 
         <p class="text-muted small mb-0">
