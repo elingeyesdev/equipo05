@@ -1,56 +1,53 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $care->name ?? __('Show') . " " . __('Care') }}
-@endsection
+@section('title', 'Detalle de cuidado — Rescate')
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Cuidados registrados')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <div>
-                            <span class="card-title">{{ __('Show') }} {{ __('Care') }}</span>
-                        </div>
-                        <div class="ml-auto">
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.cares.index') }}"> {{ __('Back') }}</a>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card card-outline card-secondary shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-hand-holding-medical"></i> Cuidado #{{ $care->id }}</h3>
+                        <div class="d-flex flex-wrap" style="gap:.35rem;">
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.cares.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.cares.edit', $care->id) }}"><i class="fas fa-edit"></i> Editar</a>
                         </div>
                     </div>
-
-                    <div class="card-body bg-white">
-                        
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Animal:</strong>
-                                    {{ $care->animalFile?->animal?->nombre ?? '-' }}
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <strong>Animal:</strong>
+                            {{ $care->animalFile?->animal?->nombre ?? '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Tipo de cuidado:</strong>
+                            {{ $care->careType?->nombre ?? '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Descripción:</strong>
+                            {{ $care->descripcion ?: '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Fecha:</strong>
+                            {{ $care->fecha ? \Carbon\Carbon::parse($care->fecha)->format('d/m/Y') : '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Imagen:</strong>
+                            @if(!empty($care?->imagen_url))
+                                <div class="mt-2">
+                                    <img src="{{ asset('storage/' . $care->imagen_url) }}" alt="Imagen cuidado" style="max-height:240px;">
                                 </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Tipo de Cuidado:</strong>
-                                    {{ $care->careType?->nombre ?? '-' }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Descripcion:</strong>
-                                    {{ $care->descripcion }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Fecha:</strong>
-                                    {{ $care->fecha ? \Carbon\Carbon::parse($care->fecha)->format('d/m/Y') : '-' }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Imagen:</strong>
-                                    @if(!empty($care?->imagen_url))
-                                        <div class="mt-2">
-                                            <img src="{{ asset('storage/' . $care->imagen_url) }}" alt="Imagen cuidado" style="max-height:240px;">
-                                        </div>
-                                    @else
-                                        -
-                                    @endif
-                                </div>
-
+                            @else
+                                —
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.page-pad')
 @endsection
