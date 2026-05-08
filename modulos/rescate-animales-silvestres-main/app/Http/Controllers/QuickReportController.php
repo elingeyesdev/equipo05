@@ -48,10 +48,21 @@ class QuickReportController extends Controller
             ]);
             $observaciones = implode("\n", $obsParts);
 
+            $isAuthenticated = Auth::check();
+            $personId = null;
+            if ($isAuthenticated) {
+                $personId = Person::where('usuario_id', Auth::id())->value('id');
+                if (empty($personId)) {
+                    return Redirect::back()
+                        ->withInput()
+                        ->withErrors(['general' => 'Tu usuario no está vinculado a una persona. Comunícate con el administrador.']);
+                }
+            }
+
             $path = $request->file('imagen')->store('reports', 'public');
 
             $data = [
-                'persona_id' => null,
+                'persona_id' => $personId,
                 'aprobado' => 0,
                 'imagen_url' => $path,
                 'observaciones' => $observaciones ?: null,
@@ -63,17 +74,6 @@ class QuickReportController extends Controller
                 'tamano' => 'mediano',
                 'puede_moverse' => true,
             ];
-
-            $isAuthenticated = Auth::check();
-            if ($isAuthenticated) {
-                $personId = Person::where('usuario_id', Auth::id())->value('id');
-                if (empty($personId)) {
-                    return Redirect::back()
-                        ->withInput()
-                        ->withErrors(['general' => 'Tu usuario no está vinculado a una persona. Comunícate con el administrador.']);
-                }
-                $data['persona_id'] = $personId;
-            }
 
             $data['urgencia'] = $urgencyService->compute($data);
 
@@ -133,9 +133,18 @@ class QuickReportController extends Controller
             return Redirect::route('rescate.reports.index')
                 ->with('success', 'El hallazgo se registró correctamente.');
         } catch (\Throwable $e) {
+            Log::error('QuickReport store falló', [
+                'message' => $e->getMessage(),
+                'exception' => $e,
+            ]);
+
+            $msg = config('app.debug')
+                ? 'No se pudo registrar el hallazgo: '.$e->getMessage()
+                : 'No se pudo registrar el hallazgo. Intente nuevamente o contacte al administrador.';
+
             return Redirect::back()
                 ->withInput()
-                ->withErrors(['general' => 'No se pudo registrar el hallazgo: '.$e->getMessage()]);
+                ->withErrors(['general' => $msg]);
         }
     }
 }
