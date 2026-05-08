@@ -50,17 +50,18 @@ return Application::configure(basePath: dirname(__DIR__))
         // Modo demo sin BD: permitir guardar en módulos integrados aunque falten tablas/columnas.
         $exceptions->render(function (QueryException $e, Request $request) {
             $isWriteMethod = in_array(strtoupper($request->method()), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+            $isReadMethod = strtoupper($request->method()) === 'GET';
             $isModulePath = $request->is('incendios/modulo/*') || $request->is('rescate/modulo/*');
             $message = (string) $e->getMessage();
             $isSchemaProblem = str_contains($message, 'no such table')
                 || str_contains($message, 'has no column named')
                 || str_contains($message, 'Base table or view not found');
 
-            if (! $isWriteMethod || ! $isModulePath || ! $isSchemaProblem) {
+            if ((! $isWriteMethod && ! $isReadMethod) || ! $isModulePath || ! $isSchemaProblem) {
                 return null;
             }
 
-            if ($request->expectsJson()) {
+            if ($isWriteMethod && $request->expectsJson()) {
                 return response()->json([
                     'ok' => true,
                     'demo_mode' => true,
@@ -68,6 +69,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 200);
             }
 
-            return redirect()->back()->with('success', 'Guardado simulado en modo demo (sin persistencia en BD).');
+            if ($isWriteMethod) {
+                return redirect()->back()->with('success', 'Guardado simulado en modo demo (sin persistencia en BD).');
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'ok' => true,
+                    'demo_mode' => true,
+                    'items' => [],
+                    'message' => 'Consulta simulada en modo demo (sin base de datos).',
+                ], 200);
+            }
+
+            return response()->view('demo.module-read-fallback', [
+                'requestedPath' => '/'.$request->path(),
+                'isRescate' => $request->is('rescate/modulo/*'),
+            ], 200);
         });
     })->create();
