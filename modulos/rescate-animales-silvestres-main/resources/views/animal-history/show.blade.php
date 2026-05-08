@@ -1,28 +1,29 @@
 @extends('layouts.app')
 
-@section('title')
-{{ __('Historial de Animal ') . $animalHistory->animal_file_id }}
-@endsection
+@section('title', 'Historial #' . ($animalHistory->animal_file_id ?? '') . ' — Rescate')
+@section('subtitle', 'Línea de tiempo y movimientos del animal.')
+@section('content_header_title', 'Historial de animales')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
+    <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-default">
+                <div class="card card-outline card-secondary shadow-sm">
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="card-title">
-                                {{ __('Detalles del animal') }}
+                        <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                            <span class="card-title mb-0 font-weight-bold">
+                                <i class="fas fa-history mr-1"></i>{{ __('Detalles del animal') }}
                                 @if($animalHistory->animalFile?->animal?->nombre)
-                                    {{ $animalHistory->animalFile->animal->nombre }}
+                                    — {{ $animalHistory->animalFile->animal->nombre }}
                                 @endif
                             </span>
-                            <a href="{{ route('rescate.animal-histories.index') }}" class="btn btn-info btn-sm">
-                                <i class="fas fa-arrow-left"></i> {{ __('Volver') }}
+                            <a href="{{ route('rescate.animal-histories.index') }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Volver al listado
                             </a>
                         </div>
                     </div>
-                    <div class="card-body bg-white">
+                    <div class="card-body">
                         @php
                             $af = $animalHistory->animalFile;
                             $animal = $af?->animal;
@@ -206,7 +207,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     @include('partials.leaflet')
     @include('partials.page-pad')
     <style>
