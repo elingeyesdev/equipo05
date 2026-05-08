@@ -74,7 +74,7 @@ class GoogleController extends Controller
             return redirect()->route('incendios.dashboard');
 
         } catch (Exception $e) {
-            return redirect('/login')->with('error', 'Error al autenticarse con Google: '.$e->getMessage());
+            return redirect()->route('login')->with('error', 'Error al autenticarse con Google: '.$e->getMessage());
         }
     }
 }

@@ -33,7 +33,7 @@
     <p>Si tiene alguna pregunta o necesita más información, no dude en contactarnos.</p>
     
     <p>
-        <a href="{{ url('/profile') }}" class="button">Ver Mi Perfil</a>
+        <a href="{{ route('rescate.profile.index') }}" class="button">Ver Mi Perfil</a>
     </p>
 @endsection
 

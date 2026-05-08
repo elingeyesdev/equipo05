@@ -11,10 +11,10 @@
         <p><strong>Fecha del reporte:</strong> {{ $report->created_at->format('d/m/Y H:i') }}</p>
         <p><strong>Reportado por:</strong> {{ $report->person->nombre ?? 'N/A' }}</p>
         @if($report->direccion)
-            <p><strong>Ubicación:</strong> {{ $report->direccion }}</p>
+            <p><strong>UbicaciÃ³n:</strong> {{ $report->direccion }}</p>
         @endif
         @if($report->condicionInicial)
-            <p><strong>Condición inicial:</strong> {{ $report->condicionInicial->nombre }}</p>
+            <p><strong>CondiciÃ³n inicial:</strong> {{ $report->condicionInicial->nombre }}</p>
         @endif
         @if($report->incidentType)
             <p><strong>Tipo de incidente:</strong> {{ $report->incidentType->nombre }}</p>
@@ -30,7 +30,7 @@
     <p>Por favor, revise el hallazgo en el sistema para tomar las acciones correspondientes.</p>
     
     <p>
-        <a href="{{ url('/reports/' . $report->id) }}" class="button">Ver Detalles del Hallazgo</a>
+        <a href="{{ route('rescate.reports.show', $report->id) }}" class="button">Ver Detalles del Hallazgo</a>
     </p>
 @endsection
 
