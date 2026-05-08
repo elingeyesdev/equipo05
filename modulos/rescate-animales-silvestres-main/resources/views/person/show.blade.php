@@ -1,17 +1,18 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $person->nombre ?? __('Show') . ' ' . __('Person') }}
-@endsection
+@section('title', ($person->nombre ?? 'Persona') . ' — Rescate')
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Personas')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
+    <div class="container-fluid page-pad">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card shadow-sm">
                     <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} {{ __('Person') }}</span>
+                            <span class="card-title font-weight-bold"><i class="fas fa-user mr-1"></i>{{ $person->nombre ?? 'Persona' }}</span>
                         </div>
                         <div class="float-right" style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-left: auto;">
                             @if($person->user)
@@ -26,10 +27,10 @@
                             @endif
                             @if($isAdmin)
                                 <a class="btn btn-success btn-sm" href="{{ route('rescate.people.edit', $person->id) }}">
-                                    <i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}
+                                    <i class="fa fa-fw fa-edit"></i> Editar
                                 </a>
                             @endif
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.people.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.people.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
                         </div>
                     </div>
 
@@ -356,7 +357,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     {{-- Script para cambiar entre vistas --}}
     @if($person->user)
