@@ -1,77 +1,74 @@
 @extends('layouts.app')
 
-@section('title')
-{{ $rescuer->name ?? __('Show') . ' ' . __('Rescuer') }}
-@endsection
+@section('title', 'Rescatista — ' . ($rescuer->person?->nombre ?? 'Detalle'))
+@section('subtitle', 'Vista de solo lectura.')
+@section('content_header_title', 'Rescatistas')
+@section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <div>
-                            <span class="card-title">{{ __('Show') }} {{ __('Rescuer') }}</span>
-                        </div>
-                        <div class="ml-auto">
-                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.rescuers.index') }}"> {{ __('Back') }}</a>
+    <div class="container-fluid page-pad">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card card-outline card-secondary shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:.5rem;">
+                        <h3 class="card-title mb-0"><i class="fas fa-hands-helping"></i> {{ $rescuer->person?->nombre ?? 'Rescatista' }}</h3>
+                        <div class="d-flex flex-wrap" style="gap:.35rem;">
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('rescate.rescuers.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
+                            <a class="btn btn-primary btn-sm" href="{{ route('rescate.rescuers.edit', $rescuer->id) }}"><i class="fas fa-edit"></i> Editar</a>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <strong>Persona:</strong>
+                            {{ $rescuer->person?->nombre ?? '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Motivo de postulación:</strong>
+                            {{ $rescuer->motivo_postulacion ?: '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>CV:</strong>
+                            @if($rescuer->cv_documentado)
+                                <a href="{{ asset('storage/' . $rescuer->cv_documentado) }}" target="_blank">Ver CV</a>
+                            @else
+                                —
+                            @endif
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Aprobado:</strong>
+                            {{ $rescuer->aprobado === null ? '—' : ($rescuer->aprobado ? 'Sí' : 'No') }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Motivo revisión:</strong>
+                            {{ $rescuer->motivo_revision ?: '—' }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <strong>Estado de la postulación:</strong>
+                            @if($rescuer->aprobado === true)
+                                Postulación aceptada.
+                            @elseif($rescuer->aprobado === false && $rescuer->motivo_revision)
+                                Postulación no aceptada. Motivo: {{ $rescuer->motivo_revision }}
+                            @elseif($rescuer->aprobado === false)
+                                Postulación no aceptada.
+                            @elseif($rescuer->aprobado === null)
+                                Postulación en proceso de revisión.
+                            @else
+                                —
+                            @endif
+                        </div>
 
-                    <div class="card-body bg-white">
-                        
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Persona:</strong>
-                                    {{ $rescuer->person?->nombre ?? '-' }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Motivo de postulación:</strong>
-                                    {{ $rescuer->motivo_postulacion ?: '-' }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>CV:</strong>
-                                    @if($rescuer->cv_documentado)
-                                        <a href="{{ asset('storage/' . $rescuer->cv_documentado) }}" target="_blank">Ver CV</a>
-                                    @else
-                                        -
-                                    @endif
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Aprobado:</strong>
-                                    {{ $rescuer->aprobado === null ? '-' : ($rescuer->aprobado ? 'Sí' : 'No') }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Motivo revisión:</strong>
-                                    {{ $rescuer->motivo_revision ?: '-' }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Estado de la postulación:</strong>
-                                    @if($rescuer->aprobado === true)
-                                        Postulación aceptada.
-                                    @elseif($rescuer->aprobado === false && $rescuer->motivo_revision)
-                                        Postulación no aceptada. Motivo: {{ $rescuer->motivo_revision }}
-                                    @elseif($rescuer->aprobado === false)
-                                        Postulación no aceptada.
-                                    @elseif($rescuer->aprobado === null)
-                                        Postulación en proceso de revisión.
-                                    @else
-                                        -
-                                    @endif
-                                </div>
-
-                                @if($rescuer->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
-                                <div class="form-group mb-2 mb20">
-                                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalAprobarRescuer">
-                                        <i class="fa fa-check-circle"></i> Aprobar/Rechazar Solicitud
-                                    </button>
-                                </div>
-                                @endif
-
+                        @if($rescuer->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
+                        <div class="form-group mb-3">
+                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalAprobarRescuer">
+                                <i class="fa fa-check-circle"></i> Aprobar/Rechazar solicitud
+                            </button>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     @if($rescuer->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
     {{-- Modal para aprobar/rechazar solicitud de rescatista --}}
@@ -93,12 +90,12 @@
                         <p class="mb-3">{{ __('¿Desea aprobar o rechazar esta solicitud de rescatista?') }}</p>
                         <div class="form-group">
                             <label for="motivo_revision">{{ __('Motivo de revisión') }} <span class="text-danger">*</span></label>
-                            <textarea 
-                                class="form-control" 
-                                id="motivo_revision" 
-                                name="motivo_revision" 
-                                rows="3" 
-                                required 
+                            <textarea
+                                class="form-control"
+                                id="motivo_revision"
+                                name="motivo_revision"
+                                rows="3"
+                                required
                                 minlength="3"
                                 placeholder="{{ __('Ingrese el motivo de la aprobación o rechazo...') }}"></textarea>
                             <small class="form-text text-muted">{{ __('Mínimo 3 caracteres') }}</small>
@@ -124,31 +121,27 @@
         var motivoInput = document.getElementById('motivo_revision');
         var btnRechazar = document.getElementById('btnRechazarRescuer');
         var btnAprobar = document.getElementById('btnAprobarRescuer');
-        
+
         function submitForm(action) {
-            // Validar que el motivo esté lleno
             if (!motivoInput.value || motivoInput.value.trim().length < 3) {
                 alert('{{ __('Por favor, ingrese un motivo de revisión (mínimo 3 caracteres).') }}');
                 motivoInput.focus();
                 return false;
             }
-            
-            // Establecer el valor de action
+
             if (actionInput) {
                 actionInput.value = action;
             }
-            
-            // Deshabilitar botones para evitar doble envío
+
             if (btnRechazar) btnRechazar.disabled = true;
             if (btnAprobar) btnAprobar.disabled = true;
-            
-            // Enviar formulario
+
             if (form) {
                 form.submit();
             }
             return true;
         }
-        
+
         if (btnRechazar) {
             btnRechazar.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -156,7 +149,7 @@
                 submitForm('reject');
             });
         }
-        
+
         if (btnAprobar) {
             btnAprobar.addEventListener('click', function(e) {
                 e.preventDefault();
