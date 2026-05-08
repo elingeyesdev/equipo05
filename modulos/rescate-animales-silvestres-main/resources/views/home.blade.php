@@ -1,23 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio')
-
-@section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="text-dark">Panel de Control</h1>
-        <div class="d-flex align-items-center">
-            @if($canViewAdminDashboard ?? false)
-            <a href="{{ route('rescate.dashboard.export-pdf') }}" class="btn btn-danger btn-sm mr-2" target="_blank">
-                <i class="fas fa-file-pdf mr-1"></i> Exportar PDF
-            </a>
-            <a href="{{ route('rescate.dashboard.export-excel') }}" class="btn btn-success btn-sm mr-2" target="_blank">
-                <i class="fas fa-file-excel mr-1"></i> Exportar a Excel
-            </a>
-            @endif
-            <small class="text-muted"><i class="fas fa-calendar-alt mr-1"></i> {{ date('d/m/Y') }}</small>
-        </div>
-    </div>
-@endsection
+@section('title', 'Inicio — Rescate')
+@section('subtitle', 'Panel principal del módulo de rescate de fauna.')
+@section('content_header_title', 'Inicio')
+@section('content_header_subtitle', 'Panel de rescate')
 
 @section('css')
 <style>
@@ -116,7 +102,22 @@
 @endsection
 
 @section('content_body')
-<div class="container-fluid pb-4">
+<div class="container-fluid pb-4 page-pad">
+
+    @if($canViewAdminDashboard ?? false)
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <p class="text-muted small mb-0 d-none d-md-block">Indicadores y gráficos del sistema</p>
+        <div class="d-flex align-items-center flex-wrap gap-2">
+            <a href="{{ route('rescate.dashboard.export-pdf') }}" class="btn btn-danger btn-sm" target="_blank" rel="noopener">
+                <i class="fas fa-file-pdf mr-1"></i> Exportar PDF
+            </a>
+            <a href="{{ route('rescate.dashboard.export-excel') }}" class="btn btn-success btn-sm" target="_blank" rel="noopener">
+                <i class="fas fa-file-excel mr-1"></i> Exportar Excel
+            </a>
+            <small class="text-muted"><i class="fas fa-calendar-alt mr-1"></i>{{ date('d/m/Y') }}</small>
+        </div>
+    </div>
+    @endif
 
     {{-- =========================================================== --}}
     {{-- SECCIÓN: ADMIN Y ENCARGADO --}}
