@@ -103,7 +103,7 @@ class BiomasaController extends Controller
             
             return Redirect::back()
                 ->withInput()
-                ->with('error', 'Error al crear la biomasa: ' . $e->getMessage());
+                ->with('error', 'No se pudo crear la biomasa en este momento.');
         }
     }
 

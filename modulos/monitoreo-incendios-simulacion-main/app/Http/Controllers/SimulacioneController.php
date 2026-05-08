@@ -185,7 +185,7 @@ class SimulacioneController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Error al guardar la simulación: ' . $e->getMessage()
+                'message' => 'No se pudo guardar la simulación en este momento.'
             ], 500);
         }
     }

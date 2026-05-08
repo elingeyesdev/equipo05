@@ -44,7 +44,7 @@ class IncidentTypeController extends Controller
         IncidentType::create($request->validated());
 
         return Redirect::route('rescate.incident-types.index')
-            ->with('success', 'IncidentType created successfully.');
+            ->with('success', 'Tipo de incidente creado correctamente.');
     }
 
     /**
@@ -75,7 +75,7 @@ class IncidentTypeController extends Controller
         $incidentType->update($request->validated());
 
         return Redirect::route('rescate.incident-types.index')
-            ->with('success', 'IncidentType updated successfully');
+            ->with('success', 'Tipo de incidente actualizado correctamente.');
     }
 
     public function destroy($id): RedirectResponse
@@ -83,6 +83,6 @@ class IncidentTypeController extends Controller
         IncidentType::find($id)->delete();
 
         return Redirect::route('rescate.incident-types.index')
-            ->with('success', 'IncidentType deleted successfully');
+            ->with('success', 'Tipo de incidente eliminado correctamente.');
     }
 }
