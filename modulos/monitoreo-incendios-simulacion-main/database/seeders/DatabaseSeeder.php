@@ -2,12 +2,12 @@
 
 namespace Modules\Incendios\Database\Seeders;
 
-use Modules\Incendios\Models\User;
-use Modules\Incendios\Models\Administrador;
-use Modules\Incendios\Models\Voluntario;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Modules\Incendios\Models\Administrador;
+use Modules\Incendios\Models\User;
+use Modules\Incendios\Models\Voluntario;
 
 class DatabaseSeeder extends Seeder
 {
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             );
 
             // Crear perfil de administrador si no existe
-            if (!$adminUser->administrador) {
+            if (! $adminUser->administrador) {
                 Administrador::create([
                     'user_id' => $adminUser->id,
                     'departamento' => 'Sistemas',
@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
             }
 
             // Assign role using Spatie if not already assigned
-            if (!$adminUser->hasRole('administrador')) {
+            if (! $adminUser->hasRole('administrador')) {
                 $adminUser->assignRole('administrador');
             }
         });
@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
             );
 
             // Crear perfil de voluntario si no existe
-            if (!$volUser->voluntario) {
+            if (! $volUser->voluntario) {
                 Voluntario::create([
                     'user_id' => $volUser->id,
                     'direccion' => 'Calle Test 123',
@@ -73,15 +73,18 @@ class DatabaseSeeder extends Seeder
             }
 
             // Assign role using Spatie if not already assigned
-            if (!$volUser->hasRole('voluntario')) {
+            if (! $volUser->hasRole('voluntario')) {
                 $volUser->assignRole('voluntario');
             }
         });
 
         // Seed tipos de biomasa
         $this->call(TipoBiomasaSeeder::class);
-        
+
         // Seed actividades de prueba del administrador
         $this->call(AdminActivitySeeder::class);
+
+        // Datos demo visibles para todos los submódulos (idempotente)
+        $this->call(\Modules\Incendios\Seeders\ShowcaseDataSeeder::class);
     }
 }
