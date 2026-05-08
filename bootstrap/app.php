@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use PDOException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -49,6 +50,51 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Modo demo sin BD: permitir guardar en módulos integrados aunque falten tablas/columnas.
         $exceptions->render(function (QueryException $e, Request $request) {
+            $isWriteMethod = in_array(strtoupper($request->method()), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+            $isReadMethod = strtoupper($request->method()) === 'GET';
+            $isModulePath = $request->is('incendios/modulo')
+                || $request->is('incendios/modulo/*')
+                || $request->is('rescate/modulo')
+                || $request->is('rescate/modulo/*');
+            $message = (string) $e->getMessage();
+            $isSchemaProblem = str_contains($message, 'no such table')
+                || str_contains($message, 'no such column')
+                || str_contains($message, 'has no column named')
+                || str_contains($message, 'Base table or view not found')
+                || str_contains($message, 'FOREIGN KEY constraint failed');
+
+            if ((! $isWriteMethod && ! $isReadMethod) || ! $isModulePath || ! $isSchemaProblem) {
+                return null;
+            }
+
+            if ($isWriteMethod && $request->expectsJson()) {
+                return response()->json([
+                    'ok' => true,
+                    'demo_mode' => true,
+                    'message' => 'Guardado simulado en modo demo (sin persistencia).',
+                ], 200);
+            }
+
+            if ($isWriteMethod) {
+                return redirect()->back()->with('success', 'Guardado simulado en modo demo (sin persistencia en BD).');
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'ok' => true,
+                    'demo_mode' => true,
+                    'items' => [],
+                    'message' => 'Consulta simulada en modo demo (sin base de datos).',
+                ], 200);
+            }
+
+            return response()->view('demo.module-read-fallback', [
+                'requestedPath' => '/'.$request->path(),
+                'isRescate' => $request->is('rescate/modulo/*'),
+            ], 200);
+        });
+
+        $exceptions->render(function (PDOException $e, Request $request) {
             $isWriteMethod = in_array(strtoupper($request->method()), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
             $isReadMethod = strtoupper($request->method()) === 'GET';
             $isModulePath = $request->is('incendios/modulo')
