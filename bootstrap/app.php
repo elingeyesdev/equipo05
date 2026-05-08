@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -37,12 +38,36 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->with('error', 'No tienes permisos para acceder a esa sección.');
             }
         });
-        
+
         // También capturamos la excepción específica de Spatie por si acaso
         $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, Request $request) {
-             if (! $request->isJson()) {
+            if (! $request->isJson()) {
                 return redirect()->route('dashboard')
                     ->with('error', 'No tienes el rol necesario para entrar ahí.');
             }
+        });
+
+        // Modo demo sin BD: permitir guardar en módulos integrados aunque falten tablas/columnas.
+        $exceptions->render(function (QueryException $e, Request $request) {
+            $isWriteMethod = in_array(strtoupper($request->method()), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+            $isModulePath = $request->is('incendios/modulo/*') || $request->is('rescate/modulo/*');
+            $message = (string) $e->getMessage();
+            $isSchemaProblem = str_contains($message, 'no such table')
+                || str_contains($message, 'has no column named')
+                || str_contains($message, 'Base table or view not found');
+
+            if (! $isWriteMethod || ! $isModulePath || ! $isSchemaProblem) {
+                return null;
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'ok' => true,
+                    'demo_mode' => true,
+                    'message' => 'Guardado simulado en modo demo (sin persistencia).',
+                ], 200);
+            }
+
+            return redirect()->back()->with('success', 'Guardado simulado en modo demo (sin persistencia en BD).');
         });
     })->create();
