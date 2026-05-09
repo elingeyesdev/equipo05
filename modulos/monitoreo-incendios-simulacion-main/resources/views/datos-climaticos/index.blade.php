@@ -3,7 +3,7 @@
 @section('subtitle', 'Datos Climáticos')
 @section('content_header_title', 'Datos Climáticos Históricos')
 @section('content_header_subtitle')
-    Región Chiquitanía - Última Semana
+    Chiquitanía, Santa Cruz de la Sierra y localidades de referencia - Última semana
 @endsection
 
 @section('content_body')

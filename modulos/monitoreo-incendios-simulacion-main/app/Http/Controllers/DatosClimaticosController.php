@@ -9,13 +9,18 @@ use Carbon\Carbon;
 class DatosClimaticosController extends Controller
 {
     /**
-     * Ubicaciones de la Chiquitanía, Bolivia
+     * Ubicaciones de referencia en Bolivia (Chiquitanía, capital departamental y localidades clave).
      */
     private array $ubicaciones = [
         'san-jose' => [
             'nombre' => 'San José de Chiquitos',
             'lat' => -17.8857,
             'lng' => -60.7556,
+        ],
+        'santa-cruz-sierra' => [
+            'nombre' => 'Santa Cruz de la Sierra',
+            'lat' => -17.7833,
+            'lng' => -63.1821,
         ],
         'robore' => [
             'nombre' => 'Roboré',
