@@ -90,7 +90,7 @@ class PublicPredictionsController extends Controller
         if (!$prediction) {
             return response()->json([
                 'success' => false,
-                'error' => 'Prediction not found',
+                'error' => 'Predicción no encontrada.',
             ], 404);
         }
 
@@ -120,7 +120,7 @@ class PublicPredictionsController extends Controller
         if ($predictions->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'error' => 'No predictions found for this fire hotspot',
+                'error' => 'No hay predicciones registradas para este foco de incendio.',
             ], 404);
         }
 

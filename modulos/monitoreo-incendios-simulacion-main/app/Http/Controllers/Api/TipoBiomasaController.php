@@ -67,7 +67,7 @@ class TipoBiomasaController extends Controller
         $tipoBiomasa->delete();
 
         return response()->json([
-            'message' => 'Tipo de biomasa eliminado exitosamente',
+            'message' => 'Tipo de biomasa eliminado correctamente.',
         ]);
     }
 }

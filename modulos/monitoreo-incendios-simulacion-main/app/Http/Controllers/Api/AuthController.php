@@ -34,7 +34,7 @@ class AuthController extends Controller
         $token = $user->createToken('mobile-app')->plainTextToken;
 
         return response()->json([
-            'message' => 'Usuario registrado exitosamente',
+            'message' => 'Usuario registrado correctamente.',
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -71,7 +71,7 @@ class AuthController extends Controller
         $token = $user->createToken('mobile-app')->plainTextToken;
 
         return response()->json([
-            'message' => 'Inicio de sesión exitoso',
+            'message' => 'Inicio de sesión correcto.',
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -92,7 +92,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Sesión cerrada exitosamente',
+            'message' => 'Sesión cerrada correctamente.',
         ]);
     }
 }

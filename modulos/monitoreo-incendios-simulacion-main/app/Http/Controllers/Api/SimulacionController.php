@@ -82,7 +82,7 @@ class SimulacionController extends Controller
         $simulacione->delete();
 
         return response()->json([
-            'message' => 'Simulación eliminada exitosamente',
+            'message' => 'Simulación eliminada correctamente.',
         ]);
     }
 

@@ -86,6 +86,6 @@ class BiomasaController extends Controller
     public function destroy(Biomasa $biomasa)
     {
         $biomasa->delete();
-        return response()->json(['message' => 'Biomasa eliminada exitosamente'], 200);
+        return response()->json(['message' => 'Biomasa eliminada correctamente.'], 200);
     }
 }

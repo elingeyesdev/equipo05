@@ -75,7 +75,7 @@ class PredictionController extends Controller
         $prediction->delete();
 
         return response()->json([
-            'message' => 'Predicción eliminada exitosamente',
+            'message' => 'Predicción eliminada correctamente.',
         ]);
     }
 

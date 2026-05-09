@@ -127,7 +127,7 @@ class PublicFirmsController extends Controller
         if (!$result['ok']) {
             return response()->json([
                 'success' => false,
-                'error' => $result['error'] ?? 'Failed to fetch data from FIRMS',
+                'error' => 'No se pudo obtener la información de focos en este momento.',
             ], $result['status'] ?? 500);
         }
 

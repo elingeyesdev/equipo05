@@ -48,7 +48,7 @@ class FocosIncendioController extends Controller
             }
 
             return response()->json([
-                'message' => count($createdFocos) . ' focos de incendio creados exitosamente',
+                'message' => count($createdFocos) . ' focos de incendio creados correctamente.',
                 'data' => FocosIncendioResource::collection(collect($createdFocos)),
                 'count' => count($createdFocos)
             ], 201);
@@ -109,6 +109,6 @@ class FocosIncendioController extends Controller
     public function destroy(FocosIncendio $focosIncendio)
     {
         $focosIncendio->delete();
-        return response()->json(['message' => 'Foco de incendio eliminado exitosamente'], 200);
+        return response()->json(['message' => 'Foco de incendio eliminado correctamente.'], 200);
     }
 }
