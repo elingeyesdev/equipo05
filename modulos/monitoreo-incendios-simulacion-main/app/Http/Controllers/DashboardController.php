@@ -18,6 +18,7 @@ use Modules\Incendios\Exports\SimulationsEffectivenessExport;
 use Modules\Incendios\Exports\SimulationsEffectivenessPdfExport;
 use Modules\Incendios\Exports\PredictionsReportExport;
 use Modules\Incendios\Exports\PredictionsReportPdfExport;
+use Modules\Incendios\Support\ClimaUbicaciones;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,11 +27,20 @@ class DashboardController extends Controller
     /**
      * Display the dashboard with map, weather, and statistics.
      */
-    public function index(OpenMeteoService $weather, FirmsDataService $firms, DashboardMetricsService $metrics)
+    public function index(Request $request, OpenMeteoService $weather, FirmsDataService $firms, DashboardMetricsService $metrics)
     {
-        // Coordinates: San José de Chiquitos, Bolivia
-        $latitude = -17.8857;
-        $longitude = -60.7556;
+        $climaUbicaciones = ClimaUbicaciones::all();
+
+        if ($request->filled('clima')) {
+            $climaUbicacionKey = ClimaUbicaciones::normalizeKey($request->query('clima'));
+            session(['incendios_clima_ubicacion' => $climaUbicacionKey]);
+        } else {
+            $climaUbicacionKey = ClimaUbicaciones::normalizeKey(session('incendios_clima_ubicacion'));
+        }
+
+        $climaUbicacion = $climaUbicaciones[$climaUbicacionKey];
+        $latitude = $climaUbicacion['lat'];
+        $longitude = $climaUbicacion['lng'];
 
         // Get current weather
         $weatherData = $weather->getCurrentWeather($latitude, $longitude);
@@ -88,6 +98,9 @@ class DashboardController extends Controller
 
         return view('dashboard', [
             'weather' => $weatherData,
+            'climaUbicaciones' => $climaUbicaciones,
+            'climaUbicacionKey' => $climaUbicacionKey,
+            'climaUbicacionNombre' => $climaUbicacion['nombre'],
             'fires' => $firesData,
             'biomasasCount' => $biomasasCount,
             'firesCount' => $firesCount,

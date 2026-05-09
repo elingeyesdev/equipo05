@@ -140,8 +140,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Datos iniciales
     let currentData = @json($datosGraficas);
-    const ubicaciones = @json($ubicaciones);
-    
+
     // Referencias a los charts
     let tempChart, humChart, precipChart, windChart;
     
@@ -268,49 +267,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Cargar datos usando Open-Meteo API directamente
-    async function loadWeatherData(lat, lng, nombreUbicacion) {
-        const loading = document.getElementById('loading-indicator');
-        
-        loading.style.display = 'inline';
-        document.querySelectorAll('canvas').forEach(c => c.classList.add('chart-updating'));
-        
-        try {
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(startDate.getDate() - 7);
-            
-            const fmt = d => d.toISOString().split('T')[0];
-            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${fmt(startDate)}&end_date=${fmt(endDate)}&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=America/La_Paz`;
-            
-            const response = await fetch(url);
-            const result = await response.json();
-            
-            if (result.hourly) {
-                const newData = {
-                    labels: result.hourly.time || [],
-                    temperatura: result.hourly.temperature_2m || [],
-                    humedad: result.hourly.relative_humidity_2m || [],
-                    precipitacion: result.hourly.precipitation || [],
-                    viento: result.hourly.wind_speed_10m || []
-                };
-                
-                currentData = newData;
-                updateCharts(newData);
-                updateSummaryCards(lat, lng);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            loading.style.display = 'none';
-            document.querySelectorAll('canvas').forEach(c => c.classList.remove('chart-updating'));
-        }
-    }
-    
-    // Event listener para cambio de ubicación
+    // Cambio de ubicación: recarga con query para persistir en sesión y URL
     document.getElementById('ubicacion-select').addEventListener('change', function() {
-        const opt = this.options[this.selectedIndex];
-        loadWeatherData(opt.dataset.lat, opt.dataset.lng, opt.textContent.trim());
+        const url = new URL(window.location.href);
+        url.searchParams.set('ubicacion', this.value);
+        window.location.href = url.toString();
     });
     
     initCharts();

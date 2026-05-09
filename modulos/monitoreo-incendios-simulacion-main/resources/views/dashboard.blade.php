@@ -107,7 +107,15 @@
     <div class="row dashboard-cards-row">
         {{-- Clima Actual Completo --}}
         <div class="col-md-6">
-            <x-adminlte-card title="Clima Actual - San José de Chiquitos" theme="info" icon="fas fa-cloud-sun" class="dashboard-equal-card">
+            <x-adminlte-card title="Clima actual — {{ $climaUbicacionNombre }}" theme="info" icon="fas fa-cloud-sun" class="dashboard-equal-card">
+                <form method="get" action="{{ route('incendios.dashboard') }}" class="mb-3 d-flex flex-wrap align-items-center" id="form-clima-ubicacion">
+                    <label for="clima-ubicacion" class="mr-2 mb-0 text-muted small">Ubicación de referencia</label>
+                    <select name="clima" id="clima-ubicacion" class="form-control form-control-sm" style="max-width: 280px;" onchange="this.form.submit()">
+                        @foreach($climaUbicaciones as $key => $ubic)
+                            <option value="{{ $key }}" @selected($climaUbicacionKey === $key)>{{ $ubic['nombre'] }}</option>
+                        @endforeach
+                    </select>
+                </form>
                 <div class="row">
                     <div class="col-6">
                         <div class="info-box mb-3 bg-light">
