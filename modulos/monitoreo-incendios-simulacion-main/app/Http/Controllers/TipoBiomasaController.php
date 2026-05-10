@@ -38,7 +38,7 @@ class TipoBiomasaController extends Controller
     {
         TipoBiomasa::create($request->validated());
 
-        return redirect()->route('tipo-biomasas.index')
+        return redirect()->route('incendios.tipo-biomasas.index')
             ->with('success', 'Tipo de Biomasa creado exitosamente.');
     }
 
@@ -69,7 +69,7 @@ class TipoBiomasaController extends Controller
     {
         $tipoBiomasa->update($request->validated());
 
-        return redirect()->route('tipo-biomasas.index')
+        return redirect()->route('incendios.tipo-biomasas.index')
             ->with('success', 'Tipo de Biomasa actualizado exitosamente');
     }
 
@@ -80,7 +80,7 @@ class TipoBiomasaController extends Controller
     {
         TipoBiomasa::find($id)->delete();
 
-        return redirect()->route('tipo-biomasas.index')
+        return redirect()->route('incendios.tipo-biomasas.index')
             ->with('success', 'Tipo de Biomasa eliminado exitosamente');
     }
 }

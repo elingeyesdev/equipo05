@@ -232,6 +232,15 @@ Route::prefix('inventario')
         require base_path('modulos/donacion-recepcion-inventario-main/routes/web.php');
     });
 
+// Pública: bienvenida del módulo incendios (sin auth; el require del módulo va detrás con middleware).
+Route::prefix('incendios/modulo')
+    ->as('incendios.')
+    ->group(function () {
+        Route::get('bienvenida', function () {
+            return view('incendios::welcome');
+        })->name('welcome');
+    });
+
 Route::prefix('incendios/modulo')
     ->as('incendios.')
     ->middleware(['auth', 'incendios.db'])

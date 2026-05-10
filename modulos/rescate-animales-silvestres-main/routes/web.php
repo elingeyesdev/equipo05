@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Modules\Rescate\Http\Controllers\Auth\RegisterController;
 use Modules\Rescate\Http\Controllers\AnimalConditionController;
 use Modules\Rescate\Http\Controllers\AnimalController;
 use Modules\Rescate\Http\Controllers\AnimalFileController;
@@ -50,6 +51,14 @@ Route::get('/refresh-csrf', function () {
         'token' => csrf_token(),
     ]);
 })->middleware('web')->withoutMiddleware(['auth']);
+
+Route::middleware('guest')->group(function () {
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])
+        ->name('register')
+        ->withoutMiddleware(['auth']);
+    Route::post('register', [RegisterController::class, 'register'])
+        ->withoutMiddleware(['auth']);
+});
 
 Route::get('/landing', [Modules\Rescate\Http\Controllers\LandingController::class, 'index'])
     ->name('landing')

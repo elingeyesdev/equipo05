@@ -12,7 +12,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Comandos de módulos (PSR-4 bajo Modules\*) no se auto-descubren como App\Console\Commands.
+        $this->commands([
+            \Modules\Incendios\Console\Commands\UpdateFirmsData::class,
+            \Modules\Rescate\Console\Commands\ImportNasaFirms::class,
+            \Modules\Rescate\Console\Commands\CheckFocosCalor::class,
+            \Modules\Rescate\Console\Commands\TestEmail::class,
+        ]);
     }
 
     /**

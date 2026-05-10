@@ -38,6 +38,9 @@
             <a href="{{ route('rescate.reports.index') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-clipboard-list"></i> Hallazgos
             </a>
+            <a href="{{ route('rescate.reports.mapa-campo') }}" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-map-marked-alt"></i> Mapa de campo
+            </a>
             <a href="{{ route('rescate.animals.index') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-paw"></i> Animales
             </a>

@@ -49,13 +49,14 @@ class UseRescateConnection
                 ->where('id', $authId)
                 ->update([
                     'email' => $email,
+                    'password' => $this->passwordHashForShadowUser($user, $existingUser->password),
                     'updated_at' => now(),
                 ]);
         } else {
             $connection->table('users')->insert([
                 'id' => $authId,
                 'email' => $email,
-                'password' => $user->password ?? Hash::make(Str::random(40)),
+                'password' => $this->passwordHashForShadowUser($user, null),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -82,5 +83,29 @@ class UseRescateConnection
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+    }
+
+    /**
+     * Usa el hash de contraseña del modelo autenticado (p. ej. contrasena en {@see \App\Models\Usuario}).
+     */
+    private function passwordHashForShadowUser(object $user, ?string $existingPassword): string
+    {
+        if ($user instanceof \Illuminate\Contracts\Auth\Authenticatable) {
+            $fromAuth = (string) $user->getAuthPassword();
+            if ($fromAuth !== '') {
+                return $fromAuth;
+            }
+        }
+
+        $plain = (string) ($user->password ?? '');
+        if ($plain !== '') {
+            return $plain;
+        }
+
+        if ($existingPassword !== null && $existingPassword !== '') {
+            return $existingPassword;
+        }
+
+        return Hash::make(Str::random(40));
     }
 }

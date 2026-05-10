@@ -13,3 +13,8 @@ Schedule::command('externo:sync-datos')->everyMinute();
 // o si quieres menos frecuencia:
 // Schedule::command('externo:sync-datos')->everyFiveMinutes();
 // Schedule::command('externo:sync-datos')->everyTenMinutes();
+
+// Módulo monitoreo incendios (original: modulos/.../routes/console.php): actualización FIRMS.
+Schedule::command('firms:update')
+    ->everyFiveMinutes()
+    ->withoutOverlapping();

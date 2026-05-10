@@ -43,13 +43,11 @@
         var gatewayBaseUrl = @json($gatewayUrl);
         
         window.handleCiLookup = async function() {
-            console.log('=== handleCiLookup EJECUTADO ===');
             var ciLookupInput = document.getElementById('ci-lookup-input');
             var ciLookupError = document.getElementById('ci-lookup-error');
             var ciLookupMessage = document.getElementById('ci-lookup-message');
             var ciLookupTopMessage = document.getElementById('ci-lookup-top-message');
-            
-            console.log('Input encontrado:', ciLookupInput);
+
             var ci = (ciLookupInput ? ciLookupInput.value : '').trim();
             
             // Ocultar mensajes anteriores
@@ -114,16 +112,10 @@
                     const systemValue = String(json.system || '').toLowerCase().trim();
                     const isRescateSystem = systemValue === 'animales';
                     const isFound = json.found === true || json.found === 'true' || json.found === 1 || String(json.found).toLowerCase() === 'true';
-                    
-                    console.log('¿Es sistema rescate?', isRescateSystem, '(valor original:', json.system, ', normalizado:', systemValue, ')');
-                    console.log('¿Se encontró usuario?', isFound, '(valor original:', json.found, ')');
-                    console.log('Condición completa (rescate Y found):', isRescateSystem && isFound);
-                    
+
                     // PRIMERO verificar si es rescate y está encontrado - NO redirigir
                     // Esta es la validación CRÍTICA que debe detener todo
                     if (isRescateSystem === true && isFound === true) {
-                        console.log('✓✓✓✓✓ USUARIO ENCONTRADO EN SISTEMA RESCATE - DETENIENDO TODO ✓✓✓✓✓');
-                        
                         // Mostrar mensaje ARRIBA del input
                         var ciLookupTopMessage = document.getElementById('ci-lookup-top-message');
                         var ciLookupInput = document.getElementById('ci-lookup-input');
@@ -144,45 +136,34 @@
                         }
                         
                         // NO redirigir al registro - retornar inmediatamente para CORTAR EL BUCLE
-                        console.log('✓✓✓ RETORNANDO SIN REDIRIGIR - FIN DE FUNCIÓN - BUCLE CORTADO ✓✓✓');
                         return; // IMPORTANTE: Esto detiene toda la ejecución de la función y corta el bucle
                     }
-                    
+
                     // Si llegamos aquí, el sistema NO es rescate o no se encontró
-                    console.log('→→→ No es sistema rescate o no se encontró - continuar con redirección');
-                    console.log('→→→ Sistema:', systemValue, '| Found:', isFound);
-                    console.log('→→→ isRescateSystem:', isRescateSystem, '| isFound:', isFound);
-                    
                     // VERIFICACIÓN FINAL: Si es rescate y found, NO continuar
                     if (isRescateSystem === true && isFound === true) {
-                        console.log('⚠️⚠️⚠️ SEGURIDAD: Detectado rescate+found después de validación - ABORTANDO ⚠️⚠️⚠️');
                         return; // CORTAR BUCLE - No continuar
                     }
-                    
+
                     // Guardar los datos en sessionStorage para que el registro los pueda leer
                     if (json.success && json.found && json.data) {
                         sessionStorage.setItem('gatewayData', JSON.stringify(json.data));
-                        console.log('Datos del gateway guardados en sessionStorage:', json.data);
                     } else {
                         // Si no hay datos, limpiar sessionStorage
                         sessionStorage.removeItem('gatewayData');
-                        console.log('No se encontraron datos en el gateway');
                     }
-                    
+
                     // Solo redirigir si NO es sistema rescate (verificación final)
                     if (!isRescateSystem || !isFound) {
-                        console.log('→→→→→ Redirigiendo al registro con CI:', ci, '(sistema:', systemValue, ')');
                         window.location.href = '{{ route("rescate.register") }}?ci=' + encodeURIComponent(ci);
                         return; // Importante: retornar después de redirigir
-                    } else {
-                        console.log('⚠️ No se redirige porque es sistema rescate');
-                        return; // CORTAR BUCLE
                     }
+
+                    return; // CORTAR BUCLE
                 } else {
                     console.warn('Error al llamar al gateway:', response.status);
                     sessionStorage.removeItem('gatewayData');
                     // Si hay error, también redirigir al registro
-                    console.log('Redirigiendo al registro con CI (después de error):', ci);
                     window.location.href = '{{ route("rescate.register") }}?ci=' + encodeURIComponent(ci);
                     return; // CORTAR BUCLE
                 }
@@ -190,7 +171,6 @@
                 console.error('Error al llamar al gateway:', error);
                 sessionStorage.removeItem('gatewayData');
                 // Si hay error en el catch, también redirigir al registro
-                console.log('Redirigiendo al registro con CI (después de catch):', ci);
                 window.location.href = '{{ route("rescate.register") }}?ci=' + encodeURIComponent(ci);
                 return; // CORTAR BUCLE
             }
@@ -403,8 +383,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     metaTag.setAttribute('content', data.token);
                 }
             }
-        }).catch(function(error) {
-            console.log('Error refreshing CSRF token:', error);
+        }).catch(function() {
+            /* ignorar fallo silencioso de refresco CSRF */
         });
     }, 30 * 60 * 1000); // 30 minutos
 
@@ -456,7 +436,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Inicializar inmediatamente y también después de un delay
-    console.log('Iniciando setup de CI lookup...');
     initCiLookup();
     setTimeout(function() {
         initCiLookup();

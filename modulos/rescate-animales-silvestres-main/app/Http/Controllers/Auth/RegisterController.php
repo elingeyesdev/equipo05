@@ -2,10 +2,16 @@
 
 namespace Modules\Rescate\Http\Controllers\Auth;
 
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Models\Usuario;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Modules\Rescate\Http\Controllers\Controller;
 use Modules\Rescate\Models\Person;
 use Modules\Rescate\Models\User;
@@ -14,26 +20,6 @@ use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/login';
-
     /**
      * Create a new controller instance.
      *
@@ -44,6 +30,24 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    public function showRegistrationForm(): View
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        $user = $this->create($request->all());
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return $this->registered($request, $user);
+    }
+
     /**
      * Get a validator for an incoming registration request.
      *
@@ -51,11 +55,15 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        $emailUnique = $this->usesIntegratedCoreAuth()
+            ? Rule::unique((new Usuario)->getTable(), 'email')
+            : 'unique:users,email';
+
         $rules = [
             'nombre' => ['required', 'string', 'max:255'],
             'ci' => ['required', 'string', 'max:50'],
             'telefono' => ['nullable', 'string', 'max:50'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'string', 'email', 'max:255', $emailUnique],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'foto' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120', new \Modules\Rescate\Rules\NotWebpImage],
         ];
@@ -84,20 +92,31 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @return \Modules\Rescate\Models\User
+     * @return \App\Models\Usuario|\Modules\Rescate\Models\User
      */
     protected function create(array $data)
+    {
+        $fotoPath = null;
+        if (isset($data['foto']) && $data['foto']->isValid()) {
+            $fotoPath = $data['foto']->store('personas', 'public');
+        }
+
+        if ($this->usesIntegratedCoreAuth()) {
+            return $this->createIntegratedUsuario($data, $fotoPath);
+        }
+
+        return $this->createStandaloneRescateUser($data, $fotoPath);
+    }
+
+    /**
+     * Flujo original del módulo rescate (solo BD rescate).
+     */
+    protected function createStandaloneRescateUser(array $data, ?string $fotoPath): User
     {
         $user = User::create([
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-
-        // Guardar foto de perfil
-        $fotoPath = null;
-        if (isset($data['foto']) && $data['foto']->isValid()) {
-            $fotoPath = $data['foto']->store('personas', 'public');
-        }
 
         $person = Person::create([
             'usuario_id' => $user->id,
@@ -108,13 +127,11 @@ class RegisterController extends Controller
             'es_cuidador' => false,
         ]);
 
-        // Rol por defecto: ciudadano (se asegura que exista aunque el seeder no se haya ejecutado)
         if (method_exists($user, 'assignRole')) {
             $role = Role::firstOrCreate(['name' => 'ciudadano', 'guard_name' => 'web']);
             $user->assignRole($role);
         }
 
-        // Registrar tracking de registro
         try {
             app(UserTrackingService::class)->logUserRegistration($user, [
                 'person' => [
@@ -124,11 +141,85 @@ class RegisterController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            // No fallar el registro si el tracking falla
             \Log::warning('Error registrando tracking de usuario: '.$e->getMessage());
         }
 
         return $user;
+    }
+
+    /**
+     * Registro alineado con el login unificado (tabla usuarios + mismos IDs en rescate).
+     */
+    protected function createIntegratedUsuario(array $data, ?string $fotoPath): Usuario
+    {
+        $nombreCompleto = trim((string) $data['nombre']);
+        $parts = preg_split('/\s+/', $nombreCompleto, 2, PREG_SPLIT_NO_EMPTY);
+        $nombre = Str::limit($parts[0] ?? 'Usuario', 50, '');
+        $apellido = Str::limit($parts[1] ?? '-', 50, '');
+
+        $imagenUrl = null;
+        if ($fotoPath !== null) {
+            $imagenUrl = Str::limit('storage/'.$fotoPath, 255, '');
+        }
+
+        $usuario = Usuario::create([
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'email' => $data['email'],
+            'contrasena' => Hash::make($data['password']),
+            'telefono' => isset($data['telefono']) ? Str::limit((string) $data['telefono'], 20, '') : null,
+            'imagenurl' => $imagenUrl,
+            'activo' => true,
+        ]);
+
+        if (method_exists($usuario, 'assignRole')) {
+            $role = Role::firstOrCreate(['name' => 'ciudadano', 'guard_name' => 'web']);
+            $usuario->assignRole($role);
+        }
+
+        $authId = (int) $usuario->getKey();
+        $now = now();
+
+        $rescate = DB::connection('rescate');
+        $rescate->table('users')->updateOrInsert(
+            ['id' => $authId],
+            [
+                'email' => $usuario->email,
+                'password' => $usuario->contrasena,
+                'email_verified_at' => null,
+                'remember_token' => null,
+                'created_at' => $rescate->table('users')->where('id', $authId)->value('created_at') ?? $now,
+                'updated_at' => $now,
+            ]
+        );
+
+        Person::on('rescate')->updateOrCreate(
+            ['usuario_id' => $authId],
+            [
+                'nombre' => $nombreCompleto,
+                'ci' => $data['ci'],
+                'telefono' => $data['telefono'] ?? null,
+                'foto_path' => $fotoPath,
+                'es_cuidador' => false,
+            ]
+        );
+
+        try {
+            $shadow = User::on('rescate')->with('person')->find($authId);
+            if ($shadow) {
+                app(UserTrackingService::class)->logUserRegistration($shadow, [
+                    'person' => [
+                        'nombre' => $data['nombre'],
+                        'ci' => $data['ci'],
+                    ],
+                    'integrated' => true,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Error registrando tracking de usuario: '.$e->getMessage());
+        }
+
+        return $usuario;
     }
 
     /**
@@ -143,7 +234,7 @@ class RegisterController extends Controller
         $reportId = $request->session()->get('pending_report_id');
 
         // Hacer logout del usuario recién registrado
-        $this->guard()->logout();
+        Auth::logout();
 
         // Restaurar el pending_report_id en la sesión después del logout
         // La sesión web se mantiene aunque el usuario se desautentique

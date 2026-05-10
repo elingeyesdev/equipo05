@@ -20,6 +20,9 @@
         </ul>
 
         <div class="d-flex flex-wrap gap-2 mb-3">
+            <a href="{{ route('incendios.welcome') }}" class="btn btn-outline-secondary btn-sm" target="_blank" rel="noopener">
+                <i class="fas fa-door-open"></i> Bienvenida pública
+            </a>
             <a href="{{ route('incendios.dashboard') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-fire"></i> Dashboard incendios
             </a>
@@ -31,6 +34,9 @@
             </a>
             <a href="{{ route('incendios.predictions.index') }}" class="btn btn-outline-info btn-sm">
                 <i class="fas fa-chart-line"></i> Predicciones
+            </a>
+            <a href="{{ route('incendios.datos-climaticos.index') }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-cloud-sun"></i> Datos climáticos
             </a>
             <a href="{{ route('incendios.simulaciones.index') }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-flask"></i> Simulaciones

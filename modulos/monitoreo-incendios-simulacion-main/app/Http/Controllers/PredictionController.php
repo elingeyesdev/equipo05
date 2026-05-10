@@ -86,8 +86,8 @@ class PredictionController extends Controller
             'ci_usuario' => auth()->user()->cedula_identidad,
         ]);
 
-        return redirect()->route('predictions.show', $prediction->id)
-            ->with('success', 'Predicción generada exitosamente.');
+        return redirect()->route('incendios.predictions.show', $prediction->id)
+            ->with('success', 'Predicción generada correctamente.');
     }
 
     /**
@@ -161,8 +161,8 @@ class PredictionController extends Controller
     {
         $prediction->update($request->validated());
 
-        return redirect()->route('predictions.index')
-            ->with('success', 'Predicción actualizada exitosamente');
+        return redirect()->route('incendios.predictions.index')
+            ->with('success', 'Predicción actualizada correctamente.');
     }
 
     /**
@@ -172,8 +172,8 @@ class PredictionController extends Controller
     {
         Prediction::findOrFail($id)->delete();
 
-        return redirect()->route('predictions.index')
-            ->with('success', 'Predicción eliminada exitosamente');
+        return redirect()->route('incendios.predictions.index')
+            ->with('success', 'Predicción eliminada correctamente.');
     }
 
     /**
