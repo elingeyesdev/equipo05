@@ -35,3 +35,15 @@ test('logistica internal module route requires authentication', function () {
 
     $response->assertRedirect('/login');
 });
+
+test('incendios welcome page is public', function () {
+    $response = $this->get('/incendios/modulo/bienvenida');
+
+    $response->assertOk();
+});
+
+test('rescate landing is public', function () {
+    $response = $this->get('/rescate/modulo/landing');
+
+    $response->assertOk();
+});
