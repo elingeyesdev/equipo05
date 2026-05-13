@@ -264,14 +264,14 @@ Route::prefix('logistica/modulo')
 
 Route::prefix('seguimiento/modulo')
     ->as('seguimiento.')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'seguimiento.db'])
     ->group(function () {
         require base_path('modulos/seguimiento-voluntarios-comunarios-main/routes/web.php');
     });
 
 Route::prefix('cuadrillas/modulo')
     ->as('cuadrillas.')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'cuadrillas.db'])
     ->group(function () {
         require base_path('modulos/cuadrillas-incendios-kardex-cursos-Alas-Chiquitanas/routes/web.php');
     });
