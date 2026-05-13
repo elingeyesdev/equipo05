@@ -96,9 +96,36 @@ services:
     networks:
       - transparencia-net
 
+  # --- PostgreSQL unificado (schemas inventario/incendios/rescate/logistica/seguimiento/cuadrillas) ---
+  # PostGIS: los scripts SQL crean CREATE EXTENSION postgis.
+  # Puerto host 5433 por defecto para no chocar con PostgreSQL local ni otros contenedores en 5432.
+  db_unificado:
+    image: postgis/postgis:16-3.5
+    container_name: equipo05-unificado-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: equipo05_unificado
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "${UNIFIED_PG_PASSWORD:-equipo05_unificado_dev}"
+    ports:
+      - "${UNIFIED_PG_DOCKER_PORT:-5433}:5432"
+    volumes:
+      - pg-unificado-data:/var/lib/postgresql/data
+      - ./database/unified_postgresql:/docker-entrypoint-sql:ro
+      - ./database/docker/init-unificado-db.sh:/docker-entrypoint-initdb.d/00-init-unificado-db.sh:ro
+    networks:
+      - transparencia-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d equipo05_unificado"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
 networks:
   transparencia-net:
     driver: bridge
 
 volumes:
   db-data:
+  pg-unificado-data:

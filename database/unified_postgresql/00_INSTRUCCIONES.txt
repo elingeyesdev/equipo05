@@ -3,7 +3,28 @@ BASE UNIFICADA PostgreSQL — equipo05_unificado
 Carpeta: database/unified_postgresql/
 ================================================================================
 
+0) DOCKER DESKTOP (recomendado si PostgreSQL en Windows te da error 1067)
+   En la raiz del repo (equipo05-main-integration):
+     - Opcional: en .env define UNIFIED_PG_PASSWORD y UNIFIED_PG_DOCKER_PORT (default 5433).
+     - Levantar solo la base unificada:
+         docker compose up -d db_unificado
+     - La primera vez crea el volumen y ejecuta automaticamente los SQL 01..08
+       (script database/docker/init-unificado-db.sh). Puede tardar 1-2 minutos.
+     - pgAdmin / Laravel en tu PC:
+         Host: 127.0.0.1   Puerto: 5433 (o el que pusiste en UNIFIED_PG_DOCKER_PORT)
+         Base de datos: equipo05_unificado   Usuario: postgres
+         Contrasena: la de UNIFIED_PG_PASSWORD en .env, o por defecto la del compose:
+         equipo05_unificado_dev (si no definiste variable en .env para compose).
+     - Si cambiaste scripts SQL y queres recrear desde cero (solo desarrollo):
+         docker compose stop db_unificado
+         docker volume rm equipo05-main-integration_pg-unificado-data
+         (el nombre del volumen puede variar; miralo con: docker volume ls)
+         docker compose up -d db_unificado
+
 1) PGADMIN / DBeaver — CONECTAR AL SERVIDOR
+   - Host localhost (o tu Docker), puerto 5432, usuario/contrasena PostgreSQL.
+
+2) CREAR LA BASE (una sola vez)
    - Host localhost (o tu Docker), puerto 5432, usuario/contrasena PostgreSQL.
 
 2) CREAR LA BASE (una sola vez)
@@ -34,7 +55,9 @@ Carpeta: database/unified_postgresql/
    En .env del proyecto de integracion:
      DATABASE_UNIFIED_POSTGRES=true
      UNIFIED_PG_HOST=127.0.0.1
-     UNIFIED_PG_PORT=5432
+     UNIFIED_PG_PORT=5433
+     (5433 = puerto publicado por Docker db_unificado; si usas PostgreSQL instalado
+      en Windows sin Docker, suele ser 5432.)
      UNIFIED_PG_DATABASE=equipo05_unificado
      UNIFIED_PG_USERNAME=postgres
      UNIFIED_PG_PASSWORD=tu_clave
