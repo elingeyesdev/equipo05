@@ -2,6 +2,45 @@
 
 use Illuminate\Support\Str;
 
+/*
+| Los seis modulos (inventario, incendios, rescate, logistica, seguimiento, cuadrillas)
+| pueden usar un solo servidor PostgreSQL (database/unified_postgresql/) con un schema
+| por modulo. Activa con DATABASE_UNIFIED_POSTGRES=true y variables UNIFIED_PG_*.
+| El septimo espacio es la app principal (conexion default: sqlite o pgsql en .env).
+*/
+$dbUnifiedPostgres = filter_var(env('DATABASE_UNIFIED_POSTGRES', false), FILTER_VALIDATE_BOOL);
+
+$unifiedModulePgsql = static function (string $schema): array {
+    return [
+        'driver' => 'pgsql',
+        'url' => env('UNIFIED_PG_URL'),
+        'host' => env('UNIFIED_PG_HOST', '127.0.0.1'),
+        'port' => env('UNIFIED_PG_PORT', '5432'),
+        'database' => env('UNIFIED_PG_DATABASE', 'equipo05_unificado'),
+        'username' => env('UNIFIED_PG_USERNAME', 'postgres'),
+        'password' => env('UNIFIED_PG_PASSWORD', ''),
+        'charset' => env('UNIFIED_PG_CHARSET', 'utf8'),
+        'prefix' => '',
+        'prefix_indexes' => true,
+        'search_path' => $schema.',public',
+        'sslmode' => env('UNIFIED_PG_SSLMODE', 'prefer'),
+    ];
+};
+
+$sqliteModule = static function (string $urlKey, string $pathKey, string $defaultFilename): array {
+    return [
+        'driver' => 'sqlite',
+        'url' => env($urlKey),
+        'database' => env($pathKey, database_path($defaultFilename)),
+        'prefix' => '',
+        'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        'busy_timeout' => null,
+        'journal_mode' => null,
+        'synchronous' => null,
+        'transaction_mode' => 'DEFERRED',
+    ];
+};
+
 return [
 
     /*
@@ -43,77 +82,29 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
-        'inventario' => [
-            'driver' => 'sqlite',
-            'url' => env('INVENTARIO_DB_URL'),
-            'database' => env('INVENTARIO_DB_DATABASE', database_path('inventario.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
-        ],
+        'inventario' => $dbUnifiedPostgres
+            ? $unifiedModulePgsql('inventario')
+            : $sqliteModule('INVENTARIO_DB_URL', 'INVENTARIO_DB_DATABASE', 'inventario.sqlite'),
 
-        'incendios' => [
-            'driver' => 'sqlite',
-            'url' => env('INCENDIOS_DB_URL'),
-            'database' => env('INCENDIOS_DB_DATABASE', database_path('incendios.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
-        ],
+        'incendios' => $dbUnifiedPostgres
+            ? $unifiedModulePgsql('incendios')
+            : $sqliteModule('INCENDIOS_DB_URL', 'INCENDIOS_DB_DATABASE', 'incendios.sqlite'),
 
-        'rescate' => [
-            'driver' => 'sqlite',
-            'url' => env('RESCATE_DB_URL'),
-            'database' => env('RESCATE_DB_DATABASE', database_path('rescate.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
-        ],
+        'rescate' => $dbUnifiedPostgres
+            ? $unifiedModulePgsql('rescate')
+            : $sqliteModule('RESCATE_DB_URL', 'RESCATE_DB_DATABASE', 'rescate.sqlite'),
 
-        'logistica' => [
-            'driver' => 'sqlite',
-            'url' => env('LOGISTICA_DB_URL'),
-            'database' => env('LOGISTICA_DB_DATABASE', database_path('logistica.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
-        ],
+        'logistica' => $dbUnifiedPostgres
+            ? $unifiedModulePgsql('logistica')
+            : $sqliteModule('LOGISTICA_DB_URL', 'LOGISTICA_DB_DATABASE', 'logistica.sqlite'),
 
-        'seguimiento' => [
-            'driver' => 'sqlite',
-            'url' => env('SEGUIMIENTO_DB_URL'),
-            'database' => env('SEGUIMIENTO_DB_DATABASE', database_path('seguimiento.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
-        ],
+        'seguimiento' => $dbUnifiedPostgres
+            ? $unifiedModulePgsql('seguimiento')
+            : $sqliteModule('SEGUIMIENTO_DB_URL', 'SEGUIMIENTO_DB_DATABASE', 'seguimiento.sqlite'),
 
-        'cuadrillas' => [
-            'driver' => 'sqlite',
-            'url' => env('CUADRILLAS_DB_URL'),
-            'database' => env('CUADRILLAS_DB_DATABASE', database_path('cuadrillas.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
-        ],
+        'cuadrillas' => $dbUnifiedPostgres
+            ? $unifiedModulePgsql('cuadrillas')
+            : $sqliteModule('CUADRILLAS_DB_URL', 'CUADRILLAS_DB_DATABASE', 'cuadrillas.sqlite'),
 
         'mysql' => [
             'driver' => 'mysql',

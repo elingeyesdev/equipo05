@@ -1,0 +1,17 @@
+================================================================================
+ACTUALIZADO — Logistica, Seguimiento, Cuadrillas
+================================================================================
+
+Los esquemas minimos para integracion Laravel estan en PostgreSQL como:
+
+  06_mod_logistica.sql
+  07_mod_seguimiento.sql
+  08_mod_cuadrillas.sql
+
+Ejecutalos en equipo05_unificado despues de 01_extensions_and_schemas.sql
+(junto con inventario/incendios/rescate). El script run_schema_all.ps1 / .sh
+los aplica en el orden correcto.
+
+Si tenes dumps completos del modulo original (public / pg_dump), podes
+importarlos al schema homonimo con SET search_path y edicion de metacomandos;
+las tablas creadas por 06–08 son idempotentes (IF NOT EXISTS) para desarrollo.

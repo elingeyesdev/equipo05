@@ -1,0 +1,74 @@
+================================================================================
+BASE UNIFICADA PostgreSQL — equipo05_unificado
+Carpeta: database/unified_postgresql/
+================================================================================
+
+1) PGADMIN / DBeaver — CONECTAR AL SERVIDOR
+   - Host localhost (o tu Docker), puerto 5432, usuario/contrasena PostgreSQL.
+
+2) CREAR LA BASE (una sola vez)
+   - Conectado a la base "postgres", ejecutar SOLO:
+     00_create_database.sql
+   - Desarrollo: DROP DATABASE equipo05_unificado; (cerrar conexiones antes).
+
+3) ESQUEMAS Y TABLAS (orden recomendado)
+   Opcion A — Script automatico (requiere psql en PATH):
+     PowerShell (Windows), desde esta carpeta:
+       $env:PGPASSWORD = "tu_clave"
+       .\run_schema_all.ps1
+     Bash (Linux/macOS):
+       export PGPASSWORD=tu_clave
+       chmod +x run_schema_all.sh
+       ./run_schema_all.sh
+
+   Opcion B — Manual en DBeaver/pgAdmin, conexion a "equipo05_unificado":
+     01_extensions_and_schemas.sql
+     04_mod_inventario_transparencia.sql
+     02_mod_incendios.sql
+     03_mod_rescate.sql
+     06_mod_logistica.sql
+     07_mod_seguimiento.sql
+     08_mod_cuadrillas.sql
+
+4) LARAVEL — PERSISTIR MODULOS EN ESTE MISMO PostgreSQL
+   En .env del proyecto de integracion:
+     DATABASE_UNIFIED_POSTGRES=true
+     UNIFIED_PG_HOST=127.0.0.1
+     UNIFIED_PG_PORT=5432
+     UNIFIED_PG_DATABASE=equipo05_unificado
+     UNIFIED_PG_USERNAME=postgres
+     UNIFIED_PG_PASSWORD=tu_clave
+   La conexion default (DB_CONNECTION) puede seguir en sqlite para la app
+   principal (donaciones / sesiones) o migrarla a pgsql si queres todo en PG.
+
+5) DIAGRAMA (ERD) EN DBeaver
+   - Conexion a "equipo05_unificado".
+   - Clic derecho en un esquema (inventario, incendios, rescate, logistica,
+     seguimiento, cuadrillas) -> View Diagram.
+
+6) REPOSITORIO UNIFICADO (GitHub)
+   https://github.com/elingeyesdev/equipo05.git
+
+   git clone https://github.com/elingeyesdev/equipo05.git equipo05-main-integration
+
+7) LOS 7 "ESPACIOS" DE DATOS
+   - Seis modulos = seis schemas PostgreSQL arriba.
+   - Septimo = aplicacion principal (usuarios globales, donaciones fase 1,
+     etc.) en database.sqlite o en schema public / core segun configures
+     DB_CONNECTION en .env.
+
+================================================================================
+ARCHIVOS EN ESTA CARPETA
+================================================================================
+  00_create_database.sql
+  00_INSTRUCCIONES.txt
+  01_extensions_and_schemas.sql
+  02_mod_incendios.sql
+  03_mod_rescate.sql
+  04_mod_inventario_transparencia.sql
+  05_PENDIENTE_logistica_seguimiento_cuadrillas.txt  (notas / dumps legacy)
+  06_mod_logistica.sql
+  07_mod_seguimiento.sql
+  08_mod_cuadrillas.sql
+  run_schema_all.ps1
+  run_schema_all.sh
