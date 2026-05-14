@@ -1,5 +1,10 @@
 * text=auto eol=lf
 
+# Scripts shell y SQL de Docker/init: deben ser LF siempre (Windows + contenedor Linux)
+*.sh text eol=lf
+database/docker/*.sql text eol=lf
+database/unified_postgresql/*.sql text eol=lf
+
 *.blade.php diff=html
 *.css diff=css
 *.html diff=html

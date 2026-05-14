@@ -9,7 +9,7 @@ Carpeta: database/unified_postgresql/
      - Levantar solo la base unificada:
          docker compose up -d db_unificado
      - La primera vez crea el volumen y ejecuta automaticamente los SQL 01..08
-       (script database/docker/init-unificado-db.sh). Puede tardar 1-2 minutos.
+       (archivo database/docker/00-init-unificado-db.sql; sin bash para evitar CRLF en Windows).
      - pgAdmin / Laravel en tu PC:
          Host: 127.0.0.1   Puerto: 5433 (o el que pusiste en UNIFIED_PG_DOCKER_PORT)
          Base de datos: equipo05_unificado   Usuario: postgres

@@ -112,7 +112,8 @@ services:
     volumes:
       - pg-unificado-data:/var/lib/postgresql/data
       - ./database/unified_postgresql:/docker-entrypoint-sql:ro
-      - ./database/docker/init-unificado-db.sh:/docker-entrypoint-initdb.d/00-init-unificado-db.sh:ro
+      # SQL en lugar de .sh: evita error "bash\r" si el repo se clona con CRLF en Windows
+      - ./database/docker/00-init-unificado-db.sql:/docker-entrypoint-initdb.d/00-init-unificado-db.sql:ro
     networks:
       - transparencia-net
     healthcheck:

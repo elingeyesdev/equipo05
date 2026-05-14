@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Uso en Linux/macOS o WSL (debe estar en LF). En Docker ya no se usa este archivo:
+# ver 00-init-unificado-db.sql (evita error bash\r con clones CRLF en Windows).
 # Ejecutado solo la primera vez que se crea el volumen de datos (imagen oficial PostgreSQL).
 # Orden alineado con database/unified_postgresql/run_schema_all.sh
 set -euo pipefail
