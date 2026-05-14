@@ -48,14 +48,32 @@ if (Test-Path $dataDir) {
     Write-Host "Ajustando permisos en: $dataDir" -ForegroundColor Yellow
     & icacls $dataDir /grant "NT AUTHORITY\SYSTEM:(OI)(CI)F" /T | Out-Null
     & icacls $dataDir /grant "BUILTIN\Administradores:(OI)(CI)F" /T | Out-Null
-    & icacls $dataDir /grant "NT AUTHORITY\NETWORK SERVICE:(OI)(CI)F" /T | Out-Null
+    # SID bien conocido (evita nombres distintos en Windows en español: "Servicio de red")
+    & icacls $dataDir /grant "*S-1-5-20:(OI)(CI)F" /T 2>$null | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "(Aviso) No se pudo conceder a Network Service por SID; no es critico si el servicio usa LocalSystem." -ForegroundColor DarkYellow
+    }
 }
 
 Write-Host "Cambiando cuenta del servicio a Sistema local (LocalSystem)..." -ForegroundColor Yellow
-& sc.exe config $serviceName obj= "NT AUTHORITY\LocalSystem" | Out-Null
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "sc config fallo (codigo $LASTEXITCODE). ¿Ejecutaste PowerShell como administrador?"
-    exit $LASTEXITCODE
+# sc.exe con "NT AUTHORITY\LocalSystem" a veces devuelve 1057 en PowerShell; WMI/CIM es mas fiable.
+$cimSvc = Get-CimInstance -ClassName Win32_Service -Filter "Name='$serviceName'" -ErrorAction Stop
+$chg = $null
+try {
+    $chg = Invoke-CimMethod -InputObject $cimSvc -MethodName Change -Arguments @{ StartName = 'LocalSystem' }
+} catch {
+    Write-Host "WMI Change (solo StartName) fallo: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+if ($null -eq $chg -or $chg.ReturnValue -ne 0) {
+    if ($null -ne $chg -and $chg.ReturnValue -ne 0) {
+        Write-Host "WMI Change devolvio $($chg.ReturnValue). Intentando sc.exe (sintaxis cmd)..." -ForegroundColor Yellow
+    }
+    $cmdLine = 'sc config {0} obj= LocalSystem password= ""' -f $serviceName
+    cmd.exe /c $cmdLine
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "No se pudo cambiar la cuenta del servicio. WMI=$(if ($chg) { $chg.ReturnValue } else { 'n/a' }); sc=$LASTEXITCODE. (22=parametro invalido; 5=acceso denegado)"
+        exit 1
+    }
 }
 
 Write-Host "Iniciando servicio..." -ForegroundColor Yellow
