@@ -1,4 +1,4 @@
-# Diagnostico PostgreSQL 18 (Windows) — no requiere administrador
+# Diagnostico PostgreSQL 18 (Windows) - no requiere administrador
 # Ejecutar en PowerShell: .\scripts\diagnostico-postgresql-18.ps1
 
 $ErrorActionPreference = "Continue"
@@ -15,9 +15,9 @@ Write-Host "=== 3. Puerto 5432 ===" -ForegroundColor Cyan
 $ns = netstat -ano | Select-String ":5432"
 if ($ns) { $ns } else { "(nadie escuchando en 5432)" }
 
-Write-Host "=== 4. postmaster.pid (si existe con servicio detenido = problema) ===" -ForegroundColor Cyan
-$pidf = Join-Path $dataDir "postmaster.pid"
-if (Test-Path $pidf) { Get-Content $pidf } else { "(no existe — OK si el servidor esta apagado)" }
+Write-Host "=== 4. postmaster.pid (si existe con servicio detenido, revisar) ===" -ForegroundColor Cyan
+$pidFile = Join-Path $dataDir "postmaster.pid"
+if (Test-Path $pidFile) { Get-Content $pidFile } else { "(no existe; normal si el servidor esta apagado)" }
 
 Write-Host "=== 5. Ultimas lineas del log de PostgreSQL ===" -ForegroundColor Cyan
 $logDir = Join-Path $dataDir "log"
@@ -29,5 +29,5 @@ Write-Host "A) Servicios (GUI): Win+R -> services.msc -> $svcName -> Propiedades
 Write-Host "   'Cuenta del sistema local' -> Aplicar -> pestaña General -> Iniciar."
 Write-Host "B) Script reparacion (PowerShell COMO ADMINISTRADOR):"
 Write-Host "   .\scripts\fix-postgresql-18-windows-service.ps1"
-Write-Host "C) Si sigue fallando: Visor de eventos -> Registros de Windows -> Aplicacion -> buscar PostgreSQL."
+Write-Host "C) Si sigue fallando: Visor de eventos, Registros de Windows, Aplicacion, buscar PostgreSQL."
 Write-Host ""
