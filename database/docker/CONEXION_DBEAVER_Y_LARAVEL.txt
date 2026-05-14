@@ -1,0 +1,66 @@
+================================================================================
+CONEXION DBeaver + Laravel al PostgreSQL unificado (Docker: db_unificado)
+Proyecto: equipo05-main-integration
+================================================================================
+
+PERSISTENCIA
+------------
+Los datos viven en el volumen Docker "pg-unificado-data" (nombre compuesto:
+equipo05-main-integration_pg-unificado-data). No se pierden al reiniciar la PC
+mientras no borres ese volumen con "docker volume rm".
+
+DBEAVER (nueva conexion PostgreSQL)
+-----------------------------------
+1. Base de datos -> Nueva conexion -> PostgreSQL -> Siguiente.
+2. Pestaña Principal (o Main):
+   - Host:     127.0.0.1
+   - Puerto:  5433
+     (5433 es el mapeo por defecto en docker-compose; si cambiaste
+      UNIFIED_PG_DOCKER_PORT en .env del proyecto, usa ese puerto.)
+   - Base de datos: equipo05_unificado
+   - Usuario:       postgres
+   - Contrasena:    la misma que UNIFIED_PG_PASSWORD en tu .env del proyecto,
+                    o si no definiste ninguna para Compose:
+                    equipo05_unificado_dev
+3. Probar conexion -> Finalizar.
+4. En el arbol, despliega: Bases de datos -> equipo05_unificado -> Esquemas
+   Deberias ver: inventario, incendios, rescate, logistica, seguimiento,
+   cuadrillas, public, (y core si esta en el script).
+
+LARAVEL (.env en la raiz del proyecto, con PHP en Windows)
+----------------------------------------------------------
+Copia o ajusta estas lineas (y ejecuta: php artisan config:clear):
+
+  DATABASE_UNIFIED_POSTGRES=true
+  UNIFIED_PG_HOST=127.0.0.1
+  UNIFIED_PG_PORT=5433
+  UNIFIED_PG_DATABASE=equipo05_unificado
+  UNIFIED_PG_USERNAME=postgres
+  UNIFIED_PG_PASSWORD=equipo05_unificado_dev
+
+  DB_CONNECTION=sqlite
+  DB_DATABASE=database/database.sqlite
+
+La app principal (usuarios Spatie, donaciones fase 1, etc.) sigue en SQLite
+por defecto. Los SEIS modulos integrados usan el mismo PostgreSQL con distinto
+search_path (esquema) por conexion.
+
+MIGRACIONES (php artisan migrate)
+---------------------------------
+- Conexion "default" (sqlite): SI, para la app principal:
+    php artisan migrate
+- Conexiones inventario/incendios/rescate/logistica/seguimiento/cuadrillas:
+  el esquema en PostgreSQL se crea con los SQL en Docker
+  (database/docker/00-init-unificado-db.sql). No hace falta volver a correr
+  las migraciones 2026_02_09_* sobre PostgreSQL si las tablas ya existen;
+  si lo intentas, puede fallar por "relation already exists".
+
+Si recreaste el volumen Docker y el init SQL fallo, revisa:
+  docker logs equipo05-unificado-pg
+
+DOCKER DESKTOP
+--------------
+El grupo "equipo05-main-i..." debe mostrar el contenedor equipo05-unificado-pg
+en ejecucion. Puerto publicado: 5433 -> 5432.
+
+================================================================================

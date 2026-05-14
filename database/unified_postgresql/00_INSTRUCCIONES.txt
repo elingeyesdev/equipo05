@@ -10,11 +10,7 @@ Carpeta: database/unified_postgresql/
          docker compose up -d db_unificado
      - La primera vez crea el volumen y ejecuta automaticamente los SQL 01..08
        (archivo database/docker/00-init-unificado-db.sql; sin bash para evitar CRLF en Windows).
-     - pgAdmin / Laravel en tu PC:
-         Host: 127.0.0.1   Puerto: 5433 (o el que pusiste en UNIFIED_PG_DOCKER_PORT)
-         Base de datos: equipo05_unificado   Usuario: postgres
-         Contrasena: la de UNIFIED_PG_PASSWORD en .env, o por defecto la del compose:
-         equipo05_unificado_dev (si no definiste variable en .env para compose).
+     - pgAdmin / DBeaver / Laravel: database/docker/CONEXION_DBEAVER_Y_LARAVEL.txt
      - Si cambiaste scripts SQL y queres recrear desde cero (solo desarrollo):
          docker compose stop db_unificado
          docker volume rm equipo05-main-integration_pg-unificado-data
