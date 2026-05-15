@@ -27,6 +27,18 @@ DBEAVER (nueva conexion PostgreSQL)
    Deberias ver: inventario, incendios, rescate, logistica, seguimiento,
    cuadrillas, public, (y core si esta en el script).
 
+ERROR "could not find driver" (todos los modulos)
+-------------------------------------------------
+PHP de XAMPP/Laragon debe tener activo pdo_pgsql. Sin eso Laravel no puede
+hablar con PostgreSQL aunque DBeaver si conecte.
+
+  1) En C:\xampp\php\php.ini descomenta (quita el ;):
+       extension=pdo_pgsql
+       extension=pgsql
+  2) O ejecuta: .\scripts\enable-php-pgsql-xampp.ps1
+  3) Cierra y abre la terminal; comprueba: php -m | findstr pdo_pgsql
+  4) Reinicia "php artisan serve" si estaba corriendo.
+
 LARAVEL (.env en la raiz del proyecto, con PHP en Windows)
 ----------------------------------------------------------
 Copia o ajusta estas lineas (y ejecuta: php artisan config:clear):
