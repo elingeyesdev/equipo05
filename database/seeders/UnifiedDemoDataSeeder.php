@@ -33,6 +33,8 @@ class UnifiedDemoDataSeeder extends Seeder
 
         $db = DB::connection('inventario');
         if ($db->table('donaciones')->count() > 0) {
+            $this->seedInventarioExtras($db);
+
             return;
         }
 
@@ -101,6 +103,29 @@ class UnifiedDemoDataSeeder extends Seeder
             'observaciones' => 'Recolección demo',
             'estado' => 'pendiente',
         ]);
+    }
+
+    private function seedInventarioExtras($db): void
+    {
+        if ($db->table('paquetes')->where('codigo_paquete', 'PKG-DEMO-001')->doesntExist()) {
+            $db->table('paquetes')->insert([
+                'codigo_paquete' => 'PKG-DEMO-001',
+                'estado' => 'pendiente',
+                'fecha_creacion' => Carbon::now(),
+            ]);
+        }
+
+        if ($db->table('solicitudes_recoleccion')->where('estado', 'pendiente')->count() === 0
+            && $db->table('donantes')->exists()) {
+            $donanteId = $db->table('donantes')->value('id_donante');
+            $db->table('solicitudes_recoleccion')->insert([
+                'id_donante' => $donanteId,
+                'direccion_recoleccion' => 'Av. Demo 123, Santa Cruz',
+                'fecha_programada' => Carbon::now()->addDays(2),
+                'observaciones' => 'Recolección demo',
+                'estado' => 'pendiente',
+            ]);
+        }
     }
 
     private function seedIncendios(): void

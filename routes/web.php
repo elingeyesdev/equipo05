@@ -228,6 +228,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('inventario')
     ->as('inventario.')
+    ->middleware(['inventario.db'])
     ->group(function () {
         require base_path('modulos/donacion-recepcion-inventario-main/routes/web.php');
     });
