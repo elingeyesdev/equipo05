@@ -22,7 +22,3 @@
         </div>
     </div>
 @endsection
-
-@section('js')
-    @stack('js')
-@endsection

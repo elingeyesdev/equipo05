@@ -34,7 +34,38 @@ class PredictionController extends Controller
             ->orderBy('fecha', 'desc')
             ->get();
 
-        return view('prediction.create', compact('prediction', 'focosIncendios'));
+        $focosMap = $focosIncendios->map(function (FocosIncendio $foco) {
+            $coords = is_string($foco->coordenadas)
+                ? json_decode($foco->coordenadas, true)
+                : $foco->coordenadas;
+
+            if (! is_array($coords)) {
+                return null;
+            }
+
+            $lat = (float) ($coords['lat'] ?? $coords[0] ?? 0);
+            $lng = (float) ($coords['lng'] ?? $coords[1] ?? 0);
+
+            if ($lat === 0.0 && $lng === 0.0) {
+                return null;
+            }
+
+            $intensity = (float) ($foco->intensidad ?? 3);
+
+            return [
+                'id' => $foco->id,
+                'lat' => $lat,
+                'lng' => $lng,
+                'ubicacion' => $foco->ubicacion ?? 'Foco registrado',
+                'intensidad' => $intensity,
+                'frp' => max(1, $intensity * 50),
+                'date' => $foco->fecha?->format('d/m/Y H:i') ?? '',
+                'confidence' => 'n',
+                'source' => 'database',
+            ];
+        })->filter()->values();
+
+        return view('prediction.create', compact('prediction', 'focosIncendios', 'focosMap'));
     }
 
     /**
@@ -43,6 +74,7 @@ class PredictionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
+            'foco_incendio_id' => 'nullable|integer|exists:incendios.focos_incendios,id',
             'fire_lat' => 'required|numeric',
             'fire_lng' => 'required|numeric',
             'fire_intensity' => 'required|numeric|min:1|max:10',
@@ -78,7 +110,7 @@ class PredictionController extends Controller
         );
 
         $prediction = Prediction::create([
-            'foco_incendio_id' => null, // No hay foco de incendio asociado
+            'foco_incendio_id' => $request->input('foco_incendio_id') ?: null,
             'predicted_at' => now(),
             'path' => $predictionData['path'],
             'meta' => $predictionData['meta'],
@@ -151,7 +183,38 @@ class PredictionController extends Controller
             ->orderBy('fecha', 'desc')
             ->get();
 
-        return view('prediction.edit', compact('prediction', 'focosIncendios'));
+        $focosMap = $focosIncendios->map(function (FocosIncendio $foco) {
+            $coords = is_string($foco->coordenadas)
+                ? json_decode($foco->coordenadas, true)
+                : $foco->coordenadas;
+
+            if (! is_array($coords)) {
+                return null;
+            }
+
+            $lat = (float) ($coords['lat'] ?? $coords[0] ?? 0);
+            $lng = (float) ($coords['lng'] ?? $coords[1] ?? 0);
+
+            if ($lat === 0.0 && $lng === 0.0) {
+                return null;
+            }
+
+            $intensity = (float) ($foco->intensidad ?? 3);
+
+            return [
+                'id' => $foco->id,
+                'lat' => $lat,
+                'lng' => $lng,
+                'ubicacion' => $foco->ubicacion ?? 'Foco registrado',
+                'intensidad' => $intensity,
+                'frp' => max(1, $intensity * 50),
+                'date' => $foco->fecha?->format('d/m/Y H:i') ?? '',
+                'confidence' => 'n',
+                'source' => 'database',
+            ];
+        })->filter()->values();
+
+        return view('prediction.edit', compact('prediction', 'focosIncendios', 'focosMap'));
     }
 
     /**
