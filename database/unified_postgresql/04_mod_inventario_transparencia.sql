@@ -3,7 +3,8 @@
 -- Fuente: postgresql_schema_dbeaver.sql — las tablas se crean en el esquema inventario
 -- =============================================================================
 
-SET search_path TO inventario, public;
+-- Tablas de transparencia/campanas (dominio distinto al modulo almacen-inventario).
+SET search_path TO transparencia, public;
 -- =============================================================================
 -- Esquema PostgreSQL â€” Transparencia donaciones / voluntarios (Laravel)
 -- Generado a partir de: database/migrations/*.php y modelos Eloquent.

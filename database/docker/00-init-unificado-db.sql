@@ -4,8 +4,10 @@
 
 \echo '>> 01_extensions_and_schemas.sql'
 \i /docker-entrypoint-sql/01_extensions_and_schemas.sql
-\echo '>> 04_mod_inventario_transparencia.sql'
+\echo '>> 04_mod_inventario_transparencia.sql (esquema transparencia)'
 \i /docker-entrypoint-sql/04_mod_inventario_transparencia.sql
+\echo '>> 04a_inventario_schema_reset.sql'
+\i /docker-entrypoint-sql/04a_inventario_schema_reset.sql
 \echo '>> 02_mod_incendios.sql'
 \i /docker-entrypoint-sql/02_mod_incendios.sql
 \echo '>> 03_mod_rescate.sql'
