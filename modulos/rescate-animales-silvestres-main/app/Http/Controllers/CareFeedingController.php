@@ -92,7 +92,7 @@ class CareFeedingController extends Controller
      */
     public function show($id): View
     {
-        $careFeeding = CareFeeding::find($id);
+        $careFeeding = CareFeeding::findOrFail($id);
 
         return view('care-feeding.show', compact('careFeeding'));
     }
@@ -102,7 +102,7 @@ class CareFeedingController extends Controller
      */
     public function edit($id): View
     {
-        $careFeeding = CareFeeding::find($id);
+        $careFeeding = CareFeeding::findOrFail($id);
 
 		$careOptions = Care::orderByDesc('id')->get()->mapWithKeys(function (Care $care) {
 			$date = isset($care->fecha) ? Carbon::parse($care->fecha)->format('d/m/y') : null;
@@ -137,7 +137,7 @@ class CareFeedingController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        CareFeeding::find($id)->delete();
+        CareFeeding::findOrFail($id)->delete();
 
         return Redirect::route('rescate.care-feedings.index')
             ->with('success', 'Cuidado de alimentación eliminado correctamente');

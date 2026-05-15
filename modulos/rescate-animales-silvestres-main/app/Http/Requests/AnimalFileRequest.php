@@ -23,11 +23,11 @@ class AnimalFileRequest extends FormRequest
     {
         return [
             'animal_nombre' => 'nullable|string|max:255',
-            'animal_id' => 'required|exists:animals,id',
-			'especie_id' => 'required|exists:species,id',
+            'animal_id' => 'required|exists:rescate.animals,id',
+			'especie_id' => 'required|exists:rescate.species,id',
 			'imagen_url' => 'nullable|string',
 			'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
-			'estado_id' => 'required|exists:animal_statuses,id',
+			'estado_id' => 'required|exists:rescate.animal_statuses,id',
         ];
     }
 }

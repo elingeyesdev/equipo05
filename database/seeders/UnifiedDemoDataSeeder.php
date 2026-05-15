@@ -149,19 +149,55 @@ class UnifiedDemoDataSeeder extends Seeder
 
     private function seedRescate(): void
     {
-        $db = DB::connection('rescate');
-        if (! Schema::connection('rescate')->hasTable('species')) {
-            return;
-        }
-        if ($db->table('species')->count() > 0) {
+        if (! Schema::connection('rescate')->hasTable('animals')) {
+            $this->command?->warn('Rescate: ejecuta migraciones del modulo (rescate) antes del seed.');
+
             return;
         }
 
-        $db->table('species')->insert([
-            'nombre' => 'Tucán',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        if (DB::connection('rescate')->table('animals')->count() >= 3) {
+            return;
+        }
+
+        $previousDefault = config('database.default');
+        config(['database.default' => 'rescate']);
+
+        try {
+            $this->resetRescatePgSequences();
+
+            require_once base_path('modulos/rescate-animales-silvestres-main/database/seeders/RolesAndPermissionsSeeder.php');
+            (new \Modules\Rescate\Database\Seeders\RolesAndPermissionsSeeder)->run();
+
+            $showcase = new \Modules\Rescate\Seeders\ShowcaseDataSeeder;
+            if ($this->command) {
+                $showcase->setCommand($this->command);
+            }
+            $showcase->run();
+
+            $this->command?->info('Rescate: catalogos, usuarios demo y flujo completo (reportes, animales, cuidados) cargados.');
+        } finally {
+            config(['database.default' => $previousDefault]);
+        }
+    }
+
+    private function resetRescatePgSequences(): void
+    {
+        if (DB::connection('rescate')->getDriverName() !== 'pgsql') {
+            return;
+        }
+
+        foreach (['users', 'people', 'centers', 'species', 'reports', 'animals', 'animal_files'] as $table) {
+            $row = DB::connection('rescate')->selectOne(
+                "SELECT pg_get_serial_sequence(?, 'id') AS seq",
+                [$table]
+            );
+            if (! empty($row?->seq)) {
+                DB::connection('rescate')->statement(
+                    "SELECT setval(?, (SELECT COALESCE(MAX(id), 1) FROM {$table}), true)",
+                    [$row->seq]
+                );
+            }
+        }
     }
 
     private function seedLogistica(): void

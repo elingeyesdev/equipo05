@@ -51,7 +51,7 @@ class AnimalStatusController extends Controller
      */
     public function show($id): View
     {
-        $animalStatus = AnimalStatus::find($id);
+        $animalStatus = AnimalStatus::findOrFail($id);
 
         return view('animal-status.show', compact('animalStatus'));
     }
@@ -61,7 +61,7 @@ class AnimalStatusController extends Controller
      */
     public function edit($id): View
     {
-        $animalStatus = AnimalStatus::find($id);
+        $animalStatus = AnimalStatus::findOrFail($id);
 
         return view('animal-status.edit', compact('animalStatus'));
     }
@@ -79,7 +79,7 @@ class AnimalStatusController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        AnimalStatus::find($id)->delete();
+        AnimalStatus::findOrFail($id)->delete();
 
         return Redirect::route('rescate.animal-statuses.index')
             ->with('success', 'Estado eliminado correctamente');

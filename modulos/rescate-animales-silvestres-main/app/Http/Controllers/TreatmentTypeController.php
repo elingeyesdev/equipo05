@@ -52,7 +52,7 @@ class TreatmentTypeController extends Controller
      */
     public function show($id): View
     {
-        $treatmentType = TreatmentType::find($id);
+        $treatmentType = TreatmentType::findOrFail($id);
 
         return view('treatment-type.show', compact('treatmentType'));
     }
@@ -62,7 +62,7 @@ class TreatmentTypeController extends Controller
      */
     public function edit($id): View
     {
-        $treatmentType = TreatmentType::find($id);
+        $treatmentType = TreatmentType::findOrFail($id);
 
         return view('treatment-type.edit', compact('treatmentType'));
     }
@@ -80,7 +80,7 @@ class TreatmentTypeController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        TreatmentType::find($id)->delete();
+        TreatmentType::findOrFail($id)->delete();
 
         return Redirect::route('rescate.treatment-types.index')
             ->with('success', 'Tipo de tratamiento eliminado correctamente');

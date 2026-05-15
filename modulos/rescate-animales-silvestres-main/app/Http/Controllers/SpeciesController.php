@@ -52,7 +52,7 @@ class SpeciesController extends Controller
      */
     public function show($id): View
     {
-        $species = Species::find($id);
+        $species = Species::findOrFail($id);
 
         return view('species.show', compact('species'));
     }
@@ -62,7 +62,7 @@ class SpeciesController extends Controller
      */
     public function edit($id): View
     {
-        $species = Species::find($id);
+        $species = Species::findOrFail($id);
 
         return view('species.edit', compact('species'));
     }
@@ -80,7 +80,7 @@ class SpeciesController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Species::find($id)->delete();
+        Species::findOrFail($id)->delete();
 
         return Redirect::route('rescate.species.index')
             ->with('success', 'Especie eliminada correctamente');

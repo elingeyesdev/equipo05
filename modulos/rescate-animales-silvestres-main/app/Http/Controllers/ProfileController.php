@@ -83,7 +83,7 @@ class ProfileController extends Controller
             'es_cuidador'         => 'nullable|boolean',
             // Es opcional: si viene y está marcado, se toma como true; si viene desmarcado o no viene, es false.
             'compromiso_cuidador' => 'nullable|boolean',
-            'cuidador_center_id'  => 'nullable|integer|exists:centers,id',
+            'cuidador_center_id'  => 'nullable|integer|exists:rescate.centers,id',
 
             // Rol de colaboración (rescatista / veterinario)
             'rol_postulacion'     => 'nullable|in:rescatista,veterinario',

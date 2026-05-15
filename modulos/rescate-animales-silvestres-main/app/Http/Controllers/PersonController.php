@@ -326,7 +326,7 @@ class PersonController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Person::find($id)->delete();
+        Person::findOrFail($id)->delete();
 
         return Redirect::route('rescate.people.index')
             ->with('success', 'Persona eliminada correctamente');

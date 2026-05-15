@@ -52,7 +52,7 @@ class CareTypeController extends Controller
      */
     public function show($id): View
     {
-        $careType = CareType::find($id);
+        $careType = CareType::findOrFail($id);
 
         return view('care-type.show', compact('careType'));
     }
@@ -62,7 +62,7 @@ class CareTypeController extends Controller
      */
     public function edit($id): View
     {
-        $careType = CareType::find($id);
+        $careType = CareType::findOrFail($id);
 
         return view('care-type.edit', compact('careType'));
     }
@@ -80,7 +80,7 @@ class CareTypeController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        CareType::find($id)->delete();
+        CareType::findOrFail($id)->delete();
 
         return Redirect::route('rescate.care-types.index')
             ->with('success', 'Tipo de cuidado eliminado correctamente');

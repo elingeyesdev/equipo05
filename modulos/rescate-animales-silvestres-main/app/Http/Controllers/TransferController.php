@@ -238,7 +238,7 @@ class TransferController extends Controller
      */
     public function show($id): View
     {
-        $transfer = Transfer::find($id);
+        $transfer = Transfer::findOrFail($id);
 
         return view('transfer.show', compact('transfer'));
     }
@@ -248,7 +248,7 @@ class TransferController extends Controller
      */
     public function edit($id): View
     {
-        $transfer = Transfer::find($id);
+        $transfer = Transfer::findOrFail($id);
         $rescuers = Rescuer::with('person')->where('aprobado', true)->orderBy('id')->get();
         $centers = Center::orderBy('nombre')->get(['id','nombre']);
         $animals = Animal::orderByDesc('id')->get(['id','nombre']);
@@ -286,7 +286,7 @@ class TransferController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Transfer::find($id)->delete();
+        Transfer::findOrFail($id)->delete();
 
         return Redirect::route('rescate.transfers.index')
             ->with('success', 'Traslado eliminado correctamente');

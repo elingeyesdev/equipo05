@@ -17,8 +17,8 @@ class CareProcessRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'animal_file_id' => 'required|exists:animal_files,id',
-            'tipo_cuidado_id' => 'required|exists:care_types,id',
+            'animal_file_id' => 'required|exists:rescate.animal_files,id',
+            'tipo_cuidado_id' => 'required|exists:rescate.care_types,id',
             'descripcion' => 'nullable|string',
             'fecha' => 'nullable|date',
             'observaciones' => 'nullable|string',

@@ -22,10 +22,10 @@ class MedicalEvaluationRequest extends FormRequest
     public function rules(): array
     {
         return [
-			'tratamiento_id' => 'nullable|exists:treatment_types,id',
-			'descripcion' => 'string',
+			'tratamiento_id' => 'nullable|exists:rescate.treatment_types,id',
+			'descripcion' => 'nullable|string',
             'fecha' => 'nullable|date',
-			'veterinario_id' => 'required',
+			'veterinario_id' => 'required|exists:rescate.veterinarians,id',
             'imagen' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:5120', 'dimensions:min_width=64,min_height=64', new \Modules\Rescate\Rules\NotWebpImage()],
         ];
     }

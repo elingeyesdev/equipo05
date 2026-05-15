@@ -30,8 +30,8 @@ class ReleaseRequest extends FormRequest
 			'longitud' => 'nullable|numeric',
             'animal_file_id' => [
                 'required',
-                'exists:animal_files,id',
-                Rule::unique('releases', 'animal_file_id')->ignore($id),
+                'exists:rescate.animal_files,id',
+                Rule::unique('rescate.releases', 'animal_file_id')->ignore($id),
             ],
             'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
         ];

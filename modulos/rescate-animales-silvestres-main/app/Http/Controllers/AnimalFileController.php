@@ -131,7 +131,7 @@ class AnimalFileController extends Controller
      */
     public function edit($id): View
     {
-        $animalFile = AnimalFile::find($id);
+        $animalFile = AnimalFile::findOrFail($id);
         $species = Species::orderBy('nombre')->get(['id','nombre']);
         $animalStatuses = AnimalStatus::orderBy('nombre')->get(['id','nombre']);
         $animals = Animal::orderByDesc('id')->get(['id','nombre']);
@@ -195,7 +195,7 @@ class AnimalFileController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        AnimalFile::find($id)->delete();
+        AnimalFile::findOrFail($id)->delete();
 
         return Redirect::route('rescate.animal-files.index')
             ->with('success', 'Hoja del Animal eliminada correctamente');

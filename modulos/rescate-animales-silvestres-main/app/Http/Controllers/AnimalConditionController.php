@@ -52,7 +52,7 @@ class AnimalConditionController extends Controller
      */
     public function show($id): View
     {
-        $animalCondition = AnimalCondition::find($id);
+        $animalCondition = AnimalCondition::findOrFail($id);
 
         return view('animal-condition.show', compact('animalCondition'));
     }
@@ -62,7 +62,7 @@ class AnimalConditionController extends Controller
      */
     public function edit($id): View
     {
-        $animalCondition = AnimalCondition::find($id);
+        $animalCondition = AnimalCondition::findOrFail($id);
 
         return view('animal-condition.edit', compact('animalCondition'));
     }
@@ -80,7 +80,7 @@ class AnimalConditionController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        AnimalCondition::find($id)->delete();
+        AnimalCondition::findOrFail($id)->delete();
 
         return Redirect::route('rescate.animal-conditions.index')
             ->with('success', 'Condición eliminada correctamente');

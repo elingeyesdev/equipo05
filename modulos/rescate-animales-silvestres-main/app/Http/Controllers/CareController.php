@@ -79,7 +79,7 @@ class CareController extends Controller
      */
     public function show($id): View
     {
-        $care = Care::find($id);
+        $care = Care::findOrFail($id);
 
         return view('care.show', compact('care'));
     }
@@ -89,7 +89,7 @@ class CareController extends Controller
      */
     public function edit($id): View
     {
-        $care = Care::find($id);
+        $care = Care::findOrFail($id);
         // Join animals to get displayable name from animals.nombre
         $animalFiles = AnimalFile::query()
             ->join('animals', 'animal_files.animal_id', '=', 'animals.id')
@@ -122,7 +122,7 @@ class CareController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Care::find($id)->delete();
+        Care::findOrFail($id)->delete();
 
         return Redirect::route('rescate.cares.index')
             ->with('success', 'Cuidado eliminado correctamente');

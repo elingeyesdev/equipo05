@@ -22,8 +22,8 @@ class CareRequest extends FormRequest
     public function rules(): array
     {
         return [
-			'hoja_animal_id' => 'required',
-			'tipo_cuidado_id' => 'required',
+			'hoja_animal_id' => 'required|exists:rescate.animal_files,id',
+			'tipo_cuidado_id' => 'required|exists:rescate.care_types,id',
 			'descripcion' => 'string',
             // fecha se asigna automáticamente por el sistema
             'imagen' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png', 'max:5120', 'dimensions:min_width=64,min_height=64', new \Modules\Rescate\Rules\NotWebpImage()],

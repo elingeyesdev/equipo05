@@ -220,7 +220,7 @@ class VeterinarianController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Veterinarian::find($id)->delete();
+        Veterinarian::findOrFail($id)->delete();
 
         return Redirect::route('rescate.veterinarians.index')
             ->with('success', 'Veterinario eliminado correctamente');

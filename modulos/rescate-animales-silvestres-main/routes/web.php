@@ -121,11 +121,11 @@ Route::resource('incident-types', IncidentTypeController::class)->middleware('au
 Route::resource('animal-conditions', AnimalConditionController::class)->middleware('auth');
 Route::resource('users', UserController::class)->middleware('auth');
 
-// Transaccionales
-Route::resource('animal-records', AnimalTransactionalController::class)->middleware('auth');
-Route::resource('animal-feeding-records', AnimalFeedingTransactionalController::class)->middleware('auth');
-Route::resource('medical-evaluation-transactions', AnimalMedicalEvaluationTransactionalController::class)->middleware('auth');
-Route::resource('animal-care-records', AnimalCareTransactionalController::class)->middleware('auth');
+// Transaccionales (solo alta y consulta; sin update/destroy incompletos)
+Route::resource('animal-records', AnimalTransactionalController::class)->only(['index', 'create', 'store', 'show'])->middleware('auth');
+Route::resource('animal-feeding-records', AnimalFeedingTransactionalController::class)->only(['index', 'create', 'store', 'show'])->middleware('auth');
+Route::resource('medical-evaluation-transactions', AnimalMedicalEvaluationTransactionalController::class)->only(['index', 'create', 'store', 'show'])->middleware('auth');
+Route::resource('animal-care-records', AnimalCareTransactionalController::class)->only(['index', 'create', 'store', 'show'])->middleware('auth');
 Route::resource('animal-histories', AnimalHistoryController::class)->only(['index', 'show'])->middleware('auth');
 
 Route::get('reportes', [ReportsController::class, 'index'])->name('reportes.index')->middleware('auth');

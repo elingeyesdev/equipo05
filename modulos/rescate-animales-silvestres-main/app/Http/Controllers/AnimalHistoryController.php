@@ -30,7 +30,7 @@ class AnimalHistoryController extends Controller
 	public function show($id): View
 	{
 		// Intentar encontrar por ID de AnimalHistory primero
-		$animalHistory = AnimalHistory::find($id);
+		$animalHistory = AnimalHistory::findOrFail($id);
 		
 		// Si no se encuentra, asumir que es un animal_file_id
 		if (!$animalHistory) {

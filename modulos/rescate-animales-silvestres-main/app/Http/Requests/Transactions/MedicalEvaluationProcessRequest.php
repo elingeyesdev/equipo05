@@ -17,11 +17,11 @@ class MedicalEvaluationProcessRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'animal_file_id' => 'required|exists:animal_files,id',
-            'tratamiento_id' => 'nullable|exists:treatment_types,id',
+            'animal_file_id' => 'required|exists:rescate.animal_files,id',
+            'tratamiento_id' => 'nullable|exists:rescate.treatment_types,id',
             'tratamiento_texto' => 'nullable|string',
-            'veterinario_id' => 'required|exists:veterinarians,id',
-            'estado_id' => 'nullable|exists:animal_statuses,id',
+            'veterinario_id' => 'required|exists:rescate.veterinarians,id',
+            'estado_id' => 'nullable|exists:rescate.animal_statuses,id',
             'descripcion' => 'nullable|string',
             'diagnostico' => 'nullable|string',
             'peso' => 'nullable|numeric|min:0|max:100000',

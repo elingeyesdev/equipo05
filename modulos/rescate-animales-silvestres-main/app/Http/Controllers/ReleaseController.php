@@ -122,7 +122,7 @@ class ReleaseController extends Controller
      */
     public function edit($id): View
     {
-        $release = Release::find($id);
+        $release = Release::findOrFail($id);
         $animalFiles = AnimalFile::with(['animal.report.person','animalStatus'])
             ->join('animal_statuses', 'animal_files.estado_id', '=', 'animal_statuses.id')
             ->leftJoin('releases', 'releases.animal_file_id', '=', 'animal_files.id')
@@ -180,7 +180,7 @@ class ReleaseController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Release::find($id)->delete();
+        Release::findOrFail($id)->delete();
 
         return Redirect::route('rescate.releases.index')
             ->with('success', 'Liberación eliminada correctamente');

@@ -52,7 +52,7 @@ class FeedingPortionController extends Controller
      */
     public function show($id): View
     {
-        $feedingPortion = FeedingPortion::find($id);
+        $feedingPortion = FeedingPortion::findOrFail($id);
 
         return view('feeding-portion.show', compact('feedingPortion'));
     }
@@ -62,7 +62,7 @@ class FeedingPortionController extends Controller
      */
     public function edit($id): View
     {
-        $feedingPortion = FeedingPortion::find($id);
+        $feedingPortion = FeedingPortion::findOrFail($id);
 
         return view('feeding-portion.edit', compact('feedingPortion'));
     }
@@ -80,7 +80,7 @@ class FeedingPortionController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        FeedingPortion::find($id)->delete();
+        FeedingPortion::findOrFail($id)->delete();
 
         return Redirect::route('rescate.feeding-portions.index')
             ->with('success', 'Porción de alimentación eliminada correctamente');

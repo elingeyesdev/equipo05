@@ -219,7 +219,7 @@ class RescuerController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        Rescuer::find($id)->delete();
+        Rescuer::findOrFail($id)->delete();
 
         return Redirect::route('rescate.rescuers.index')
             ->with('success', 'Rescatista eliminado correctamente');

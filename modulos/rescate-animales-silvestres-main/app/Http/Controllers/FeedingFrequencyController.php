@@ -52,7 +52,7 @@ class FeedingFrequencyController extends Controller
      */
     public function show($id): View
     {
-        $feedingFrequency = FeedingFrequency::find($id);
+        $feedingFrequency = FeedingFrequency::findOrFail($id);
 
         return view('feeding-frequency.show', compact('feedingFrequency'));
     }
@@ -62,7 +62,7 @@ class FeedingFrequencyController extends Controller
      */
     public function edit($id): View
     {
-        $feedingFrequency = FeedingFrequency::find($id);
+        $feedingFrequency = FeedingFrequency::findOrFail($id);
 
         return view('feeding-frequency.edit', compact('feedingFrequency'));
     }
@@ -80,7 +80,7 @@ class FeedingFrequencyController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        FeedingFrequency::find($id)->delete();
+        FeedingFrequency::findOrFail($id)->delete();
 
         return Redirect::route('rescate.feeding-frequencies.index')
             ->with('success', 'Frecuencia de alimentación eliminada correctamente');

@@ -88,7 +88,7 @@ class MedicalEvaluationController extends Controller
      */
     public function show($id): View
     {
-        $medicalEvaluation = MedicalEvaluation::find($id);
+        $medicalEvaluation = MedicalEvaluation::findOrFail($id);
 
         return view('medical-evaluation.show', compact('medicalEvaluation'));
     }
@@ -98,7 +98,7 @@ class MedicalEvaluationController extends Controller
      */
     public function edit($id): View
     {
-        $medicalEvaluation = MedicalEvaluation::find($id);
+        $medicalEvaluation = MedicalEvaluation::findOrFail($id);
         $treatmentTypes = TreatmentType::orderBy('nombre')->get(['id','nombre']);
         $veterinarians = Veterinarian::with('person')->where('aprobado', true)->orderBy('id')->get();
 
@@ -124,7 +124,7 @@ class MedicalEvaluationController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        MedicalEvaluation::find($id)->delete();
+        MedicalEvaluation::findOrFail($id)->delete();
 
         return Redirect::route('rescate.medical-evaluations.index')
             ->with('success', 'Evaluación médica eliminada correctamente');

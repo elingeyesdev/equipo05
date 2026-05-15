@@ -52,7 +52,7 @@ class FeedingTypeController extends Controller
      */
     public function show($id): View
     {
-        $feedingType = FeedingType::find($id);
+        $feedingType = FeedingType::findOrFail($id);
 
         return view('feeding-type.show', compact('feedingType'));
     }
@@ -62,7 +62,7 @@ class FeedingTypeController extends Controller
      */
     public function edit($id): View
     {
-        $feedingType = FeedingType::find($id);
+        $feedingType = FeedingType::findOrFail($id);
 
         return view('feeding-type.edit', compact('feedingType'));
     }
@@ -80,7 +80,7 @@ class FeedingTypeController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        FeedingType::find($id)->delete();
+        FeedingType::findOrFail($id)->delete();
 
         return Redirect::route('rescate.feeding-types.index')
             ->with('success', 'Tipo de alimentación eliminado correctamente');

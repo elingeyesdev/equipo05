@@ -52,7 +52,7 @@ class IncidentTypeController extends Controller
      */
     public function show($id): View
     {
-        $incidentType = IncidentType::find($id);
+        $incidentType = IncidentType::findOrFail($id);
 
         return view('incident-type.show', compact('incidentType'));
     }
@@ -62,7 +62,7 @@ class IncidentTypeController extends Controller
      */
     public function edit($id): View
     {
-        $incidentType = IncidentType::find($id);
+        $incidentType = IncidentType::findOrFail($id);
 
         return view('incident-type.edit', compact('incidentType'));
     }
@@ -80,7 +80,7 @@ class IncidentTypeController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        IncidentType::find($id)->delete();
+        IncidentType::findOrFail($id)->delete();
 
         return Redirect::route('rescate.incident-types.index')
             ->with('success', 'Tipo de incidente eliminado correctamente.');
