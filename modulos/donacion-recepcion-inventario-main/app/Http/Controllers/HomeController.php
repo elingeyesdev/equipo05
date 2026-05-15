@@ -53,7 +53,7 @@ class HomeController extends Controller
         $totalDonaciones = \Modules\Inventario\Models\Donacione::count();
         $totalPaquetes = \Modules\Inventario\Models\Paquete::count();
         $totalSalidas = \Modules\Inventario\Models\RegistrosSalida::count();
-        $solicitudesPendientes = \Modules\Inventario\Models\SolicitudesRecoleccion::where('estado', 'Pendiente')->count();
+        $solicitudesPendientes = \Modules\Inventario\Models\SolicitudesRecoleccion::where('estado', 'pendiente')->count();
         $totalDonantes = \Modules\Inventario\Models\Donante::count();
         $totalProductos = \Modules\Inventario\Models\Producto::count();
         $totalUsuarios = \Modules\Inventario\Models\Usuario::count();
@@ -401,7 +401,7 @@ class HomeController extends Controller
         $promedioDonacionesDia = $donacionesUltimos30Dias > 0 ? round($donacionesUltimos30Dias / 30, 1) : 0;
 
         // Solicitudes de recolección pendientes
-        $solicitudesPendientes = \Modules\Inventario\Models\SolicitudesRecoleccion::where('estado', 'Pendiente')->count();
+        $solicitudesPendientes = \Modules\Inventario\Models\SolicitudesRecoleccion::where('estado', 'pendiente')->count();
 
         // ============================================
         // VIZ 1: Tendencia de Donaciones (12 meses) - LINE CHART
