@@ -2,7 +2,9 @@
 
 namespace Modules\Inventario\Http\Controllers;
 
+use App\Support\Database\YearMonthSql;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -68,9 +70,9 @@ class HomeController extends Controller
         // ============================================
         // VISUALIZACIÓN 1: Tendencia de Donaciones (12 meses) - LINE CHART
         // ============================================
-        $donacionesPorMes = \Modules\Inventario\Models\Donacione::selectRaw("CAST(strftime('%Y', fecha) AS INTEGER) as anio, CAST(strftime('%m', fecha) AS INTEGER) as mes, COUNT(*) as total")
+        $donacionesPorMes = \Modules\Inventario\Models\Donacione::selectRaw(YearMonthSql::yearMonthSelect('fecha', 'inventario').', COUNT(*) as total')
             ->where('fecha', '>=', \Carbon\Carbon::now()->subMonths(12))
-            ->groupBy('anio', 'mes')
+            ->groupByRaw(YearMonthSql::yearMonthGroupByRaw('fecha', 'inventario'))
             ->orderBy('anio')
             ->orderBy('mes')
             ->get();
@@ -118,9 +120,9 @@ class HomeController extends Controller
         // VISUALIZACIÓN 4: Tendencia de Donaciones en Dinero (12 meses) - LINE CHART
         // ============================================
         $donacionesDineroPorMes = \Modules\Inventario\Models\DonacionesDinero::join('donaciones', 'donaciones_dinero.id_donacion', '=', 'donaciones.id_donacion')
-            ->selectRaw("CAST(strftime('%Y', donaciones.fecha) AS INTEGER) as anio, CAST(strftime('%m', donaciones.fecha) AS INTEGER) as mes, SUM(donaciones_dinero.monto) as total_monto")
+            ->selectRaw(YearMonthSql::yearMonthSelect('donaciones.fecha', 'inventario').', SUM(donaciones_dinero.monto) as total_monto')
             ->where('donaciones.fecha', '>=', \Carbon\Carbon::now()->subMonths(12))
-            ->groupBy('anio', 'mes')
+            ->groupByRaw(YearMonthSql::yearMonthGroupByRaw('donaciones.fecha', 'inventario'))
             ->orderBy('anio')
             ->orderBy('mes')
             ->get();
@@ -404,9 +406,9 @@ class HomeController extends Controller
         // ============================================
         // VIZ 1: Tendencia de Donaciones (12 meses) - LINE CHART
         // ============================================
-        $donacionesPorMes = \Modules\Inventario\Models\Donacione::selectRaw("CAST(strftime('%Y', fecha) AS INTEGER) as anio, CAST(strftime('%m', fecha) AS INTEGER) as mes, COUNT(*) as total")
+        $donacionesPorMes = \Modules\Inventario\Models\Donacione::selectRaw(YearMonthSql::yearMonthSelect('fecha', 'inventario').', COUNT(*) as total')
             ->where('fecha', '>=', \Carbon\Carbon::now()->subMonths(12))
-            ->groupBy('anio', 'mes')
+            ->groupByRaw(YearMonthSql::yearMonthGroupByRaw('fecha', 'inventario'))
             ->orderBy('anio')
             ->orderBy('mes')
             ->get();
@@ -454,18 +456,18 @@ class HomeController extends Controller
         // ============================================
         // Para donaciones en especie, contar las donaciones que tienen detalles (productos)
         $donacionesEspeciePorMes = \Modules\Inventario\Models\Donacione::join('donacion_detalles', 'donaciones.id_donacion', '=', 'donacion_detalles.id_donacion')
-            ->selectRaw("CAST(strftime('%Y', donaciones.fecha) AS INTEGER) as anio, CAST(strftime('%m', donaciones.fecha) AS INTEGER) as mes, COUNT(DISTINCT donaciones.id_donacion) as total")
+            ->selectRaw(YearMonthSql::yearMonthSelect('donaciones.fecha', 'inventario').', COUNT(DISTINCT donaciones.id_donacion) as total')
             ->where('donaciones.fecha', '>=', \Carbon\Carbon::now()->subMonths(12))
-            ->groupBy('anio', 'mes')
+            ->groupByRaw(YearMonthSql::yearMonthGroupByRaw('donaciones.fecha', 'inventario'))
             ->orderBy('anio')
             ->orderBy('mes')
             ->get();
 
         // Para donaciones en dinero
         $donacionesDineroPorMes = \Modules\Inventario\Models\DonacionesDinero::join('donaciones', 'donaciones_dinero.id_donacion', '=', 'donaciones.id_donacion')
-            ->selectRaw("CAST(strftime('%Y', donaciones.fecha) AS INTEGER) as anio, CAST(strftime('%m', donaciones.fecha) AS INTEGER) as mes, COUNT(*) as total")
+            ->selectRaw(YearMonthSql::yearMonthSelect('donaciones.fecha', 'inventario').', COUNT(*) as total')
             ->where('donaciones.fecha', '>=', \Carbon\Carbon::now()->subMonths(12))
-            ->groupBy('anio', 'mes')
+            ->groupByRaw(YearMonthSql::yearMonthGroupByRaw('donaciones.fecha', 'inventario'))
             ->orderBy('anio')
             ->orderBy('mes')
             ->get();

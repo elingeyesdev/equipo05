@@ -2,6 +2,7 @@
 
 namespace Modules\Inventario\Http\Controllers\Api;
 
+use App\Support\Database\YearMonthSql;
 use Modules\Inventario\Http\Controllers\Controller;
 use Modules\Inventario\Models\Donacione;
 use Illuminate\Http\Request;
@@ -36,11 +37,11 @@ class DashboardController extends Controller
     {
         try {
             $donacionesPorMes = Donacione::select(
-                    DB::raw("CAST(strftime('%m', fecha) AS INTEGER) as mes"),
+                    DB::raw(YearMonthSql::monthSelect('fecha', 'inventario')),
                     DB::raw('COUNT(*) as total')
                 )
                 ->whereYear('fecha', $year)
-                ->groupBy(DB::raw("CAST(strftime('%m', fecha) AS INTEGER)"))
+                ->groupByRaw(YearMonthSql::monthGroupByRaw('fecha', 'inventario'))
                 ->orderBy('mes')
                 ->get();
 
