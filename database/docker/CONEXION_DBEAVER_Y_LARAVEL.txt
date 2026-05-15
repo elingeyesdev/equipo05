@@ -57,6 +57,19 @@ La app principal (usuarios Spatie, donaciones fase 1, etc.) sigue en SQLite
 por defecto. Los SEIS modulos integrados usan el mismo PostgreSQL con distinto
 search_path (esquema) por conexion.
 
+MODULO INVENTARIO / ALMACEN (obligatorio una vez en PostgreSQL)
+---------------------------------------------------------------
+El esquema inventario NO usa las tablas del SQL 04 (transparencia/campanias).
+Ese SQL ahora va al esquema "transparencia". El modulo inventario usa migraciones Laravel:
+
+  cd C:\Users\Santiago\Downloads\equipo05-main-integration
+  php artisan db:setup-inventario --fresh
+  php artisan db:seed --class=Database\Seeders\UnifiedDemoDataSeeder
+
+O todo junto:
+
+  php artisan db:setup-unificado --fresh-inventario --seed
+
 MIGRACIONES (php artisan migrate)
 ---------------------------------
 - Conexion "default" (sqlite): SI, para la app principal:
