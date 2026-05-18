@@ -57,14 +57,18 @@ final class SensacionTermica
         array $aparentes = []
     ): array {
         $out = [];
+        $ultimaTemp = null;
         foreach ($temperaturas as $i => $temp) {
-            if ($temp === null) {
+            if ($temp !== null) {
+                $ultimaTemp = (float) $temp;
+            }
+            if ($ultimaTemp === null) {
                 $out[] = null;
 
                 continue;
             }
             $out[] = self::calcular(
-                (float) $temp,
+                (float) $ultimaTemp,
                 (float) ($humedades[$i] ?? 50),
                 (float) ($vientos[$i] ?? 0),
                 (float) ($rafagas[$i] ?? 0),

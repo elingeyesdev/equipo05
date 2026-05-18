@@ -7,7 +7,6 @@
 @endsection
 
 @section('content_body')
-    {{-- Info del período con selector integrado --}}
     <div class="row mb-3">
         <div class="col-12">
             <div class="alert alert-info mb-0 py-2 d-flex align-items-center justify-content-between">
@@ -22,8 +21,8 @@
                     <i class="fas fa-map-marker-alt mr-2"></i>
                     <select id="ubicacion-select" class="form-control form-control-sm" style="width: auto; min-width: 200px;">
                         @foreach($ubicaciones as $key => $ubic)
-                            <option value="{{ $key }}" 
-                                    data-lat="{{ $ubic['lat'] }}" 
+                            <option value="{{ $key }}"
+                                    data-lat="{{ $ubic['lat'] }}"
                                     data-lng="{{ $ubic['lng'] }}"
                                     {{ $ubicacionKey === $key ? 'selected' : '' }}>
                                 {{ $ubic['nombre'] }}, Bolivia
@@ -35,9 +34,9 @@
         </div>
     </div>
 
-    {{-- Resumen en cards - Datos Actuales --}}
-    <div class="row" id="summary-cards">
-        <div class="col-6 col-md-4 col-lg">
+    {{-- 6 tarjetas uniformes --}}
+    <div class="row clima-summary-row" id="summary-cards">
+        <div class="col-6 col-md-4 col-xl-2 clima-summary-col">
             <div class="small-box bg-warning">
                 <div class="inner">
                     <h3 id="feels-current">
@@ -47,83 +46,123 @@
                             <i class="fas fa-spinner fa-spin"></i>
                         @endif
                     </h3>
-                    <p>Sensacion termica</p>
-                    <small class="text-white-50">Humedad, viento, rafagas</small>
+                    <p>Sensaci&oacute;n t&eacute;rmica</p>
                 </div>
                 <div class="icon"><i class="fas fa-temperature-low"></i></div>
             </div>
         </div>
-        <div class="col-6 col-md-4 col-lg">
+        <div class="col-6 col-md-4 col-xl-2 clima-summary-col">
             <div class="small-box bg-danger">
                 <div class="inner">
-                    <h3 id="temp-current"><i class="fas fa-spinner fa-spin"></i></h3>
-                    <p>Temperatura Actual</p>
+                    <h3 id="temp-current">
+                        @if(isset($datosGraficas['temperatura_actual']))
+                            {{ $datosGraficas['temperatura_actual'] }}&deg;C
+                        @else
+                            <i class="fas fa-spinner fa-spin"></i>
+                        @endif
+                    </h3>
+                    <p>Temperatura</p>
                 </div>
                 <div class="icon"><i class="fas fa-temperature-high"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-4 col-xl-2 clima-summary-col">
             <div class="small-box bg-info">
                 <div class="inner">
-                    <h3 id="humidity-current"><i class="fas fa-spinner fa-spin"></i></h3>
-                    <p>Humedad Actual</p>
+                    <h3 id="humidity-current">
+                        @if(isset($datosGraficas['humedad_actual']))
+                            {{ $datosGraficas['humedad_actual'] }}%
+                        @else
+                            <i class="fas fa-spinner fa-spin"></i>
+                        @endif
+                    </h3>
+                    <p>Humedad</p>
                 </div>
                 <div class="icon"><i class="fas fa-tint"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-4 col-xl-2 clima-summary-col">
             <div class="small-box bg-primary">
                 <div class="inner">
-                    <h3 id="precip-current"><i class="fas fa-spinner fa-spin"></i></h3>
-                    <p>Precipitación Actual</p>
+                    <h3 id="precip-current">
+                        @if(isset($datosGraficas['precip_actual']))
+                            {{ number_format((float) $datosGraficas['precip_actual'], 1) }} mm
+                        @else
+                            <i class="fas fa-spinner fa-spin"></i>
+                        @endif
+                    </h3>
+                    <p>Precipitaci&oacute;n</p>
                 </div>
                 <div class="icon"><i class="fas fa-cloud-rain"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-4 col-xl-2 clima-summary-col">
             <div class="small-box bg-success">
                 <div class="inner">
-                    <h3 id="wind-current"><i class="fas fa-spinner fa-spin"></i></h3>
-                    <p>Viento Actual</p>
+                    <h3 id="wind-current">
+                        @if(isset($datosGraficas['viento_actual']))
+                            {{ $datosGraficas['viento_actual'] }} km/h
+                        @else
+                            <i class="fas fa-spinner fa-spin"></i>
+                        @endif
+                    </h3>
+                    <p>Viento</p>
+                </div>
+                <div class="icon"><i class="fas fa-wind"></i></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2 clima-summary-col">
+            <div class="small-box bg-teal">
+                <div class="inner">
+                    <h3 id="gust-current">
+                        @if(isset($datosGraficas['rafagas_actual']))
+                            {{ $datosGraficas['rafagas_actual'] }} km/h
+                        @else
+                            <i class="fas fa-spinner fa-spin"></i>
+                        @endif
+                    </h3>
+                    <p>R&aacute;fagas de viento</p>
                 </div>
                 <div class="icon"><i class="fas fa-wind"></i></div>
             </div>
         </div>
     </div>
 
-    {{-- Gráfica de Temperatura y sensación térmica --}}
-    <div class="row">
-        <div class="col-lg-6">
-            <x-adminlte-card title="Temperatura Horaria" theme="danger" icon="fas fa-temperature-high">
-                <canvas id="temperaturaChart" height="80"></canvas>
-            </x-adminlte-card>
-        </motion.div>
-        <div class="col-lg-6">
-            <x-adminlte-card title="Sensacion termica (ajuste tropical)" theme="warning" icon="fas fa-temperature-low">
-                <canvas id="sensacionChart" height="80"></canvas>
-            </x-adminlte-card>
-        </motion.div>
-    </div>
-
-    {{-- Gráficas de Humedad y Precipitación --}}
-    <div class="row">
-        <div class="col-lg-6">
-            <x-adminlte-card title="Humedad Relativa" theme="info" icon="fas fa-tint">
-                <canvas id="humedadChart" height="120"></canvas>
+    <div class="row clima-charts-row">
+        <div class="col-lg-6 mb-3">
+            <x-adminlte-card title="Temperatura Horaria" theme="danger" icon="fas fa-temperature-high" class="clima-chart-card h-100">
+                <div class="clima-chart-wrap"><canvas id="temperaturaChart"></canvas></div>
             </x-adminlte-card>
         </div>
-        <div class="col-lg-6">
-            <x-adminlte-card title="Precipitación Acumulada" theme="primary" icon="fas fa-cloud-rain">
-                <canvas id="precipitacionChart" height="120"></canvas>
+        <div class="col-lg-6 mb-3">
+            <x-adminlte-card title="Sensaci&oacute;n t&eacute;rmica (ajuste tropical)" theme="warning" icon="fas fa-temperature-low" class="clima-chart-card h-100">
+                <div class="clima-chart-wrap"><canvas id="sensacionChart"></canvas></div>
             </x-adminlte-card>
         </div>
     </div>
 
-    {{-- Gráfica de Viento --}}
-    <div class="row">
-        <div class="col-12">
-            <x-adminlte-card title="Velocidad del Viento" theme="success" icon="fas fa-wind">
-                <canvas id="vientoChart" height="80"></canvas>
+    <div class="row clima-charts-row">
+        <div class="col-lg-6 mb-3">
+            <x-adminlte-card title="Humedad Relativa" theme="info" icon="fas fa-tint" class="clima-chart-card h-100">
+                <div class="clima-chart-wrap"><canvas id="humedadChart"></canvas></div>
+            </x-adminlte-card>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <x-adminlte-card title="Precipitaci&oacute;n" theme="primary" icon="fas fa-cloud-rain" class="clima-chart-card h-100">
+                <div class="clima-chart-wrap"><canvas id="precipitacionChart"></canvas></div>
+            </x-adminlte-card>
+        </div>
+    </div>
+
+    <div class="row clima-charts-row mb-2">
+        <div class="col-lg-6 mb-3">
+            <x-adminlte-card title="Velocidad del Viento" theme="success" icon="fas fa-wind" class="clima-chart-card h-100">
+                <div class="clima-chart-wrap"><canvas id="vientoChart"></canvas></div>
+            </x-adminlte-card>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <x-adminlte-card title="R&aacute;fagas de Viento" theme="teal" icon="fas fa-wind" class="clima-chart-card h-100">
+                <div class="clima-chart-wrap"><canvas id="rafagasChart"></canvas></div>
             </x-adminlte-card>
         </div>
     </div>
@@ -131,27 +170,28 @@
 
 @push('css')
 <style>
-    #ubicacion-select {
-        transition: all 0.3s ease;
-        font-weight: 500;
+    #ubicacion-select { transition: all 0.3s ease; font-weight: 500; }
+    #ubicacion-select:focus { box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
+    #loading-indicator { animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .clima-summary-row { margin-left: -8px; margin-right: -8px; }
+    .clima-summary-col { padding-left: 8px; padding-right: 8px; margin-bottom: 16px; display: flex; }
+    .clima-summary-col .small-box {
+        width: 100%; margin-bottom: 0; min-height: 118px;
+        display: flex; flex-direction: column; justify-content: center;
     }
-    #ubicacion-select:focus {
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-    .small-box h3 {
-        transition: all 0.4s ease;
-    }
-    .chart-updating {
-        opacity: 0.4;
-        transition: opacity 0.3s ease;
-    }
-    #loading-indicator {
-        animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
+    .clima-summary-col .small-box .inner { padding: 12px 14px; }
+    .clima-summary-col .small-box .inner h3 { font-size: 1.75rem; margin: 0 0 4px; }
+    .clima-summary-col .small-box .inner p { margin: 0; font-size: 0.95rem; }
+    .clima-summary-col .small-box .icon { font-size: 56px; top: 8px; }
+
+    .bg-teal { background-color: #20c997 !important; color: #fff; }
+    .bg-teal .icon { color: rgba(255,255,255,0.25); }
+
+    .clima-chart-card .card-body { padding: 12px 16px 16px; }
+    .clima-chart-wrap { position: relative; height: 220px; width: 100%; }
+    .clima-chart-wrap canvas { max-height: 220px; }
 </style>
 @endpush
 
@@ -159,11 +199,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Datos iniciales
     let currentData = @json($datosGraficas);
-
-    // Referencias a los charts
-    let tempChart, sensacionChart, humChart, precipChart, windChart;
+    let tempChart, sensacionChart, humChart, precipChart, windChart, gustChart;
 
     function calcSensacionTermica(temp, hum, wind, gust, precip, aparenteApi) {
         let base = aparenteApi != null ? aparenteApi : (temp + 0.33 * ((hum/100)*6.105*Math.exp((17.27*temp)/(237.7+temp))) - 0.70*Math.max(0.1,wind) - 4);
@@ -176,8 +213,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return Math.round(Math.max(-15, Math.min(55, base))*10)/10;
     }
-    
-    // Formatear labels
+
+    function buildSensacionSerie(data) {
+        const serie = data.sensacion_termica;
+        if (serie && serie.length && serie.some(v => v != null)) {
+            return serie;
+        }
+        return (data.temperatura || []).map((t, i) => {
+            if (t == null) return null;
+            return calcSensacionTermica(
+                t,
+                data.humedad?.[i] ?? 50,
+                data.viento?.[i] ?? 0,
+                data.rafagas?.[i] ?? 0,
+                data.precipitacion?.[i] ?? 0,
+                null
+            );
+        });
+    }
+
     function formatLabels(labels) {
         return labels.map(label => {
             const fecha = new Date(label);
@@ -187,167 +241,97 @@ document.addEventListener('DOMContentLoaded', function() {
             return `${dia}/${mes} ${hora}:00`;
         });
     }
-    
-    // Configuración común
+
     const commonOptions = {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         animation: { duration: 600, easing: 'easeInOutQuart' },
-        plugins: {
-            legend: { display: false },
-            tooltip: { mode: 'index', intersect: false }
-        },
-        scales: {
-            x: { ticks: { maxRotation: 45, minRotation: 45, maxTicksLimit: 24 } }
-        }
+        plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+        scales: { x: { ticks: { maxRotation: 45, minRotation: 45, maxTicksLimit: 24 } } }
     };
-    
-    // Inicializar gráficas
+
+    function yScale(minZero, title) {
+        return {
+            ...commonOptions.scales,
+            y: { beginAtZero: minZero, title: { display: true, text: title } }
+        };
+    }
+
     function initCharts() {
-        const labels = formatLabels(currentData.labels);
-        
+        const labels = formatLabels(currentData.labels || []);
+        const sensacionData = buildSensacionSerie(currentData);
+
         tempChart = new Chart(document.getElementById('temperaturaChart'), {
             type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperatura (°C)',
-                    data: currentData.temperatura,
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                    fill: true, tension: 0.4
-                }]
-            },
-            options: { ...commonOptions, scales: { ...commonOptions.scales, y: { beginAtZero: false, title: { display: true, text: 'Temperatura (°C)' } } } }
+            data: { labels, datasets: [{ label: 'Temperatura', data: currentData.temperatura, borderColor: 'rgb(255,99,132)', backgroundColor: 'rgba(255,99,132,0.1)', fill: true, tension: 0.4, spanGaps: true }] },
+            options: { ...commonOptions, scales: yScale(false, 'Temperatura (C)') }
         });
-        
-        humChart = new Chart(document.getElementById('humedadChart'), {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Humedad (%)',
-                    data: currentData.humedad,
-                    borderColor: 'rgb(54, 162, 235)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
-                    fill: true, tension: 0.4
-                }]
-            },
-            options: { ...commonOptions, scales: { ...commonOptions.scales, y: { beginAtZero: true, max: 100, title: { display: true, text: 'Humedad (%)' } } } }
-        });
-        
-        precipChart = new Chart(document.getElementById('precipitacionChart'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Precipitación (mm)',
-                    data: currentData.precipitacion,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgb(75, 192, 192)', borderWidth: 1
-                }]
-            },
-            options: { ...commonOptions, scales: { ...commonOptions.scales, y: { beginAtZero: true, title: { display: true, text: 'Precipitación (mm)' } } } }
-        });
-        
+
         sensacionChart = new Chart(document.getElementById('sensacionChart'), {
             type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sensacion termica (C)',
-                    data: currentData.sensacion_termica || [],
-                    borderColor: 'rgb(255, 159, 64)',
-                    backgroundColor: 'rgba(255, 159, 64, 0.15)',
-                    fill: true, tension: 0.4
-                }]
-            },
-            options: { ...commonOptions, scales: { ...commonOptions.scales, y: { beginAtZero: false, title: { display: true, text: 'Sensacion (C)' } } } }
+            data: { labels, datasets: [{ label: 'Sensacion', data: sensacionData, borderColor: 'rgb(255,159,64)', backgroundColor: 'rgba(255,159,64,0.15)', fill: true, tension: 0.4, spanGaps: true }] },
+            options: { ...commonOptions, scales: yScale(false, 'Sensacion (C)') }
+        });
+
+        humChart = new Chart(document.getElementById('humedadChart'), {
+            type: 'line',
+            data: { labels, datasets: [{ label: 'Humedad', data: currentData.humedad, borderColor: 'rgb(54,162,235)', backgroundColor: 'rgba(54,162,235,0.1)', fill: true, tension: 0.4 }] },
+            options: { ...commonOptions, scales: { ...yScale(true, 'Humedad (%)'), y: { ...yScale(true, 'Humedad (%)').y, max: 100 } } }
+        });
+
+        precipChart = new Chart(document.getElementById('precipitacionChart'), {
+            type: 'bar',
+            data: { labels, datasets: [{ label: 'Precipitacion', data: currentData.precipitacion, backgroundColor: 'rgba(75,192,192,0.6)', borderColor: 'rgb(75,192,192)', borderWidth: 1 }] },
+            options: { ...commonOptions, scales: yScale(true, 'Precipitacion (mm)') }
         });
 
         windChart = new Chart(document.getElementById('vientoChart'), {
             type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Velocidad del Viento (km/h)',
-                    data: currentData.viento,
-                    borderColor: 'rgb(75, 192, 75)',
-                    backgroundColor: 'rgba(75, 192, 75, 0.1)',
-                    fill: true, tension: 0.4
-                }]
-            },
-            options: { ...commonOptions, scales: { ...commonOptions.scales, y: { beginAtZero: true, title: { display: true, text: 'Velocidad (km/h)' } } } }
+            data: { labels, datasets: [{ label: 'Viento', data: currentData.viento, borderColor: 'rgb(40,167,69)', backgroundColor: 'rgba(40,167,69,0.1)', fill: true, tension: 0.4, spanGaps: true }] },
+            options: { ...commonOptions, scales: yScale(true, 'Viento (km/h)') }
+        });
+
+        gustChart = new Chart(document.getElementById('rafagasChart'), {
+            type: 'line',
+            data: { labels, datasets: [{ label: 'Rafagas', data: currentData.rafagas, borderColor: 'rgb(32,201,151)', backgroundColor: 'rgba(32,201,151,0.15)', fill: true, tension: 0.4, spanGaps: true }] },
+            options: { ...commonOptions, scales: yScale(true, 'Rafagas (km/h)') }
         });
     }
-    
-    // Actualizar gráficas con animación fluida
-    function updateCharts(data) {
-        const labels = formatLabels(data.labels);
-        
-        tempChart.data.labels = labels;
-        tempChart.data.datasets[0].data = data.temperatura;
-        tempChart.update('active');
-        if (sensacionChart) {
-            sensacionChart.data.labels = labels;
-            sensacionChart.data.datasets[0].data = data.sensacion_termica || [];
-            sensacionChart.update('active');
-        }
-        humChart.data.labels = labels;
-        humChart.data.datasets[0].data = data.humedad;
-        humChart.update('active');
-        precipChart.data.labels = labels;
-        precipChart.data.datasets[0].data = data.precipitacion;
-        precipChart.update('active');
-        windChart.data.labels = labels;
-        windChart.data.datasets[0].data = data.viento;
-        windChart.update('active');
-    }
-    
-    // Actualizar cards de resumen con datos actuales
+
     async function updateSummaryCards(lat, lng) {
         try {
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_gusts_10m,apparent_temperature,uv_index&timezone=America/La_Paz`;
-            const response = await fetch(url);
-            const result = await response.json();
-            
+            const result = await (await fetch(url)).json();
             if (result.current) {
-                const t = result.current.temperature_2m || 0;
-                const h = result.current.relative_humidity_2m || 0;
-                const w = result.current.wind_speed_10m || 0;
-                const g = result.current.wind_gusts_10m || 0;
-                const p = result.current.precipitation || 0;
-                const feels = calcSensacionTermica(t, h, w, g, p, result.current.apparent_temperature);
+                const t = result.current.temperature_2m ?? 0;
+                const h = result.current.relative_humidity_2m ?? 0;
+                const w = result.current.wind_speed_10m ?? 0;
+                const g = result.current.wind_gusts_10m ?? (w * 1.35);
+                const p = result.current.precipitation ?? 0;
                 document.getElementById('temp-current').textContent = t.toFixed(1) + '°C';
-                document.getElementById('feels-current').textContent = feels.toFixed(1) + '°C';
+                document.getElementById('feels-current').textContent = calcSensacionTermica(t, h, w, g, p, result.current.apparent_temperature).toFixed(1) + '°C';
                 document.getElementById('humidity-current').textContent = h.toFixed(0) + '%';
                 document.getElementById('precip-current').textContent = p.toFixed(1) + ' mm';
                 document.getElementById('wind-current').textContent = w.toFixed(1) + ' km/h';
+                document.getElementById('gust-current').textContent = g.toFixed(1) + ' km/h';
             }
-        } catch (error) {
-            console.error('Error fetching current weather:', error);
-            // Show error state
-            document.getElementById('temp-current').textContent = 'N/A';
-            document.getElementById('feels-current').textContent = 'N/A';
-            document.getElementById('humidity-current').textContent = 'N/A';
-            document.getElementById('precip-current').textContent = 'N/A';
-            document.getElementById('wind-current').textContent = 'N/A';
+        } catch (e) {
+            ['temp-current','feels-current','humidity-current','precip-current','wind-current','gust-current'].forEach(id => {
+                document.getElementById(id).textContent = 'N/A';
+            });
         }
     }
-    
-    // Cambio de ubicación: recarga con query para persistir en sesión y URL
+
     document.getElementById('ubicacion-select').addEventListener('change', function() {
         const url = new URL(window.location.href);
         url.searchParams.set('ubicacion', this.value);
         window.location.href = url.toString();
     });
-    
+
     initCharts();
-    
-    // Cargar datos actuales al iniciar la página
-    const initialSelect = document.getElementById('ubicacion-select');
-    const initialOpt = initialSelect.options[initialSelect.selectedIndex];
-    updateSummaryCards(parseFloat(initialOpt.dataset.lat), parseFloat(initialOpt.dataset.lng));
+    const sel = document.getElementById('ubicacion-select');
+    const opt = sel.options[sel.selectedIndex];
+    updateSummaryCards(parseFloat(opt.dataset.lat), parseFloat(opt.dataset.lng));
 });
 </script>
 @endpush
