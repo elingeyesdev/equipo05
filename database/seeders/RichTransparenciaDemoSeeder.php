@@ -26,7 +26,8 @@ class RichTransparenciaDemoSeeder extends Seeder
             }
         }
 
-        $estadoId = $db->table('estados')->value('estadoid') ?? 1;
+        $estados = $db->table('estados')->pluck('estadoid', 'nombre');
+        $estadoId = $estados['Pendiente'] ?? $estados->first() ?? 1;
         $now = Carbon::now();
 
         $campanias = [
@@ -64,10 +65,10 @@ class RichTransparenciaDemoSeeder extends Seeder
                     'usuarioid' => $creatorId,
                     'campaniaid' => $campaniaId,
                     'monto' => rand(50, 2500),
-                    'tipodonacion' => $d % 3 === 0 ? 'especie' : 'dinero',
+                    'tipodonacion' => $d % 4 === 0 ? 'Especie' : 'Monetaria',
                     'descripcion' => 'Donación solidaria registrada en demo.',
                     'fechadonacion' => $now->copy()->subDays(rand(1, 35)),
-                    'estadoid' => $estadoId,
+                    'estadoid' => $d % 4 === 0 ? $estadoId : ($estados['Confirmada'] ?? $estadoId),
                     'esanonima' => $d % 4 === 0,
                     'created_at' => $now,
                     'updated_at' => $now,

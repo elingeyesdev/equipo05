@@ -134,6 +134,24 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-6">
+                        <div class="info-box mb-3 bg-light">
+                            <span class="info-box-icon bg-warning elevation-1">
+                                <i class="fas fa-temperature-low"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Sensacion termica</span>
+                                <span class="info-box-number">
+                                    @if($sensacionTermica !== null)
+                                        {{ $sensacionTermica }}&deg;C
+                                    @else
+                                        --&deg;C
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="col-6">
                         <div class="info-box mb-3 bg-light">

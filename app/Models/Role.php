@@ -2,28 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\Permission\Models\Role as SpatieRole;
+use Spatie\Permission\PermissionRegistrar;
 
-class Role extends Model
+class Role extends SpatieRole
 {
-    protected $table = 'roles';
-    protected $primaryKey = 'rolid';
-    public $timestamps = false;
-
-    protected $fillable = [
-        'nombre',
-        'descripcion',
-    ];
-
-    public function usuarios()
+    public function getConnectionName(): ?string
     {
-        return $this->belongsToMany(
-            Usuario::class,
-            'usuariosroles',
-            'rolid',
-            'usuarioid',
-            'rolid',
-            'usuarioid'
+        return \App\Support\UnifiedPostgres::enabled()
+            ? \App\Support\UnifiedPostgres::coreAuthConnection()
+            : parent::getConnectionName();
+    }
+
+    /**
+     * Usuarios con este rol (siempre App\Models\Usuario en PG unificado).
+     */
+    public function users(): MorphToMany
+    {
+        $userModel = config('auth.providers.users.model', Usuario::class);
+
+        return $this->morphedByMany(
+            $userModel,
+            'model',
+            config('permission.table_names.model_has_roles'),
+            app(PermissionRegistrar::class)->pivotRole,
+            config('permission.column_names.model_morph_key')
         );
     }
 }

@@ -25,6 +25,7 @@ class RichUnifiedDemoSeeder extends Seeder
             RichLogisticaDemoSeeder::class,
             RichSeguimientoDemoSeeder::class,
             RichCuadrillasDemoSeeder::class,
+            PatchDemoDashboardSeeder::class,
         ]);
 
         $this->command?->info('Datos demo abundantes listos.');

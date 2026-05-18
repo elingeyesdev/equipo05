@@ -4,6 +4,7 @@ namespace Modules\Incendios\Http\Controllers;
 
 use Modules\Incendios\Services\OpenMeteoService;
 use Modules\Incendios\Support\ClimaUbicaciones;
+use Modules\Incendios\Support\SensacionTermica;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -73,12 +74,35 @@ class DatosClimaticosController extends Controller
         
         $hourly = $weatherData['data']['hourly'];
         
+        $temperatura = $hourly['temperature_2m'] ?? [];
+        $humedad = $hourly['relative_humidity_2m'] ?? [];
+        $viento = $hourly['wind_speed_10m'] ?? [];
+        $rafagas = $hourly['wind_gusts_10m'] ?? [];
+        $precip = $hourly['precipitation'] ?? [];
+        $aparenteApi = $hourly['apparent_temperature'] ?? [];
+
+        $sensacion = SensacionTermica::serie(
+            $temperatura,
+            $humedad,
+            $viento,
+            $rafagas,
+            $precip,
+            $aparenteApi
+        );
+
+        $idxActual = max(0, count($sensacion) - 1);
+
         return [
             'labels' => $hourly['time'] ?? [],
-            'temperatura' => $hourly['temperature_2m'] ?? [],
-            'humedad' => $hourly['relative_humidity_2m'] ?? [],
-            'precipitacion' => $hourly['precipitation'] ?? [],
-            'viento' => $hourly['wind_speed_10m'] ?? [],
+            'temperatura' => $temperatura,
+            'humedad' => $humedad,
+            'precipitacion' => $precip,
+            'viento' => $viento,
+            'rafagas' => $rafagas,
+            'uv_index' => $hourly['uv_index'] ?? [],
+            'sensacion_termica' => $sensacion,
+            'sensacion_actual' => $sensacion[$idxActual] ?? null,
+            'temperatura_actual' => $temperatura[$idxActual] ?? null,
         ];
     }
 }

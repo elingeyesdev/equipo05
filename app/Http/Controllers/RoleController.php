@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 // CORRECCIÓN: Usamos el modelo de Spatie, NO App\Models\Role
-use Spatie\Permission\Models\Role; 
+use App\Models\Role; 
 use App\Http\Controllers\Controller;
 
 class RoleController extends Controller

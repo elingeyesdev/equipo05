@@ -46,13 +46,38 @@ class OpenMeteoService
             $url = 'https://archive-api.open-meteo.com/v1/archive';
             $params['start_date'] = $startDate;
             $params['end_date'] = $endDate;
-            $params['hourly'] = 'temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m';
+            $params['hourly'] = implode(',', [
+                'temperature_2m',
+                'relative_humidity_2m',
+                'precipitation',
+                'wind_speed_10m',
+                'wind_gusts_10m',
+                'apparent_temperature',
+                'uv_index',
+            ]);
         } else {
             // Current forecast data
             $url = 'https://api.open-meteo.com/v1/forecast';
-            $params['hourly'] = 'temperature_2m,relative_humidity_2m,precipitation';
+            $params['hourly'] = implode(',', [
+                'temperature_2m',
+                'relative_humidity_2m',
+                'precipitation',
+                'wind_speed_10m',
+                'wind_gusts_10m',
+                'apparent_temperature',
+                'uv_index',
+            ]);
             $params['current_weather'] = 'true';
-            $params['daily'] = 'temperature_2m_max,temperature_2m_min';
+            $params['current'] = implode(',', [
+                'temperature_2m',
+                'relative_humidity_2m',
+                'precipitation',
+                'wind_speed_10m',
+                'wind_gusts_10m',
+                'apparent_temperature',
+                'uv_index',
+            ]);
+            $params['daily'] = 'temperature_2m_max,temperature_2m_min,uv_index_max';
         }
 
         $response = Http::timeout(15)->retry(2, 500)->get($url, $params);

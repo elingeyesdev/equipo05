@@ -37,7 +37,23 @@
 
     {{-- Resumen en cards - Datos Actuales --}}
     <div class="row" id="summary-cards">
-        <div class="col-md-3">
+        <div class="col-6 col-md-4 col-lg">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3 id="feels-current">
+                        @if(isset($datosGraficas['sensacion_actual']))
+                            {{ $datosGraficas['sensacion_actual'] }}&deg;C
+                        @else
+                            <i class="fas fa-spinner fa-spin"></i>
+                        @endif
+                    </h3>
+                    <p>Sensacion termica</p>
+                    <small class="text-white-50">Humedad, viento, rafagas</small>
+                </div>
+                <div class="icon"><i class="fas fa-temperature-low"></i></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg">
             <div class="small-box bg-danger">
                 <div class="inner">
                     <h3 id="temp-current"><i class="fas fa-spinner fa-spin"></i></h3>
@@ -75,13 +91,18 @@
         </div>
     </div>
 
-    {{-- Gráfica de Temperatura --}}
+    {{-- Gráfica de Temperatura y sensación térmica --}}
     <div class="row">
-        <div class="col-12">
+        <div class="col-lg-6">
             <x-adminlte-card title="Temperatura Horaria" theme="danger" icon="fas fa-temperature-high">
                 <canvas id="temperaturaChart" height="80"></canvas>
             </x-adminlte-card>
-        </div>
+        </motion.div>
+        <div class="col-lg-6">
+            <x-adminlte-card title="Sensacion termica (ajuste tropical)" theme="warning" icon="fas fa-temperature-low">
+                <canvas id="sensacionChart" height="80"></canvas>
+            </x-adminlte-card>
+        </motion.div>
     </div>
 
     {{-- Gráficas de Humedad y Precipitación --}}
@@ -142,7 +163,19 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentData = @json($datosGraficas);
 
     // Referencias a los charts
-    let tempChart, humChart, precipChart, windChart;
+    let tempChart, sensacionChart, humChart, precipChart, windChart;
+
+    function calcSensacionTermica(temp, hum, wind, gust, precip, aparenteApi) {
+        let base = aparenteApi != null ? aparenteApi : (temp + 0.33 * ((hum/100)*6.105*Math.exp((17.27*temp)/(237.7+temp))) - 0.70*Math.max(0.1,wind) - 4);
+        const vEff = Math.max(wind, (gust||0)*0.85);
+        if (temp <= 22) {
+            base -= Math.max(0, (hum-50)*0.14);
+            if (precip > 0) base -= Math.min(4, precip*0.6);
+            if (vEff >= 12) base -= Math.min(3, (vEff-10)*0.15);
+            if (temp <= 16 && hum >= 60) base -= 2.5;
+        }
+        return Math.round(Math.max(-15, Math.min(55, base))*10)/10;
+    }
     
     // Formatear labels
     function formatLabels(labels) {
@@ -217,6 +250,21 @@ document.addEventListener('DOMContentLoaded', function() {
             options: { ...commonOptions, scales: { ...commonOptions.scales, y: { beginAtZero: true, title: { display: true, text: 'Precipitación (mm)' } } } }
         });
         
+        sensacionChart = new Chart(document.getElementById('sensacionChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sensacion termica (C)',
+                    data: currentData.sensacion_termica || [],
+                    borderColor: 'rgb(255, 159, 64)',
+                    backgroundColor: 'rgba(255, 159, 64, 0.15)',
+                    fill: true, tension: 0.4
+                }]
+            },
+            options: { ...commonOptions, scales: { ...commonOptions.scales, y: { beginAtZero: false, title: { display: true, text: 'Sensacion (C)' } } } }
+        });
+
         windChart = new Chart(document.getElementById('vientoChart'), {
             type: 'line',
             data: {
@@ -237,30 +285,50 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCharts(data) {
         const labels = formatLabels(data.labels);
         
-        [tempChart, humChart, precipChart, windChart].forEach((chart, i) => {
-            chart.data.labels = labels;
-            chart.data.datasets[0].data = [data.temperatura, data.humedad, data.precipitacion, data.viento][i];
-            chart.update('active');
-        });
+        tempChart.data.labels = labels;
+        tempChart.data.datasets[0].data = data.temperatura;
+        tempChart.update('active');
+        if (sensacionChart) {
+            sensacionChart.data.labels = labels;
+            sensacionChart.data.datasets[0].data = data.sensacion_termica || [];
+            sensacionChart.update('active');
+        }
+        humChart.data.labels = labels;
+        humChart.data.datasets[0].data = data.humedad;
+        humChart.update('active');
+        precipChart.data.labels = labels;
+        precipChart.data.datasets[0].data = data.precipitacion;
+        precipChart.update('active');
+        windChart.data.labels = labels;
+        windChart.data.datasets[0].data = data.viento;
+        windChart.update('active');
     }
     
     // Actualizar cards de resumen con datos actuales
     async function updateSummaryCards(lat, lng) {
         try {
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=America/La_Paz`;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_gusts_10m,apparent_temperature,uv_index&timezone=America/La_Paz`;
             const response = await fetch(url);
             const result = await response.json();
             
             if (result.current) {
-                document.getElementById('temp-current').textContent = (result.current.temperature_2m || 0).toFixed(1) + '°C';
-                document.getElementById('humidity-current').textContent = (result.current.relative_humidity_2m || 0).toFixed(0) + '%';
-                document.getElementById('precip-current').textContent = (result.current.precipitation || 0).toFixed(1) + ' mm';
-                document.getElementById('wind-current').textContent = (result.current.wind_speed_10m || 0).toFixed(1) + ' km/h';
+                const t = result.current.temperature_2m || 0;
+                const h = result.current.relative_humidity_2m || 0;
+                const w = result.current.wind_speed_10m || 0;
+                const g = result.current.wind_gusts_10m || 0;
+                const p = result.current.precipitation || 0;
+                const feels = calcSensacionTermica(t, h, w, g, p, result.current.apparent_temperature);
+                document.getElementById('temp-current').textContent = t.toFixed(1) + '°C';
+                document.getElementById('feels-current').textContent = feels.toFixed(1) + '°C';
+                document.getElementById('humidity-current').textContent = h.toFixed(0) + '%';
+                document.getElementById('precip-current').textContent = p.toFixed(1) + ' mm';
+                document.getElementById('wind-current').textContent = w.toFixed(1) + ' km/h';
             }
         } catch (error) {
             console.error('Error fetching current weather:', error);
             // Show error state
             document.getElementById('temp-current').textContent = 'N/A';
+            document.getElementById('feels-current').textContent = 'N/A';
             document.getElementById('humidity-current').textContent = 'N/A';
             document.getElementById('precip-current').textContent = 'N/A';
             document.getElementById('wind-current').textContent = 'N/A';
