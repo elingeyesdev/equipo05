@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 {{-- Info Boxes Row --}}
 <div class="row">
     <div class="col-md-3 col-sm-6 col-12">

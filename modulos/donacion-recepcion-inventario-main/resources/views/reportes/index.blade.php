@@ -7,6 +7,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 <div class="row">
     <!-- Reporte de Donaciones por Período -->
     <div class="col-md-6 col-lg-4">

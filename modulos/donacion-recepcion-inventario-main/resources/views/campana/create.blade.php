@@ -7,6 +7,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
     <div class="row">
         <div class="col-md-12">
             @includeif('partials.errors')

@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Puntos de Recolección')
+@section('title', 'Puntos de Recolecciï¿½n')
 
 @section('content_header')
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>Puntos de Recolección</h1>
+        <h1>Puntos de Recolecciï¿½n</h1>
     </div>
     <div class="col-sm-6">
         <a href="{{ route('inventario.puntos-recoleccion.create') }}" class="btn btn-primary float-right">
@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 {{-- Statistics Row --}}
 <div class="row">
     <div class="col-lg-3 col-6">
@@ -44,7 +45,7 @@
 {{-- Main Card --}}
 <div class="card card-primary card-outline">
     <div class="card-header">
-        <h3 class="card-title">Listado de Puntos de Recolección</h3>
+        <h3 class="card-title">Listado de Puntos de Recolecciï¿½n</h3>
     </div>
     <div class="card-body">
         <table id="puntosTable" class="table table-bordered table-striped table-hover">
@@ -52,7 +53,7 @@
                 <tr>
                     <th width="60px">#</th>
                     <th>Nombre</th>
-                    <th>Dirección</th>
+                    <th>Direcciï¿½n</th>
                     <th>Contacto</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>
@@ -84,7 +85,7 @@
                                 </a>
                                 <form action="{{ route('inventario.puntos-recoleccion.destroy', $punto->id_punto) }}" method="POST"
                                     style="display: inline;"
-                                    onsubmit="return confirm('¿Está seguro de eliminar este punto de recolección?');">
+                                    onsubmit="return confirm('ï¿½Estï¿½ seguro de eliminar este punto de recolecciï¿½n?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -99,7 +100,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre pï¿½ginas</small>
     </div>
 </div>
 @stop
@@ -135,14 +136,14 @@
             "language": {
                 "search": "Buscar:",
                 "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay puntos de recolección registrados",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "emptyTable": "No hay puntos de recolecciï¿½n registrados",
+                "lengthMenu": "Mostrar _MENU_ registros por pï¿½gina",
                 "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
                 "infoEmpty": "Mostrando 0 a 0 de 0 registros",
                 "infoFiltered": "(filtrado de _MAX_ registros totales)",
                 "paginate": {
                     "first": "Primero",
-                    "last": "Último",
+                    "last": "ï¿½ltimo",
                     "next": "Siguiente",
                     "previous": "Anterior"
                 }

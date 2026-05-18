@@ -5,7 +5,7 @@
 @section('content_header')
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>Gestión de Estantes</h1>
+        <h1>Gestiï¿½n de Estantes</h1>
     </div>
     <div class="col-sm-6">
         <a href="{{ route('inventario.estante.create') }}" class="btn btn-primary float-right">
@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 {{-- Statistics Row --}}
 <div class="row">
     <div class="col-lg-3 col-6">
@@ -51,9 +52,9 @@
             <thead class="thead-light">
                 <tr>
                     <th width="60px">#</th>
-                    <th>Almacén</th>
-                    <th>Código Estante</th>
-                    <th>Descripción</th>
+                    <th>Almacï¿½n</th>
+                    <th>Cï¿½digo Estante</th>
+                    <th>Descripciï¿½n</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -67,7 +68,7 @@
                                     {{ $estante->almacene->nombre }}
                                 </span>
                             @else
-                                <span class="badge badge-secondary">Sin almacén</span>
+                                <span class="badge badge-secondary">Sin almacï¿½n</span>
                             @endif
                         </td>
                         <td><strong>{{ $estante->codigo_estante }}</strong></td>
@@ -84,7 +85,7 @@
                                 </a>
                                 <form action="{{ route('inventario.estante.destroy', $estante->id_estante) }}" method="POST"
                                     style="display: inline;"
-                                    onsubmit="return confirm('¿Está seguro de eliminar este estante?');">
+                                    onsubmit="return confirm('ï¿½Estï¿½ seguro de eliminar este estante?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -99,7 +100,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre pï¿½ginas</small>
     </div>
 </div>
 @stop
@@ -136,13 +137,13 @@
                 "search": "Buscar:",
                 "zeroRecords": "No se encontraron resultados",
                 "emptyTable": "No hay datos disponibles en la tabla",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "lengthMenu": "Mostrar _MENU_ registros por pï¿½gina",
                 "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
                 "infoEmpty": "Mostrando 0 a 0 de 0 registros",
                 "infoFiltered": "(filtrado de _MAX_ registros totales)",
                 "paginate": {
                     "first": "Primero",
-                    "last": "Último",
+                    "last": "ï¿½ltimo",
                     "next": "Siguiente",
                     "previous": "Anterior"
                 }

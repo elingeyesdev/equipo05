@@ -7,6 +7,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 col-sm-6 col-md-3">

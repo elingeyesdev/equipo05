@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 <form method="POST" action="{{ route('inventario.solicitudes-recoleccions.store') }}" role="form" enctype="multipart/form-data">
     @csrf
     @include('inventario::solicitudes-recoleccion.form')

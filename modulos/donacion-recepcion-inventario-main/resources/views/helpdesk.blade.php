@@ -15,6 +15,7 @@
 @endsection
 
 @section('content')
+@include('inventario::partials.flash-messages')
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">

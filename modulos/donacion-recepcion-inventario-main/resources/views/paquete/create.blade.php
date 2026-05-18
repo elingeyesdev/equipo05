@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 <form method="POST" action="{{ route('inventario.paquete.store') }}" role="form" enctype="multipart/form-data">
     @csrf
     @include('inventario::paquete.form')

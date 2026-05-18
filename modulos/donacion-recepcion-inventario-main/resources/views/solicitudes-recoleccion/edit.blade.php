@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 <form method="POST" action="{{ route('inventario.solicitudes-recoleccions.update', $solicitudesRecoleccion->id_solicitud) }}"
     role="form" enctype="multipart/form-data">
     @method('PATCH')

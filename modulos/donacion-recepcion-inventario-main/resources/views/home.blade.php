@@ -1,16 +1,19 @@
 @extends('adminlte::page')
 
-@section('title', 'Estadísticas')
+@section('title', 'Estadísticas — Inventario')
+@section('subtitle', 'Panel de recepción, almacén y distribución de donaciones.')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center">
-    <h1><i class="fas fa-chart-line"></i> Estadísticas Principales</h1>
-    <small class="text-muted">Sistema de Gestión de Donaciones</small>
+<div class="d-flex flex-wrap justify-content-between align-items-center">
+    <div>
+        <h1 class="m-0"><i class="fas fa-chart-line text-primary"></i> Estadísticas principales</h1>
+        <p class="text-muted mb-0 small">Resumen operativo del módulo de inventario</p>
+    </div>
 </div>
-@stop
+@endsection
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid px-0">
     {{-- SECCIÓN 1: KPIs Principales - Fila 1 --}}
     <div class="row">
         <div class="col-12 col-sm-6 col-md-3">

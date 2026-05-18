@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Gestión de Donantes')
+@section('title', 'Gestiï¿½n de Donantes')
 
 @section('content_header')
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>Gestión de Donantes</h1>
+        <h1>Gestiï¿½n de Donantes</h1>
     </div>
     <div class="col-sm-6">
         <a href="{{ route('inventario.donante.create') }}" class="btn btn-primary float-right">
@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 {{-- Info Boxes --}}
 <div class="row">
     <div class="col-lg-4 col-6">
@@ -54,7 +55,7 @@
                     <th>Nombre</th>
                     <th>Tipo</th>
                     <th>Email</th>
-                    <th>Teléfono</th>
+                    <th>Telï¿½fono</th>
                     <th>Fecha Registro</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>
@@ -86,7 +87,7 @@
                                 </a>
                                 <form action="{{ route('inventario.donante.destroy', $donante->id_donante) }}" method="POST"
                                     style="display: inline;"
-                                    onsubmit="return confirm('¿Está seguro de eliminar este donante?');">
+                                    onsubmit="return confirm('ï¿½Estï¿½ seguro de eliminar este donante?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -101,7 +102,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre pï¿½ginas</small>
     </div>
 </div>
 @stop
@@ -139,13 +140,13 @@
                 "search": "Buscar:",
                 "zeroRecords": "No se encontraron resultados",
                 "emptyTable": "No hay donantes registrados",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "lengthMenu": "Mostrar _MENU_ registros por pï¿½gina",
                 "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
                 "infoEmpty": "Mostrando 0 a 0 de 0 registros",
                 "infoFiltered": "(filtrado de _MAX_ registros totales)",
                 "paginate": {
                     "first": "Primero",
-                    "last": "Último",
+                    "last": "ï¿½ltimo",
                     "next": "Siguiente",
                     "previous": "Anterior"
                 }

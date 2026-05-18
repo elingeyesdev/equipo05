@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 
 {{-- Statistics Row --}}
 <div class="row">

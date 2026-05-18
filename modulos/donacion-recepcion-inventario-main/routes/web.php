@@ -107,7 +107,7 @@ Route::middleware(['auth'])->group(function () {
 // ========== HELPDESK WIDGET ==========
 // Ruta generada por: php artisan helpdeskwidget:install
 Route::get('helpdesk', function () {
-    return view('helpdesk');
+    return view('inventario::helpdesk');
 })->name('helpdesk')->middleware('auth');
 
 

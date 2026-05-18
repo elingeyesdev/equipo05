@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Solicitudes de Recolección')
+@section('title', 'Solicitudes de Recolecciï¿½n')
 
 @section('content_header')
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>Solicitudes de Recolección</h1>
+        <h1>Solicitudes de Recolecciï¿½n</h1>
     </div>
     <div class="col-sm-6">
         <a href="{{ route('inventario.solicitudes-recoleccions.create') }}" class="btn btn-primary float-right">
@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 {{-- Statistics Row --}}
 <div class="row">
     <div class="col-lg-3 col-6">
@@ -52,7 +53,7 @@
                 <tr>
                     <th width="60px">#</th>
                     <th>Donante</th>
-                    <th>Dirección</th>
+                    <th>Direcciï¿½n</th>
                     <th>Fecha Programada</th>
                     <th>Estado</th>
                     <th width="200px" class="text-center">Acciones</th>
@@ -101,7 +102,7 @@
                                 </a>
                                 <form action="{{ route('inventario.solicitudes-recoleccions.destroy', $solicitud->id_solicitud) }}"
                                     method="POST" style="display: inline;"
-                                    onsubmit="return confirm('¿Está seguro de eliminar esta solicitud?');">
+                                    onsubmit="return confirm('ï¿½Estï¿½ seguro de eliminar esta solicitud?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -116,7 +117,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre pï¿½ginas</small>
     </div>
 </div>
 @stop
@@ -153,13 +154,13 @@
                 "search": "Buscar:",
                 "zeroRecords": "No se encontraron resultados",
                 "emptyTable": "No hay solicitudes registradas",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "lengthMenu": "Mostrar _MENU_ registros por pï¿½gina",
                 "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
                 "infoEmpty": "Mostrando 0 a 0 de 0 registros",
                 "infoFiltered": "(filtrado de _MAX_ registros totales)",
                 "paginate": {
                     "first": "Primero",
-                    "last": "Último",
+                    "last": "ï¿½ltimo",
                     "next": "Siguiente",
                     "previous": "Anterior"
                 }
