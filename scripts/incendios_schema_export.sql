@@ -1,0 +1,57 @@
+-- Esquema SQLite exportado desde database/incendios.sqlite (estado tras migraciones Laravel).
+-- Fuente canónica del proyecto: modulos/monitoreo-incendios-simulacion-main/database/migrations/*.php
+-- Para crear la BD vacía en la app: configurar INCENDIOS_DB_* y ejecutar php artisan migrate --database=incendios (o el nombre de conexión que usen).
+
+CREATE TABLE IF NOT EXISTS "migrations" ("id" integer primary key autoincrement not null, "migration" varchar not null, "batch" integer not null);
+CREATE TABLE sqlite_sequence(name,seq);
+CREATE TABLE IF NOT EXISTS "users" ("id" integer primary key autoincrement not null, "name" varchar not null, "email" varchar not null, "email_verified_at" datetime, "password" varchar not null, "remember_token" varchar, "created_at" datetime, "updated_at" datetime, "telefono" varchar, "cedula_identidad" varchar, "google_id" varchar);
+CREATE UNIQUE INDEX "users_email_unique" on "users" ("email");
+CREATE TABLE IF NOT EXISTS "password_reset_tokens" ("email" varchar not null, "token" varchar not null, "created_at" datetime, primary key ("email"));
+CREATE TABLE IF NOT EXISTS "sessions" ("id" varchar not null, "user_id" integer, "ip_address" varchar, "user_agent" text, "payload" text not null, "last_activity" integer not null, primary key ("id"));
+CREATE INDEX "sessions_user_id_index" on "sessions" ("user_id");
+CREATE INDEX "sessions_last_activity_index" on "sessions" ("last_activity");
+CREATE TABLE IF NOT EXISTS "cache" ("key" varchar not null, "value" text not null, "expiration" integer not null, primary key ("key"));
+CREATE TABLE IF NOT EXISTS "cache_locks" ("key" varchar not null, "owner" varchar not null, "expiration" integer not null, primary key ("key"));
+CREATE TABLE IF NOT EXISTS "jobs" ("id" integer primary key autoincrement not null, "queue" varchar not null, "payload" text not null, "attempts" integer not null, "reserved_at" integer, "available_at" integer not null, "created_at" integer not null);
+CREATE INDEX "jobs_queue_index" on "jobs" ("queue");
+CREATE TABLE IF NOT EXISTS "job_batches" ("id" varchar not null, "name" varchar not null, "total_jobs" integer not null, "pending_jobs" integer not null, "failed_jobs" integer not null, "failed_job_ids" text not null, "options" text, "cancelled_at" integer, "created_at" integer not null, "finished_at" integer, primary key ("id"));
+CREATE TABLE IF NOT EXISTS "failed_jobs" ("id" integer primary key autoincrement not null, "uuid" varchar not null, "connection" text not null, "queue" text not null, "payload" text not null, "exception" text not null, "failed_at" datetime not null default CURRENT_TIMESTAMP);
+CREATE UNIQUE INDEX "failed_jobs_uuid_unique" on "failed_jobs" ("uuid");
+CREATE TABLE IF NOT EXISTS "foco_tracks" ("id" integer primary key autoincrement not null, "foco_incendio_id" integer not null, "recorded_at" datetime, "coordinates" text not null, "intensidad" float, "created_at" datetime, "updated_at" datetime, foreign key("foco_incendio_id") references "focos_incendios"("id") on delete cascade);
+CREATE TABLE IF NOT EXISTS "voluntarios" ("id" integer primary key autoincrement not null, "user_id" integer not null, "direccion" varchar, "ciudad" varchar, "zona" varchar, "notas" text, "created_at" datetime, "updated_at" datetime, foreign key("user_id") references "users"("id") on delete cascade);
+CREATE UNIQUE INDEX "clientes_user_id_unique" on "voluntarios" ("user_id");
+CREATE TABLE IF NOT EXISTS "administradores" ("id" integer primary key autoincrement not null, "user_id" integer not null, "departamento" varchar, "nivel_acceso" varchar not null default 'basico', "activo" tinyint(1) not null default '1', "created_at" datetime, "updated_at" datetime, foreign key("user_id") references "users"("id") on delete cascade);
+CREATE UNIQUE INDEX "administradores_user_id_unique" on "administradores" ("user_id");
+CREATE TABLE IF NOT EXISTS "foco_simulacion" ("id" integer primary key autoincrement not null, "foco_incendio_id" integer not null, "simulacion_id" integer not null, "agregado_at" datetime, "activo" tinyint(1) not null default '1', "created_at" datetime, "updated_at" datetime, foreign key("foco_incendio_id") references "focos_incendios"("id") on delete cascade, foreign key("simulacion_id") references "simulaciones"("id") on delete cascade);
+CREATE UNIQUE INDEX "foco_simulacion_foco_incendio_id_simulacion_id_unique" on "foco_simulacion" ("foco_incendio_id", "simulacion_id");
+CREATE TABLE IF NOT EXISTS "simulaciones" ("id" integer primary key autoincrement not null, "created_at" datetime, "updated_at" datetime, "nombre" varchar not null, "fecha" datetime, "duracion" integer, "focos_activos" integer not null default ('0'), "num_voluntarios_enviados" integer not null default ('0'), "estado" varchar not null default ('pendiente'), "admin_id" integer, "temperature" numeric, "humidity" numeric, "wind_speed" numeric, "wind_direction" integer, "simulation_speed" numeric not null default '1', "fire_risk" integer, "map_center_lat" numeric, "map_center_lng" numeric, "initial_fires" text, "mitigation_strategies" text, "auto_stopped" tinyint(1) not null default '0', "ci_usuario" varchar, "deleted_at" datetime, "public" tinyint(1) not null default '0', foreign key("admin_id") references "administradores"("id") on delete set null);
+CREATE TABLE IF NOT EXISTS "focos_incendios" ("id" integer primary key autoincrement not null, "created_at" datetime, "updated_at" datetime, "fecha" datetime, "ubicacion" varchar, "coordenadas" text, "intensidad" float);
+CREATE TABLE IF NOT EXISTS "predictions" ("id" integer primary key autoincrement not null, "predicted_at" datetime, "path" text, "meta" text, "created_at" datetime, "updated_at" datetime, "foco_incendio_id" integer, "user_id" integer, "ci_usuario" varchar, "deleted_at" datetime, foreign key("foco_incendio_id") references "focos_incendios"("id") on delete cascade);
+CREATE TABLE IF NOT EXISTS "tipo_biomasa" ("id" integer primary key autoincrement not null, "tipo_biomasa" varchar not null, "created_at" datetime, "updated_at" datetime, "color" varchar not null default '#4CAF50', "modificador_intensidad" numeric not null default '1');
+CREATE UNIQUE INDEX "tipo_biomasa_tipo_biomasa_unique" on "tipo_biomasa" ("tipo_biomasa");
+CREATE TABLE IF NOT EXISTS "simulation_fire_history" ("id" integer primary key autoincrement not null, "simulacion_id" integer not null, "fire_id" varchar not null, "time_step" integer not null, "lat" numeric not null, "lng" numeric not null, "intensity" numeric not null, "spread" numeric not null, "active" tinyint(1) not null default ('1'), "created_at" datetime, "updated_at" datetime, foreign key("simulacion_id") references simulaciones("id") on delete cascade on update no action);
+CREATE INDEX "simulation_fire_history_simulacion_id_time_step_index" on "simulation_fire_history" ("simulacion_id", "time_step");
+CREATE TABLE IF NOT EXISTS "personal_access_tokens" ("id" integer primary key autoincrement not null, "tokenable_type" varchar not null, "tokenable_id" integer not null, "name" text not null, "token" varchar not null, "abilities" text, "last_used_at" datetime, "expires_at" datetime, "created_at" datetime, "updated_at" datetime);
+CREATE INDEX "personal_access_tokens_tokenable_type_tokenable_id_index" on "personal_access_tokens" ("tokenable_type", "tokenable_id");
+CREATE UNIQUE INDEX "personal_access_tokens_token_unique" on "personal_access_tokens" ("token");
+CREATE INDEX "personal_access_tokens_expires_at_index" on "personal_access_tokens" ("expires_at");
+CREATE TABLE IF NOT EXISTS "biomasas" ("id" integer primary key autoincrement not null, "created_at" datetime, "updated_at" datetime, "area_m2" integer, "densidad" varchar not null default ('media'), "ubicacion" varchar, "descripcion" text, "user_id" integer, "tipo_biomasa_id" integer, "fecha_reporte" date, "coordenadas" text, "perimetro_m" numeric, "estado" varchar check ("estado" in ('pendiente', 'aprobada', 'rechazada')) not null default 'pendiente', "motivo_rechazo" text, "aprobada_por" integer, "fecha_revision" datetime, "ci_usuario" varchar, "deleted_at" datetime, foreign key("tipo_biomasa_id") references tipo_biomasa("id") on delete set null on update no action, foreign key("user_id") references users("id") on delete set null on update no action, foreign key("aprobada_por") references "users"("id") on delete set null);
+CREATE UNIQUE INDEX "users_google_id_unique" on "users" ("google_id");
+CREATE TABLE IF NOT EXISTS "permissions" ("id" integer primary key autoincrement not null, "name" varchar not null, "guard_name" varchar not null, "created_at" datetime, "updated_at" datetime);
+CREATE UNIQUE INDEX "permissions_name_guard_name_unique" on "permissions" ("name", "guard_name");
+CREATE TABLE IF NOT EXISTS "roles" ("id" integer primary key autoincrement not null, "name" varchar not null, "guard_name" varchar not null, "created_at" datetime, "updated_at" datetime);
+CREATE UNIQUE INDEX "roles_name_guard_name_unique" on "roles" ("name", "guard_name");
+CREATE TABLE IF NOT EXISTS "model_has_permissions" ("permission_id" integer not null, "model_type" varchar not null, "model_id" integer not null, foreign key("permission_id") references "permissions"("id") on delete cascade, primary key ("permission_id", "model_id", "model_type"));
+CREATE INDEX "model_has_permissions_model_id_model_type_index" on "model_has_permissions" ("model_id", "model_type");
+CREATE TABLE IF NOT EXISTS "model_has_roles" ("role_id" integer not null, "model_type" varchar not null, "model_id" integer not null, foreign key("role_id") references "roles"("id") on delete cascade, primary key ("role_id", "model_id", "model_type"));
+CREATE INDEX "model_has_roles_model_id_model_type_index" on "model_has_roles" ("model_id", "model_type");
+CREATE TABLE IF NOT EXISTS "role_has_permissions" ("permission_id" integer not null, "role_id" integer not null, foreign key("permission_id") references "permissions"("id") on delete cascade, foreign key("role_id") references "roles"("id") on delete cascade, primary key ("permission_id", "role_id"));
+CREATE INDEX "focos_incendios_fecha_index" on "focos_incendios" ("fecha");
+CREATE INDEX "focos_incendios_intensidad_index" on "focos_incendios" ("intensidad");
+CREATE INDEX "focos_incendios_created_at_index" on "focos_incendios" ("created_at");
+CREATE INDEX "focos_incendios_fecha_intensidad_index" on "focos_incendios" ("fecha", "intensidad");
+CREATE UNIQUE INDEX "users_cedula_identidad_unique" on "users" ("cedula_identidad");
+CREATE INDEX "biomasas_ci_usuario_index" on "biomasas" ("ci_usuario");
+CREATE INDEX "simulaciones_ci_usuario_index" on "simulaciones" ("ci_usuario");
+CREATE INDEX "predictions_ci_usuario_index" on "predictions" ("ci_usuario");
+CREATE INDEX "simulaciones_public_index" on "simulaciones" ("public");
