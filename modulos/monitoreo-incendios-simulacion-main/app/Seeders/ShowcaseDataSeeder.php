@@ -18,8 +18,8 @@ class ShowcaseDataSeeder extends Seeder
 {
     public function run(): void
     {
-        Role::firstOrCreate(['name' => 'administrador', 'guard_name' => '']);
-        Role::firstOrCreate(['name' => 'voluntario', 'guard_name' => '']);
+        Role::firstOrCreate(['name' => 'administrador', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'voluntario', 'guard_name' => 'web']);
 
         $pastizal = TipoBiomasa::firstOrCreate(
             ['tipo_biomasa' => 'Pastizal'],

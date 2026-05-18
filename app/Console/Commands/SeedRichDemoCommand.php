@@ -21,6 +21,9 @@ class SeedRichDemoCommand extends Command
         }
 
         $this->call('storage:link');
+        $this->call('db:ensure-core-cache');
+
+        config(['cache.stores.database.connection' => 'core']);
 
         $seeder = new RichUnifiedDemoSeeder;
         $seeder->setCommand($this);

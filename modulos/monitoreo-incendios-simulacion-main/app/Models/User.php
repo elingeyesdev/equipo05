@@ -32,10 +32,19 @@ class User extends Authenticatable
 
     protected $fillable = ['name', 'email', 'telefono', 'cedula_identidad', 'password', 'google_id', 'nombre', 'apellido', 'contrasena'];
 
-    protected $casts = [
-        'password' => 'hashed',
-        'email_verified_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        if (UnifiedPostgres::enabled()) {
+            return [
+                'email_verified_at' => 'datetime',
+            ];
+        }
+
+        return [
+            'password' => 'hashed',
+            'email_verified_at' => 'datetime',
+        ];
+    }
 
     public function getAuthPassword()
     {
@@ -46,6 +55,35 @@ class User extends Authenticatable
         return $this->password;
     }
 
+    public function setNameAttribute($value): void
+    {
+        if (UnifiedPostgres::enabled()) {
+            $parts = preg_split('/\s+/', trim((string) $value), 2);
+            $this->attributes['nombre'] = $parts[0] ?? 'Usuario';
+            $this->attributes['apellido'] = $parts[1] ?? 'Demo';
+
+            return;
+        }
+
+        $this->attributes['name'] = $value;
+    }
+
+    public function setPasswordAttribute($value): void
+    {
+        if (UnifiedPostgres::enabled()) {
+            $this->attributes['contrasena'] = $value;
+
+            return;
+        }
+
+        $this->attributes['password'] = $value;
+    }
+
+    public function setCedulaIdentidadAttribute($value): void
+    {
+        $this->attributes['cedula_identidad'] = $value;
+    }
+
     public function getNameAttribute(): string
     {
         if (UnifiedPostgres::enabled()) {
@@ -53,6 +91,35 @@ class User extends Authenticatable
         }
 
         return (string) ($this->attributes['name'] ?? '');
+    }
+
+    public function getCedulaIdentidadAttribute(): ?string
+    {
+        if (array_key_exists('cedula_identidad', $this->attributes) && $this->attributes['cedula_identidad'] !== '') {
+            return (string) $this->attributes['cedula_identidad'];
+        }
+
+        if (! empty($this->telefono)) {
+            $digits = preg_replace('/\D+/', '', (string) $this->telefono);
+
+            return $digits !== '' ? $digits : null;
+        }
+
+        return UnifiedPostgres::enabled() ? 'CORE-'.(string) $this->getKey() : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getAttributesForInsert(): array
+    {
+        $attributes = parent::getAttributesForInsert();
+
+        if (UnifiedPostgres::enabled()) {
+            unset($attributes['name'], $attributes['password'], $attributes['cedula_identidad'], $attributes['google_id']);
+        }
+
+        return $attributes;
     }
 
     public function getIdAttribute(): ?int

@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (\App\Support\UnifiedPostgres::enabled() && config('cache.default') === 'database') {
+            config(['cache.stores.database.connection' => 'core']);
+        }
+
         View::composer(['layouts.app', 'fusion::layouts.app'], function ($view) {
             if (! \Illuminate\Support\Facades\Auth::check()) {
                 $view->with('contextModuleRoles', collect());

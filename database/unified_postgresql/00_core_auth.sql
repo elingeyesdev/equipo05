@@ -77,3 +77,18 @@ CREATE TABLE IF NOT EXISTS core.sessions (
 );
 CREATE INDEX IF NOT EXISTS core_sessions_user_id_index ON core.sessions (user_id);
 CREATE INDEX IF NOT EXISTS core_sessions_last_activity_index ON core.sessions (last_activity);
+
+-- Caché Laravel (Spatie Permission y CACHE_STORE=database)
+CREATE TABLE IF NOT EXISTS core.cache (
+    key         VARCHAR(255) NOT NULL PRIMARY KEY,
+    value       TEXT NOT NULL,
+    expiration  INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS core_cache_expiration_index ON core.cache (expiration);
+
+CREATE TABLE IF NOT EXISTS core.cache_locks (
+    key         VARCHAR(255) NOT NULL PRIMARY KEY,
+    owner       VARCHAR(255) NOT NULL,
+    expiration  INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS core_cache_locks_expiration_index ON core.cache_locks (expiration);
