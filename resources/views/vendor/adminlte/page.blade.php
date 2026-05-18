@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('fusion::layouts.app')
 
 @section('title')
     @hasSection('title')
@@ -18,7 +18,16 @@
     @endif
 @endsection
 
+@section('css')
+    @yield('css')
+    @stack('css')
+@endsection
+
 @section('content')
     @yield('content')
 @endsection
 
+@section('js')
+    @yield('js')
+    @stack('js')
+@endsection

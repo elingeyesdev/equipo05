@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @if(str_contains($bodyModuleClass ?? '', 'module-inventario'))
+        <link rel="stylesheet" href="{{ asset('css/inventario-module.css') }}">
+    @endif
     @yield('css')
     @stack('css')
     @stack('styles')
@@ -232,7 +235,7 @@
                         <li class="nav-item {{ request()->routeIs('inventario.*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('inventario.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-warehouse"></i>
-                                <p>donacion-recepcion-inventario-main <i class="fas fa-angle-left right"></i></p>
+                                <p>Inventario y donaciones <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">

@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('layouts.app', function ($view) {
+        View::composer(['layouts.app', 'fusion::layouts.app'], function ($view) {
             if (! \Illuminate\Support\Facades\Auth::check()) {
                 $view->with('contextModuleRoles', collect());
                 $view->with('showModuleContextBar', false);
@@ -35,8 +35,18 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
             $path = request()->path();
+            $inInventario = str_starts_with($path, 'inventario');
             $inRescate = str_starts_with($path, 'rescate/modulo') || request()->routeIs('fusion.modulos.rescate');
             $inIncendios = str_starts_with($path, 'incendios/modulo') || request()->routeIs('fusion.modulos.incendios');
+
+            if ($inInventario) {
+                $view->with('contextModuleRoles', collect());
+                $view->with('showModuleContextBar', false);
+                $view->with('bodyModuleClass', 'module-inventario');
+
+                return;
+            }
+
             if (! $inRescate && ! $inIncendios) {
                 $view->with('contextModuleRoles', collect());
                 $view->with('showModuleContextBar', false);
@@ -59,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('moduleContextIsIncendios', $inIncendios);
         });
 
+        View::addNamespace('fusion', resource_path('views'));
         View::addNamespace('adminlte', resource_path('views/vendor/adminlte'));
         View::addNamespace('inventario', base_path('modulos/donacion-recepcion-inventario-main/resources/views'));
         View::addNamespace('incendios', base_path('modulos/monitoreo-incendios-simulacion-main/resources/views'));
