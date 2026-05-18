@@ -131,7 +131,7 @@
                                 <div class="col-md-4">
                                     <div class="card card-outline card-secondary h-100 animalfile-card">
                                         @if($animalFile->imagen_url)
-                                            <img class="animalfile-card-img" src="{{ asset('storage/' . $animalFile->imagen_url) }}" alt="imagen animal">
+                                            <img class="animalfile-card-img" src="{{ rescate_media_url($animalFile->imagen_url, 'animal-'.$animalFile->id) }}" alt="imagen animal">
                                         @endif
                                         <div class="card-header d-flex align-items-center">
                                             <h3 class="card-title mb-0" title="{{ $animalFile->animal?->nombre }}">

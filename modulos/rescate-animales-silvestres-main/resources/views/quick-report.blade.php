@@ -102,9 +102,9 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="imagen">Fotografía <span class="text-danger">*</span></label>
+                                                <label for="imagen">Fotografía <span class="text-muted small">(opcional)</span></label>
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input @error('imagen') is-invalid @enderror" id="imagen" name="imagen" accept="image/jpeg,image/jpg,image/png" required>
+                                                    <input type="file" class="custom-file-input @error('imagen') is-invalid @enderror" id="imagen" name="imagen" accept="image/jpeg,image/jpg,image/png">
                                                     <label class="custom-file-label" for="imagen">Seleccionar archivo JPG o PNG</label>
                                                 </div>
                                                 @error('imagen')<span class="invalid-feedback d-block" role="alert">{{ $message }}</span>@enderror

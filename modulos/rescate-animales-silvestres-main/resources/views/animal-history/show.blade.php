@@ -52,7 +52,7 @@
                             </div>
                             @if($arrivalImg)
                                 <div class="ml-3">
-                                    <img src="{{ asset('storage/' . $arrivalImg) }}" alt="Llegada" style="max-height:96px; border-radius:6px;">
+                                    <img src="{{ rescate_media_url($arrivalImg, 'arrival-'.$report?->id) }}" alt="Llegada" style="max-height:96px; border-radius:6px;">
                                 </div>
                             @endif
                         </div>

@@ -164,7 +164,7 @@
                             <div class="release-card release-live">
                                 <div class="release-card-img">
                                     @if(!empty($af?->imagen_url))
-                                        <img src="{{ asset('storage/' . $af->imagen_url) }}" alt="animal">
+                                        <img src="{{ rescate_media_url($af->imagen_url, 'release-'.$af->id) }}" alt="animal">
                                     @else
                                         <i class="fas fa-paw" style="font-size: 28px; color:#9ca3af"></i>
                                     @endif

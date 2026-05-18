@@ -144,7 +144,7 @@
                                 <div class="col-md-4">
                                     <div class="card card-outline card-secondary h-100 report-card">
                                         @if($report->imagen_url)
-                                            <img class="report-card-img" src="{{ asset('storage/' . $report->imagen_url) }}" alt="imagen hallazgo">
+                                            <img class="report-card-img" src="{{ rescate_media_url($report->imagen_url, 'report-'.$report->id) }}" alt="imagen hallazgo">
                                         @endif
                                         <div class="card-header d-flex justify-content-between align-items-center">
                                             <h3 class="card-title mb-0" title="{{ $report->condicionInicial?->nombre }}">

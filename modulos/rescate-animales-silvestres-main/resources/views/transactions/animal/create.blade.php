@@ -36,7 +36,7 @@
                                         <div class="card m-2 report-card" data-report-id="{{ $rep->id }}" data-cond-id="{{ $rep->condicion_inicial_id }}" data-cond-name="{{ $rep->condicion_nombre }}" data-obs="{{ e($rep->observaciones) }}" style="width: 200px; cursor: pointer;">
                                             <div class="card-img-top mt-3" style="height:110px; overflow:hidden; display:flex; align-items:center; justify-content:center; ">
                                                 @if(!empty($rep->imagen_url))
-                                                    <img src="{{ asset('storage/'.$rep->imagen_url) }}" alt="#{{ $rep->id }}" style="max-height:100%; max-width:100%;">
+                                                    <img src="{{ rescate_media_url($rep->imagen_url, 'report-'.$rep->id) }}" alt="#{{ $rep->id }}" style="max-height:100%; max-width:100%;">
                                                 @else
                                                     <span class="text-muted small">{{ __('Sin imagen') }}</span>
                                                 @endif

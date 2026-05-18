@@ -20,7 +20,7 @@ class QuickReportRequest extends FormRequest
             'telefono' => 'nullable|string|max:60',
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
-            'imagen' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage],
+            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage],
         ];
     }
 
