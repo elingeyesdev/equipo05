@@ -91,12 +91,39 @@ Proyecto nuevo para unificar de forma gradual:
     - Boton `Solicitar ayuda` (acceso a `logistica.solicitud.create`).
     - Boton `Galeria de paquetes entregados` (acceso a `logistica.galeria`).
 
-## Arranque local
+## PostgreSQL unificado (recomendado con Docker)
+
+Un solo servidor PostgreSQL (`equipo05_unificado`) con un esquema por módulo. **Login único** en `core.usuarios` (ya no hay tablas `users` duplicadas por módulo).
+
+Guías:
+- `database/docker/CONEXION_DBEAVER_Y_LARAVEL.txt` — DBeaver, `.env`, credenciales de prueba
+- `database/docker/ARRANQUE_SEGURO.txt` — checklist antes de `php artisan serve`
+
+Arranque rápido:
+
+```bash
+docker compose up -d db_unificado
+php artisan config:clear
+php artisan db:seed --force
+php artisan db:setup-inventario --fresh   # una vez
+php artisan serve
+```
+
+Login de prueba: `admin123@gmail.com` / `admin123`
+
+Si migras una base Docker antigua con tablas `users` repetidas:
+
+```bash
+php artisan db:consolidate-users-core --fresh-core
+php artisan db:seed --force
+```
+
+## Arranque local (SQLite, sin Docker PG)
 1. Instalar dependencias:
    - `composer install`
    - `npm install`
 2. Copiar variables:
-   - `cp .env.example .env` (si aplica en tu entorno)
+   - `cp .env.example .env` y usa `DATABASE_UNIFIED_POSTGRES=false`, `DB_CONNECTION=sqlite`
 3. Generar clave:
    - `php artisan key:generate`
 4. Ejecutar migraciones:

@@ -464,3 +464,24 @@ Verificacion ejecutada:
 Resultado esperado:
 
 - La navegacion a rutas con parametros ya no genera errores `500`; ante registros inexistentes se obtiene comportamiento estable (404 o redireccion valida segun flujo).
+
+### Hito 16 - Usuarios unificados en PostgreSQL (core.usuarios)
+
+Fecha: 2026-05-18
+
+Cambios:
+
+- Nuevo esquema de identidad: `database/unified_postgresql/00_core_auth.sql` (`core.usuarios`, roles Spatie, sesiones).
+- Modulos incendios, rescate, transparencia y logistica dejan de crear tablas `users` locales; FKs apuntan a `core.usuarios(usuarioid)`.
+- Login central (`App\Models\Usuario`) usa conexion `core` cuando `DATABASE_UNIFIED_POSTGRES=true`.
+- Comando `php artisan db:consolidate-users-core` para migrar bases Docker ya existentes.
+- Documentacion: `database/docker/CONEXION_DBEAVER_Y_LARAVEL.txt`, `database/docker/ARRANQUE_SEGURO.txt`.
+
+Verificacion:
+
+- `Auth::attempt` con `admin123@gmail.com` / `admin123` => OK contra `core.usuarios`.
+- Contenedor `equipo05-unificado-pg` healthy en puerto 5433.
+
+Resultado esperado:
+
+- En DBeaver solo una tabla de usuarios para login; modulos comparten los mismos IDs de usuario sin tablas sombra.

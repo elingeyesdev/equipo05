@@ -1,0 +1,40 @@
+================================================================================
+ARRANQUE SEGURO — PostgreSQL unificado + login en core.usuarios
+================================================================================
+
+1. Levantar base de datos
+   docker compose up -d db_unificado
+
+2. Variables en .env (raiz del proyecto)
+   DATABASE_UNIFIED_POSTGRES=true
+   DB_CONNECTION=core
+   UNIFIED_PG_HOST=127.0.0.1
+   UNIFIED_PG_PORT=5433
+   UNIFIED_PG_DATABASE=equipo05_unificado
+   UNIFIED_PG_USERNAME=postgres
+   UNIFIED_PG_PASSWORD=equipo05_unificado_dev
+
+3. Preparar Laravel
+   php artisan config:clear
+
+4. Si la base ya tenia tablas users duplicadas (instalacion anterior):
+   php artisan db:consolidate-users-core --fresh-core
+   php artisan db:seed --force
+
+   Si es volumen Docker nuevo (primera vez):
+   php artisan db:seed --force
+
+5. Inventario (una vez)
+   php artisan db:setup-inventario --fresh
+   (o: php artisan db:setup-unificado --fresh-inventario --seed)
+
+6. Servidor
+   php artisan serve
+
+7. Probar login
+   http://127.0.0.1:8000/login
+   admin123@gmail.com / admin123
+
+Cuando los pasos 1–7 terminan sin error, es seguro usar el programa.
+
+================================================================================

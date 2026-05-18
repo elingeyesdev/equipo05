@@ -9,6 +9,27 @@ Los datos viven en el volumen Docker "pg-unificado-data" (nombre compuesto:
 equipo05-main-integration_pg-unificado-data). No se pierden al reiniciar la PC
 mientras no borres ese volumen con "docker volume rm".
 
+USUARIOS (UN SOLO LUGAR)
+------------------------
+Desde la unificacion de auth, TODOS los logins usan:
+
+  Esquema:  core
+  Tabla:    core.usuarios
+  PK:       usuarioid
+  Password: columna contrasena (hash bcrypt)
+
+Roles y permisos Spatie tambien en core:
+  core.roles, core.permissions, core.model_has_roles, etc.
+
+YA NO existen (ni deben recrearse):
+  transparencia.usuarios
+  incendios.users
+  rescate.users
+  logistica.users
+
+Los modulos incendios/rescate/transparencia referencian core.usuarios(usuarioid)
+con columnas user_id / usuario_id / usuarioid.
+
 DBEAVER (nueva conexion PostgreSQL)
 -----------------------------------
 1. Base de datos -> Nueva conexion -> PostgreSQL -> Siguiente.
@@ -24,8 +45,16 @@ DBEAVER (nueva conexion PostgreSQL)
                     equipo05_unificado_dev
 3. Probar conexion -> Finalizar.
 4. En el arbol, despliega: Bases de datos -> equipo05_unificado -> Esquemas
-   Deberias ver: inventario, incendios, rescate, logistica, seguimiento,
-   cuadrillas, public, (y core si esta en el script).
+   Deberias ver: core, inventario, transparencia, incendios, rescate, logistica,
+   seguimiento, cuadrillas, public.
+
+5. Consultas utiles en DBeaver:
+   SELECT * FROM core.usuarios ORDER BY usuarioid;
+   SELECT u.email, r.name AS rol
+     FROM core.usuarios u
+     JOIN core.model_has_roles mhr ON mhr.model_id = u.usuarioid
+       AND mhr.model_type LIKE '%Usuario%'
+     JOIN core.roles r ON r.id = mhr.role_id;
 
 ERROR "could not find driver" (todos los modulos)
 -------------------------------------------------
@@ -41,26 +70,55 @@ hablar con PostgreSQL aunque DBeaver si conecte.
 
 LARAVEL (.env en la raiz del proyecto, con PHP en Windows)
 ----------------------------------------------------------
-Copia o ajusta estas lineas (y ejecuta: php artisan config:clear):
+Perfil recomendado con Docker (copia y ejecuta: php artisan config:clear):
 
   DATABASE_UNIFIED_POSTGRES=true
+  DB_CONNECTION=core
   UNIFIED_PG_HOST=127.0.0.1
   UNIFIED_PG_PORT=5433
   UNIFIED_PG_DATABASE=equipo05_unificado
   UNIFIED_PG_USERNAME=postgres
   UNIFIED_PG_PASSWORD=equipo05_unificado_dev
 
-  DB_CONNECTION=sqlite
-  DB_DATABASE=database/database.sqlite
+  SESSION_DRIVER=file
 
-La app principal (usuarios Spatie, donaciones fase 1, etc.) sigue en SQLite
-por defecto. Los SEIS modulos integrados usan el mismo PostgreSQL con distinto
-search_path (esquema) por conexion.
+La conexion "core" usa search_path core,public. El login (App\Models\Usuario)
+lee y escribe solo en core.usuarios.
+
+Los SEIS modulos integrados usan el mismo servidor PostgreSQL con distinto
+search_path por conexion (inventario, incendios, rescate, etc.).
+
+CREDENCIALES DE PRUEBA (UserSeeder)
+-----------------------------------
+  admin123@gmail.com     / admin123        (Administrador)
+  almacen123@gmail.com   / almacen123      (Almacenero)
+  reportes123@gmail.com  / reportes123     (Reportes)
+  voluntario123@gmail.com / voluntario123  (Voluntario)
+  juan1232@gmail.com     / juan1232        (Donante)
+
+La contraseña es la parte del email antes de @.
+
+BASE YA EXISTENTE (migrar tablas users duplicadas)
+--------------------------------------------------
+Si tu volumen Docker se creo ANTES de la unificacion:
+
+  php artisan config:clear
+  php artisan db:consolidate-users-core --fresh-core
+  php artisan db:seed --force
+
+Eso copia usuarios a core.usuarios, re-enlaza FKs y elimina tablas sombra.
+
+BASE NUEVA (volumen Docker recien creado)
+-----------------------------------------
+El init SQL ya ejecuta 00_core_auth.sql antes de los modulos. Luego:
+
+  php artisan config:clear
+  php artisan db:seed --force
 
 MODULO INVENTARIO / ALMACEN (obligatorio una vez en PostgreSQL)
 ---------------------------------------------------------------
 El esquema inventario NO usa las tablas del SQL 04 (transparencia/campanias).
-Ese SQL ahora va al esquema "transparencia". El modulo inventario usa migraciones Laravel:
+Ese SQL va al esquema "transparencia". El modulo inventario usa migraciones Laravel:
 
   cd C:\Users\Santiago\Downloads\equipo05-main-integration
   php artisan db:setup-inventario --fresh
@@ -72,20 +130,30 @@ O todo junto:
 
 MIGRACIONES (php artisan migrate)
 ---------------------------------
-- Conexion "default" (sqlite): SI, para la app principal:
-    php artisan migrate
-- Conexiones inventario/incendios/rescate/logistica/seguimiento/cuadrillas:
+- Conexion "default" (core cuando unificado): migraciones de la app principal
+  sobre SQLite solo si DB_CONNECTION=sqlite. Con PostgreSQL unificado, el
+  esquema core se crea con 00_core_auth.sql (Docker o consolidate).
+- Modulos inventario/incendios/rescate/logistica/seguimiento/cuadrillas:
   el esquema en PostgreSQL se crea con los SQL en Docker
   (database/docker/00-init-unificado-db.sql). No hace falta volver a correr
-  las migraciones 2026_02_09_* sobre PostgreSQL si las tablas ya existen;
-  si lo intentas, puede fallar por "relation already exists".
+  las migraciones 2026_02_09_* sobre PostgreSQL si las tablas ya existen.
 
 Si recreaste el volumen Docker y el init SQL fallo, revisa:
   docker logs equipo05-unificado-pg
 
+CHECKLIST ANTES DE php artisan serve
+------------------------------------
+  [ ] Docker: contenedor equipo05-unificado-pg en ejecucion (puerto 5433)
+  [ ] .env: DATABASE_UNIFIED_POSTGRES=true y DB_CONNECTION=core
+  [ ] php -m | findstr pdo_pgsql   (debe mostrar pdo_pgsql)
+  [ ] php artisan config:clear
+  [ ] SELECT count(*) FROM core.usuarios;  (>= 1 en DBeaver)
+  [ ] php artisan serve
+  [ ] Abrir http://127.0.0.1:8000/login
+
 DOCKER DESKTOP
 --------------
-El grupo "equipo05-main-i..." debe mostrar el contenedor equipo05-unificado-pg
+El grupo del proyecto debe mostrar el contenedor equipo05-unificado-pg
 en ejecucion. Puerto publicado: 5433 -> 5432.
 
 ================================================================================
