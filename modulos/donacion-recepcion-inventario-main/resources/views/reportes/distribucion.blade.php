@@ -7,6 +7,7 @@
 @stop
 
 @section('content')
+@include('inventario::partials.flash-messages')
 {{-- Filters Card --}}
 <div class="card card-primary collapsed-card">
     <div class="card-header">

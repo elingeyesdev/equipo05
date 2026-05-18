@@ -1,16 +1,20 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard Almacenista')
+@section('title', 'Dashboard Almacén — Inventario')
+@section('subtitle', 'Operaciones de almacén, paquetes y salidas.')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center">
-    <h1><i class="fas fa-warehouse"></i> Dashboard de Almacén</h1>
-    <small class="text-muted">Vista del Almacenista</small>
+<div class="d-flex flex-wrap justify-content-between align-items-center">
+    <div>
+        <h1 class="m-0"><i class="fas fa-warehouse text-primary"></i> Dashboard de almacén</h1>
+        <p class="text-muted mb-0 small">Vista del almacenista</p>
+    </div>
 </div>
-@stop
+@endsection
 
 @section('content')
-<div class="container-fluid">
+@include('inventario::partials.flash-messages')
+<div class="container-fluid px-0">
     {{-- SECCIÓN 1: KPIs del Almacén --}}
     <div class="row">
         <div class="col-12 col-sm-6 col-md-4">

@@ -1,10 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Reportes')
+@section('title', 'Reportes — Inventario')
+@section('subtitle', 'Generación de informes de donaciones, inventario y logística.')
 
 @section('content_header')
-<h1><i class="fas fa-chart-bar"></i> Centro de Reportes</h1>
-@stop
+<h1 class="m-0"><i class="fas fa-chart-bar text-primary"></i> Centro de reportes</h1>
+@endsection
 
 @section('content')
 @include('inventario::partials.flash-messages')
