@@ -13,16 +13,7 @@ CREATE TABLE IF NOT EXISTS logistica.migrations (
     batch       INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS logistica.users (
-    id              BIGSERIAL PRIMARY KEY,
-    name            VARCHAR(255) NOT NULL,
-    email           VARCHAR(255) NOT NULL,
-    password        VARCHAR(255) NOT NULL,
-    remember_token  VARCHAR(100),
-    created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at      TIMESTAMP(0) WITHOUT TIME ZONE
-);
-CREATE UNIQUE INDEX IF NOT EXISTS log_users_email_unique ON logistica.users (email);
+-- Usuarios: core.usuarios (00_core_auth.sql)
 
 CREATE TABLE IF NOT EXISTS logistica.estado (
     id_estado       BIGSERIAL PRIMARY KEY,

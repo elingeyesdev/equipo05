@@ -3,48 +3,63 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
 {
     public function run()
     {
-        // Definimos todos los roles en un array para tener el código ordenado
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            try {
+                DB::statement(
+                    "SELECT setval(pg_get_serial_sequence('core.roles', 'id'), COALESCE((SELECT MAX(id) FROM core.roles), 1), true)"
+                );
+            } catch (\Throwable) {
+                // sqlite u otro esquema
+            }
+        }
+
         $roles = [
-            // 1. TUS NUEVOS ROLES
             [
-                'name' => 'Administrador', 
-                'descripcion' => 'Tiene acceso total a todos los módulos.'
+                'name' => 'Administrador',
+                'descripcion' => 'Tiene acceso total a todos los módulos.',
             ],
             [
-                'name' => 'Almacenero',    
-                'descripcion' => 'Encargado de inventario y almacenes.'
+                'name' => 'Almacenero',
+                'descripcion' => 'Encargado de inventario y almacenes.',
             ],
             [
-                'name' => 'Reportes',      
-                'descripcion' => 'Visualiza reportes y métricas.' 
+                'name' => 'Reportes',
+                'descripcion' => 'Visualiza reportes y métricas.',
             ],
-
-            // 2. EL ROL VOLUNTARIO (Que pediste conservar)
             [
-                'name' => 'Voluntario',    
-                'descripcion' => 'Apoya en la logística y actividades.'
+                'name' => 'Voluntario',
+                'descripcion' => 'Apoya en la logística y actividades.',
             ],
-
-            // 3. EL ROL DONANTE (Importante: Lo usaste en tu UserSeeder anterior)
             [
-                'name' => 'Donante',       
-                'descripcion' => 'Usuario registrado para realizar donaciones.'
-            ]
+                'name' => 'Donante',
+                'descripcion' => 'Usuario registrado para realizar donaciones.',
+            ],
         ];
 
-        // Recorremos y creamos
         foreach ($roles as $rol) {
-            // firstOrCreate: Busca por 'name'. Si existe, no hace nada. Si no, lo crea.
-            Role::firstOrCreate(
-                ['name' => $rol['name']], 
-                ['descripcion' => $rol['descripcion']]
-            );
+            $existing = Role::query()
+                ->where('name', $rol['name'])
+                ->where('guard_name', 'web')
+                ->first();
+
+            if ($existing) {
+                $existing->update(['descripcion' => $rol['descripcion']]);
+
+                continue;
+            }
+
+            Role::query()->create([
+                'name' => $rol['name'],
+                'guard_name' => 'web',
+                'descripcion' => $rol['descripcion'],
+            ]);
         }
     }
 }

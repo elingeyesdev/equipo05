@@ -2,93 +2,103 @@
 
 namespace Modules\Rescate\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\UnifiedPostgres;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Modules\Rescate\Models\Person;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    protected $connection = 'rescate';
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'email',
-        'password',
-    ];
+    protected $fillable = ['email', 'password', 'contrasena', 'nombre', 'apellido'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'contrasena', 'remember_token'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    public function getConnectionName(): ?string
+    {
+        return UnifiedPostgres::enabled() ? UnifiedPostgres::coreAuthConnection() : 'rescate';
+    }
+
+    public function getTable(): string
+    {
+        return UnifiedPostgres::enabled() ? 'usuarios' : 'users';
+    }
+
+    public function getKeyName(): string
+    {
+        return UnifiedPostgres::enabled() ? 'usuarioid' : 'id';
+    }
+
     protected function casts(): array
     {
+        if (UnifiedPostgres::enabled()) {
+            return [];
+        }
+
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
-    /**
-     * Relación uno a uno con Person.
-     */
-    public function person()
+    public function getAuthPassword()
     {
-        return $this->hasOne(Person::class, 'usuario_id', 'id');
+        return UnifiedPostgres::enabled() ? $this->contrasena : $this->password;
     }
 
-    /**
-     * Nombre "lógico" del usuario para mostrar en el header.
-     * Como la tabla users no tiene columna name, usamos:
-     * - El nombre de la persona asociada, o
-     * - El email como fallback.
-     */
+    public function setPasswordAttribute($value): void
+    {
+        if (UnifiedPostgres::enabled()) {
+            $this->attributes['contrasena'] = $value;
+
+            return;
+        }
+
+        $this->attributes['password'] = $value;
+    }
+
+    public function getIdAttribute(): ?int
+    {
+        return UnifiedPostgres::enabled()
+            ? ($this->attributes['usuarioid'] ?? null)
+            : ($this->attributes['id'] ?? null);
+    }
+
+    public function person()
+    {
+        return $this->hasOne(Person::class, 'usuario_id', $this->getKeyName());
+    }
+
     public function getNameAttribute(): string
     {
-        return $this->person->nombre ?? $this->attributes['email'] ?? '';
+        if ($this->relationLoaded('person') || $this->person) {
+            return (string) ($this->person->nombre ?? '');
+        }
+
+        if (UnifiedPostgres::enabled()) {
+            return trim((string) ($this->attributes['nombre'] ?? '').' '.(string) ($this->attributes['apellido'] ?? ''));
+        }
+
+        return (string) ($this->attributes['email'] ?? '');
     }
 
     public function adminlte_image()
     {
         if ($this->person && $this->person->foto_path) {
-            return asset('storage/' . $this->person->foto_path);
+            return asset('storage/'.$this->person->foto_path);
         }
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
+
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&color=7F9CF5&background=EBF4FF';
     }
 
-    /**
-     * URL del perfil de usuario para el menú de AdminLTE.
-     */
     public function adminlte_profile_url()
     {
-        // Se interpretará como url('profile') porque use_route_url = false
         return 'profile';
     }
 
-    /**
-     * Descripción que muestra AdminLTE para el usuario.
-     * Se usa en el header del menú de usuario (dropdown), no en el toggler.
-     */
     public function adminlte_desc(): ?string
     {
         if (! method_exists($this, 'getRoleNames')) {

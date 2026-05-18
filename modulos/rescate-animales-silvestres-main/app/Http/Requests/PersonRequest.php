@@ -2,6 +2,7 @@
 
 namespace Modules\Rescate\Http\Requests;
 
+use App\Support\UnifiedPostgres;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PersonRequest extends FormRequest
@@ -49,14 +50,15 @@ class PersonRequest extends FormRequest
             $rules['cuidador_motivo_revision'] = 'required|string|min:10';
         }
         
-        // En creación, email y password son requeridos
+        $emailTable = UnifiedPostgres::enabled() ? 'core.usuarios' : 'rescate.users';
+        $emailKey = UnifiedPostgres::enabled() ? 'usuarioid' : 'id';
+
         if ($isCreating) {
-            $rules['email'] = 'required|email|unique:rescate.users,email';
+            $rules['email'] = "required|email|unique:{$emailTable},email";
             $rules['password'] = 'required|string|min:8|confirmed';
             $rules['password_confirmation'] = 'required|string|min:8';
         } else {
-            // En edición, email es opcional pero debe ser único si se proporciona
-            $rules['email'] = 'nullable|email|unique:rescate.users,email,' . ($userId ?? 'NULL') . ',id';
+            $rules['email'] = 'nullable|email|unique:'.$emailTable.',email,'.($userId ?? 'NULL').','.$emailKey;
         }
         
         // Si es_cuidador es true, el centro y el motivo son requeridos

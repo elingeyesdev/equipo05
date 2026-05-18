@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\UnifiedPostgres;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,21 +13,37 @@ class Usuario extends Authenticatable
     use HasFactory, Notifiable, HasRoles;
 
     protected $table = 'usuarios';
+
     protected $primaryKey = 'usuarioid';
+
     public $timestamps = false;
 
     protected $fillable = [
         'email', 'contrasena', 'nombre', 'apellido', 'telefono', 'imagenurl', 'activo', 'fecharegistro',
     ];
 
+    public function getConnectionName(): ?string
+    {
+        return UnifiedPostgres::coreAuthConnection();
+    }
+
     public function getAuthPassword()
     {
         return $this->contrasena;
     }
 
+    public function getNameAttribute(): string
+    {
+        return trim((string) $this->nombre.' '.(string) $this->apellido);
+    }
+
+    public function getIdAttribute(): ?int
+    {
+        return $this->usuarioid;
+    }
+
     /**
      * CI para el módulo de incendios (columna ci_usuario / trazabilidad).
-     * El modelo del core no tiene cedula_identidad: derivamos un valor estable.
      */
     public function getCedulaIdentidadAttribute(): ?string
     {

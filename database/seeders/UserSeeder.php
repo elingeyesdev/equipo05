@@ -44,10 +44,18 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($usuarios as $u) {
-            // 1. Extraemos la contraseña del correo (lo que está antes del @)
             $passwordSinEncriptar = explode('@', $u['email'])[0];
 
-            // 2. Creamos el usuario
+            $nuevoUsuario = Usuario::query()->where('email', $u['email'])->first();
+            if ($nuevoUsuario) {
+                if (! $nuevoUsuario->hasRole($u['rol'])) {
+                    $nuevoUsuario->assignRole($u['rol']);
+                }
+                $this->command?->info("Usuario existente: {$u['email']} | Pass: {$passwordSinEncriptar}");
+
+                continue;
+            }
+
             $nuevoUsuario = Usuario::create([
                 'nombre'     => $u['nombre'],
                 'apellido'   => $u['apellido'],

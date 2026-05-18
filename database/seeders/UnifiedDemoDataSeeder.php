@@ -160,7 +160,7 @@ class UnifiedDemoDataSeeder extends Seeder
         }
 
         $previousDefault = config('database.default');
-        config(['database.default' => 'rescate']);
+        config(['database.default' => \App\Support\UnifiedPostgres::coreAuthConnection()]);
 
         try {
             $this->resetRescatePgSequences();
@@ -186,7 +186,7 @@ class UnifiedDemoDataSeeder extends Seeder
             return;
         }
 
-        foreach (['users', 'people', 'centers', 'species', 'reports', 'animals', 'animal_files'] as $table) {
+        foreach (['people', 'centers', 'species', 'reports', 'animals', 'animal_files'] as $table) {
             $row = DB::connection('rescate')->selectOne(
                 "SELECT pg_get_serial_sequence(?, 'id') AS seq",
                 [$table]

@@ -4,6 +4,8 @@
 
 \echo '>> 01_extensions_and_schemas.sql'
 \i /docker-entrypoint-sql/01_extensions_and_schemas.sql
+\echo '>> 00_core_auth.sql (usuarios y roles centralizados)'
+\i /docker-entrypoint-sql/00_core_auth.sql
 \echo '>> 04_mod_inventario_transparencia.sql (esquema transparencia)'
 \i /docker-entrypoint-sql/04_mod_inventario_transparencia.sql
 \echo '>> 04a_inventario_schema_reset.sql'

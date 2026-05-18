@@ -2,146 +2,128 @@
 
 namespace Modules\Incendios\Models;
 
+use App\Support\UnifiedPostgres;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Modules\Incendios\Models\Simulacione;
-use Modules\Incendios\Models\FocosIncendio;
-use Modules\Incendios\Models\Voluntario;
-use Modules\Incendios\Models\Administrador;
 
-/**
- * Class User
- *
- * @property $id
- * @property $name
- * @property $email
- * @property $email_verified_at
- * @property $password
- * @property $remember_token
- * @property $created_at
- * @property $updated_at
- *
- * @package App
- * @mixin \Illuminate\Database\Eloquent\Builder
- */
 class User extends Authenticatable
 {
-    protected $connection = 'incendios';
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
-    
+
     protected $perPage = 20;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = ['name', 'email', 'telefono', 'cedula_identidad', 'password', 'google_id'];
+    public function getConnectionName(): ?string
+    {
+        return UnifiedPostgres::enabled() ? UnifiedPostgres::coreAuthConnection() : 'incendios';
+    }
+
+    public function getTable(): string
+    {
+        return UnifiedPostgres::enabled() ? 'usuarios' : 'users';
+    }
+
+    public function getKeyName(): string
+    {
+        return UnifiedPostgres::enabled() ? 'usuarioid' : 'id';
+    }
+
+    protected $fillable = ['name', 'email', 'telefono', 'cedula_identidad', 'password', 'google_id', 'nombre', 'apellido', 'contrasena'];
 
     protected $casts = [
         'password' => 'hashed',
         'email_verified_at' => 'datetime',
     ];
 
-    /**
-     * Biomasas created by this user (anyone can create)
-     */
+    public function getAuthPassword()
+    {
+        if (UnifiedPostgres::enabled()) {
+            return $this->contrasena;
+        }
+
+        return $this->password;
+    }
+
+    public function getNameAttribute(): string
+    {
+        if (UnifiedPostgres::enabled()) {
+            return trim((string) ($this->attributes['nombre'] ?? '').' '.(string) ($this->attributes['apellido'] ?? ''));
+        }
+
+        return (string) ($this->attributes['name'] ?? '');
+    }
+
+    public function getIdAttribute(): ?int
+    {
+        return UnifiedPostgres::enabled()
+            ? ($this->attributes['usuarioid'] ?? null)
+            : ($this->attributes['id'] ?? null);
+    }
+
     public function biomasas()
     {
-        return $this->hasMany(\Modules\Incendios\Models\Biomasa::class, 'user_id');
+        return $this->hasMany(Biomasa::class, 'user_id', $this->getKeyName());
     }
 
-    /**
-     * Voluntario profile for this user
-     */
     public function voluntario()
     {
-        return $this->hasOne(Voluntario::class);
+        return $this->hasOne(Voluntario::class, 'user_id', $this->getKeyName());
     }
 
-    /**
-     * Administrador profile for this user
-     */
     public function administrador()
     {
-        return $this->hasOne(Administrador::class);
+        return $this->hasOne(Administrador::class, 'user_id', $this->getKeyName());
     }
 
-    /**
-     * Check if user is a voluntario
-     * Uses Spatie roles with fallback to legacy table
-     */
     public function isVoluntario()
     {
         return $this->hasRole('voluntario') || $this->voluntario()->exists();
     }
 
-    /**
-     * Check if user is an administrador
-     * Uses Spatie roles with fallback to legacy table
-     */
     public function isAdministrador()
     {
         return $this->hasRole('administrador') || $this->administrador()->exists();
     }
 
-    /**
-     * Get user role type
-     * Uses Spatie roles with fallback to legacy tables
-     */
     public function getRoleType()
     {
-        // Check Spatie roles first
         if ($this->hasRole('administrador')) {
             return 'administrador';
         }
         if ($this->hasRole('voluntario')) {
             return 'voluntario';
         }
-        
-        // Fallback to legacy table check
+
         if ($this->administrador()->exists()) {
             return 'administrador';
         }
         if ($this->voluntario()->exists()) {
             return 'voluntario';
         }
-        
-        return 'user'; // base user without role extension
+
+        return 'user';
     }
 
-    /**
-     * Get the user's avatar image URL for AdminLTE
-     * Returns a Gravatar or default avatar
-     */
     public function adminlte_image()
     {
-        // Opción 1: Usar Gravatar basado en email
-        $hash = md5(strtolower(trim($this->email)));
+        $hash = md5(strtolower(trim((string) $this->email)));
+
         return "https://www.gravatar.com/avatar/{$hash}?d=mp&s=160";
-        
-        // Opción 2: Usar un avatar predeterminado
-        // return asset('vendor/adminlte/dist/img/avatar5.png');
     }
 
-    /**
-     * Get the user's description for AdminLTE header
-     * Shows role and registration date
-     */
     public function adminlte_desc()
     {
         $role = $this->getRoleType();
-        $roleLabel = match($role) {
+        $roleLabel = match ($role) {
             'administrador' => 'Administrador',
             'voluntario' => 'Voluntario',
-            default => 'Usuario'
+            default => 'Usuario',
         };
-        
-        return "{$roleLabel} • Miembro desde " . $this->created_at->format('M Y');
+
+        $since = $this->created_at ?? $this->fecharegistro ?? now();
+
+        return "{$roleLabel} • Miembro desde ".$since->format('M Y');
     }
-
-
 }

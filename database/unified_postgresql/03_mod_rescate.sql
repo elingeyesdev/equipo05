@@ -12,16 +12,7 @@ CREATE TABLE rescate.migrations (
     batch       INTEGER NOT NULL
 );
 
-CREATE TABLE rescate.users (
-    id                  BIGSERIAL PRIMARY KEY,
-    email               VARCHAR(255) NOT NULL,
-    email_verified_at   TIMESTAMP(0) WITHOUT TIME ZONE,
-    password            VARCHAR(255) NOT NULL,
-    remember_token      VARCHAR(100),
-    created_at          TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at          TIMESTAMP(0) WITHOUT TIME ZONE
-);
-CREATE UNIQUE INDEX resc_users_email_unique ON rescate.users (email);
+-- Usuarios: core.usuarios (00_core_auth.sql)
 
 CREATE TABLE rescate.password_reset_tokens (
     email       VARCHAR(255) PRIMARY KEY,
@@ -65,7 +56,7 @@ CREATE TABLE rescate.centers (
 
 CREATE TABLE rescate.people (
     id                          BIGSERIAL PRIMARY KEY,
-    usuario_id                  BIGINT REFERENCES rescate.users (id) ON DELETE CASCADE,
+    usuario_id                  BIGINT REFERENCES core.usuarios (usuarioid) ON DELETE CASCADE,
     nombre                      VARCHAR(255) NOT NULL,
     ci                          VARCHAR(255) NOT NULL,
     telefono                    VARCHAR(255),
@@ -295,45 +286,7 @@ CREATE TABLE rescate.transfers (
     reporte_id          BIGINT REFERENCES rescate.reports (id) ON DELETE SET NULL
 );
 
-CREATE TABLE rescate.permissions (
-    id          BIGSERIAL PRIMARY KEY,
-    name        VARCHAR(255) NOT NULL,
-    guard_name  VARCHAR(255) NOT NULL DEFAULT 'web',
-    created_at  TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at  TIMESTAMP(0) WITHOUT TIME ZONE,
-    UNIQUE (name, guard_name)
-);
-
-CREATE TABLE rescate.roles (
-    id          BIGSERIAL PRIMARY KEY,
-    name        VARCHAR(255) NOT NULL,
-    guard_name  VARCHAR(255) NOT NULL DEFAULT 'web',
-    created_at  TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at  TIMESTAMP(0) WITHOUT TIME ZONE,
-    UNIQUE (name, guard_name)
-);
-
-CREATE TABLE rescate.model_has_permissions (
-    permission_id BIGINT NOT NULL REFERENCES rescate.permissions (id) ON DELETE CASCADE,
-    model_type      VARCHAR(255) NOT NULL,
-    model_id        BIGINT NOT NULL,
-    PRIMARY KEY (permission_id, model_id, model_type)
-);
-CREATE INDEX resc_mhp_model_idx ON rescate.model_has_permissions (model_id, model_type);
-
-CREATE TABLE rescate.model_has_roles (
-    role_id     BIGINT NOT NULL REFERENCES rescate.roles (id) ON DELETE CASCADE,
-    model_type  VARCHAR(255) NOT NULL,
-    model_id    BIGINT NOT NULL,
-    PRIMARY KEY (role_id, model_id, model_type)
-);
-CREATE INDEX resc_mhr_model_idx ON rescate.model_has_roles (model_id, model_type);
-
-CREATE TABLE rescate.role_has_permissions (
-    permission_id BIGINT NOT NULL REFERENCES rescate.permissions (id) ON DELETE CASCADE,
-    role_id         BIGINT NOT NULL REFERENCES rescate.roles (id) ON DELETE CASCADE,
-    PRIMARY KEY (permission_id, role_id)
-);
+-- Roles y permisos Spatie: core (00_core_auth.sql)
 
 CREATE TABLE rescate.personal_access_tokens (
     id              BIGSERIAL PRIMARY KEY,
@@ -352,7 +305,7 @@ CREATE INDEX resc_pat_expires_at_idx ON rescate.personal_access_tokens (expires_
 
 CREATE TABLE rescate.contact_messages (
     id          BIGSERIAL PRIMARY KEY,
-    user_id     BIGINT NOT NULL REFERENCES rescate.users (id) ON DELETE CASCADE,
+    user_id     BIGINT NOT NULL REFERENCES core.usuarios (usuarioid) ON DELETE CASCADE,
     motivo      VARCHAR(255) NOT NULL,
     mensaje     TEXT NOT NULL,
     leido       BOOLEAN NOT NULL DEFAULT FALSE,
@@ -364,7 +317,7 @@ CREATE TABLE rescate.contact_messages (
 
 CREATE TABLE rescate.user_tracking (
     id                      BIGSERIAL PRIMARY KEY,
-    user_id                 BIGINT REFERENCES rescate.users (id) ON DELETE SET NULL,
+    user_id                 BIGINT REFERENCES core.usuarios (usuarioid) ON DELETE SET NULL,
     performed_by            BIGINT,
     action_type             VARCHAR(255) NOT NULL,
     action_description      VARCHAR(255) NOT NULL,

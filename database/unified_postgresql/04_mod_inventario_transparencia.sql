@@ -61,67 +61,10 @@ DROP TABLE IF EXISTS password_reset_tokens CASCADE;
 DROP TABLE IF EXISTS usuarios CASCADE;
 */
 
--- =============================================================================
--- 1. Usuarios y Spatie Permission
--- =============================================================================
-
-CREATE TABLE usuarios (
-    usuarioid       BIGSERIAL PRIMARY KEY,
-    email           VARCHAR(100) NOT NULL UNIQUE,
-    contrasena      VARCHAR(255) NOT NULL,
-    nombre          VARCHAR(50) NOT NULL,
-    apellido        VARCHAR(50) NOT NULL,
-    telefono        VARCHAR(20),
-    imagenurl       VARCHAR(255),
-    activo          BOOLEAN NOT NULL DEFAULT TRUE,
-    fecharegistro   TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at      TIMESTAMP(0) WITHOUT TIME ZONE
-);
-
-CREATE TABLE roles (
-    id              BIGSERIAL PRIMARY KEY,
-    name            VARCHAR(255) NOT NULL,
-    guard_name      VARCHAR(255) NOT NULL,
-    descripcion     VARCHAR(255),
-    created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at      TIMESTAMP(0) WITHOUT TIME ZONE,
-    UNIQUE (name, guard_name)
-);
-
-CREATE TABLE permissions (
-    id              BIGSERIAL PRIMARY KEY,
-    name            VARCHAR(255) NOT NULL,
-    guard_name      VARCHAR(255) NOT NULL,
-    created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at      TIMESTAMP(0) WITHOUT TIME ZONE,
-    UNIQUE (name, guard_name)
-);
-
-CREATE TABLE model_has_roles (
-    role_id         BIGINT NOT NULL REFERENCES roles (id) ON DELETE CASCADE,
-    model_type      VARCHAR(255) NOT NULL,
-    model_id        BIGINT NOT NULL,
-    PRIMARY KEY (role_id, model_id, model_type)
-);
-CREATE INDEX model_has_roles_model_id_model_type_index ON model_has_roles (model_id, model_type);
-
-CREATE TABLE model_has_permissions (
-    permission_id   BIGINT NOT NULL REFERENCES permissions (id) ON DELETE CASCADE,
-    model_type      VARCHAR(255) NOT NULL,
-    model_id        BIGINT NOT NULL,
-    PRIMARY KEY (permission_id, model_id, model_type)
-);
-CREATE INDEX model_has_permissions_model_id_model_type_index ON model_has_permissions (model_id, model_type);
-
-CREATE TABLE role_has_permissions (
-    permission_id   BIGINT NOT NULL REFERENCES permissions (id) ON DELETE CASCADE,
-    role_id         BIGINT NOT NULL REFERENCES roles (id) ON DELETE CASCADE,
-    PRIMARY KEY (permission_id, role_id)
-);
+-- Usuarios y Spatie: database/unified_postgresql/00_core_auth.sql (esquema core)
 
 -- =============================================================================
--- 2. Estados, campaÃ±as, donaciones, asignaciones
+-- 1. Estados, campañas, donaciones, asignaciones
 -- =============================================================================
 
 CREATE TABLE estados (
@@ -139,7 +82,7 @@ CREATE TABLE campanias (
     fechafin            DATE,
     metarecaudacion     NUMERIC(12, 2) NOT NULL,
     montorecaudado      NUMERIC(12, 2) NOT NULL DEFAULT 0,
-    usuarioidcreador    BIGINT NOT NULL REFERENCES usuarios (usuarioid),
+    usuarioidcreador    BIGINT NOT NULL REFERENCES core.usuarios (usuarioid),
     activa              BOOLEAN NOT NULL DEFAULT TRUE,
     imagenurl           VARCHAR(255),
     fechacreacion       TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -148,7 +91,7 @@ CREATE TABLE campanias (
 CREATE TABLE donaciones (
     donacionid      BIGSERIAL PRIMARY KEY,
     idexterno       INTEGER UNIQUE,
-    usuarioid       BIGINT REFERENCES usuarios (usuarioid),
+    usuarioid       BIGINT REFERENCES core.usuarios (usuarioid),
     campaniaid      BIGINT REFERENCES campanias (campaniaid),
     monto           NUMERIC(12, 2) NOT NULL DEFAULT 0,
     tipodonacion    VARCHAR(20) NOT NULL,
@@ -167,7 +110,7 @@ CREATE TABLE asignaciones (
     monto               NUMERIC(12, 2) NOT NULL,
     fechaasignacion     TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     imagenurl           VARCHAR(255),
-    usuarioid           BIGINT NOT NULL REFERENCES usuarios (usuarioid),
+    usuarioid           BIGINT NOT NULL REFERENCES core.usuarios (usuarioid),
     comprobante         VARCHAR(255)
 );
 
@@ -194,7 +137,7 @@ CREATE TABLE conversaciones (
 CREATE TABLE conversacion_usuarios (
     conversacion_usuarioid  BIGSERIAL PRIMARY KEY,
     conversacionid          BIGINT NOT NULL REFERENCES conversaciones (conversacionid) ON DELETE CASCADE,
-    usuarioid               BIGINT NOT NULL REFERENCES usuarios (usuarioid) ON DELETE CASCADE,
+    usuarioid               BIGINT NOT NULL REFERENCES core.usuarios (usuarioid) ON DELETE CASCADE,
     ultimo_leido            TIMESTAMP(0) WITHOUT TIME ZONE,
     UNIQUE (conversacionid, usuarioid)
 );
@@ -202,7 +145,7 @@ CREATE TABLE conversacion_usuarios (
 CREATE TABLE mensajes (
     mensajeid       BIGSERIAL PRIMARY KEY,
     conversacionid  BIGINT NOT NULL REFERENCES conversaciones (conversacionid) ON DELETE CASCADE,
-    usuarioid       BIGINT NOT NULL REFERENCES usuarios (usuarioid) ON DELETE CASCADE,
+    usuarioid       BIGINT NOT NULL REFERENCES core.usuarios (usuarioid) ON DELETE CASCADE,
     asunto          VARCHAR(150) NOT NULL,
     contenido       TEXT NOT NULL,
     fechaenvio      TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -213,7 +156,7 @@ CREATE INDEX mensajes_conversacionid_fechaenvio_index ON mensajes (conversacioni
 CREATE TABLE respuestasmensajes (
     respuestaid     BIGSERIAL PRIMARY KEY,
     mensajeid       BIGINT NOT NULL REFERENCES mensajes (mensajeid) ON DELETE CASCADE,
-    usuarioid       BIGINT NOT NULL REFERENCES usuarios (usuarioid),
+    usuarioid       BIGINT NOT NULL REFERENCES core.usuarios (usuarioid),
     contenido       TEXT NOT NULL,
     fecharespuesta  TIMESTAMP(0) WITHOUT TIME ZONE
 );

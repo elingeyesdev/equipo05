@@ -6,8 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class UseRescateConnection
@@ -16,63 +14,34 @@ class UseRescateConnection
     {
         DB::purge('rescate');
         DB::reconnect('rescate');
-        $this->syncAuthenticatedUser();
+        $this->syncPersonProfile();
 
         return $next($request);
     }
 
-    private function syncAuthenticatedUser(): void
+    private function syncPersonProfile(): void
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return;
         }
+
         $authId = Auth::id();
-        if (!$authId) {
+        if (! $authId) {
             return;
         }
 
         $connection = DB::connection('rescate');
-        $existingUser = $connection->table('users')->where('id', $authId)->first();
-
-        $email = $user->email ?? $user->correo_electronico ?? $user->correo ?? ('usuario' . $authId . '@local.invalid');
-        $emailTaken = $connection->table('users')
-            ->where('email', $email)
-            ->where('id', '!=', $authId)
-            ->exists();
-        if ($emailTaken) {
-            $email = 'rescate_user_' . $authId . '@local.invalid';
-        }
-
-        if ($existingUser) {
-            $connection->table('users')
-                ->where('id', $authId)
-                ->update([
-                    'email' => $email,
-                    'password' => $this->passwordHashForShadowUser($user, $existingUser->password),
-                    'updated_at' => now(),
-                ]);
-        } else {
-            $connection->table('users')->insert([
-                'id' => $authId,
-                'email' => $email,
-                'password' => $this->passwordHashForShadowUser($user, null),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        $personExists = $connection->table('people')->where('usuario_id', $authId)->exists();
-        if ($personExists) {
+        if ($connection->table('people')->where('usuario_id', $authId)->exists()) {
             return;
         }
 
-        $nombre = trim((string) ($user->name ?? $user->nombre ?? $user->usuario ?? ''));
+        $nombre = trim((string) ($user->name ?? $user->nombre ?? ''));
         if ($nombre === '') {
-            $nombre = 'Usuario ' . $authId;
+            $nombre = 'Usuario '.$authId;
         }
 
-        $ci = (string) ($user->cedula_identidad ?? $user->ci ?? ('AUTO-' . $authId));
+        $ci = (string) ($user->cedula_identidad ?? $user->ci ?? ('AUTO-'.$authId));
 
         $connection->table('people')->insert([
             'usuario_id' => $authId,
@@ -83,29 +52,5 @@ class UseRescateConnection
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-    }
-
-    /**
-     * Usa el hash de contraseña del modelo autenticado (p. ej. contrasena en {@see \App\Models\Usuario}).
-     */
-    private function passwordHashForShadowUser(object $user, ?string $existingPassword): string
-    {
-        if ($user instanceof \Illuminate\Contracts\Auth\Authenticatable) {
-            $fromAuth = (string) $user->getAuthPassword();
-            if ($fromAuth !== '') {
-                return $fromAuth;
-            }
-        }
-
-        $plain = (string) ($user->password ?? '');
-        if ($plain !== '') {
-            return $plain;
-        }
-
-        if ($existingPassword !== null && $existingPassword !== '') {
-            return $existingPassword;
-        }
-
-        return Hash::make(Str::random(40));
     }
 }

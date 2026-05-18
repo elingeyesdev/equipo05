@@ -12,22 +12,7 @@ CREATE TABLE incendios.migrations (
     batch       INTEGER NOT NULL
 );
 
-CREATE TABLE incendios.users (
-    id                  BIGSERIAL PRIMARY KEY,
-    name                VARCHAR(255) NOT NULL,
-    email               VARCHAR(255) NOT NULL,
-    email_verified_at   TIMESTAMP(0) WITHOUT TIME ZONE,
-    password            VARCHAR(255) NOT NULL,
-    remember_token      VARCHAR(100),
-    created_at          TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at          TIMESTAMP(0) WITHOUT TIME ZONE,
-    telefono            VARCHAR(255),
-    cedula_identidad    VARCHAR(255),
-    google_id           VARCHAR(255)
-);
-CREATE UNIQUE INDEX inc_users_email_unique ON incendios.users (email);
-CREATE UNIQUE INDEX inc_users_google_id_unique ON incendios.users (google_id);
-CREATE UNIQUE INDEX inc_users_cedula_unique ON incendios.users (cedula_identidad);
+-- Usuarios: core.usuarios (00_core_auth.sql)
 
 CREATE TABLE incendios.password_reset_tokens (
     email       VARCHAR(255) PRIMARY KEY,
@@ -129,7 +114,7 @@ CREATE TABLE incendios.foco_tracks (
 
 CREATE TABLE incendios.administradores (
     id              BIGSERIAL PRIMARY KEY,
-    user_id         BIGINT NOT NULL REFERENCES incendios.users (id) ON DELETE CASCADE,
+    user_id         BIGINT NOT NULL REFERENCES core.usuarios (usuarioid) ON DELETE CASCADE,
     departamento    VARCHAR(255),
     nivel_acceso    VARCHAR(255) NOT NULL DEFAULT 'basico',
     activo          BOOLEAN NOT NULL DEFAULT TRUE,
@@ -140,7 +125,7 @@ CREATE UNIQUE INDEX inc_administradores_user_id_unique ON incendios.administrado
 
 CREATE TABLE incendios.voluntarios (
     id          BIGSERIAL PRIMARY KEY,
-    user_id     BIGINT NOT NULL REFERENCES incendios.users (id) ON DELETE CASCADE,
+    user_id     BIGINT NOT NULL REFERENCES core.usuarios (usuarioid) ON DELETE CASCADE,
     direccion   VARCHAR(255),
     ciudad      VARCHAR(255),
     zona        VARCHAR(255),
@@ -198,7 +183,7 @@ CREATE TABLE incendios.predictions (
     created_at        TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at        TIMESTAMP(0) WITHOUT TIME ZONE,
     foco_incendio_id  BIGINT REFERENCES incendios.focos_incendios (id) ON DELETE CASCADE,
-    user_id           BIGINT REFERENCES incendios.users (id) ON DELETE SET NULL,
+    user_id           BIGINT REFERENCES core.usuarios (usuarioid) ON DELETE SET NULL,
     ci_usuario        VARCHAR(255),
     deleted_at        TIMESTAMP(0) WITHOUT TIME ZONE
 );
@@ -227,14 +212,14 @@ CREATE TABLE incendios.biomasas (
     densidad          VARCHAR(255) NOT NULL DEFAULT 'media',
     ubicacion         VARCHAR(255),
     descripcion       TEXT,
-    user_id           BIGINT REFERENCES incendios.users (id) ON DELETE SET NULL,
+    user_id           BIGINT REFERENCES core.usuarios (usuarioid) ON DELETE SET NULL,
     tipo_biomasa_id   BIGINT REFERENCES incendios.tipo_biomasa (id) ON DELETE SET NULL,
     fecha_reporte     DATE,
     coordenadas       TEXT,
     perimetro_m       NUMERIC(14, 4),
     estado            VARCHAR(255) NOT NULL DEFAULT 'pendiente',
     motivo_rechazo    TEXT,
-    aprobada_por      BIGINT REFERENCES incendios.users (id) ON DELETE SET NULL,
+    aprobada_por      BIGINT REFERENCES core.usuarios (usuarioid) ON DELETE SET NULL,
     fecha_revision    TIMESTAMP(0) WITHOUT TIME ZONE,
     ci_usuario        VARCHAR(255),
     deleted_at        TIMESTAMP(0) WITHOUT TIME ZONE,

@@ -82,6 +82,20 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
+        'core' => $dbUnifiedPostgres
+            ? $unifiedModulePgsql('core')
+            : [
+                'driver' => 'sqlite',
+                'url' => env('DB_URL'),
+                'database' => env('DB_DATABASE', database_path('database.sqlite')),
+                'prefix' => '',
+                'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+                'busy_timeout' => null,
+                'journal_mode' => null,
+                'synchronous' => null,
+                'transaction_mode' => 'DEFERRED',
+            ],
+
         'inventario' => $dbUnifiedPostgres
             ? $unifiedModulePgsql('inventario')
             : $sqliteModule('INVENTARIO_DB_URL', 'INVENTARIO_DB_DATABASE', 'inventario.sqlite'),
