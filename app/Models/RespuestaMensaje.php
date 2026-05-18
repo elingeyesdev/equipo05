@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class RespuestaMensaje extends Model
+class RespuestaMensaje extends TransparenciaModel
 {
     protected $table = 'respuestasmensajes';
     protected $primaryKey = 'respuestaid';

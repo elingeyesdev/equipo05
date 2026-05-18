@@ -2,9 +2,9 @@
 
 namespace App\Models\Ext;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class ExtCategoriaProducto extends Model
+class ExtCategoriaProducto extends TransparenciaModel
 {
     protected $table = 'ext_categorias_productos';
     protected $primaryKey = 'categoriaid';

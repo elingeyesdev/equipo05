@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class Conversacion extends Model
+class Conversacion extends TransparenciaModel
 {
     protected $table = 'conversaciones';
     protected $primaryKey = 'conversacionid';

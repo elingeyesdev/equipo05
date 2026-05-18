@@ -2,9 +2,9 @@
 
 namespace App\Models\Ext;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class ExtEspacio extends Model
+class ExtEspacio extends TransparenciaModel
 {
     protected $table = 'ext_espacios';
     protected $primaryKey = 'espacioid';

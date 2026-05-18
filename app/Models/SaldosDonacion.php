@@ -1,8 +1,8 @@
 <?php
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class SaldosDonacion extends Model
+class SaldosDonacion extends TransparenciaModel
 {
     protected $table = 'saldosdonaciones';
     protected $primaryKey = 'saldoid';

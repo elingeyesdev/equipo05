@@ -98,12 +98,21 @@ CREDENCIALES DE PRUEBA (UserSeeder)
 
 La contraseña es la parte del email antes de @.
 
+ESQUEMA TRANSPARENCIA (campanias, donaciones, dashboard admin)
+------------------------------------------------------------
+Si al entrar como Administrador ves error "relation campanias does not exist":
+
+  php artisan db:setup-transparencia
+
+Las tablas quedan en transparencia.campanias (no en core).
+
 BASE YA EXISTENTE (migrar tablas users duplicadas)
 --------------------------------------------------
 Si tu volumen Docker se creo ANTES de la unificacion:
 
   php artisan config:clear
   php artisan db:consolidate-users-core --fresh-core
+  php artisan db:setup-transparencia
   php artisan db:seed --force
 
 Eso copia usuarios a core.usuarios, re-enlaza FKs y elimina tablas sombra.

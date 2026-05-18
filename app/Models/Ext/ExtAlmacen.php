@@ -2,9 +2,9 @@
 
 namespace App\Models\Ext;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class ExtAlmacen extends Model
+class ExtAlmacen extends TransparenciaModel
 {
     protected $table = 'ext_almacenes';
     protected $primaryKey = 'almacenid';

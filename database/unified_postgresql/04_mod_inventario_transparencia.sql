@@ -1,4 +1,4 @@
-﻿-- =============================================================================
+-- =============================================================================
 -- Modulo: inventario / transparencia donaciones (schema inventario)
 -- Fuente: postgresql_schema_dbeaver.sql — las tablas se crean en el esquema inventario
 -- =============================================================================

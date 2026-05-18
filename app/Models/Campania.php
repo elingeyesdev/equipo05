@@ -1,8 +1,8 @@
 <?php
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class Campania extends Model
+class Campania extends TransparenciaModel
 {
     protected $table = 'campanias';
     protected $primaryKey = 'campaniaid';

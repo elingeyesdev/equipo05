@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 use App\Models\Ext\ExtProducto;
 use App\Models\Ext\ExtAlmacen;
 use App\Models\Ext\ExtEstante;
 use App\Models\Ext\ExtEspacio;
 
-class TrazabilidadItem extends Model
+class TrazabilidadItem extends TransparenciaModel
 {
     protected $table = 'trazabilidad_items';
     protected $primaryKey = 'trazabilidadid';

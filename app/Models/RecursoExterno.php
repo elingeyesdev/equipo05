@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class RecursoExterno extends Model
+class RecursoExterno extends TransparenciaModel
 {
     protected $table = 'recursos_externos';
 

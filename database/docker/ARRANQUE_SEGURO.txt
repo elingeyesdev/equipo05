@@ -17,21 +17,24 @@ ARRANQUE SEGURO — PostgreSQL unificado + login en core.usuarios
 3. Preparar Laravel
    php artisan config:clear
 
-4. Si la base ya tenia tablas users duplicadas (instalacion anterior):
+4. Esquema transparencia (campanias, donaciones, mensajes):
+   php artisan db:setup-transparencia
+
+5. Si la base ya tenia tablas users duplicadas (instalacion anterior):
    php artisan db:consolidate-users-core --fresh-core
    php artisan db:seed --force
 
    Si es volumen Docker nuevo (primera vez):
    php artisan db:seed --force
 
-5. Inventario (una vez)
+6. Inventario (una vez)
    php artisan db:setup-inventario --fresh
    (o: php artisan db:setup-unificado --fresh-inventario --seed)
 
-6. Servidor
+7. Servidor
    php artisan serve
 
-7. Probar login
+8. Probar login
    http://127.0.0.1:8000/login
    admin123@gmail.com / admin123
 

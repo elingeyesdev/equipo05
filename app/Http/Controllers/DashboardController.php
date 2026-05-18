@@ -96,7 +96,7 @@ class DashboardController extends Controller
         // =========================
         //   GRÁFICO: DONACIONES POR MES (compatible con sqlite/pgsql/mysql)
         // =========================
-        $driver = DB::connection()->getDriverName();
+        $driver = Donacion::query()->getConnection()->getDriverName();
         $mesExpr = match ($driver) {
             'sqlite' => "strftime('%Y-%m', fechadonacion)",
             'mysql' => "DATE_FORMAT(fechadonacion, '%Y-%m')",

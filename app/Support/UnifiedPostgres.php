@@ -13,4 +13,9 @@ class UnifiedPostgres
     {
         return self::enabled() ? 'core' : (string) config('database.default', 'sqlite');
     }
+
+    public static function transparenciaConnection(): string
+    {
+        return self::enabled() ? 'transparencia' : (string) config('database.default', 'sqlite');
+    }
 }

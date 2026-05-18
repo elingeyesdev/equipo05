@@ -1,8 +1,8 @@
 <?php
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class DetallesAsignacion extends Model
+class DetallesAsignacion extends TransparenciaModel
 {
     protected $table = 'detallesasignacion';
     protected $primaryKey = 'detalleid';

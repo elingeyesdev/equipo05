@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TransparenciaModel;
 
-class Mensaje extends Model
+class Mensaje extends TransparenciaModel
 {
     protected $table = 'mensajes';
     protected $primaryKey = 'mensajeid';

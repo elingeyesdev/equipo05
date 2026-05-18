@@ -104,6 +104,7 @@ Arranque rápido:
 ```bash
 docker compose up -d db_unificado
 php artisan config:clear
+php artisan db:setup-transparencia
 php artisan db:seed --force
 php artisan db:setup-inventario --fresh   # una vez
 php artisan serve
