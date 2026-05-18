@@ -13,6 +13,7 @@ export PGHOST PGPORT PGUSER PGDATABASE
 
 ORDERED=(
   "01_extensions_and_schemas.sql"
+  "00_core_auth.sql"
   "04_mod_inventario_transparencia.sql"
   "02_mod_incendios.sql"
   "03_mod_rescate.sql"
