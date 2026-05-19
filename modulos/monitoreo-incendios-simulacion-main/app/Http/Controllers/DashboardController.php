@@ -43,21 +43,8 @@ class DashboardController extends Controller
         $latitude = $climaUbicacion['lat'];
         $longitude = $climaUbicacion['lng'];
 
-        // Get current weather
         $weatherData = $weather->getCurrentWeather($latitude, $longitude);
-        $sensacionTermica = null;
-        $current = $weatherData['data']['current'] ?? $weatherData['data']['current_weather'] ?? null;
-        if (is_array($current)) {
-            $sensacionTermica = SensacionTermica::calcular(
-                (float) ($current['temperature_2m'] ?? $current['temperature'] ?? 0),
-                (float) ($current['relative_humidity_2m'] ?? 0),
-                (float) ($current['wind_speed_10m'] ?? $current['windspeed'] ?? 0),
-                (float) ($current['wind_gusts_10m'] ?? 0),
-                (float) ($current['precipitation'] ?? 0),
-                isset($current['uv_index']) ? (float) $current['uv_index'] : null,
-                isset($current['apparent_temperature']) ? (float) $current['apparent_temperature'] : null
-            );
-        }
+        $climaActual = ClimaActual::fromOpenMeteo($weatherData['data'] ?? null);
         
         // Get fire hotspots from Chiquitanía area (last 2 days for demo, clustered)
         // Area: west,south,east,north = -62.5,-18.5,-57.5,-14.5
