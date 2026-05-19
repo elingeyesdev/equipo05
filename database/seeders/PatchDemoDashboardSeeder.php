@@ -20,8 +20,9 @@ class PatchDemoDashboardSeeder extends Seeder
         $this->fixTransparenciaDonaciones();
         $this->fixTransparenciaMensajesYDetalles();
         $this->fixInventarioHuecos();
+        $this->fixRescateDashboard();
 
-        $this->command?->info('Parche demo: roles, dashboard transparencia e inventario completados.');
+        $this->command?->info('Parche demo: roles, dashboard transparencia, inventario y rescate completados.');
     }
 
     private function fixRolesGuard(): void
@@ -185,6 +186,20 @@ class PatchDemoDashboardSeeder extends Seeder
                 }
             }
         }
+    }
+
+    private function fixRescateDashboard(): void
+    {
+        if (! Schema::connection('rescate')->hasTable('animal_files')) {
+            return;
+        }
+
+        $seeder = new RichRescateDemoSeeder;
+        if ($this->command) {
+            $seeder->setCommand($this->command);
+        }
+        $seeder->enrichDashboardDemoData();
+        $seeder->runSpeciesImageRefresh();
     }
 
     private function fixInventarioHuecos(): void

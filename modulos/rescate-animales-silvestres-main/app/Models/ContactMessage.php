@@ -24,7 +24,7 @@ class ContactMessage extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', User::relationKey());
     }
 
     public function leidoPor(): BelongsTo

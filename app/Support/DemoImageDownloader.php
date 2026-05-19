@@ -7,6 +7,47 @@ use Illuminate\Support\Facades\Storage;
 
 class DemoImageDownloader
 {
+    public static function storeSpeciesImage(string $relativePath, string $speciesOrLabel, bool $force = false): ?string
+    {
+        if (! $force && Storage::disk('public')->exists($relativePath)) {
+            $size = Storage::disk('public')->size($relativePath);
+            if ($size > 8000) {
+                return $relativePath;
+            }
+        }
+
+        $url = AnimalImageCatalog::urlFor($speciesOrLabel);
+        if (self::downloadUrl($relativePath, $url) !== null) {
+            return $relativePath;
+        }
+
+        return self::storePlaceholder($relativePath, AnimalImageCatalog::seedFor($speciesOrLabel));
+    }
+
+    public static function downloadUrl(string $relativePath, string $url): ?string
+    {
+        try {
+            $response = Http::timeout(25)
+                ->withOptions(['allow_redirects' => true])
+                ->withHeaders(['User-Agent' => 'Equipo05-DemoSeeder/1.0'])
+                ->get($url);
+
+            if ($response->successful() && strlen($response->body()) > 2000) {
+                $dir = dirname($relativePath);
+                if ($dir !== '.' && ! Storage::disk('public')->exists($dir)) {
+                    Storage::disk('public')->makeDirectory($dir);
+                }
+                Storage::disk('public')->put($relativePath, $response->body());
+
+                return $relativePath;
+            }
+        } catch (\Throwable) {
+            // siguiente fallback
+        }
+
+        return null;
+    }
+
     public static function storePlaceholder(string $relativePath, string $seed): ?string
     {
         if (Storage::disk('public')->exists($relativePath)) {

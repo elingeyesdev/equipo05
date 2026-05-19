@@ -4,6 +4,7 @@ namespace Modules\Rescate\Services\Dashboard;
 
 use Modules\Rescate\Models\ContactMessage;
 use Modules\Rescate\Models\Report;
+use Modules\Rescate\Models\Animal;
 use Modules\Rescate\Models\AnimalFile;
 use Modules\Rescate\Models\Person;
 use Modules\Rescate\Models\Rescuer;
@@ -577,11 +578,7 @@ class DashboardService
      */
     private function getAnimalsBeingRescued(): int
     {
-        $sevenDaysAgo = Carbon::now()->subDays(7);
-        
-        return AnimalFile::where('created_at', '>=', $sevenDaysAgo)
-            ->whereDoesntHave('release')
-            ->count();
+        return AnimalFile::whereDoesntHave('release')->count();
     }
 
     /**
@@ -592,35 +589,23 @@ class DashboardService
      */
     private function getAnimalsBeingTransferred(): int
     {
-        $sevenDaysAgo = Carbon::now()->subDays(7);
-        
-        // Contar transfers recientes donde el animal no tiene release
-        $recentTransfers = Transfer::where('created_at', '>=', $sevenDaysAgo)->get();
-        
-        $count = 0;
-        foreach ($recentTransfers as $transfer) {
-            if ($transfer->animal_id) {
-                // Traslado interno: verificar que el animal no tenga release
-                $animalFileIds = AnimalFile::where('animal_id', $transfer->animal_id)->pluck('id');
-                if ($animalFileIds->isNotEmpty() && !Release::whereIn('animal_file_id', $animalFileIds)->exists()) {
-                    $count++;
-                }
-            } elseif ($transfer->reporte_id) {
-                // Primer traslado: verificar que el reporte no tenga animal con release
-                $report = Report::with('animalFiles.release')->find($transfer->reporte_id);
-                if ($report) {
-                    // Si no hay animalFiles o ninguno tiene release, contar
-                    $hasReleased = $report->animalFiles->contains(function($animalFile) {
-                        return $animalFile->release !== null;
-                    });
-                    if (!$hasReleased) {
-                        $count++;
-                    }
-                }
-            }
+        $animalIds = Transfer::whereNotNull('animal_id')->pluck('animal_id')->unique();
+
+        $fromReports = Transfer::whereNotNull('reporte_id')
+            ->whereNull('animal_id')
+            ->pluck('reporte_id')
+            ->unique()
+            ->flatMap(fn ($reportId) => Animal::where('reporte_id', $reportId)->pluck('id'));
+
+        $allAnimalIds = $animalIds->merge($fromReports)->unique()->filter();
+
+        if ($allAnimalIds->isEmpty()) {
+            return 0;
         }
-        
-        return $count;
+
+        return AnimalFile::whereIn('animal_id', $allAnimalIds)
+            ->whereDoesntHave('release')
+            ->count();
     }
 
     /**
@@ -631,24 +616,15 @@ class DashboardService
      */
     private function getAnimalsBeingTreated(): int
     {
-        $sevenDaysAgo = Carbon::now()->subDays(7);
-        
-        // Animales con evaluaciones médicas recientes
-        $animalsWithRecentEvaluations = MedicalEvaluation::where('created_at', '>=', $sevenDaysAgo)
-            ->whereNotNull('animal_file_id')
-            ->pluck('animal_file_id')
-            ->unique();
-        
-        // Animales con cuidados recientes
-        $animalsWithRecentCares = Care::where('created_at', '>=', $sevenDaysAgo)
-            ->whereNotNull('hoja_animal_id')
-            ->pluck('hoja_animal_id')
-            ->unique();
-        
-        // Combinar y contar únicos sin release
-        $allAnimalIds = $animalsWithRecentEvaluations->merge($animalsWithRecentCares)->unique();
-        
-        return AnimalFile::whereIn('id', $allAnimalIds)
+        $withEvaluation = MedicalEvaluation::whereNotNull('animal_file_id')->pluck('animal_file_id');
+        $withCare = Care::whereNotNull('hoja_animal_id')->pluck('hoja_animal_id');
+        $fileIds = $withEvaluation->merge($withCare)->unique()->filter();
+
+        if ($fileIds->isEmpty()) {
+            return 0;
+        }
+
+        return AnimalFile::whereIn('id', $fileIds)
             ->whereDoesntHave('release')
             ->count();
     }
@@ -769,81 +745,49 @@ class DashboardService
      */
     private function getTopVolunteers(int $limit = 5): array
     {
-        // Obtener IDs de usuarios admin y encargado para excluirlos
-        $adminUserIds = \Modules\Rescate\Models\User::whereHas('roles', function($query) {
+        $userKey = \Modules\Rescate\Models\User::relationKey();
+
+        $adminUserIds = \Modules\Rescate\Models\User::whereHas('roles', function ($query) {
             $query->whereIn('name', ['admin', 'encargado']);
-        })->pluck('id')->toArray();
+        })->pluck($userKey);
 
-        // Obtener IDs de personas asociadas a admin/encargado
-        $adminPersonIds = Person::whereIn('usuario_id', $adminUserIds)->pluck('id')->toArray();
+        $adminPersonIds = Person::whereIn('usuario_id', $adminUserIds)->pluck('id');
 
-        // Si no hay admin/encargado, usar array vacío
-        $adminPersonIdsClause = empty($adminPersonIds) ? '0' : implode(',', $adminPersonIds);
-        $adminUserIdsClause = empty($adminUserIds) ? '0' : implode(',', $adminUserIds);
+        $people = Person::whereNotNull('usuario_id')
+            ->whereNotIn('usuario_id', $adminUserIds)
+            ->whereNotIn('id', $adminPersonIds)
+            ->with('user')
+            ->get();
 
-        // Contar contribuciones por persona usando agregación SQL
-        // Usar subconsulta para evitar problema con HAVING en PostgreSQL
-        $contributions = DB::select("
-            SELECT 
-                person_id,
-                nombre,
-                user_id,
-                email,
-                total,
-                reports,
-                transfers,
-                evaluations
-            FROM (
-                SELECT 
-                    p.id as person_id,
-                    p.nombre,
-                    p.usuario_id as user_id,
-                    COALESCE(u.email, '') as email,
-                    (COALESCE(r.reports_count, 0) + COALESCE(t.transfers_count, 0) + COALESCE(e.evaluations_count, 0)) as total,
-                    COALESCE(r.reports_count, 0) as reports,
-                    COALESCE(t.transfers_count, 0) as transfers,
-                    COALESCE(e.evaluations_count, 0) as evaluations
-                FROM people p
-                LEFT JOIN users u ON p.usuario_id = u.id
-                LEFT JOIN (
-                    SELECT persona_id, COUNT(*) as reports_count 
-                    FROM reports 
-                    WHERE persona_id NOT IN ({$adminPersonIdsClause})
-                    GROUP BY persona_id
-                ) r ON p.id = r.persona_id
-                LEFT JOIN (
-                    SELECT persona_id, COUNT(*) as transfers_count 
-                    FROM transfers 
-                    WHERE persona_id NOT IN ({$adminPersonIdsClause})
-                    GROUP BY persona_id
-                ) t ON p.id = t.persona_id
-                LEFT JOIN (
-                    SELECT v.persona_id, COUNT(*) as evaluations_count 
-                    FROM medical_evaluations me
-                    INNER JOIN veterinarians v ON me.veterinario_id = v.id 
-                    WHERE v.persona_id NOT IN ({$adminPersonIdsClause})
-                    GROUP BY v.persona_id
-                ) e ON p.id = e.persona_id
-                WHERE p.usuario_id NOT IN ({$adminUserIdsClause})
-                AND p.usuario_id IS NOT NULL
-            ) as contributions
-            WHERE total > 0
-            ORDER BY total DESC
-            LIMIT ?
-        ", [$limit]);
+        $ranking = [];
 
-        return array_map(function($item) {
-            return [
-                'user_id' => $item->user_id,
-                'person_id' => $item->person_id,
-                'nombre' => $item->nombre ?? 'Sin nombre',
-                'email' => $item->email ?? '',
-                'total' => (int)$item->total,
-                'reports' => (int)$item->reports,
-                'transfers' => (int)$item->transfers,
-                'evaluations' => (int)$item->evaluations,
+        foreach ($people as $person) {
+            $reports = Report::where('persona_id', $person->id)->count();
+            $transfers = Transfer::where('persona_id', $person->id)->count();
+            $evaluations = MedicalEvaluation::whereHas('veterinarian', function ($q) use ($person) {
+                $q->where('persona_id', $person->id);
+            })->count();
+
+            $total = $reports + $transfers + $evaluations;
+            if ($total === 0) {
+                continue;
+            }
+
+            $ranking[] = [
+                'user_id' => $person->usuario_id,
+                'person_id' => $person->id,
+                'nombre' => $person->nombre ?? 'Sin nombre',
+                'email' => $person->user?->email ?? '',
+                'total' => $total,
+                'reports' => $reports,
+                'transfers' => $transfers,
+                'evaluations' => $evaluations,
             ];
-        }, $contributions);
+        }
+
+        usort($ranking, fn ($a, $b) => $b['total'] <=> $a['total']);
+
+        return array_slice($ranking, 0, $limit);
     }
 }
 

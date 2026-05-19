@@ -29,6 +29,11 @@ class User extends Authenticatable
 
     public function getKeyName(): string
     {
+        return self::relationKey();
+    }
+
+    public static function relationKey(): string
+    {
         return UnifiedPostgres::enabled() ? 'usuarioid' : 'id';
     }
 

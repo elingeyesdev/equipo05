@@ -54,7 +54,7 @@ class Person extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\Modules\Rescate\Models\User::class, 'usuario_id', 'id');
+        return $this->belongsTo(\Modules\Rescate\Models\User::class, 'usuario_id', User::relationKey());
     }
     
     /**
