@@ -1,0 +1,273 @@
+/* Shell visual — plataforma unificada (7 módulos) */
+.platform-ui {
+    --shell-sidebar: #0c1222;
+    --shell-sidebar-hover: rgba(255, 255, 255, 0.06);
+    --shell-sidebar-active: rgba(255, 255, 255, 0.12);
+    --shell-navbar: rgba(255, 255, 255, 0.88);
+    --shell-glow: var(--module-accent, #2563eb);
+    --shell-glow-soft: color-mix(in srgb, var(--shell-glow) 18%, transparent);
+}
+
+.platform-ui {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Fondo ambiental */
+.platform-ui .content-wrapper {
+    background:
+        radial-gradient(ellipse 80% 50% at 100% 0%, var(--shell-glow-soft) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 0% 100%, rgba(15, 23, 42, 0.04) 0%, transparent 50%),
+        linear-gradient(165deg, #f0f4f8 0%, #e8edf4 45%, #f5f7fa 100%);
+    min-height: calc(100vh - 57px);
+}
+
+.platform-ui .main-header {
+    background: var(--shell-navbar) !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+.platform-ui .main-header .nav-link {
+    font-weight: 600;
+    color: #334155 !important;
+    border-radius: 0.5rem;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.platform-ui .main-header .nav-link:hover {
+    background: var(--shell-glow-soft);
+    color: var(--shell-glow) !important;
+}
+
+/* Sidebar */
+.platform-ui .main-sidebar {
+    background: linear-gradient(180deg, var(--shell-sidebar) 0%, #151b2e 55%, #0f1628 100%) !important;
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.2);
+}
+
+.platform-ui .brand-link {
+    background: linear-gradient(135deg, var(--shell-glow) 0%, color-mix(in srgb, var(--shell-glow) 70%, #0f172a) 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1rem 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 20px var(--shell-glow-soft);
+}
+
+.platform-ui .brand-text {
+    font-weight: 700 !important;
+    color: #fff !important;
+}
+
+.platform-ui .user-panel {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.platform-ui .user-panel .info a {
+    color: #f1f5f9 !important;
+    font-weight: 600;
+}
+
+.platform-ui .nav-header {
+    color: rgba(148, 163, 184, 0.9) !important;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    padding: 1rem 0.75rem 0.35rem;
+}
+
+.platform-ui .nav-sidebar .nav-link {
+    border-radius: 0.65rem;
+    margin: 0.15rem 0.5rem;
+    color: #cbd5e1 !important;
+    font-weight: 500;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.platform-ui .nav-sidebar .nav-link:hover {
+    background: var(--shell-sidebar-hover) !important;
+    color: #fff !important;
+}
+
+.platform-ui .nav-sidebar > .nav-item > .nav-link.active,
+.platform-ui .nav-sidebar .menu-open > .nav-link {
+    background: var(--shell-sidebar-active) !important;
+    color: #fff !important;
+    box-shadow: inset 3px 0 0 var(--shell-glow), 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.platform-ui .nav-sidebar .nav-treeview .nav-link.active {
+    background: color-mix(in srgb, var(--shell-glow) 25%, transparent) !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.platform-ui .nav-icon {
+    opacity: 0.9;
+}
+
+/* Barra contexto módulo */
+.platform-ui .module-context-bar {
+    background: linear-gradient(90deg, var(--shell-glow-soft), rgba(255, 255, 255, 0.9)) !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06) !important;
+    font-weight: 500;
+}
+
+/* Content header página */
+.platform-ui .content-header {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem !important;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+.platform-ui .content-header h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+/* Cards con borde luminoso sutil */
+.platform-ui .card {
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 8px 32px rgba(15, 23, 42, 0.08);
+}
+
+.platform-ui .card::before {
+    content: '';
+    display: block;
+    height: 3px;
+    background: linear-gradient(90deg, var(--shell-glow), transparent);
+    opacity: 0.85;
+}
+
+.platform-ui .card-outline.card-primary {
+    border-top: 3px solid var(--shell-glow);
+}
+
+/* Info boxes / small boxes */
+.platform-ui .info-box {
+    border-radius: 1rem;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.1);
+    overflow: hidden;
+    border: none;
+}
+
+.platform-ui .info-box-icon {
+    border-radius: 1rem 0 0 1rem;
+}
+
+.platform-ui .small-box {
+    border-radius: 1rem;
+}
+
+/* Tabs modernos */
+.platform-ui .nav-tabs {
+    border: none;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+.platform-ui .nav-tabs .nav-link {
+    border: none;
+    border-radius: 0.65rem;
+    font-weight: 600;
+    color: #64748b;
+    padding: 0.65rem 1.1rem;
+    transition: all 0.2s ease;
+}
+
+.platform-ui .nav-tabs .nav-link:hover {
+    background: var(--shell-glow-soft);
+    color: var(--shell-glow);
+}
+
+.platform-ui .nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, var(--shell-glow), color-mix(in srgb, var(--shell-glow) 80%, #1e293b));
+    color: #fff !important;
+    box-shadow: 0 4px 14px var(--shell-glow-soft);
+}
+
+/* Footer */
+.platform-ui .main-footer {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Dropdown */
+.platform-ui .dropdown-menu {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 16px 48px rgba(15, 23, 42, 0.12);
+    padding: 0.5rem;
+}
+
+.platform-ui .dropdown-item {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    padding: 0.5rem 0.85rem;
+}
+
+.platform-ui .dropdown-item:hover {
+    background: var(--shell-glow-soft);
+    color: var(--shell-glow);
+}
+
+/* Modal */
+.platform-ui .modal-content {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.2);
+}
+
+.platform-ui .modal-header {
+    background: linear-gradient(135deg, var(--shell-glow-soft), #fff);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 1rem 1rem 0 0;
+}
+
+/* Tarjetas rescate / reportes */
+.platform-ui .animalfile-card,
+.platform-ui .report-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.platform-ui .animalfile-card:hover,
+.platform-ui .report-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+}
+
+.platform-ui .animalfile-card-img {
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Paginación y badges en tablas */
+.platform-ui .badge {
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+/* Animación entrada suave */
+@keyframes platformFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.platform-ui .content > .container-fluid,
+.platform-ui .content > .container {
+    animation: platformFadeIn 0.45s ease-out;
+}

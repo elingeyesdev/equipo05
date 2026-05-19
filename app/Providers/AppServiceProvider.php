@@ -31,35 +31,36 @@ class AppServiceProvider extends ServiceProvider
         }
 
         View::composer(['layouts.app', 'fusion::layouts.app'], function ($view) {
+            $path = request()->path();
+            $moduleClass = match (true) {
+                str_starts_with($path, 'inventario') => 'module-inventario',
+                str_starts_with($path, 'incendios') => 'module-incendios',
+                str_starts_with($path, 'rescate') => 'module-rescate',
+                str_starts_with($path, 'logistica') => 'module-logistica',
+                str_starts_with($path, 'seguimiento') => 'module-seguimiento',
+                str_starts_with($path, 'cuadrillas') => 'module-cuadrillas',
+                default => 'module-transparencia',
+            };
+
+            $view->with('bodyModuleClass', trim('platform-ui '.$moduleClass));
+
             if (! \Illuminate\Support\Facades\Auth::check()) {
                 $view->with('contextModuleRoles', collect());
                 $view->with('showModuleContextBar', false);
-                $view->with('bodyModuleClass', '');
 
                 return;
             }
-            $path = request()->path();
-            $inInventario = str_starts_with($path, 'inventario');
+
             $inRescate = str_starts_with($path, 'rescate/modulo') || request()->routeIs('fusion.modulos.rescate');
             $inIncendios = str_starts_with($path, 'incendios/modulo') || request()->routeIs('fusion.modulos.incendios');
-
-            if ($inInventario) {
-                $view->with('contextModuleRoles', collect());
-                $view->with('showModuleContextBar', false);
-                $view->with('bodyModuleClass', 'module-inventario');
-
-                return;
-            }
 
             if (! $inRescate && ! $inIncendios) {
                 $view->with('contextModuleRoles', collect());
                 $view->with('showModuleContextBar', false);
-                $view->with('bodyModuleClass', '');
 
                 return;
             }
 
-            $view->with('bodyModuleClass', $inRescate ? 'module-rescate' : 'module-incendios');
             try {
                 $view->with(
                     'contextModuleRoles',

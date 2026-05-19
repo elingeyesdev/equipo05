@@ -6,20 +6,24 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title','Plataforma de gestión territorial')</title>
     
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @php
+        $cssVer = fn (string $file) => file_exists(public_path($file)) ? filemtime(public_path($file)) : time();
+    @endphp
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}?v={{ $cssVer('css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform-shell.css') }}?v={{ $cssVer('css/platform-shell.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/platform-modules.css') }}?v={{ $cssVer('css/platform-modules.css') }}">
     @if(str_contains($bodyModuleClass ?? '', 'module-inventario'))
-        <link rel="stylesheet" href="{{ asset('css/inventario-module.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/inventario-module.css') }}?v={{ $cssVer('css/inventario-module.css') }}">
     @endif
     @yield('css')
     @stack('css')
     @stack('styles')
     <style>
-        .brand-link { background-color: #0d6efd !important; }
-        .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active { background-color: #0d6efd !important; }
-        
         /* Estilos Chat */
         .chat-container { display: flex; gap: 1.5rem; flex-wrap: wrap; }
         .chat-sidebar { flex: 1 1 260px; max-width: 320px; }
@@ -58,7 +62,7 @@
         .user-avatar-circle { width: 40px; height: 40px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; background: linear-gradient(135deg, #6366f1, #3b82f6); color: white; }
     </style>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed {{ trim($bodyModuleClass ?? '') }}">
+<body class="hold-transition sidebar-mini layout-fixed {{ trim($bodyModuleClass ?? 'platform-ui module-transparencia') }}">
     <div class="wrapper">
         
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -118,7 +122,7 @@
 
         @auth
         @if(!empty($showModuleContextBar) && $showModuleContextBar)
-        <div class="px-3 py-2 border-bottom bg-light d-flex flex-wrap align-items-center" style="gap: .5rem; font-size: 0.9rem;">
+        <div class="module-context-bar px-3 py-2 border-bottom d-flex flex-wrap align-items-center" style="gap: .5rem; font-size: 0.9rem;">
             <span class="text-secondary mb-0">Rol de referencia en el módulo (no restringe el acceso; el login del sistema basta):</span>
             @if(!empty($moduleContextIsRescate) && $moduleContextIsRescate)
             <form method="post" action="{{ route('modulos.contexto.rescate') }}" class="d-inline m-0">

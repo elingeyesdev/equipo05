@@ -5,63 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Iniciar Sesión | Sistema Donaciones</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-
-    <style>
-        body {
-            background-color: #e9ecef;
-        }
-        .login-box {
-            width: 400px; /* Un poco más ancho para mejor lectura */
-        }
-        @media (min-width: 992px) {
-            .login-box {
-                width: 920px;
-            }
-        }
-        .card-primary.card-outline {
-            border-top: 3px solid #007bff;
-        }
-        .landing-access-btn {
-            border-width: 2px;
-            border-color: #007bff;
-            color: #007bff;
-            font-size: 1.1rem;
-            font-weight: 500;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-        }
-        .landing-access-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.25);
-            background-color: #007bff;
-            color: #fff;
-        }
-        .landing-access-btn.btn-cuadrillas {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-        .landing-access-btn.btn-cuadrillas:hover {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: #fff;
-            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.25);
-        }
-        .landing-access-btn.btn-seguimiento {
-            border-color: #17a2b8;
-            color: #17a2b8;
-        }
-        .landing-access-btn.btn-seguimiento:hover {
-            background-color: #17a2b8;
-            border-color: #17a2b8;
-            color: #fff;
-            box-shadow: 0 6px 16px rgba(23, 162, 184, 0.25);
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/platform-login.css') }}?v={{ file_exists(public_path('css/platform-login.css')) ? filemtime(public_path('css/platform-login.css')) : time() }}">
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page platform-login">
     <div class="login-box">
         <div class="row mb-3">
             <div class="col-12 col-lg-6 mb-2 mb-lg-0">
