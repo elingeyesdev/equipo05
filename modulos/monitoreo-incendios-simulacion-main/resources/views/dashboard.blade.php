@@ -116,17 +116,17 @@
                         @endforeach
                     </select>
                 </form>
-                <div class="row">
+                <div class="row dashboard-clima-mini">
                     <div class="col-6">
-                        <div class="info-box mb-3 bg-light">
-                            <span class="info-box-icon bg-info elevation-1">
+                        <div class="info-box mb-3 bg-light dashboard-clima-box">
+                            <span class="info-box-icon bg-danger elevation-1">
                                 <i class="fas fa-thermometer-half"></i>
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Temperatura</span>
                                 <span class="info-box-number">
-                                    @if(isset($weather['data']['current_weather']['temperature']))
-                                        {{ $weather['data']['current_weather']['temperature'] }}°C
+                                    @if(!empty($climaActual['temperatura']))
+                                        {{ $climaActual['temperatura'] }}&deg;C
                                     @else
                                         --°C
                                     @endif
@@ -136,15 +136,15 @@
                     </div>
 
                     <div class="col-6">
-                        <div class="info-box mb-3 bg-light">
+                        <div class="info-box mb-3 bg-light dashboard-clima-box">
                             <span class="info-box-icon bg-warning elevation-1">
                                 <i class="fas fa-temperature-low"></i>
                             </span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Sensacion termica</span>
+                                <span class="info-box-text">Sensaci&oacute;n t&eacute;rmica</span>
                                 <span class="info-box-number">
-                                    @if($sensacionTermica !== null)
-                                        {{ $sensacionTermica }}&deg;C
+                                    @if(!empty($climaActual['sensacion_termica']))
+                                        {{ $climaActual['sensacion_termica'] }}&deg;C
                                     @else
                                         --&deg;C
                                     @endif
@@ -154,15 +154,15 @@
                     </div>
                     
                     <div class="col-6">
-                        <div class="info-box mb-3 bg-light">
-                            <span class="info-box-icon bg-primary elevation-1">
+                        <div class="info-box mb-3 bg-light dashboard-clima-box">
+                            <span class="info-box-icon bg-info elevation-1">
                                 <i class="fas fa-tint"></i>
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Humedad</span>
                                 <span class="info-box-number">
-                                    @if(isset($weather['data']['hourly']['relative_humidity_2m'][0]))
-                                        {{ $weather['data']['hourly']['relative_humidity_2m'][0] }}%
+                                    @if(isset($climaActual['humedad']))
+                                        {{ $climaActual['humedad'] }}%
                                     @else
                                         --%
                                     @endif
@@ -172,15 +172,15 @@
                     </div>
                     
                     <div class="col-6">
-                        <div class="info-box mb-3 bg-light">
+                        <div class="info-box mb-3 bg-light dashboard-clima-box">
                             <span class="info-box-icon bg-success elevation-1">
                                 <i class="fas fa-wind"></i>
                             </span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Viento</span>
                                 <span class="info-box-number">
-                                    @if(isset($weather['data']['current_weather']['windspeed']))
-                                        {{ $weather['data']['current_weather']['windspeed'] }} km/h
+                                    @if(isset($climaActual['viento']))
+                                        {{ $climaActual['viento'] }} km/h
                                     @else
                                         -- km/h
                                     @endif
@@ -188,17 +188,35 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-6">
-                        <div class="info-box mb-3 bg-light">
+                        <div class="info-box mb-3 bg-light dashboard-clima-box">
+                            <span class="info-box-icon bg-teal elevation-1">
+                                <i class="fas fa-wind"></i>
+                            </span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">R&aacute;fagas</span>
+                                <span class="info-box-number">
+                                    @if(isset($climaActual['rafagas']))
+                                        {{ $climaActual['rafagas'] }} km/h
+                                    @else
+                                        -- km/h
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="info-box mb-3 bg-light dashboard-clima-box">
                             <span class="info-box-icon bg-cyan elevation-1">
                                 <i class="fas fa-cloud-rain"></i>
                             </span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Precipitación</span>
+                                <span class="info-box-text">Precipitaci&oacute;n</span>
                                 <span class="info-box-number">
-                                    @if(isset($weather['data']['hourly']['precipitation'][0]))
-                                        {{ $weather['data']['hourly']['precipitation'][0] }} mm
+                                    @if(isset($climaActual['precipitacion']))
+                                        {{ number_format((float) $climaActual['precipitacion'], 1) }} mm
                                     @else
                                         0 mm
                                     @endif
@@ -216,9 +234,9 @@
                                 <span class="info-box-text">Descripción</span>
                                 <span class="info-box-number" style="font-size: 16px;">
                                     @php
-                                        $temp = $weather['data']['current_weather']['temperature'] ?? 0;
-                                        $precipitation = $weather['data']['hourly']['precipitation'][0] ?? 0;
-                                        $humidity = $weather['data']['hourly']['relative_humidity_2m'][0] ?? 0;
+                                        $temp = $climaActual['temperatura'] ?? 0;
+                                        $precipitation = $climaActual['precipitacion'] ?? 0;
+                                        $humidity = $climaActual['humedad'] ?? 0;
                                         
                                         if ($precipitation > 0) {
                                             $desc = '🌧️ Lluvia';
@@ -542,6 +560,16 @@
 @push('css')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
+    .bg-teal { background-color: #20c997 !important; color: #fff; }
+    .dashboard-clima-mini .dashboard-clima-box {
+        min-height: 88px;
+        margin-bottom: 0.75rem;
+    }
+    .dashboard-clima-mini .info-box-number {
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
     #map {
         height: 460px;
         width: 100%;

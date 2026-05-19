@@ -18,8 +18,8 @@ use Modules\Incendios\Exports\SimulationsEffectivenessExport;
 use Modules\Incendios\Exports\SimulationsEffectivenessPdfExport;
 use Modules\Incendios\Exports\PredictionsReportExport;
 use Modules\Incendios\Exports\PredictionsReportPdfExport;
+use Modules\Incendios\Support\ClimaActual;
 use Modules\Incendios\Support\ClimaUbicaciones;
-use Modules\Incendios\Support\SensacionTermica;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -112,7 +112,7 @@ class DashboardController extends Controller
 
         return view('dashboard', [
             'weather' => $weatherData,
-            'sensacionTermica' => $sensacionTermica,
+            'climaActual' => $climaActual ?? [],
             'climaUbicaciones' => $climaUbicaciones,
             'climaUbicacionKey' => $climaUbicacionKey,
             'climaUbicacionNombre' => $climaUbicacion['nombre'],
