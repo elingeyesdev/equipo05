@@ -151,7 +151,7 @@ class Biomasa extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\Modules\Incendios\Models\User::class, 'user_id');
+        return $this->belongsTo(\Modules\Incendios\Models\User::class, 'user_id', User::relationKey());
     }
     
     /**
@@ -159,7 +159,7 @@ class Biomasa extends Model
      */
     public function aprobadaPor()
     {
-        return $this->belongsTo(\Modules\Incendios\Models\User::class, 'aprobada_por');
+        return $this->belongsTo(\Modules\Incendios\Models\User::class, 'aprobada_por', User::relationKey());
     }
     
     /**

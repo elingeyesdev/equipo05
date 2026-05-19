@@ -38,8 +38,8 @@
                                 @forelse ($voluntarios as $voluntario)
                                     <tr>
                                         <td>{{ ++$i }}</td>
-                                        <td>{{ $voluntario->user->name }}</td>
-                                        <td>{{ $voluntario->user->email }}</td>
+                                        <td>{{ $voluntario->user?->name ?? '—' }}</td>
+                                        <td>{{ $voluntario->user?->email ?? '—' }}</td>
                                         <td>{{ $voluntario->ciudad }}</td>
                                         <td>{{ $voluntario->zona }}</td>
                                         <td>{{ $voluntario->direccion }}</td>

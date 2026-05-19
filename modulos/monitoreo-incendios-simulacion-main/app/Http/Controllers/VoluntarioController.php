@@ -136,9 +136,9 @@ class VoluntarioController extends Controller
     {
         $voluntario = Voluntario::findOrFail($id);
         $user = $voluntario->user;
-        
+
         $voluntario->delete();
-        $user->delete();
+        $user?->delete();
 
         return Redirect::route('incendios.voluntarios.index')
             ->with('success', 'Voluntario eliminado exitosamente.');

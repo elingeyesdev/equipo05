@@ -30,6 +30,12 @@ class User extends Authenticatable
         return UnifiedPostgres::enabled() ? 'usuarioid' : 'id';
     }
 
+    /** Clave primaria para relaciones belongsTo/hasMany con core.usuarios. */
+    public static function relationKey(): string
+    {
+        return (new static)->getKeyName();
+    }
+
     protected $fillable = ['name', 'email', 'telefono', 'cedula_identidad', 'password', 'google_id', 'nombre', 'apellido', 'contrasena'];
 
     protected function casts(): array

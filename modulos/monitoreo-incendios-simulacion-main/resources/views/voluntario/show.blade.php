@@ -8,7 +8,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <x-adminlte-card title="Información del Voluntario: {{ $voluntario->user->name }}" theme="info" icon="fas fa-hands-helping">
+                <x-adminlte-card title="Información del Voluntario: {{ $voluntario->user?->name ?? '—' }}" theme="info" icon="fas fa-hands-helping">
                     <x-slot name="toolsSlot">
                         <a href="{{ route('incendios.voluntarios.index') }}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
                         <a href="{{ route('incendios.voluntarios.edit', $voluntario->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
@@ -17,12 +17,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <x-adminlte-callout theme="teal" title="Nombre">
-                                {{ $voluntario->user->name }}
+                                {{ $voluntario->user?->name ?? '—' }}
                             </x-adminlte-callout>
                         </div>
                         <div class="col-md-6">
                             <x-adminlte-callout theme="info" title="Email">
-                                {{ $voluntario->user->email }}
+                                {{ $voluntario->user?->email ?? '—' }}
                             </x-adminlte-callout>
                         </div>
                         <div class="col-md-12">

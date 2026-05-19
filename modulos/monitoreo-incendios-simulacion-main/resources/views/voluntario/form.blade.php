@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <x-adminlte-input name="name" label="Nombre" 
             placeholder="Nombre completo" 
-            value="{{ old('name', $voluntario->user->name ?? '') }}" enable-old-support>
+            value="{{ old('name', $voluntario->user?->name ?? '') }}" enable-old-support>
             <x-slot name="prependSlot">
                 <div class="input-group-text">
                     <i class="fas fa-user text-teal"></i>
@@ -17,7 +17,7 @@
     <div class="col-md-12">
         <x-adminlte-input name="email" label="Email" type="email"
             placeholder="email@example.com" 
-            value="{{ old('email', $voluntario->user->email ?? '') }}" enable-old-support>
+            value="{{ old('email', $voluntario->user?->email ?? '') }}" enable-old-support>
             <x-slot name="prependSlot">
                 <div class="input-group-text">
                     <i class="fas fa-envelope text-teal"></i>
