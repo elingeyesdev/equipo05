@@ -6,7 +6,9 @@ use App\Models\Usuario;
 use App\Models\Donacion;
 use App\Models\Conversacion;
 use App\Models\Mensaje;
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
+use App\Support\UnifiedPostgres;
 use Illuminate\Support\Facades\DB;
 
 class CentroMensajesController extends Controller
@@ -22,7 +24,7 @@ class CentroMensajesController extends Controller
     public function centroPorUsuario(Request $request)
     {
         $request->validate([
-            'usuarioid' => 'required|integer|exists:usuarios,usuarioid',
+            'usuarioid' => 'required|integer|'.UnifiedValidation::existsCoreUsuario(),
         ]);
 
         $usuario = Usuario::findOrFail($request->usuarioid);
@@ -36,7 +38,8 @@ class CentroMensajesController extends Controller
          * 1) Traer conversaciones donde participa el usuario
          * (pivot: conversacion_usuarios)
          */
-        $conversacionIds = DB::table('conversacion_usuarios')
+        $conversacionIds = DB::connection(UnifiedPostgres::transparenciaConnection())
+            ->table('conversacion_usuarios')
             ->where('usuarioid', $usuario->usuarioid)
             ->pluck('conversacionid');
 
@@ -72,7 +75,8 @@ class CentroMensajesController extends Controller
         /**
          * 3) Respuestas agrupadas por mensaje (esto sigue igual)
          */
-        $respuestas = DB::table('respuestasmensajes')
+        $respuestas = DB::connection(UnifiedPostgres::transparenciaConnection())
+            ->table('respuestasmensajes')
             ->leftJoin('usuarios', 'respuestasmensajes.usuarioid', '=', 'usuarios.usuarioid')
             ->whereIn('mensajeid', $mensajes->pluck('mensajeid'))
             ->select(

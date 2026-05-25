@@ -4,8 +4,10 @@ namespace Modules\Incendios\Http\Controllers\Api;
 
 use Modules\Incendios\Http\Controllers\Controller;
 use Modules\Incendios\Models\User;
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -15,18 +17,25 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $validated = $request->validate([
+        $emailUnique = Rule::unique(UnifiedValidation::incendiosUsersTable(), 'email');
+
+        $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => ['required', 'string', 'email', 'max:255', $emailUnique],
             'password' => 'required|string|min:8|confirmed',
             'telefono' => 'nullable|string|max:20',
-            'cedula_identidad' => 'nullable|string|max:50|unique:users',
-        ]);
+        ];
+
+        if (! \App\Support\UnifiedPostgres::enabled()) {
+            $rules['cedula_identidad'] = ['nullable', 'string', 'max:50', Rule::unique('users', 'cedula_identidad')];
+        }
+
+        $validated = $request->validate($rules);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'],
             'telefono' => $validated['telefono'] ?? null,
             'cedula_identidad' => $validated['cedula_identidad'] ?? null,
         ]);
@@ -56,7 +65,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->getAuthPassword())) {
             throw ValidationException::withMessages([
                 'email' => ['Las credenciales proporcionadas son incorrectas.'],
             ]);

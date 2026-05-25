@@ -2,6 +2,7 @@
 
 namespace Modules\Incendios\Http\Requests;
 
+use App\Support\UnifiedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PredictionRequest extends FormRequest
@@ -20,7 +21,7 @@ class PredictionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'foco_incendio_id' => 'required|exists:focos_incendios,id',
+            'foco_incendio_id' => 'required|exists:'.UnifiedValidation::incendiosTable('focos_incendios').',id',
             'predicted_at' => 'nullable|date',
             'path' => 'nullable|json',
             'meta' => 'nullable|json',

@@ -2,12 +2,14 @@
  
 namespace Modules\Rescate\Http\Controllers\Api;
  
+use App\Support\UnifiedPostgres;
+use App\Support\UnifiedValidation;
 use Modules\Rescate\Http\Controllers\Controller;
 use Modules\Rescate\Models\User;
 use Modules\Rescate\Models\Person;
 use Modules\Rescate\Services\Api\User\UserRegistrationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
  
 class UserApiController extends Controller
 {
@@ -30,8 +32,11 @@ class UserApiController extends Controller
      */
     public function store(Request $request)
     {
+        $emailTable = UnifiedPostgres::enabled() ? UnifiedValidation::coreUsuariosTable() : 'users';
+        $emailKey = UnifiedPostgres::enabled() ? UnifiedValidation::coreUsuariosKey() : 'id';
+
         $validated = $request->validate([
-            'email'    => 'required|email|unique:users,email',
+            'email'    => ['required', 'email', Rule::unique($emailTable, 'email')],
             'password' => 'required|min:6',
             'nombre'   => 'required|string',
             'ci'       => 'required|string',
@@ -66,8 +71,11 @@ class UserApiController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $emailTable = UnifiedPostgres::enabled() ? UnifiedValidation::coreUsuariosTable() : 'users';
+        $emailKey = UnifiedPostgres::enabled() ? UnifiedValidation::coreUsuariosKey() : 'id';
+
         $request->validate([
-            'email'    => 'sometimes|email|unique:users,email,' . $user->id,
+            'email'    => ['sometimes', 'email', Rule::unique($emailTable, 'email')->ignore($user->getKey(), $emailKey)],
             'password' => 'nullable|min:6',
             'nombre'   => 'sometimes|string',
             'ci'       => 'sometimes|string',
@@ -80,7 +88,7 @@ class UserApiController extends Controller
         }
  
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $user->password = $request->password;
         }
  
         $user->save();

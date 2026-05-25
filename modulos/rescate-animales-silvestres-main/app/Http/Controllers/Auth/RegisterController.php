@@ -180,18 +180,22 @@ class RegisterController extends Controller
         $authId = (int) $usuario->getKey();
         $now = now();
 
-        $rescate = DB::connection('rescate');
-        $rescate->table('users')->updateOrInsert(
-            ['id' => $authId],
-            [
-                'email' => $usuario->email,
-                'password' => $usuario->contrasena,
-                'email_verified_at' => null,
-                'remember_token' => null,
-                'created_at' => $rescate->table('users')->where('id', $authId)->value('created_at') ?? $now,
-                'updated_at' => $now,
-            ]
-        );
+        try {
+            $rescate = DB::connection('rescate');
+            $rescate->table('users')->updateOrInsert(
+                ['id' => $authId],
+                [
+                    'email' => $usuario->email,
+                    'password' => $usuario->contrasena,
+                    'email_verified_at' => null,
+                    'remember_token' => null,
+                    'created_at' => $rescate->table('users')->where('id', $authId)->value('created_at') ?? $now,
+                    'updated_at' => $now,
+                ]
+            );
+        } catch (\Throwable $e) {
+            \Log::warning('Shadow users sync skipped: '.$e->getMessage());
+        }
 
         Person::on('rescate')->updateOrCreate(
             ['usuario_id' => $authId],

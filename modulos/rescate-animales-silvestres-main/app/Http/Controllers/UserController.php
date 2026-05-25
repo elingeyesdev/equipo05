@@ -37,7 +37,12 @@ class UserController extends Controller
      */
     public function store(UserRequest $request): RedirectResponse
     {
-        User::create($request->validated());
+        $data = $request->validated();
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        User::create($data);
 
         return Redirect::route('rescate.users.index')
             ->with('success', 'Usuario creado correctamente.');
@@ -68,7 +73,12 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user): RedirectResponse
     {
-        $user->update($request->validated());
+        $data = $request->validated();
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        $user->update($data);
 
         return Redirect::route('rescate.users.index')
             ->with('success', 'Usuario actualizado correctamente');

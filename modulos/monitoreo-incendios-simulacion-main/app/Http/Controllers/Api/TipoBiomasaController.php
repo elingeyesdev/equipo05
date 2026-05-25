@@ -2,6 +2,7 @@
 
 namespace Modules\Incendios\Http\Controllers\Api;
 
+use App\Support\UnifiedValidation;
 use Modules\Incendios\Http\Controllers\Controller;
 use Modules\Incendios\Http\Resources\TipoBiomasaResource;
 use Modules\Incendios\Models\TipoBiomasa;
@@ -23,8 +24,10 @@ class TipoBiomasaController extends Controller
      */
     public function store(Request $request)
     {
+        $table = UnifiedValidation::incendiosTable('tipo_biomasa');
+
         $validated = $request->validate([
-            'tipo_biomasa' => 'required|string|max:255|unique:tipo_biomasas',
+            'tipo_biomasa' => 'required|string|max:255|unique:'.$table.',tipo_biomasa',
             'color' => 'required|string|max:7|regex:/^#[0-9A-Fa-f]{6}$/',
             'modificador_intensidad' => 'required|numeric|between:0,10',
         ]);
@@ -48,8 +51,10 @@ class TipoBiomasaController extends Controller
      */
     public function update(Request $request, TipoBiomasa $tipoBiomasa)
     {
+        $table = UnifiedValidation::incendiosTable('tipo_biomasa');
+
         $validated = $request->validate([
-            'tipo_biomasa' => 'sometimes|string|max:255|unique:tipo_biomasas,tipo_biomasa,' . $tipoBiomasa->id,
+            'tipo_biomasa' => 'sometimes|string|max:255|unique:'.$table.',tipo_biomasa,'.$tipoBiomasa->id,
             'color' => 'sometimes|string|max:7|regex:/^#[0-9A-Fa-f]{6}$/',
             'modificador_intensidad' => 'sometimes|numeric|between:0,10',
         ]);

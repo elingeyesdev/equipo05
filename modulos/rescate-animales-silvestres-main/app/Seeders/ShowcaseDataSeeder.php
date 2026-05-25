@@ -2,6 +2,7 @@
 
 namespace Modules\Rescate\Seeders;
 
+use App\Support\UnifiedPostgres;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -72,28 +73,19 @@ class ShowcaseDataSeeder extends Seeder
         $incAtropello = IncidentType::firstOrCreate(['nombre' => 'Atropello'], ['riesgo' => 2, 'activo' => true]);
         $incOtro = IncidentType::firstOrCreate(['nombre' => 'Otro'], ['riesgo' => 1, 'activo' => true]);
 
-        $rescuerUser = User::firstOrCreate(
-            ['email' => 'rescatista.demo@rescate.local'],
-            ['password' => Hash::make('rescate123')]
-        );
+        $rescuerUser = $this->demoUser('rescatista.demo@rescate.local', 'Luis', 'Ortega');
         $rescuerPerson = Person::firstOrCreate(
             ['usuario_id' => $rescuerUser->id],
             ['nombre' => 'Luis Ortega', 'ci' => '4455667', 'telefono' => '71100001', 'es_cuidador' => false]
         );
 
-        $vetUser = User::firstOrCreate(
-            ['email' => 'veterinaria.demo@rescate.local'],
-            ['password' => Hash::make('rescate123')]
-        );
+        $vetUser = $this->demoUser('veterinaria.demo@rescate.local', 'María', 'Salvatierra');
         $vetPerson = Person::firstOrCreate(
             ['usuario_id' => $vetUser->id],
             ['nombre' => 'María Salvatierra', 'ci' => '5566778', 'telefono' => '71100002', 'es_cuidador' => false]
         );
 
-        $caregiverUser = User::firstOrCreate(
-            ['email' => 'cuidador.demo@rescate.local'],
-            ['password' => Hash::make('rescate123')]
-        );
+        $caregiverUser = $this->demoUser('cuidador.demo@rescate.local', 'Ana', 'Vega');
         Person::firstOrCreate(
             ['usuario_id' => $caregiverUser->id],
             [
@@ -106,10 +98,7 @@ class ShowcaseDataSeeder extends Seeder
             ]
         );
 
-        $citizenUser = User::firstOrCreate(
-            ['email' => 'ciudadano.demo@rescate.local'],
-            ['password' => Hash::make('rescate123')]
-        );
+        $citizenUser = $this->demoUser('ciudadano.demo@rescate.local', 'Carlos', 'Ibañez');
         $citizenPerson = Person::firstOrCreate(
             ['usuario_id' => $citizenUser->id],
             ['nombre' => 'Carlos Ibañez', 'ci' => '7788990', 'telefono' => '71100004', 'es_cuidador' => false]
@@ -321,5 +310,19 @@ class ShowcaseDataSeeder extends Seeder
                 'leido' => false,
             ]
         );
+    }
+
+    private function demoUser(string $email, string $nombre, string $apellido): User
+    {
+        $attrs = ['password' => Hash::make('rescate123')];
+
+        if (UnifiedPostgres::enabled()) {
+            $attrs['nombre'] = $nombre;
+            $attrs['apellido'] = $apellido;
+            $attrs['activo'] = true;
+            $attrs['fecharegistro'] = now();
+        }
+
+        return User::firstOrCreate(['email' => $email], $attrs);
     }
 }

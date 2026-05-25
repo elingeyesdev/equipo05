@@ -45,15 +45,29 @@
 
                     {{-- Columna derecha --}}
                     <div class="col-md-6">
-                        
-                        {{-- SOLUCIÓN AL ERROR: Mostrar creador original sin select --}}
+                        @php
+                            $fechaInicio = old('fechainicio');
+                            if ($fechaInicio === null && $campania->fechainicio) {
+                                $fechaInicio = \Carbon\Carbon::parse($campania->fechainicio)->format('Y-m-d');
+                            }
+                            $fechaFin = old('fechafin');
+                            if ($fechaFin === null && $campania->fechafin) {
+                                $fechaFin = \Carbon\Carbon::parse($campania->fechafin)->format('Y-m-d');
+                            }
+                        @endphp
+
                         <div class="form-group">
-                            <label>Creado por</label>
-                            <input type="text" class="form-control" 
-                                   value="{{ optional($campania->creador)->nombre }} {{ optional($campania->creador)->apellido }}" 
-                                   readonly 
-                                   style="background-color: #e9ecef;">
-                            <small class="text-muted">El creador no se puede cambiar.</small>
+                            <label>Responsable <span class="text-danger">*</span></label>
+                            <select name="usuarioidcreador" class="form-control" required>
+                                <option value="">Seleccione un responsable</option>
+                                @foreach($usuarios as $u)
+                                    <option value="{{ $u->usuarioid }}"
+                                        {{ (string) old('usuarioidcreador', $campania->usuarioidcreador) === (string) $u->usuarioid ? 'selected' : '' }}>
+                                        {{ $u->nombre }} {{ $u->apellido }} — {{ $u->email }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('usuarioidcreador') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="form-group">
@@ -66,14 +80,14 @@
                         <div class="form-group">
                             <label>Fecha de inicio</label>
                             <input type="date" name="fechainicio" class="form-control"
-                                   value="{{ old('fechainicio', $campania->fechainicio) }}" required>
+                                   value="{{ $fechaInicio }}" required>
                             @error('fechainicio') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="form-group">
                             <label>Fecha de fin (opcional)</label>
                             <input type="date" name="fechafin" class="form-control"
-                                   value="{{ old('fechafin', $campania->fechafin) }}">
+                                   value="{{ $fechaFin }}">
                             @error('fechafin') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 

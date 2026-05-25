@@ -2,6 +2,7 @@
 
 namespace Modules\Incendios\Http\Requests;
 
+use App\Support\UnifiedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TipoBiomasaRequest extends FormRequest
@@ -20,9 +21,10 @@ class TipoBiomasaRequest extends FormRequest
     public function rules(): array
     {
         $tipoBiomasaId = $this->route('tipo_biomasa') ? $this->route('tipo_biomasa')->id : null;
-        
+        $table = UnifiedValidation::incendiosTable('tipo_biomasa');
+
         return [
-            'tipo_biomasa' => 'required|string|max:255|unique:tipo_biomasa,tipo_biomasa,' . $tipoBiomasaId,
+            'tipo_biomasa' => 'required|string|max:255|unique:'.$table.',tipo_biomasa,'.$tipoBiomasaId,
             'color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'modificador_intensidad' => ['required', 'numeric', 'min:0.5', 'max:2.0'],
         ];

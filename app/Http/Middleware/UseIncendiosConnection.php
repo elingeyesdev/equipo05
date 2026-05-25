@@ -11,6 +11,7 @@ class UseIncendiosConnection
 {
     public function handle(Request $request, Closure $next): Response
     {
+        config(['database.default' => 'incendios']);
         DB::purge('incendios');
         DB::reconnect('incendios');
 

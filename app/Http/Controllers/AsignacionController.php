@@ -10,11 +10,11 @@ use App\Models\{
     DonacionesAsignacion,
     SaldosDonacion,
     Donacion
-};  
+};
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 
 class AsignacionController extends Controller
 {
@@ -60,25 +60,26 @@ class AsignacionController extends Controller
     public function create()
     {
         $campanias = Campania::orderByDesc('campaniaid')->get();
-        // NO enviamos usuarios, el responsable es el logueado
-        return view('asignaciones.create', compact('campanias'));
+        $usuarios  = Usuario::orderBy('nombre')->orderBy('apellido')->get();
+
+        return view('asignaciones.create', compact('campanias', 'usuarios'));
     }
 
     /** GUARDAR */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'campaniaid'      => 'required|integer|exists:campanias,campaniaid',
+            'campaniaid'      => 'required|integer|'.UnifiedValidation::existsTransparencia('campanias', 'campaniaid'),
             'descripcion'     => 'required|string|max:255',
             'monto'           => 'required|numeric|min:0',
             'fechaasignacion' => 'nullable|date',
             'imagenurl'       => 'nullable|string|max:255',
-            // 'usuarioid' eliminado de validación
+            'usuarioid'       => 'required|integer|'.UnifiedValidation::existsCoreUsuario(),
             'comprobante'     => 'nullable|string|max:255',
+        ], [
+            'campaniaid.exists' => 'La campaña seleccionada no es válida.',
+            'usuarioid.exists'  => 'El responsable seleccionado no es válido.',
         ]);
-
-        // ASIGNACIÓN AUTOMÁTICA
-        $data['usuarioid'] = Auth::id();
 
         if ($request->filled('fechaasignacion')) {
             $data['fechaasignacion'] = \Carbon\Carbon::parse(
@@ -108,13 +109,16 @@ class AsignacionController extends Controller
         $asignacion = Asignacion::findOrFail($id);
 
         $data = $request->validate([
-            'campaniaid'      => 'required|integer|exists:campanias,campaniaid',
+            'campaniaid'      => 'required|integer|'.UnifiedValidation::existsTransparencia('campanias', 'campaniaid'),
             'descripcion'     => 'required|string|max:255',
             'monto'           => 'required|numeric|min:0',
             'fechaasignacion' => 'nullable|date',
             'imagenurl'       => 'nullable|string|max:255',
-            'usuarioid'       => 'required|integer|exists:usuarios,usuarioid',
+            'usuarioid'       => 'required|integer|'.UnifiedValidation::existsCoreUsuario(),
             'comprobante'     => 'nullable|string|max:255',
+        ], [
+            'campaniaid.exists' => 'La campaña seleccionada no es válida.',
+            'usuarioid.exists'  => 'El responsable seleccionado no es válido.',
         ]);
 
         if ($request->filled('fechaasignacion')) {
@@ -246,7 +250,7 @@ class AsignacionController extends Controller
         $asignacion = Asignacion::findOrFail($id);
 
         $data = $request->validate([
-            'donacionid'    => 'required|exists:donaciones,donacionid',
+            'donacionid'    => 'required|'.UnifiedValidation::existsTransparencia('donaciones', 'donacionid'),
             'montoasignado' => 'required|numeric|min:0.01',
         ]);
 

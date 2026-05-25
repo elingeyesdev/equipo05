@@ -25,13 +25,17 @@
         <div class="list-group list-group-flush">
           @forelse($conversaciones as $c)
             @php
-              $otro = $c->usuarios->first();
+              $otro = $c->otroUsuario ?? $c->usuarios->first();
               $ultimo = $c->mensajes->first();
             @endphp
 
+            @if(!$otro)
+              @continue
+            @endif
+
             <a class="list-group-item list-group-item-action"
                href="{{ route('chat.conversacion', $otro->usuarioid) }}">
-              <strong>{{ $otro->nombre ?? 'Usuario' }}</strong>
+              <strong>{{ trim(($otro->nombre ?? '').' '.($otro->apellido ?? '')) ?: 'Usuario' }}</strong>
               @if($ultimo)
                 — {{ \Illuminate\Support\Str::limit($ultimo->contenido, 60) }}
               @endif

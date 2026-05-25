@@ -2,6 +2,7 @@
 
 namespace Modules\Rescate\Http\Controllers;
 
+use App\Support\UnifiedValidation;
 use Modules\Rescate\Models\Person;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -87,11 +88,15 @@ class PersonController extends Controller
     public function store(PersonRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        
+
+        $names = UnifiedValidation::splitNombreCompleto($data['nombre']);
+
         // Crear usuario primero
         $user = \Modules\Rescate\Models\User::create([
             'email' => $data['email'],
-            'password' => $data['password'], // Se encripta automáticamente por el cast "hashed"
+            'password' => $data['password'],
+            'nombre' => $names['nombre'],
+            'apellido' => $names['apellido'],
         ]);
         
         // Preparar datos para la persona

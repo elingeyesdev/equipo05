@@ -15,18 +15,16 @@ composer install --no-interaction --prefer-dist --optimize-autoloader
 echo "🔒 Asignando permisos..."
 chmod -R 777 storage bootstrap/cache
 
-# Generar Key
-php artisan key:generate --force
+# Generar APP_KEY solo si falta (evita error si .env no define APP_KEY)
+if ! grep -q '^APP_KEY=.\+' .env 2>/dev/null; then
+    php artisan key:generate --force
+fi
 
-# Migraciones y Seeders
-echo "🗄️ Ejecutando migraciones..."
-php artisan migrate --force
+# Migraciones/seeders: ejecutar manualmente según la guía (db:setup-unificado, RoleSeeder, etc.)
+# El migrate automático fallaba en Docker si faltan los .sqlite de módulos legacy.
 
-echo "🌱 Ejecutando Seeders..."
-php artisan db:seed --force
-
-# Storage Link
-php artisan storage:link
+# Storage Link (ignorar si ya existe)
+php artisan storage:link 2>/dev/null || true
 
 echo "🚀 Iniciando PHP-FPM..."
 exec php-fpm

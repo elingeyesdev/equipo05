@@ -46,14 +46,18 @@
                     {{-- Columna derecha --}}
                     <div class="col-md-6">
                         
-                        {{-- CAMPO DE CREADOR AUTOMÁTICO --}}
                         <div class="form-group">
-                            <label>Responsable (Tú)</label>
-                            <input type="text" class="form-control" 
-                                   value="{{ auth()->user()->nombre }} {{ auth()->user()->apellido }}" 
-                                   readonly 
-                                   style="background-color: #e9ecef;">
-                            <small class="text-muted">Se registrará a tu nombre.</small>
+                            <label>Responsable <span class="text-danger">*</span></label>
+                            <select name="usuarioidcreador" class="form-control" required>
+                                <option value="">Seleccione un responsable</option>
+                                @foreach($usuarios as $u)
+                                    <option value="{{ $u->usuarioid }}"
+                                        {{ (string) old('usuarioidcreador', auth()->id()) === (string) $u->usuarioid ? 'selected' : '' }}>
+                                        {{ $u->nombre }} {{ $u->apellido }} — {{ $u->email }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('usuarioidcreador') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="form-group">

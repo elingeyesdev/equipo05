@@ -2,6 +2,7 @@
 
 namespace Modules\Incendios\Http\Controllers\Api;
 
+use App\Support\UnifiedValidation;
 use Modules\Incendios\Http\Controllers\Controller;
 use Modules\Incendios\Http\Resources\PredictionResource;
 use Modules\Incendios\Models\Prediction;
@@ -24,8 +25,10 @@ class PredictionController extends Controller
      */
     public function store(Request $request)
     {
+        $focosTable = UnifiedValidation::incendiosTable('focos_incendios');
+
         $validated = $request->validate([
-            'foco_incendio_id' => 'required|exists:focos_incendios,id',
+            'foco_incendio_id' => 'required|exists:'.$focosTable.',id',
             'predicted_at' => 'required|date',
             'path' => 'required|array',
             'meta' => 'nullable|array',
@@ -54,8 +57,10 @@ class PredictionController extends Controller
      */
     public function update(Request $request, Prediction $prediction)
     {
+        $focosTable = UnifiedValidation::incendiosTable('focos_incendios');
+
         $validated = $request->validate([
-            'foco_incendio_id' => 'sometimes|exists:focos_incendios,id',
+            'foco_incendio_id' => 'sometimes|exists:'.$focosTable.',id',
             'predicted_at' => 'sometimes|date',
             'path' => 'sometimes|array',
             'meta' => 'nullable|array',

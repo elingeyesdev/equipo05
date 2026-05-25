@@ -2,6 +2,8 @@
 
 namespace Modules\Rescate\Services\Api\User;
 
+use App\Support\UnifiedPostgres;
+use App\Support\UnifiedValidation;
 use Modules\Rescate\Models\User;
 use Modules\Rescate\Models\Person;
 use Illuminate\Support\Facades\DB;
@@ -19,12 +21,18 @@ class UserRegistrationService
     public function register(array $data): array
     {
         return DB::transaction(function () use ($data) {
-            // El modelo User tiene cast \"password\" => \"hashed\",
-            // por lo que al asignar el valor plano se encripta automáticamente.
-            $user = User::create([
+            $userPayload = [
                 'email'    => $data['email'],
                 'password' => $data['password'],
-            ]);
+            ];
+
+            if (UnifiedPostgres::enabled()) {
+                $names = UnifiedValidation::splitNombreCompleto($data['nombre']);
+                $userPayload['nombre'] = $names['nombre'];
+                $userPayload['apellido'] = $names['apellido'];
+            }
+
+            $user = User::create($userPayload);
 
             $person = Person::create([
                 'usuario_id' => $user->id,

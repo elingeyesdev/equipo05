@@ -83,7 +83,10 @@ return [
         ],
 
         'core' => $dbUnifiedPostgres
-            ? $unifiedModulePgsql('core')
+            ? array_merge($unifiedModulePgsql('core'), [
+                // Mensajería: pivot en transparencia, usuarios en core
+                'search_path' => 'core,transparencia,public',
+            ])
             : [
                 'driver' => 'sqlite',
                 'url' => env('DB_URL'),
@@ -97,7 +100,10 @@ return [
             ],
 
         'transparencia' => $dbUnifiedPostgres
-            ? $unifiedModulePgsql('transparencia')
+            ? array_merge($unifiedModulePgsql('transparencia'), [
+                // Mensajería: pivot en transparencia, usuarios en core (00_core_auth.sql)
+                'search_path' => 'transparencia,core,public',
+            ])
             : [
                 'driver' => 'sqlite',
                 'url' => env('DB_URL'),

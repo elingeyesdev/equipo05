@@ -8,6 +8,9 @@ services:
     restart: unless-stopped
     volumes:
       - .:/var/www
+      # vendor en volumen Linux: evita fallos de composer en bind mount Windows
+      - laravel-vendor:/var/www/vendor
+      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
     environment:
       APP_NAME: Laravel
       APP_ENV: local
@@ -30,6 +33,7 @@ services:
       # CONFIGURACIÓN GENERAL
       QUEUE_CONNECTION: database
       SESSION_DRIVER: database
+      SESSION_CONNECTION: core
       CACHE_STORE: file
     depends_on:
       - db
@@ -46,6 +50,8 @@ services:
     command: php artisan schedule:work
     volumes:
       - .:/var/www
+      - laravel-vendor:/var/www/vendor
+      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
     environment:
       APP_KEY: "base64:X8nyK98ag/d2uCKYgyPchsPAZia71misVstUk6G7sto="
       DB_CONNECTION: pgsql
@@ -58,6 +64,7 @@ services:
       API_GATEWAY_URL: "http://gatealas.dasalas.shop"
       QUEUE_CONNECTION: database
       SESSION_DRIVER: database
+      SESSION_CONNECTION: core
     depends_on:
       - db
       - laravel
@@ -130,3 +137,4 @@ networks:
 volumes:
   db-data:
   pg-unificado-data:
+  laravel-vendor:

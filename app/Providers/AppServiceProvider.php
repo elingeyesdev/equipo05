@@ -30,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
             config(['cache.stores.database.connection' => 'core']);
         }
 
+        if (\App\Support\UnifiedPostgres::enabled() && config('session.driver') === 'database') {
+            config(['session.connection' => 'core']);
+        }
+
         View::composer(['layouts.app', 'fusion::layouts.app'], function ($view) {
             $path = request()->path();
             $moduleClass = match (true) {

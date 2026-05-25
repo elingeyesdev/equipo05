@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campania;
 use App\Models\Donacion;
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
 
 class CampaniaCierreController extends Controller
@@ -23,7 +24,9 @@ class CampaniaCierreController extends Controller
     public function mostrarResumen(Request $request)
     {
         $request->validate([
-            'campaniaid' => 'required|integer|exists:campanias,campaniaid',
+            'campaniaid' => 'required|integer|'.UnifiedValidation::existsTransparencia('campanias', 'campaniaid'),
+        ], [
+            'campaniaid.exists' => 'La campaña seleccionada no es válida.',
         ]);
 
         $campania = Campania::findOrFail($request->campaniaid);

@@ -29,9 +29,9 @@
                     @csrf
                     <div class="card-body">
                         
-                        {{-- FILA 1: Campaña --}}
+                        {{-- FILA 1: Campaña y Responsable --}}
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="campaniaid">
                                         <i class="fas fa-bullhorn"></i> Campaña <span class="text-danger">*</span>
@@ -49,9 +49,28 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="usuarioid">
+                                        <i class="fas fa-user"></i> Responsable <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="usuarioid" id="usuarioid" class="form-control select2" required>
+                                        <option value="">-- Seleccione responsable --</option>
+                                        @foreach($usuarios as $u)
+                                            <option value="{{ $u->usuarioid }}"
+                                                @selected((string) old('usuarioid', auth()->id()) === (string) $u->usuarioid)>
+                                                {{ $u->nombre }} {{ $u->apellido }} — {{ $u->email }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('usuarioid')
+                                        <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
 
-                        {{-- FILA 2: Descripción --}}
+                        {{-- Descripción --}}
                         <div class="form-group">
                             <label for="descripcion">
                                 <i class="fas fa-align-left"></i> Descripción <span class="text-danger">*</span>
@@ -68,7 +87,7 @@
                             @enderror
                         </div>
 
-                        {{-- FILA 3: Monto y Fecha --}}
+                        {{-- Monto y Fecha --}}
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">

@@ -4,11 +4,12 @@ namespace Modules\Incendios\Http\Controllers;
 
 use Modules\Incendios\Models\Voluntario;
 use Modules\Incendios\Models\User;
+use App\Support\UnifiedValidation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class VoluntarioController extends Controller
 {
@@ -37,9 +38,11 @@ class VoluntarioController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $emailUnique = Rule::unique(UnifiedValidation::incendiosUsersTable(), 'email');
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => ['required', 'string', 'email', 'max:255', $emailUnique],
             'password' => 'required|string|min:8|confirmed',
             'direccion' => 'required|string|max:255',
             'ciudad' => 'required|string|max:255',
@@ -51,7 +54,7 @@ class VoluntarioController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
         ]);
 
         // Crear voluntario
@@ -95,9 +98,12 @@ class VoluntarioController extends Controller
     {
         $voluntario = Voluntario::findOrFail($id);
         
+        $emailUnique = Rule::unique(UnifiedValidation::incendiosUsersTable(), 'email')
+            ->ignore($voluntario->user_id, UnifiedValidation::incendiosUsersKey());
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $voluntario->user_id,
+            'email' => ['required', 'string', 'email', 'max:255', $emailUnique],
             'password' => 'nullable|string|min:8|confirmed',
             'direccion' => 'required|string|max:255',
             'ciudad' => 'required|string|max:255',
@@ -112,7 +118,7 @@ class VoluntarioController extends Controller
         ];
         
         if ($request->filled('password')) {
-            $userData['password'] = Hash::make($request->password);
+            $userData['password'] = $request->password;
         }
         
         $voluntario->user->update($userData);

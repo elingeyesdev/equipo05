@@ -164,9 +164,9 @@
                         <i class="fas fa-user-circle fa-2x text-white"></i>
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">
-                            {{ Auth::user()->nombre ?? 'Usuario' }}
-                            <small class="d-block text-muted">
+                        <a href="#" class="d-block text-truncate" style="max-width: 200px;" title="{{ trim((Auth::user()->nombre ?? '').' '.(Auth::user()->apellido ?? '')) }}">
+                            {{ trim((Auth::user()->nombre ?? 'Usuario').' '.(Auth::user()->apellido ?? '')) }}
+                            <small class="d-block text-muted text-truncate">
                                 {{ Auth::user()->getRoleNames()->first() ?? 'Sin Rol' }}
                             </small>
                         </a>
@@ -180,7 +180,7 @@
                         <li class="nav-item {{ request()->routeIs('dashboard') || request()->routeIs('roles.*') || request()->routeIs('usuarios.*') || request()->routeIs('campanias.*') || request()->routeIs('donaciones.*') || request()->routeIs('estados.*') || request()->routeIs('asignaciones.*') || request()->routeIs('gateway.trazabilidad.*') || request()->routeIs('reportes.trazabilidad.*') || request()->routeIs('mensajes.*') || request()->routeIs('chat.*') || request()->routeIs('saldosdonaciones.*') || request()->routeIs('reporte.cierreCaja*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('dashboard') || request()->routeIs('roles.*') || request()->routeIs('usuarios.*') || request()->routeIs('campanias.*') || request()->routeIs('donaciones.*') || request()->routeIs('estados.*') || request()->routeIs('asignaciones.*') || request()->routeIs('gateway.trazabilidad.*') || request()->routeIs('reportes.trazabilidad.*') || request()->routeIs('mensajes.*') || request()->routeIs('chat.*') || request()->routeIs('saldosdonaciones.*') || request()->routeIs('reporte.cierreCaja*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-layer-group"></i>
-                                <p>transparencia_donaciones_voluntarios-main <i class="fas fa-angle-left right"></i></p>
+                                <p><span class="sidebar-menu-label">Transparencia y donaciones</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
@@ -239,7 +239,7 @@
                         <li class="nav-item {{ request()->routeIs('inventario.*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('inventario.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-warehouse"></i>
-                                <p>Inventario y donaciones <i class="fas fa-angle-left right"></i></p>
+                                <p><span class="sidebar-menu-label">Inventario</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
@@ -323,7 +323,7 @@
                         <li class="nav-item {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-fire"></i>
-                                <p>Monitoreo de Incendios <i class="fas fa-angle-left right"></i></p>
+                                <p><span class="sidebar-menu-label">Incendios</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
@@ -397,7 +397,7 @@
                         <li class="nav-item {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-paw"></i>
-                                <p>Rescate de Animales Silvestres <i class="fas fa-angle-left right"></i></p>
+                                <p><span class="sidebar-menu-label">Rescate silvestre</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
@@ -569,7 +569,7 @@
                         <li class="nav-item {{ request()->routeIs('logistica.*') || request()->routeIs('fusion.modulos.logistica') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('logistica.*') || request()->routeIs('fusion.modulos.logistica') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-truck"></i>
-                                <p>Logistica Transportacion Donaciones <i class="fas fa-angle-left right"></i></p>
+                                <p><span class="sidebar-menu-label">Logística</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
@@ -600,7 +600,7 @@
                                 <li class="nav-item {{ request()->routeIs('logistica.solicitante') || request()->routeIs('logistica.destino') || request()->routeIs('logistica.ubicacion') || request()->routeIs('logistica.conductor') || request()->routeIs('logistica.marca') || request()->routeIs('logistica.tipo-vehiculo') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link {{ request()->routeIs('logistica.solicitante') || request()->routeIs('logistica.destino') || request()->routeIs('logistica.ubicacion') || request()->routeIs('logistica.conductor') || request()->routeIs('logistica.marca') || request()->routeIs('logistica.tipo-vehiculo') ? 'active' : '' }}">
                                         <i class="fas fa-book-open nav-icon"></i>
-                                        <p>Catalogos <i class="fas fa-angle-left right"></i></p>
+                                        <p><span class="sidebar-menu-label">Catálogos</span> <i class="fas fa-angle-left right"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
@@ -639,7 +639,7 @@
                                 <li class="nav-item {{ request()->routeIs('logistica.usuario') || request()->routeIs('logistica.rol') || request()->routeIs('logistica.estado') || request()->routeIs('logistica.tipo-emergencia') || request()->routeIs('logistica.tipo-licencia') || request()->routeIs('logistica.reporte') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link {{ request()->routeIs('logistica.usuario') || request()->routeIs('logistica.rol') || request()->routeIs('logistica.estado') || request()->routeIs('logistica.tipo-emergencia') || request()->routeIs('logistica.tipo-licencia') || request()->routeIs('logistica.reporte') ? 'active' : '' }}">
                                         <i class="fas fa-user-shield nav-icon"></i>
-                                        <p>Administracion <i class="fas fa-angle-left right"></i></p>
+                                        <p><span class="sidebar-menu-label">Administración</span> <i class="fas fa-angle-left right"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
@@ -690,7 +690,7 @@
                         <li class="nav-item {{ request()->routeIs('seguimiento.*') || request()->routeIs('fusion.modulos.seguimiento') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('seguimiento.*') || request()->routeIs('fusion.modulos.seguimiento') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-users"></i>
-                                <p>Seguimiento Voluntarios Comunitarios <i class="fas fa-angle-left right"></i></p>
+                                <p><span class="sidebar-menu-label">Voluntarios</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
@@ -759,7 +759,7 @@
                         <li class="nav-item {{ request()->routeIs('cuadrillas.*') || request()->routeIs('fusion.modulos.cuadrillas') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('cuadrillas.*') || request()->routeIs('fusion.modulos.cuadrillas') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-fire"></i>
-                                <p>Cuadrillas Incendios Kardex Cursos <i class="fas fa-angle-left right"></i></p>
+                                <p><span class="sidebar-menu-label">Cuadrillas e incendios</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
@@ -819,7 +819,7 @@
                                 </li>
                                 <li class="nav-item {{ request()->routeIs('cuadrillas.roles') || request()->routeIs('cuadrillas.generos') || request()->routeIs('cuadrillas.tipos-sangre') || request()->routeIs('cuadrillas.niveles-entrenamiento') || request()->routeIs('cuadrillas.niveles-gravedad') || request()->routeIs('cuadrillas.tipos-incidente') || request()->routeIs('cuadrillas.tipos-recurso') || request()->routeIs('cuadrillas.condiciones-climaticas') || request()->routeIs('cuadrillas.estados-sistema') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link {{ request()->routeIs('cuadrillas.roles') || request()->routeIs('cuadrillas.generos') || request()->routeIs('cuadrillas.tipos-sangre') || request()->routeIs('cuadrillas.niveles-entrenamiento') || request()->routeIs('cuadrillas.niveles-gravedad') || request()->routeIs('cuadrillas.tipos-incidente') || request()->routeIs('cuadrillas.tipos-recurso') || request()->routeIs('cuadrillas.condiciones-climaticas') || request()->routeIs('cuadrillas.estados-sistema') ? 'active' : '' }}">
-                                        <i class="fas fa-cog nav-icon"></i><p>Catalogos <i class="fas fa-angle-left right"></i></p>
+                                        <i class="fas fa-cog nav-icon"></i><p><span class="sidebar-menu-label">Catálogos</span> <i class="fas fa-angle-left right"></i></p>
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item"><a href="{{ route('cuadrillas.roles') }}" class="nav-link {{ request()->routeIs('cuadrillas.roles') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Roles</p></a></li>
@@ -850,7 +850,7 @@
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-sync-alt"></i>
-                                <p>Sincronizaciones <i class="right fas fa-angle-left"></i></p>
+                                <p><span class="sidebar-menu-label">Sincronizaciones</span> <i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">

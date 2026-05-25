@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Support\UnifiedPostgres;
 use App\Models\TransparenciaModel;
 
 class Conversacion extends TransparenciaModel
@@ -12,12 +13,18 @@ class Conversacion extends TransparenciaModel
 
     public function usuarios()
     {
+        $pivot = UnifiedPostgres::enabled()
+            ? 'transparencia.conversacion_usuarios'
+            : 'conversacion_usuarios';
+
         return $this->belongsToMany(
             Usuario::class,
-            'conversacion_usuarios',
+            $pivot,
             'conversacionid',
             'usuarioid'
-        )->withPivot('ultimo_leido');
+        )
+            ->using(ConversacionUsuario::class)
+            ->withPivot('ultimo_leido');
     }
 
     public function mensajes()

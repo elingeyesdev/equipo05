@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use App\Models\Donacion;
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
 
 class UsuarioReporteController extends Controller
@@ -21,7 +22,7 @@ class UsuarioReporteController extends Controller
     public function mostrarDesdeSeleccion(Request $request)
     {
         $request->validate([
-            'usuarioid' => 'required|integer|exists:usuarios,usuarioid',
+            'usuarioid' => 'required|integer|'.UnifiedValidation::existsCoreUsuario(),
         ]);
 
         return redirect()->route('usuarios.estadoCuenta', $request->usuarioid);

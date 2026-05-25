@@ -3,18 +3,45 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campania;
+use App\Models\Usuario;
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Importante para Auth::id()
 
 class CampaniaController extends Controller
 {
-public function index()
+    /** @return array<string, string> */
+    private function reglasCampania(?int $ignoreId = null): array
     {
-        // Listado con suma de recaudación (Monetaria + Confirmada/Asignada/Utilizada)
+        return [
+            'titulo'            => 'required|string|max:100',
+            'descripcion'       => 'required|string',
+            'fechainicio'       => 'required|date',
+            'fechafin'          => 'nullable|date|after_or_equal:fechainicio',
+            'metarecaudacion'   => 'required|numeric|min:0',
+            'activa'            => 'nullable|boolean',
+            'imagenurl'         => 'nullable|string|max:255',
+            'fechacreacion'     => 'nullable|date',
+            'usuarioidcreador'  => 'required|integer|'.UnifiedValidation::existsCoreUsuario(),
+        ];
+    }
+
+    /** @return array<string, string> */
+    private function mensajesCampania(): array
+    {
+        return [
+            'usuarioidcreador.required' => 'Selecciona el responsable de la campaña.',
+            'usuarioidcreador.exists'   => 'El responsable seleccionado no es válido.',
+            'titulo.required'           => 'El título es obligatorio.',
+            'metarecaudacion.required'  => 'Indica la meta de recaudación.',
+        ];
+    }
+
+    public function index()
+    {
         $campanias = Campania::with(['creador'])
             ->withSum(['donaciones as montorecaudado_calculado' => function ($q) {
                 $q->where('tipodonacion', 'Monetaria')
-                  ->whereIn('estadoid', [2, 3, 4]); 
+                  ->whereIn('estadoid', [2, 3, 4]);
             }], 'monto')
             ->orderByDesc('campaniaid')
             ->get();
@@ -24,32 +51,22 @@ public function index()
 
     public function create()
     {
-        // No necesitamos enviar $usuarios, el creador eres tú (Auth)
-        return view('campanias.create');
+        $usuarios = Usuario::orderBy('nombre')->orderBy('apellido')->get();
+
+        return view('campanias.create', compact('usuarios'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'titulo'          => 'required|string|max:100',
-            'descripcion'     => 'required|string',
-            'fechainicio'     => 'required|date',
-            'fechafin'        => 'nullable|date|after_or_equal:fechainicio',
-            'metarecaudacion' => 'required|numeric|min:0',
-            // 'montorecaudado' lo dejamos en 0 por defecto o lo calculamos
-            'activa'          => 'boolean',
-            'imagenurl'       => 'nullable|string|max:255',
-            'fechacreacion'   => 'nullable|date',
-        ]);
+        $validated = $request->validate($this->reglasCampania(), $this->mensajesCampania());
 
         $data = $request->only([
-            'titulo','descripcion','fechainicio','fechafin','metarecaudacion',
-            'activa','imagenurl','fechacreacion'
+            'titulo', 'descripcion', 'fechainicio', 'fechafin', 'metarecaudacion',
+            'imagenurl', 'fechacreacion', 'usuarioidcreador',
         ]);
 
-        // ASIGNACIÓN AUTOMÁTICA DEL USUARIO LOGUEADO
-        $data['usuarioidcreador'] = Auth::id();
-        $data['montorecaudado']   = 0; // Inicia en 0
+        $data['activa'] = $request->boolean('activa', true);
+        $data['montorecaudado'] = 0;
 
         Campania::create($data);
 
@@ -59,40 +76,28 @@ public function index()
     public function edit($id)
     {
         $campania = Campania::with('creador')->findOrFail($id);
-        
-        // No enviamos $usuarios. En el edit mostraremos al creador original como info.
-        return view('campanias.edit', compact('campania'));
+        $usuarios = Usuario::orderBy('nombre')->orderBy('apellido')->get();
+
+        return view('campanias.edit', compact('campania', 'usuarios'));
     }
 
     public function update(Request $request, $id)
     {
         $campania = Campania::findOrFail($id);
 
-        $request->validate([
-            'titulo'          => 'required|string|max:100',
-            'descripcion'     => 'required|string',
-            'fechainicio'     => 'required|date',
-            'fechafin'        => 'nullable|date|after_or_equal:fechainicio',
-            'metarecaudacion' => 'required|numeric|min:0',
-            // 'montorecaudado' usualmente no se edita manual, se calcula con donaciones,
-            // pero si lo permites manual, descomenta abajo:
-            // 'montorecaudado' => 'nullable|numeric|min:0',
-            'activa'          => 'boolean',
-            'imagenurl'       => 'nullable|string|max:255',
-            'fechacreacion'   => 'nullable|date',
-        ]);
+        $validated = $request->validate($this->reglasCampania($campania->campaniaid), $this->mensajesCampania());
 
         $data = $request->only([
-            'titulo','descripcion','fechainicio','fechafin','metarecaudacion',
-            'activa','imagenurl','fechacreacion'
+            'titulo', 'descripcion', 'fechainicio', 'fechafin', 'metarecaudacion',
+            'imagenurl', 'fechacreacion', 'usuarioidcreador',
         ]);
 
-        // Opcional: Si permites editar el monto manual
+        $data['activa'] = $request->boolean('activa', false);
+
         if ($request->has('montorecaudado')) {
-             $data['montorecaudado'] = $request->input('montorecaudado');
+            $data['montorecaudado'] = $request->input('montorecaudado');
         }
 
-        // NO actualizamos usuarioidcreador para mantener al dueño original
         $campania->update($data);
 
         return redirect()->route('campanias.index')->with('success', 'Campaña actualizada.');
@@ -101,13 +106,13 @@ public function index()
     public function destroy($id)
     {
         $campania = Campania::findOrFail($id);
-        
-        // Validar si tiene donaciones antes de borrar (opcional pero recomendado)
-        if($campania->donaciones()->count() > 0) {
+
+        if ($campania->donaciones()->count() > 0) {
             return redirect()->back()->with('error', 'No se puede eliminar una campaña que ya tiene donaciones.');
         }
 
         $campania->delete();
+
         return redirect()->route('campanias.index')->with('success', 'Campaña eliminada.');
     }
 }

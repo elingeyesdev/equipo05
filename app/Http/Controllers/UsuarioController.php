@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role; // <--- 1. Usamos el modelo de Spatie
-use Illuminate\Support\Facades\Hash; // Para encriptar contraseña
+use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
@@ -23,7 +25,7 @@ class UsuarioController extends Controller
 
     public function store(Request $request) {
         $request->validate([
-            'email' => 'required|email|max:100|unique:usuarios,email',
+            'email' => ['required', 'email', 'max:100', Rule::unique(UnifiedValidation::coreUsuariosTable(), 'email')],
             'contrasena' => 'required|string|max:255',
             'nombre' => 'required|string|max:50',
             'apellido' => 'required|string|max:50',
@@ -66,8 +68,8 @@ class UsuarioController extends Controller
         $usuario = Usuario::findOrFail($id);
 
         $request->validate([
-            'email' => 'required|email|max:100|unique:usuarios,email,' . $id . ',usuarioid',
-            'contrasena' => 'nullable|string|max:255', // Nullable para no obligar a cambiarla siempre
+            'email' => ['required', 'email', 'max:100', Rule::unique(UnifiedValidation::coreUsuariosTable(), 'email')->ignore($usuario->usuarioid, UnifiedValidation::coreUsuariosKey())],
+            'contrasena' => 'nullable|string|max:255',
             'nombre' => 'required|string|max:50',
             'apellido' => 'required|string|max:50',
             'telefono' => 'nullable|string|max:20',

@@ -3,12 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\{Donacion, Usuario, Campania, Estado, SaldosDonacion};
+use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class DonacionController extends Controller
 {
+    /** @return array<string, string> */
+    private function reglasDonacion(bool $incluirUsuario = true): array
+    {
+        $rules = [
+            'campaniaid'    => 'required|integer|'.UnifiedValidation::existsTransparencia('campanias', 'campaniaid'),
+            'monto'         => 'required|numeric|min:0.01',
+            'tipodonacion'  => ['required', 'in:Monetaria,Especie,monetaria,especie'],
+            'descripcion'   => 'nullable|string',
+            'fechadonacion' => 'nullable|date',
+            'estadoid'      => 'required|integer|'.UnifiedValidation::existsTransparencia('estados', 'estadoid'),
+            'esanonima'     => 'nullable|boolean',
+        ];
+
+        if ($incluirUsuario) {
+            $rules['usuarioid'] = 'required|integer|'.UnifiedValidation::existsCoreUsuario();
+        } else {
+            $rules['usuarioid'] = 'nullable|integer|'.UnifiedValidation::existsCoreUsuario();
+        }
+
+        return $rules;
+    }
+
+    /** @return array<string, string> */
+    private function mensajesDonacion(): array
+    {
+        return [
+            'campaniaid.required' => 'Selecciona una campaña.',
+            'campaniaid.exists'   => 'La campaña seleccionada no es válida.',
+            'estadoid.required'   => 'Selecciona un estado.',
+            'estadoid.exists'     => 'El estado seleccionado no es válido.',
+            'usuarioid.required'  => 'Selecciona el donante.',
+            'usuarioid.exists'    => 'El donante seleccionado no es válido.',
+            'monto.required'      => 'Indica el monto de la donación.',
+            'monto.min'           => 'El monto debe ser mayor a cero.',
+        ];
+    }
+
 /** LISTADO */
     public function index()
     {
@@ -22,30 +60,17 @@ class DonacionController extends Controller
     /** FORM CREAR */
     public function create()
     {
-        // MODIFICADO: Ya no enviamos $usuarios. 
-        // El donante se asigna automáticamente al usuario logueado.
-        $campanias = Campania::where('activa', true)->orderByDesc('campaniaid')->get(); // Solo campañas activas
+        $usuarios  = Usuario::orderBy('nombre')->orderBy('apellido')->get();
+        $campanias = Campania::where('activa', true)->orderByDesc('campaniaid')->get();
         $estados   = Estado::orderBy('estadoid')->get();
-        
-        return view('donaciones.create', compact('campanias','estados'));
+
+        return view('donaciones.create', compact('usuarios', 'campanias', 'estados'));
     }
 
     /** GUARDAR */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            // 'usuarioid' no se valida aquí porque lo inyectamos abajo
-            'campaniaid'    => 'required|integer|exists:campanias,campaniaid',
-            'monto'         => 'required|numeric|min:0.01',
-            'tipodonacion'  => ['required','in:Monetaria,Especie,monetaria,especie'],
-            'descripcion'   => 'nullable|string',
-            'fechadonacion' => 'nullable|date',
-            'estadoid'      => 'required|integer|exists:estados,estadoid',
-            'esanonima'     => 'nullable|boolean',
-        ]);
-
-        // ASIGNACIÓN AUTOMÁTICA DEL USUARIO LOGUEADO
-        $validated['usuarioid'] = Auth::id();
+        $validated = $request->validate($this->reglasDonacion(), $this->mensajesDonacion());
 
         // Normalizar tipo
         $validated['tipodonacion'] = ucfirst(strtolower($validated['tipodonacion']));
@@ -99,16 +124,7 @@ class DonacionController extends Controller
     {
         $donacion = Donacion::findOrFail($id);
 
-        $validated = $request->validate([
-            'usuarioid'     => 'nullable|integer|exists:usuarios,usuarioid', // En update permitimos cambiarlo si se envía
-            'campaniaid'    => 'required|integer|exists:campanias,campaniaid',
-            'monto'         => 'required|numeric|min:0.01',
-            'tipodonacion'  => ['required','in:Monetaria,Especie,monetaria,especie'],
-            'descripcion'   => 'nullable|string',
-            'fechadonacion' => 'nullable|date',
-            'estadoid'      => 'required|integer|exists:estados,estadoid',
-            'esanonima'     => 'nullable|boolean',
-        ]);
+        $validated = $request->validate($this->reglasDonacion(false), $this->mensajesDonacion());
 
         $validated['tipodonacion'] = ucfirst(strtolower($validated['tipodonacion']));
 
@@ -118,6 +134,10 @@ class DonacionController extends Controller
         }
 
         $validated['esanonima'] = $request->boolean('esanonima', false);
+
+        if (empty($validated['usuarioid'])) {
+            $validated['usuarioid'] = null;
+        }
 
         DB::transaction(function () use ($donacion, $validated) {
             $campaniaAnterior = $donacion->campaniaid;
@@ -193,7 +213,9 @@ class DonacionController extends Controller
     {
         $donacion = Donacion::findOrFail($id);
         $data = $request->validate([
-            'campaniaid' => 'required|integer|exists:campanias,campaniaid',
+            'campaniaid' => 'required|integer|'.UnifiedValidation::existsTransparencia('campanias', 'campaniaid'),
+        ], [
+            'campaniaid.exists' => 'La campaña seleccionada no es válida.',
         ]);
 
         $campaniaNueva = Campania::findOrFail($data['campaniaid']);

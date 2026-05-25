@@ -5,10 +5,11 @@ namespace Modules\Incendios\Http\Controllers\Auth;
 use Modules\Incendios\Http\Controllers\Controller;
 use Modules\Incendios\Models\User;
 use Modules\Incendios\Models\Voluntario;
+use App\Support\UnifiedValidation;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -50,16 +51,22 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
+        $emailUnique = Rule::unique(UnifiedValidation::incendiosUsersTable(), 'email');
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', $emailUnique],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'telefono' => ['nullable', 'string', 'max:20'],
-            'cedula_identidad' => ['nullable', 'string', 'max:20', 'unique:users'],
             'direccion' => ['nullable', 'string', 'max:255'],
             'ciudad' => ['nullable', 'string', 'max:100'],
             'zona' => ['nullable', 'string', 'max:100'],
-        ]);
+        ];
+
+        if (! \App\Support\UnifiedPostgres::enabled()) {
+            $rules['cedula_identidad'] = ['nullable', 'string', 'max:20', Rule::unique('users', 'cedula_identidad')];
+        }
+
+        return Validator::make($data, $rules);
     }
 
     /**
@@ -76,7 +83,7 @@ class RegisterController extends Controller
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make($data['password']),
+                'password' => $data['password'],
                 'telefono' => $data['telefono'] ?? null,
                 'cedula_identidad' => $data['cedula_identidad'] ?? null,
             ]);

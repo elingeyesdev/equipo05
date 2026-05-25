@@ -114,8 +114,20 @@
                         </div>
                     </div>
                     
-                    {{-- Input oculto de usuario para mantenerlo si no se cambia (aunque el controlador no lo pide en update normalmente, es bueno tenerlo presente si cambiaras la lógica) --}}
-                    <input type="hidden" name="usuarioid" value="{{ $asignacion->usuarioid }}">
+                    {{-- Responsable --}}
+                    <div class="form-group">
+                        <label for="usuarioid">Responsable <span class="text-danger">*</span></label>
+                        <select name="usuarioid" id="usuarioid" class="form-control select2 @error('usuarioid') is-invalid @enderror" required>
+                            <option value="">-- Seleccione responsable --</option>
+                            @foreach($usuarios as $u)
+                                <option value="{{ $u->usuarioid }}"
+                                    @selected((string) old('usuarioid', $asignacion->usuarioid) === (string) $u->usuarioid)>
+                                    {{ $u->nombre }} {{ $u->apellido }} — {{ $u->email }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('usuarioid') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                    </div>
 
                 </div>
 

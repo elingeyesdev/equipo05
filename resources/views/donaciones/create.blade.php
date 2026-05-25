@@ -22,15 +22,21 @@
                     {{-- Columna izquierda --}}
                     <div class="col-md-6">
                         
-                        {{-- CAMBIO AQUÍ: Donante automático (Tú) --}}
+                        {{-- Donante: elegir entre usuarios del sistema --}}
                         <div class="form-group">
-                            <label>Donante (Tú)</label>
-                            <input type="text" class="form-control" 
-                                   value="{{ auth()->user()->nombre }} {{ auth()->user()->apellido }} — {{ auth()->user()->email }}" 
-                                   readonly 
-                                   style="background-color: #e9ecef;">
+                            <label>Donante <span class="text-danger">*</span></label>
+                            <select name="usuarioid" class="form-control" required>
+                                <option value="">Seleccione un donante</option>
+                                @foreach($usuarios as $u)
+                                    <option value="{{ $u->usuarioid }}"
+                                        {{ (string) old('usuarioid', auth()->id()) === (string) $u->usuarioid ? 'selected' : '' }}>
+                                        {{ $u->nombre }} {{ $u->apellido }} — {{ $u->email }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('usuarioid') <small class="text-danger">{{ $message }}</small> @enderror
                             <small class="form-text text-muted">
-                                La donación se registrará a tu nombre.
+                                Puedes registrar la donación a nombre de cualquier usuario activo.
                             </small>
                         </div>
 

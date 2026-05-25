@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\UnifiedValidation;
 use App\Models\RespuestaMensaje;
 use App\Models\Mensaje;
 use App\Models\Usuario;
@@ -28,9 +29,13 @@ class RespuestaMensajeController extends Controller
 
     public function store(Request $request)
     {
+        $mensajesTable = UnifiedValidation::transparenciaTable('mensajes');
+        $usuariosTable = UnifiedValidation::coreUsuariosTable();
+        $usuariosKey = UnifiedValidation::coreUsuariosKey();
+
         $data = $request->validate([
-            'mensajeid'      => 'required|integer|exists:mensajes,mensajeid',
-            'usuarioid'      => 'required|integer|exists:usuarios,usuarioid',
+            'mensajeid'      => 'required|integer|exists:'.$mensajesTable.',mensajeid',
+            'usuarioid'      => 'required|integer|exists:'.$usuariosTable.','.$usuariosKey,
             'contenido'      => 'required|string',
             'fecharespuesta' => 'nullable|date',
         ]);
@@ -54,9 +59,13 @@ class RespuestaMensajeController extends Controller
     {
         $respuesta = RespuestaMensaje::findOrFail($id);
 
+        $mensajesTable = UnifiedValidation::transparenciaTable('mensajes');
+        $usuariosTable = UnifiedValidation::coreUsuariosTable();
+        $usuariosKey = UnifiedValidation::coreUsuariosKey();
+
         $data = $request->validate([
-            'mensajeid'      => 'required|integer|exists:mensajes,mensajeid',
-            'usuarioid'      => 'required|integer|exists:usuarios,usuarioid',
+            'mensajeid'      => 'required|integer|exists:'.$mensajesTable.',mensajeid',
+            'usuarioid'      => 'required|integer|exists:'.$usuariosTable.','.$usuariosKey,
             'contenido'      => 'required|string',
             'fecharespuesta' => 'nullable|date',
         ]);

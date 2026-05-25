@@ -25,6 +25,11 @@ class Mensaje extends TransparenciaModel
         return $this->belongsTo(Usuario::class, 'usuarioid', 'usuarioid');
     }
 
+    public function autor()
+    {
+        return $this->usuario();
+    }
+
     public function conversacion()
     {
         return $this->belongsTo(Conversacion::class, 'conversacionid', 'conversacionid');

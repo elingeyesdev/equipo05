@@ -3,9 +3,11 @@
 namespace Modules\Rescate\Models;
 
 use App\Support\UnifiedPostgres;
+use App\Support\UnifiedValidation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -13,7 +15,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    protected $fillable = ['email', 'password', 'contrasena', 'nombre', 'apellido'];
+    protected $fillable = ['email', 'password', 'contrasena', 'nombre', 'apellido', 'activo', 'fecharegistro', 'name'];
 
     protected $hidden = ['password', 'contrasena', 'remember_token'];
 
@@ -56,13 +58,32 @@ class User extends Authenticatable
 
     public function setPasswordAttribute($value): void
     {
+        if ($value === null || $value === '') {
+            return;
+        }
+
         if (UnifiedPostgres::enabled()) {
-            $this->attributes['contrasena'] = $value;
+            $this->attributes['contrasena'] = is_string($value) && str_starts_with($value, '$2y$')
+                ? $value
+                : Hash::make($value);
 
             return;
         }
 
         $this->attributes['password'] = $value;
+    }
+
+    public function setNameAttribute($value): void
+    {
+        if (UnifiedPostgres::enabled()) {
+            $parts = UnifiedValidation::splitNombreCompleto((string) $value);
+            $this->attributes['nombre'] = $parts['nombre'];
+            $this->attributes['apellido'] = $parts['apellido'];
+
+            return;
+        }
+
+        $this->attributes['name'] = $value;
     }
 
     public function getIdAttribute(): ?int

@@ -24,7 +24,7 @@
                     <select name="donacionid" class="form-control" required>
                         @foreach($donaciones as $d)
                             <option value="{{ $d->donacionid }}"
-                                {{ $rel->donacionid == $d->donacionid ? 'selected' : '' }}>
+                                {{ (string) old('donacionid', $rel->donacionid) === (string) $d->donacionid ? 'selected' : '' }}>
                                 #{{ $d->donacionid }} —
                                 Bs {{ number_format($d->monto,2,',','.') }} —
                                 {{ optional($d->usuario)->nombre ?? 'Anónima' }}
@@ -39,7 +39,7 @@
                     <select name="asignacionid" class="form-control" required>
                         @foreach($asignaciones as $a)
                             <option value="{{ $a->asignacionid }}"
-                                {{ $rel->asignacionid == $a->asignacionid ? 'selected' : '' }}>
+                                {{ (string) old('asignacionid', $rel->asignacionid) === (string) $a->asignacionid ? 'selected' : '' }}>
                                 #{{ $a->asignacionid }} — {{ $a->descripcion }}
                             </option>
                         @endforeach
