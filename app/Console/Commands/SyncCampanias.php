@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\UnifiedDataSyncService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -12,14 +13,25 @@ class SyncCampanias extends Command
     protected $signature = 'sync:campanias';
     protected $description = 'Sincroniza campañas desde API externa';
 
-    public function handle(): int
+    public function handle(UnifiedDataSyncService $sync): int
     {
+        $local = $sync->syncCampaniasFromInventario();
+        if ($local > 0) {
+            $this->info("Campañas sincronizadas desde inventario local: {$local}");
+        }
+
         $baseUrl = config('services.externos.donaciones_url');
 
         $resp = Http::timeout(20)->get("{$baseUrl}/api/campanas");
 
         if ($resp->failed()) {
+            if ($local > 0) {
+                $this->warn("API externa no disponible; se usaron {$local} campañas locales.");
+
+                return self::SUCCESS;
+            }
             $this->error("No se pudo conectar a /api/campanas en {$baseUrl}");
+
             return self::FAILURE;
         }
 

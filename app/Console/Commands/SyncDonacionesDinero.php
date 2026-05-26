@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\UnifiedDataSyncService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -14,8 +15,13 @@ class SyncDonacionesDinero extends Command
     protected $signature = 'sync:donaciones-dinero';
     protected $description = 'Sincroniza donaciones de dinero desde API externa';
 
-    public function handle(): int
+    public function handle(UnifiedDataSyncService $sync): int
     {
+        $local = $sync->syncDonacionesDineroFromInventario();
+        if ($local > 0) {
+            $this->info("Donaciones monetarias desde inventario local: {$local}");
+        }
+
         // IMPORTANTE: Donaciones depende de Campañas
         $this->call('sync:campanias');
 

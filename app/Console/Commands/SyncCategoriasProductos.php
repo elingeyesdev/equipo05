@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\UnifiedDataSyncService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\Ext\ExtCategoriaProducto;
@@ -12,15 +13,26 @@ class SyncCategoriasProductos extends Command
     protected $signature = 'sync:categorias-productos';
     protected $description = 'Sincroniza categorías y productos desde API externa';
 
-    public function handle(): int
+    public function handle(UnifiedDataSyncService $sync): int
     {
+        $local = $sync->syncCategoriasProductosFromInventario();
+        if ($local > 0) {
+            $this->info("Categorías sincronizadas desde inventario local: {$local}");
+        }
+
         $baseUrl = config('services.externos.donaciones_url');
         $url = "{$baseUrl}/api/categorias";
 
         $resp = Http::timeout(25)->get($url);
 
         if ($resp->failed()) {
+            if ($local > 0) {
+                $this->warn('API externa no disponible; se usaron categorías locales.');
+
+                return self::SUCCESS;
+            }
             $this->error("Error consumiendo {$url}");
+
             return self::FAILURE;
         }
 

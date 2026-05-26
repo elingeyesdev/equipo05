@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\UnifiedDataSyncService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +20,14 @@ class SyncDonacionesEspecie extends Command
     protected $signature = 'sync:donaciones-especie';
     protected $description = 'Sincroniza donaciones en especie + ubicaciones + referencia a paquete (si existe en payload)';
 
-    public function handle(): int
+    public function handle(UnifiedDataSyncService $sync): int
     {
-        // dependencias
+        $localItems = $sync->syncTrazabilidadItemsFromInventario();
+        if ($localItems > 0) {
+            $this->info("Trazabilidad sincronizada desde inventario local: {$localItems} ítems");
+        }
+
+        // dependencias (local + API externa si está disponible)
         $this->call('sync:campanias');
         $this->call('sync:categorias-productos');
         $this->call('sync:almacenes');

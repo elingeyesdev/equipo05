@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\UnifiedDataSyncService;
 use App\Models\TrazabilidadItem;
 use App\Models\Campania;
 use App\Models\Ext\ExtAlmacen;
@@ -19,8 +20,10 @@ class ReporteTrazabilidadController extends Controller
     /**
      * Muestra el inventario global agrupado por almacenes.
      */
-    public function index(Request $request)
+    public function index(Request $request, UnifiedDataSyncService $sync)
     {
+        $sync->syncAllFromInventario();
+
         // 1. Recuperar Campañas para el filtro
         $campanias = Campania::orderBy('fechainicio', 'desc')->get();
         

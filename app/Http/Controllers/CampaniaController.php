@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campania;
 use App\Models\Usuario;
+use App\Services\UnifiedDataSyncService;
 use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
 
@@ -68,7 +69,8 @@ class CampaniaController extends Controller
         $data['activa'] = $request->boolean('activa', true);
         $data['montorecaudado'] = 0;
 
-        Campania::create($data);
+        $campania = Campania::create($data);
+        app(UnifiedDataSyncService::class)->mirrorCampaniaToInventario($campania);
 
         return redirect()->route('campanias.index')->with('success', 'Campaña creada exitosamente.');
     }
@@ -99,6 +101,7 @@ class CampaniaController extends Controller
         }
 
         $campania->update($data);
+        app(UnifiedDataSyncService::class)->mirrorCampaniaToInventario($campania->fresh());
 
         return redirect()->route('campanias.index')->with('success', 'Campaña actualizada.');
     }

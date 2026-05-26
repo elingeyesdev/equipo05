@@ -28,7 +28,6 @@
 <div class="container-fluid">
 
 @forelse($almacenes as $alm)
-    @if($alm->lista_productos->count() || $alm->lista_paquetes->count())
     <div class="card card-outline card-primary mb-4">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
@@ -44,6 +43,12 @@
         </div>
 
         <div class="card-body bg-light">
+            @if($alm->lista_productos->isEmpty() && $alm->lista_paquetes->isEmpty())
+                <div class="alert alert-info text-center mb-0">
+                    <i class="fas fa-info-circle"></i>
+                    Almacén sincronizado. Aún no hay productos ni paquetes ubicados aquí.
+                </div>
+            @else
             <div class="row">
                 {{-- PRODUCTOS --}}
                 <div class="col-lg-7 border-right">
@@ -108,13 +113,14 @@
                     @endif
                 </div>
             </div>
+            @endif
         </div>
     </div>
-    @endif
 @empty
     <div class="text-center py-5">
         <i class="fas fa-warehouse fa-3x text-muted mb-3"></i>
         <h4 class="text-muted">No existen almacenes sincronizados</h4>
+        <p class="text-muted small">Crea almacenes en <strong>Inventario → Almacenes</strong> o ejecuta <code>php artisan sync:unificado-local</code>.</p>
     </div>
 @endforelse
 

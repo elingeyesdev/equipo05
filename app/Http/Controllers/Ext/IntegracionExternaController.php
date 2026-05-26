@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ext;
 
 use App\Http\Controllers\Controller;
+use App\Services\UnifiedDataSyncService;
 use App\Models\Ext\ExtCategoriaProducto;
 use App\Models\Ext\ExtProducto;
 use App\Models\Ext\ExtAlmacen;
@@ -55,8 +56,13 @@ class IntegracionExternaController extends Controller
         return response()->json(['success' => true, 'message' => 'Categorías sincronizadas.']);
     }
 
-    public function syncAlmacenes()
+    public function syncAlmacenes(UnifiedDataSyncService $sync)
     {
+        $local = $sync->syncAlmacenesFromInventario();
+        if ($local > 0) {
+            return back()->with('success', "Almacenes sincronizados desde inventario local ({$local}).");
+        }
+
         // Usa la propiedad de clase
         $url = "{$this->donacionesUrl}/api/almacenes-completo";
 
@@ -95,10 +101,16 @@ class IntegracionExternaController extends Controller
         return back()->with('success', 'Almacenes sincronizados correctamente.');
     }
 
-    public function syncAll()
+    public function syncAll(UnifiedDataSyncService $sync)
     {
+        $stats = $sync->syncAllFromInventario();
         $this->syncCategoriasProductos();
-        $this->syncAlmacenes();
-        return response()->json(['success' => true, 'message' => 'Sincronización completa.']);
+        $this->syncAlmacenes($sync);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sincronización completa.',
+            'local'   => $stats,
+        ]);
     }
 }

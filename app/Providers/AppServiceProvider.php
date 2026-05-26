@@ -26,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registerInventarioTransparenciaSync();
+
         if (\App\Support\UnifiedPostgres::enabled() && config('cache.default') === 'database') {
             config(['cache.stores.database.connection' => 'core']);
         }
@@ -89,5 +91,29 @@ class AppServiceProvider extends ServiceProvider
         View::addLocation(base_path('modulos/monitoreo-incendios-simulacion-main/resources/views'));
         View::addLocation(base_path('modulos/rescate-animales-silvestres-main/resources/views'));
 
+    }
+
+    private function registerInventarioTransparenciaSync(): void
+    {
+        $observer = \App\Observers\InventarioTransparenciaObserver::class;
+        $models = [
+            \Modules\Inventario\Models\Almacene::class,
+            \Modules\Inventario\Models\Estante::class,
+            \Modules\Inventario\Models\Espacio::class,
+            \Modules\Inventario\Models\CategoriasProducto::class,
+            \Modules\Inventario\Models\Producto::class,
+            \Modules\Inventario\Models\Campana::class,
+            \Modules\Inventario\Models\UbicacionesDonacione::class,
+            \Modules\Inventario\Models\DonacionDetalle::class,
+            \Modules\Inventario\Models\Donacione::class,
+            \Modules\Inventario\Models\Paquete::class,
+            \Modules\Inventario\Models\DonacionesDinero::class,
+        ];
+
+        foreach ($models as $model) {
+            if (class_exists($model)) {
+                $model::observe($observer);
+            }
+        }
     }
 }

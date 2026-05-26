@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Ext;
 
 use App\Http\Controllers\Controller;
+use App\Services\UnifiedDataSyncService;
 use App\Models\Ext\ExtAlmacen;
 
 class AlmacenesEstructuraController extends Controller
 {
-    public function index()
+    public function index(UnifiedDataSyncService $sync)
     {
+        $sync->syncAlmacenesFromInventario();
+        $sync->syncTrazabilidadItemsFromInventario();
+
         // Trae almacenes -> estantes -> espacios -> Y AHORA LOS ITEMS DENTRO
         $almacenes = ExtAlmacen::with(['estantes.espacios.items']) 
             ->orderBy('nombre')

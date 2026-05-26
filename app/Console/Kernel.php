@@ -10,6 +10,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // orden correcto por dependencias
+        $schedule->command('sync:unificado-local')->everyFiveMinutes();
+
         $schedule->command('sync:campanias')->hourly();
         $schedule->command('sync:donaciones-dinero')->hourly();
 
