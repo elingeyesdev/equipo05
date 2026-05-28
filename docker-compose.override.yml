@@ -1,0 +1,31 @@
+# Solo local: Laravel en contenedor debe usar el hostname de Docker, no 127.0.0.1
+services:
+  laravel:
+    environment:
+      DATABASE_UNIFIED_POSTGRES: "true"
+      DB_CONNECTION: core
+      UNIFIED_PG_HOST: db_unificado
+      UNIFIED_PG_PORT: 5432
+      UNIFIED_PG_DATABASE: equipo05_unificado
+      UNIFIED_PG_USERNAME: postgres
+      UNIFIED_PG_PASSWORD: equipo05_unificado_dev
+      SESSION_DRIVER: database
+      SESSION_CONNECTION: core
+    depends_on:
+      db_unificado:
+        condition: service_healthy
+
+  scheduler:
+    environment:
+      DATABASE_UNIFIED_POSTGRES: "true"
+      DB_CONNECTION: core
+      UNIFIED_PG_HOST: db_unificado
+      UNIFIED_PG_PORT: 5432
+      UNIFIED_PG_DATABASE: equipo05_unificado
+      UNIFIED_PG_USERNAME: postgres
+      UNIFIED_PG_PASSWORD: equipo05_unificado_dev
+      SESSION_DRIVER: database
+      SESSION_CONNECTION: core
+    depends_on:
+      db_unificado:
+        condition: service_healthy

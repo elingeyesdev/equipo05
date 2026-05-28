@@ -30,3 +30,11 @@ Route::get('/reporte', [SeccionesController::class, 'show'])->defaults('seccion'
 
 Route::get('/galeria', [SeccionesController::class, 'show'])->defaults('seccion', 'galeria')->name('galeria');
 Route::get('/helpdesk', [SeccionesController::class, 'show'])->defaults('seccion', 'helpdesk')->name('helpdesk');
+
+Route::prefix('crud/{seccion}')->group(function () {
+    Route::get('/create', [SeccionesController::class, 'crudCreate'])->name('crud.create');
+    Route::post('/', [SeccionesController::class, 'crudStore'])->name('crud.store');
+    Route::get('/{id}/edit', [SeccionesController::class, 'crudEdit'])->name('crud.edit');
+    Route::put('/{id}', [SeccionesController::class, 'crudUpdate'])->name('crud.update');
+    Route::delete('/{id}', [SeccionesController::class, 'crudDestroy'])->name('crud.destroy');
+});

@@ -28,3 +28,11 @@ Route::get('/condiciones-climaticas', [SeccionesController::class, 'show'])->def
 Route::get('/estados-sistema', [SeccionesController::class, 'show'])->defaults('seccion', 'estados-sistema')->name('estados-sistema');
 Route::get('/kardex', [SeccionesController::class, 'show'])->defaults('seccion', 'kardex')->name('kardex');
 Route::get('/helpdesk', [SeccionesController::class, 'show'])->defaults('seccion', 'helpdesk')->name('helpdesk');
+
+Route::prefix('crud/{seccion}')->group(function () {
+    Route::get('/create', [SeccionesController::class, 'crudCreate'])->name('crud.create');
+    Route::post('/', [SeccionesController::class, 'crudStore'])->name('crud.store');
+    Route::get('/{id}/edit', [SeccionesController::class, 'crudEdit'])->name('crud.edit');
+    Route::put('/{id}', [SeccionesController::class, 'crudUpdate'])->name('crud.update');
+    Route::delete('/{id}', [SeccionesController::class, 'crudDestroy'])->name('crud.destroy');
+});

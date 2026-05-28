@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CuadrillasIncendios;
 
+use App\Http\Controllers\Concerns\HandlesFusionModuloCrud;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -9,9 +10,26 @@ use Illuminate\View\View;
 
 class SeccionesController extends Controller
 {
-    public function show(string $seccion): View
+    use HandlesFusionModuloCrud;
+
+    protected function moduloConnection(): string
     {
-        $secciones = [
+        return 'cuadrillas';
+    }
+
+    protected function moduloRoutePrefix(): string
+    {
+        return 'cuadrillas';
+    }
+
+    protected function moduloCrudView(): string
+    {
+        return 'fusion.modulos.cuadrillas-crud-form';
+    }
+
+    protected function seccionesConfig(): array
+    {
+        return [
             'reportes' => ['titulo' => 'Reportes', 'tabla' => 'reporte', 'pk' => 'id_reporte'],
             'reportes-incendio' => ['titulo' => 'Reportes de Incendio', 'tabla' => 'reporte_incendio', 'pk' => 'id_reporte_incendio'],
             'focos-calor' => ['titulo' => 'Mapa en Tiempo Real', 'tabla' => 'foco_calor', 'pk' => 'id_foco_calor'],
@@ -34,12 +52,18 @@ class SeccionesController extends Controller
             'kardex' => ['titulo' => 'Mi Kardex', 'tabla' => 'kardex', 'pk' => 'id_kardex'],
             'helpdesk' => ['titulo' => 'Centro de Soporte', 'tabla' => 'consultas', 'pk' => 'id'],
         ];
+    }
 
+    public function show(string $seccion): View
+    {
+        $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
-        $connection = 'cuadrillas';
+        $pk = $config['pk'];
+        $connection = $this->moduloConnection();
+
         $columnas = [];
         $filas = collect();
         $total = 0;
@@ -51,8 +75,8 @@ class SeccionesController extends Controller
             $query = DB::connection($connection)->table($tabla);
             if (Schema::connection($connection)->hasColumn($tabla, 'created_at')) {
                 $query->orderByDesc('created_at');
-            } elseif (Schema::connection($connection)->hasColumn($tabla, $config['pk'])) {
-                $query->orderByDesc($config['pk']);
+            } elseif (Schema::connection($connection)->hasColumn($tabla, $pk)) {
+                $query->orderByDesc($pk);
             }
 
             $filas = $query->limit(20)->get($columnas);
@@ -60,8 +84,10 @@ class SeccionesController extends Controller
         }
 
         return view('fusion.modulos.cuadrillas-seccion', [
+            'seccion' => $seccion,
             'tituloSeccion' => $config['titulo'],
             'nombreTabla' => $tabla,
+            'primaryKey' => $pk,
             'columnas' => $columnas,
             'filas' => $filas,
             'total' => $total,

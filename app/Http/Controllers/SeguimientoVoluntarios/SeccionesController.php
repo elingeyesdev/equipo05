@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\SeguimientoVoluntarios;
 
+use App\Http\Controllers\Concerns\HandlesFusionModuloCrud;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -9,9 +10,26 @@ use Illuminate\View\View;
 
 class SeccionesController extends Controller
 {
-    public function show(string $seccion): View
+    use HandlesFusionModuloCrud;
+
+    protected function moduloConnection(): string
     {
-        $secciones = [
+        return 'seguimiento';
+    }
+
+    protected function moduloRoutePrefix(): string
+    {
+        return 'seguimiento';
+    }
+
+    protected function moduloCrudView(): string
+    {
+        return 'fusion.modulos.seguimiento-crud-form';
+    }
+
+    protected function seccionesConfig(): array
+    {
+        return [
             'voluntarios' => ['titulo' => 'Voluntarios', 'tabla' => 'usuario', 'pk' => 'id_usuario'],
             'voluntarios-inactivos' => ['titulo' => 'Voluntarios Inactivos', 'tabla' => 'usuario', 'pk' => 'id_usuario', 'inactivos' => true],
             'evaluacion' => ['titulo' => 'Evaluacion', 'tabla' => 'evaluacion', 'pk' => 'id_evaluacion'],
@@ -24,12 +42,18 @@ class SeccionesController extends Controller
             'chat-consulta' => ['titulo' => 'Chat de Voluntarios', 'tabla' => 'chat_mensajes', 'pk' => 'id'],
             'helpdesk' => ['titulo' => 'Centro de Soporte', 'tabla' => 'consultas', 'pk' => 'id'],
         ];
+    }
 
+    public function show(string $seccion): View
+    {
+        $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
-        $connection = 'seguimiento';
+        $pk = $config['pk'];
+        $connection = $this->moduloConnection();
+
         $columnas = [];
         $filas = collect();
         $total = 0;
@@ -50,8 +74,8 @@ class SeccionesController extends Controller
 
             if (Schema::connection($connection)->hasColumn($tabla, 'created_at')) {
                 $query->orderByDesc('created_at');
-            } elseif (Schema::connection($connection)->hasColumn($tabla, $config['pk'])) {
-                $query->orderByDesc($config['pk']);
+            } elseif (Schema::connection($connection)->hasColumn($tabla, $pk)) {
+                $query->orderByDesc($pk);
             }
 
             $filas = $query->limit(20)->get($columnas);
@@ -59,8 +83,10 @@ class SeccionesController extends Controller
         }
 
         return view('fusion.modulos.seguimiento-seccion', [
+            'seccion' => $seccion,
             'tituloSeccion' => $config['titulo'],
             'nombreTabla' => $tabla,
+            'primaryKey' => $pk,
             'columnas' => $columnas,
             'filas' => $filas,
             'total' => $total,

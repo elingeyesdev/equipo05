@@ -942,23 +942,6 @@
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     @yield('js')
     @stack('js')
-    
-    <script>
-        (function () {
-            const REFRESH_MS = 60000; 
-            function autoRefreshEnabled() {
-                if (document.body.classList.contains('no-auto-refresh')) return false;
-                const p = window.location.pathname || '';
-                if (p.includes('incendios/modulo') || p.includes('rescate/modulo')) return false;
-                if (document.querySelector('.modal.show')) return false;
-                return true;
-            }
-            setInterval(() => {
-                if (!autoRefreshEnabled()) return;
-                window.location.reload();
-            }, REFRESH_MS);
-        })();
-    </script>
 
     @stack('scripts')
 </body>
