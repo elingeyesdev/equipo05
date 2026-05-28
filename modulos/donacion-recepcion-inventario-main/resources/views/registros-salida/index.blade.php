@@ -42,8 +42,25 @@
                     @endif
 
                     <div class="card-body">
+                        @include('inventario::partials.datatables-list-toolbar', [
+                            'filters' => [[
+                                'id' => 'filtroPaquete',
+                                'label' => 'Paquete',
+                                'options' => [
+                                    'con' => 'Con paquete',
+                                    'sin' => 'Sin paquete',
+                                ],
+                            ]],
+                            'sortOptions' => [
+                                'fecha_desc' => 'Fecha salida (más reciente)',
+                                'fecha_asc' => 'Fecha salida (más antigua)',
+                                'destino_asc' => 'Destino (A-Z)',
+                                'destino_desc' => 'Destino (Z-A)',
+                            ],
+                            'defaultSort' => 'fecha_desc',
+                        ])
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover table-bordered">
+                            <table id="registrosSalidaTable" class="table table-striped table-hover table-bordered">
                                 <thead class="thead-light">
                                     <tr>
                                         <th>No</th>
@@ -65,7 +82,9 @@
                                                     <span class="badge badge-secondary">Sin Paquete</span>
                                                 @endif
                                             </td>
-                                            <td>{{ \Carbon\Carbon::parse($registrosSalida->fecha_salida)->format('d/m/Y H:i') }}</td>
+                                            <td data-order="{{ \Carbon\Carbon::parse($registrosSalida->fecha_salida)->format('Y-m-d H:i:s') }}">
+                                                {{ \Carbon\Carbon::parse($registrosSalida->fecha_salida)->format('d/m/Y H:i') }}
+                                            </td>
                                             <td>{{ $registrosSalida->destino }}</td>
                                             <td>{{ Str::limit($registrosSalida->observaciones, 50) }}</td>
                                             <td>
@@ -98,35 +117,29 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('table').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "order": [[2, 'desc']], // Order by fecha salida descending
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay registros de salida",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+    $(function () {
+        initInventarioListTable({
+            selector: '#registrosSalidaTable',
+            defaultOrder: [[2, 'desc']],
+            filters: [{
+                select: '#filtroPaquete',
+                column: 1,
+                valueMap: {
+                    con: 'badge-info',
+                    sin: 'Sin Paquete',
+                },
+            }],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                fecha_desc: [2, 'desc'],
+                fecha_asc: [2, 'asc'],
+                destino_asc: [3, 'asc'],
+                destino_desc: [3, 'desc'],
+            },
         });
     });
 </script>

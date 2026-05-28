@@ -256,6 +256,44 @@ class DonacionController extends Controller
     }
 
     /**
+     * PUT/PATCH /api/inventario/donaciones/{donacione}
+     */
+    public function update(Request $request, string $donacione)
+    {
+        $donacion = Donacione::findOrFail($donacione);
+
+        $validated = $request->validate([
+            'tipo' => 'sometimes|in:dinero,especie,ropa',
+            'fecha' => 'sometimes|date',
+            'id_donante' => 'sometimes|integer|exists:inventario.donantes,id_donante',
+            'id_campana' => 'nullable|integer|exists:inventario.campanas,id_campana',
+            'observaciones' => 'nullable|string|max:500',
+        ]);
+
+        $donacion->update($validated);
+
+        if ($donacion->tipo === 'dinero' && $request->has('monto')) {
+            return $this->updateMoneyDonation($donacione, $request);
+        }
+
+        return response()->json([
+            'message' => 'Donación actualizada',
+            'data' => $donacion->fresh(['donante', 'campana']),
+        ]);
+    }
+
+    /**
+     * DELETE /api/inventario/donaciones/{donacione}
+     */
+    public function destroy(string $donacione)
+    {
+        $donacion = Donacione::findOrFail($donacione);
+        $donacion->delete();
+
+        return response()->json(['message' => 'Donación eliminada correctamente']);
+    }
+
+    /**
      * POST /api/upload-comprobante
      * Upload payment receipt image
      */

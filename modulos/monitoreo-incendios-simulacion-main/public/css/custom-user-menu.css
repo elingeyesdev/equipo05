@@ -2,7 +2,7 @@
 
 /* Header del usuario con gradiente sutil */
 .user-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: #6366f1 !important;
     padding: 15px !important;
 }
 

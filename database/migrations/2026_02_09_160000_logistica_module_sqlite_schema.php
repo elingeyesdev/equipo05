@@ -12,6 +12,10 @@ return new class extends Migration
     {
         $c = $this->c;
 
+        if (Schema::connection($c)->hasTable('estado')) {
+            return;
+        }
+
         Schema::connection($c)->create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');

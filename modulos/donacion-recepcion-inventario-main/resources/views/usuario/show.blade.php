@@ -50,7 +50,7 @@
                             {{ $usuario->correo }}
                         </div>
                         <div class="form-group mb-2 mb20">
-                            <strong>Telefono:</strong>
+                            <strong>Teléfono:</strong>
                             {{ $usuario->telefono }}
                         </div>
                         <div class="form-group mb-2 mb20">

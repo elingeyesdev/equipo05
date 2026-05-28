@@ -37,7 +37,7 @@
                             <input type="text" name="ci" class="form-control" value="{{ old('ci') }}" required>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label>Telefono</label>
+                            <label>Teléfono</label>
                             <input type="text" name="telefono" class="form-control" value="{{ old('telefono') }}">
                         </div>
                         <div class="col-md-4 mb-3">

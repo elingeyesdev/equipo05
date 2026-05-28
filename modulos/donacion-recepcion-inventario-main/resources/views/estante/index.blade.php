@@ -3,16 +3,11 @@
 @section('title', 'Estantes')
 
 @section('content_header')
-<div class="row mb-2">
-    <div class="col-sm-6">
-        <h1>Gesti�n de Estantes</h1>
-    </div>
-    <div class="col-sm-6">
-        <a href="{{ route('inventario.estante.create') }}" class="btn btn-primary float-right">
-            Nuevo Estante
-        </a>
-    </div>
-</div>
+@include('inventario::partials.page-toolbar', [
+    'title' => 'Gestión de Estantes',
+    'createRoute' => route('inventario.estante.create'),
+    'createLabel' => 'Nuevo Estante',
+])
 @stop
 
 @section('content')
@@ -48,13 +43,38 @@
         <h3 class="card-title">Listado de Estantes</h3>
     </div>
     <div class="card-body">
+        @php
+            $almacenesFiltro = collect();
+            foreach ($estantes as $estanteFiltro) {
+                $nombreAlm = $estanteFiltro->almacene?->nombre;
+                if ($nombreAlm) {
+                    $almacenesFiltro->put($nombreAlm, $nombreAlm);
+                }
+            }
+            $almacenesFiltro = $almacenesFiltro->sortKeys();
+        @endphp
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => $almacenesFiltro->isNotEmpty() ? [[
+                'id' => 'filtroAlmacen',
+                'label' => 'Filtrar por almacén',
+                'options' => $almacenesFiltro->all(),
+            ]] : [],
+            'sortOptions' => [
+                'codigo_asc' => 'Código estante (A-Z)',
+                'codigo_desc' => 'Código estante (Z-A)',
+                'almacen_asc' => 'Almacén (A-Z)',
+                'almacen_desc' => 'Almacén (Z-A)',
+            ],
+            'defaultSort' => 'codigo_asc',
+        ])
+
         <table id="estantesTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
                     <th width="60px">#</th>
-                    <th>Almac�n</th>
-                    <th>C�digo Estante</th>
-                    <th>Descripci�n</th>
+                    <th>Almacn</th>
+                    <th>Cdigo Estante</th>
+                    <th>Descripcin</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -68,7 +88,7 @@
                                     {{ $estante->almacene->nombre }}
                                 </span>
                             @else
-                                <span class="badge badge-secondary">Sin almac�n</span>
+                                <span class="badge badge-secondary">Sin almacn</span>
                             @endif
                         </td>
                         <td><strong>{{ $estante->codigo_estante }}</strong></td>
@@ -85,7 +105,7 @@
                                 </a>
                                 <form action="{{ route('inventario.estante.destroy', $estante->id_estante) }}" method="POST"
                                     style="display: inline;"
-                                    onsubmit="return confirm('�Est� seguro de eliminar este estante?');">
+                                    onsubmit="return confirm('¿Está seguro de eliminar este estante?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -100,7 +120,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre p�ginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
     </div>
 </div>
 @stop
@@ -120,34 +140,26 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#estantesTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay datos disponibles en la tabla",
-                "lengthMenu": "Mostrar _MENU_ registros por p�gina",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "�ltimo",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+    $(function () {
+        initInventarioListTable({
+            selector: '#estantesTable',
+            defaultOrder: [[2, 'asc']],
+            filters: [
+                @if ($almacenesFiltro->isNotEmpty())
+                { select: '#filtroAlmacen', column: 1 },
+                @endif
+            ],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                codigo_asc: [2, 'asc'],
+                codigo_desc: [2, 'desc'],
+                almacen_asc: [1, 'asc'],
+                almacen_desc: [1, 'desc'],
+            },
         });
     });
 </script>

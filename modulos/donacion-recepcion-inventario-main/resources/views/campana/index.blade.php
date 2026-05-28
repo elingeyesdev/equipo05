@@ -50,6 +50,26 @@
         <h3 class="card-title">Listado de Campañas</h3>
     </div>
     <div class="card-body">
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => [[
+                'id' => 'filtroEstadoCampana',
+                'label' => 'Filtrar por estado',
+                'options' => [
+                    'proxima' => 'Próxima',
+                    'activa' => 'Activa',
+                    'finalizada' => 'Finalizada',
+                ],
+            ]],
+            'sortOptions' => [
+                'inicio_desc' => 'Fecha inicio (más reciente)',
+                'inicio_asc' => 'Fecha inicio (más antigua)',
+                'fin_desc' => 'Fecha fin (más reciente)',
+                'nombre_asc' => 'Nombre (A-Z)',
+                'nombre_desc' => 'Nombre (Z-A)',
+            ],
+            'defaultSort' => 'inicio_desc',
+        ])
+
         <table id="campanasTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
@@ -68,10 +88,10 @@
                         <td class="text-center"><strong>{{ ++$i }}</strong></td>
                         <td><strong>{{ $campana->nombre }}</strong></td>
                         <td>{{ Str::limit($campana->descripcion, 50) }}</td>
-                        <td>
+                        <td data-order="{{ \Carbon\Carbon::parse($campana->fecha_inicio)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($campana->fecha_inicio)->format('d/m/Y') }}
                         </td>
-                        <td>
+                        <td data-order="{{ \Carbon\Carbon::parse($campana->fecha_fin)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($campana->fecha_fin)->format('d/m/Y') }}
                         </td>
                         <td>
@@ -143,34 +163,31 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#campanasTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay campañas registradas",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+    $(function () {
+        initInventarioListTable({
+            selector: '#campanasTable',
+            defaultOrder: [[3, 'desc']],
+            filters: [{
+                select: '#filtroEstadoCampana',
+                column: 5,
+                valueMap: {
+                    proxima: 'Próxima',
+                    activa: 'Activa',
+                    finalizada: 'Finalizada',
+                },
+            }],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                inicio_desc: [3, 'desc'],
+                inicio_asc: [3, 'asc'],
+                fin_desc: [4, 'desc'],
+                nombre_asc: [1, 'asc'],
+                nombre_desc: [1, 'desc'],
+            },
         });
     });
 </script>

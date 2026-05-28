@@ -1,5 +1,10 @@
 @extends('adminlte::page')
 
+@php
+    $destinosDt = collect($destinosUnicos ?? [])->filter()->sort()->mapWithKeys(fn ($d) => [$d => $d]);
+    $encargadosDt = collect($encargadosUnicos ?? [])->filter()->sort()->mapWithKeys(fn ($e) => [$e => $e]);
+@endphp
+
 @section('title', 'Dashboard de Distribución')
 
 @section('content_header')
@@ -156,6 +161,27 @@
         </div>
     </div>
     <div class="card-body">
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => array_values(array_filter([
+                $destinosDt->isNotEmpty() ? [
+                    'id' => 'filtroDestinoDt',
+                    'label' => 'Destino',
+                    'options' => $destinosDt->all(),
+                ] : null,
+                $encargadosDt->isNotEmpty() ? [
+                    'id' => 'filtroEncargadoDt',
+                    'label' => 'Encargado',
+                    'options' => $encargadosDt->all(),
+                ] : null,
+            ])),
+            'sortOptions' => [
+                'fecha_desc' => 'Fecha salida (más reciente)',
+                'fecha_asc' => 'Fecha salida (más antigua)',
+                'destino_asc' => 'Destino (A-Z)',
+                'destino_desc' => 'Destino (Z-A)',
+            ],
+            'defaultSort' => 'fecha_desc',
+        ])
         <div class="table-responsive">
             <table id="distribucionTable" class="table table-bordered table-striped table-hover">
                 <thead class="thead-dark">
@@ -173,7 +199,9 @@
                     @forelse($salidasDetalladas as $salida)
                         <tr>
                             <td><code>{{ $salida['codigo_paquete'] }}</code></td>
-                            <td>{{ \Carbon\Carbon::parse($salida['fecha_salida'])->format('d/m/Y H:i') }}</td>
+                            <td data-order="{{ \Carbon\Carbon::parse($salida['fecha_salida'])->format('Y-m-d H:i:s') }}">
+                                {{ \Carbon\Carbon::parse($salida['fecha_salida'])->format('d/m/Y H:i') }}
+                            </td>
                             <td><strong>{{ $salida['destino'] ?? '-' }}</strong></td>
                             <td>{{ $salida['encargado'] ?? '-' }}</td>
                             <td class="text-center">
@@ -300,20 +328,39 @@
         window.location.href = '{{ route("inventario.reportes.distribucion") }}?' + params.toString();
     }
 
-    // Initialize DataTable
-    $(document).ready(function () {
-        $('#distribucionTable').DataTable({
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+</script>
+@include('inventario::partials.datatables-inventario-init')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(function () {
+        const filters = [];
+        @if ($destinosDt->isNotEmpty())
+        filters.push({ select: '#filtroDestinoDt', column: 2 });
+        @endif
+        @if ($encargadosDt->isNotEmpty())
+        filters.push({ select: '#filtroEncargadoDt', column: 3 });
+        @endif
+
+        initInventarioListTable({
+            selector: '#distribucionTable',
+            defaultOrder: [[1, 'desc']],
+            filters: filters,
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                fecha_desc: [1, 'desc'],
+                fecha_asc: [1, 'asc'],
+                destino_asc: [2, 'asc'],
+                destino_desc: [2, 'desc'],
             },
-            "pageLength": 10,
-            "order": [[1, "desc"]]
         });
     });
 </script>
 @stop
 
 @section('css')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
 <style>
     .info-box-number {
         font-weight: bold;

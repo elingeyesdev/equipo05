@@ -128,10 +128,10 @@ Route::middleware(['auth'])->group(function () {
     // GRUPO A: SOLO ADMINISTRADOR
     // ====================================================
     Route::group(['middleware' => ['role:Administrador']], function () {
-        Route::resource('roles', RoleController::class);
-        Route::resource('usuarios', UsuarioController::class);
-        Route::resource('estados', EstadoController::class);
-        Route::resource('campanias', CampaniaController::class)->whereNumber('campania');
+        Route::resource('roles', RoleController::class)->except(['show']);
+        Route::resource('usuarios', UsuarioController::class)->except(['show']);
+        Route::resource('estados', EstadoController::class)->except(['show']);
+        Route::resource('campanias', CampaniaController::class)->except(['show'])->whereNumber('campania');
     });
 
     // ====================================================
@@ -147,20 +147,20 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['middleware' => ['role:Administrador|Reportes']], function () {
         
         // --- DONACIONES & ASIGNACIONES ---
-        Route::resource('donaciones', DonacionController::class);
+        Route::resource('donaciones', DonacionController::class)->except(['show']);
         Route::get('/donaciones/{id}/reasignar', [DonacionController::class, 'reasignarForm'])->name('donaciones.reasignarForm');
         Route::post('/donaciones/{id}/reasignar', [DonacionController::class, 'reasignar'])->name('donaciones.reasignar');
 
         Route::resource('asignaciones', AsignacionController::class);
-        Route::resource('detallesasignacion', DetallesAsignacionController::class);
-        Route::resource('donacionesasignaciones', DonacionesAsignacionController::class);
+        Route::resource('detallesasignacion', DetallesAsignacionController::class)->except(['show']);
+        Route::resource('donacionesasignaciones', DonacionesAsignacionController::class)->except(['show']);
         
         Route::get('asignaciones/{id}/detalles', [AsignacionController::class, 'detalles'])->name('asignaciones.detalles');
         Route::post('asignaciones/{id}/detalles', [AsignacionController::class, 'guardarDetalle'])->name('asignaciones.detalles.store');
         Route::get('asignaciones/{id}/asignar', [AsignacionController::class, 'asignar'])->name('asignaciones.asignar');
         Route::post('asignaciones/{id}/asignar', [AsignacionController::class, 'guardarAsignacion'])->name('asignaciones.asignar.store');
-        Route::get('/asignaciones/{id}/asignar-donacion', [AsignacionController::class, 'asignarDonacionForm'])->name('asignaciones.asignarDonacionForm');
-        Route::post('/asignaciones/{id}/asignar-donacion', [AsignacionController::class, 'asignarDonacionStore'])->name('asignaciones.asignarDonacionStore');
+        Route::get('/asignaciones/{id}/asignar-donacion', [AsignacionController::class, 'asignar'])->name('asignaciones.asignarDonacionForm');
+        Route::post('/asignaciones/{id}/asignar-donacion', [AsignacionController::class, 'guardarAsignacion'])->name('asignaciones.asignarDonacionStore');
 
         // --- REPORTES & ESTADOS DE CUENTA ---
         Route::get('/estado-cuenta', [UsuarioReporteController::class, 'seleccionarUsuario'])->name('usuarios.estadoCuentaSeleccion');
@@ -211,13 +211,13 @@ Route::middleware(['auth'])->group(function () {
 
 
         // --- SALDOS ---
-        Route::resource('saldosdonaciones', SaldosDonacionController::class);
+        Route::resource('saldosdonaciones', SaldosDonacionController::class)->except(['show']);
 
         // --- MENSAJERÍA ---
         Route::get('/centro-mensajes', [CentroMensajesController::class, 'seleccionarUsuario'])->name('mensajes.centroSeleccion');
         Route::get('/centro-mensajes/usuario', [CentroMensajesController::class, 'centroPorUsuario'])->name('mensajes.centroUsuario');
         Route::resource('mensajes', MensajeController::class)->parameters(['mensajes' => 'id']);
-        Route::resource('respuestasmensajes', RespuestaMensajeController::class)->parameters(['respuestasmensajes' => 'id']);
+        Route::resource('respuestasmensajes', RespuestaMensajeController::class)->except(['show'])->parameters(['respuestasmensajes' => 'id']);
 
         Route::get('/chat', [MensajeController::class, 'inbox'])->name('chat.inbox');
         Route::get('/chat/{usuario}', [MensajeController::class, 'conversacion'])->name('chat.conversacion');

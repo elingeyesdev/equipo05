@@ -3,16 +3,11 @@
 @section('title', 'Gestión de Donaciones')
 
 @section('content_header')
-<div class="row mb-2">
-    <div class="col-sm-6">
-        <h1>Gestión de Donaciones</h1>
-    </div>
-    <div class="col-sm-6">
-        <a href="{{ route('inventario.donaciones.create') }}" class="btn btn-primary float-right">
-            Nueva Donación
-        </a>
-    </div>
-</div>
+@include('inventario::partials.page-toolbar', [
+    'title' => 'Gestión de Donaciones',
+    'createRoute' => route('inventario.donaciones.create'),
+    'createLabel' => 'Nueva Donación',
+])
 @stop
 
 @section('content')
@@ -84,6 +79,21 @@
         <h3 class="card-title">Listado de Donaciones</h3>
     </div>
     <div class="card-body">
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => [[
+                'id' => 'filtroTipo',
+                'label' => 'Filtrar por tipo',
+                'options' => ['dinero' => 'Dinero', 'especie' => 'Especie'],
+            ]],
+            'sortOptions' => [
+                'fecha_desc' => 'Fecha (más reciente)',
+                'fecha_asc' => 'Fecha (más antigua)',
+                'alfabeto_asc' => 'Donante (A-Z)',
+                'alfabeto_desc' => 'Donante (Z-A)',
+            ],
+            'defaultSort' => 'fecha_desc',
+        ])
+
         <table id="donacionesTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
@@ -107,16 +117,16 @@
                         </td>
                         <td>
                             @if($donacion->tipo === 'dinero')
-                                <span class="badge badge-success badge-lg">
+                                <span class="badge badge-success badge-lg" data-tipo="dinero">
                                     <i class="fas fa-dollar-sign"></i> Dinero
                                 </span>
                             @else
-                                <span class="badge badge-warning badge-lg">
+                                <span class="badge badge-warning badge-lg" data-tipo="especie">
                                     <i class="fas fa-box-open"></i> Especie
                                 </span>
                             @endif
                         </td>
-                        <td>
+                        <td data-order="{{ \Carbon\Carbon::parse($donacion->fecha)->format('Y-m-d H:i:s') }}">
                             {{ \Carbon\Carbon::parse($donacion->fecha)->format('d/m/Y H:i') }}
                         </td>
                         <td class="text-center">
@@ -174,36 +184,27 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#donacionesTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "order": [[3, 'desc']], // Order by date descending
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay donaciones registradas",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+        initInventarioListTable({
+            selector: '#donacionesTable',
+            defaultOrder: [[3, 'desc']],
+            filters: [{
+                select: '#filtroTipo',
+                column: 2,
+                valueMap: { dinero: 'Dinero', especie: 'Especie' },
+            }],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                fecha_desc: [3, 'desc'],
+                fecha_asc: [3, 'asc'],
+                alfabeto_asc: [1, 'asc'],
+                alfabeto_desc: [1, 'desc'],
+            },
         });
 
         // Handle delete button clicks

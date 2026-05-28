@@ -818,7 +818,7 @@
         return `
             <div style="min-width: 250px; font-family: system-ui, -apple-system, sans-serif;">
                 <div style="
-                    background: linear-gradient(135deg, #dc2626 0%, #f59e0b 100%);
+                    background: #dc2626;
                     color: white;
                     padding: 12px;
                     margin: -15px -20px 10px -20px;
@@ -912,7 +912,7 @@
                        style="
                            flex: 1;
                            display: block;
-                           background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                           background: #f59e0b;
                            color: white;
                            text-align: center;
                            padding: 10px 12px;
@@ -931,7 +931,7 @@
                        style="
                            flex: 1;
                            display: block;
-                           background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+                           background: #8b5cf6;
                            color: white;
                            text-align: center;
                            padding: 10px 12px;

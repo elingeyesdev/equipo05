@@ -62,6 +62,26 @@
         <h3 class="card-title">Listado de Paquetes</h3>
     </div>
     <div class="card-body">
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => [[
+                'id' => 'filtroEstadoPaquete',
+                'label' => 'Filtrar por estado',
+                'options' => [
+                    'pendiente' => 'Pendiente',
+                    'en_proceso' => 'En proceso',
+                    'despachado' => 'Despachado',
+                    'cancelado' => 'Cancelado',
+                ],
+            ]],
+            'sortOptions' => [
+                'fecha_desc' => 'Fecha creación (más reciente)',
+                'fecha_asc' => 'Fecha creación (más antigua)',
+                'codigo_asc' => 'Código (A-Z)',
+                'codigo_desc' => 'Código (Z-A)',
+            ],
+            'defaultSort' => 'fecha_desc',
+        ])
+
         <table id="paquetesTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
@@ -79,7 +99,7 @@
                         <td>
                             <strong>{{ $paquete->codigo_paquete ?? 'N/A' }}</strong>
                         </td>
-                        <td>
+                        <td data-order="{{ $paquete->fecha_creacion ? \Carbon\Carbon::parse($paquete->fecha_creacion)->format('Y-m-d H:i:s') : '' }}">
                             {{ $paquete->fecha_creacion ? \Carbon\Carbon::parse($paquete->fecha_creacion)->format('d/m/Y H:i') : 'N/A' }}
                         </td>
                         <td class="text-center">
@@ -145,35 +165,32 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#paquetesTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay paquetes registrados",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+        initInventarioListTable({
+            selector: '#paquetesTable',
+            defaultOrder: [[2, 'desc']],
+            filters: [{
+                select: '#filtroEstadoPaquete',
+                column: 3,
+                valueMap: {
+                    pendiente: 'Pendiente',
+                    en_proceso: 'En proceso',
+                    despachado: 'Despachado',
+                    cancelado: 'Cancelado',
+                },
+            }],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                fecha_desc: [2, 'desc'],
+                fecha_asc: [2, 'asc'],
+                codigo_asc: [1, 'asc'],
+                codigo_desc: [1, 'desc'],
+            },
         });
 
         // Handle delete button clicks

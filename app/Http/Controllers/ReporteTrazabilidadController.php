@@ -22,7 +22,7 @@ class ReporteTrazabilidadController extends Controller
      */
     public function index(Request $request, UnifiedDataSyncService $sync)
     {
-        $sync->syncAllFromInventario();
+        $sync->syncForTrazabilidadViews();
 
         // 1. Recuperar Campañas para el filtro
         $campanias = Campania::orderBy('fechainicio', 'desc')->get();

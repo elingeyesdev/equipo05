@@ -14,110 +14,91 @@
     <link rel="stylesheet" href="{{ asset('css/platform-login.css') }}?v={{ file_exists(public_path('css/platform-login.css')) ? filemtime(public_path('css/platform-login.css')) : time() }}">
 </head>
 <body class="hold-transition login-page platform-login">
-    <div class="login-box">
-        <div class="row mb-3">
-            <div class="col-12 col-lg-6 mb-2 mb-lg-0">
-                <a href="{{ route('publico.logistica.solicitud') }}"
-                   class="btn btn-outline-primary btn-lg btn-block landing-access-btn">
-                    <i class="fas fa-hands-helping mr-2"></i>
-                    Solicitar ayuda
-                </a>
-            </div>
-            <div class="col-12 col-lg-6">
-                <a href="{{ route('publico.logistica.galeria') }}"
-                   class="btn btn-outline-primary btn-lg btn-block landing-access-btn">
-                    <i class="fas fa-images mr-2"></i>
-                    Galería de paquetes entregados
-                </a>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-12 col-lg-4 mb-2 mb-lg-0">
-                <a href="{{ route('publico.cuadrillas.reporte') }}"
-                   class="btn btn-outline-danger btn-lg btn-block landing-access-btn btn-cuadrillas">
-                    <i class="fas fa-bullhorn mr-2"></i>
-                    Reporte Público
-                </a>
-            </div>
-            <div class="col-12 col-lg-4 mb-2 mb-lg-0">
-                <a href="{{ route('publico.cuadrillas.mapa') }}"
-                   class="btn btn-outline-danger btn-lg btn-block landing-access-btn btn-cuadrillas">
-                    <i class="fas fa-fire mr-2"></i>
-                    Mapa en Tiempo Real
-                </a>
-            </div>
-            <div class="col-12 col-lg-4">
-                <a href="{{ route('publico.seguimiento.info') }}"
-                   class="btn btn-outline-info btn-lg btn-block landing-access-btn btn-seguimiento">
-                    <i class="fas fa-user-friends mr-2"></i>
-                    Seguimiento Voluntarios
-                </a>
-            </div>
-        </div>
-        <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <a href="#" class="h1"><b>Sistema</b>Donaciones</a>
-            </div>
-            <div class="card-body">
-                <p class="login-box-msg">Ingresa tus credenciales para iniciar sesión</p>
-
-                <form action="{{ route('login') }}" method="post">
-                    @csrf <div class="input-group mb-3">
-                        <input type="email" 
-                               name="email" 
-                               class="form-control @error('email') is-invalid @enderror" 
-                               placeholder="Correo electrónico" 
-                               value="{{ old('email') }}" 
-                               required 
-                               autofocus>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-envelope"></span>
-                            </div>
-                        </div>
-                        @error('email')
-                            <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
+    <div class="login-page-shell">
+        <main class="login-main">
+            <div class="login-box">
+                <div class="card card-outline card-primary">
+                    <div class="card-header text-center">
+                        <a href="#" class="h1"><b>Sistema</b>Donaciones</a>
                     </div>
+                    <div class="card-body">
+                        <p class="login-box-msg">Ingresa tus credenciales para iniciar sesión</p>
 
-                    <div class="input-group mb-3">
-                        <input type="password" 
-                               name="contrasena" 
-                               class="form-control @error('contrasena') is-invalid @enderror" 
-                               placeholder="Contraseña" 
-                               required>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
+                        <form action="{{ route('login') }}" method="post">
+                            @csrf
+                            <div class="input-group mb-3">
+                                <input type="email"
+                                       name="email"
+                                       class="form-control @error('email') is-invalid @enderror"
+                                       placeholder="Correo electrónico"
+                                       value="{{ old('email') }}"
+                                       required
+                                       autofocus>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-envelope"></span>
+                                    </div>
+                                </div>
+                                @error('email')
+                                    <span class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
                             </div>
-                        </div>
-                        @error('contrasena')
-                            <span class="error invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
 
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="remember" name="remember">
-                                <label for="remember">
-                                    Recuérdame
-                                </label>
+                            <div class="input-group mb-3">
+                                <input type="password"
+                                       name="contrasena"
+                                       class="form-control @error('contrasena') is-invalid @enderror"
+                                       placeholder="Contraseña"
+                                       required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-lock"></span>
+                                    </div>
+                                </div>
+                                @error('contrasena')
+                                    <span class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
-                        </div>
-                    </div>
-                </form>
 
-                {{-- Opcional: Enlace para recuperar contraseña (si lo implementas a futuro) --}}
-                {{-- <p class="mb-1 mt-3">
-                    <a href="#">Olvidé mi contraseña</a>
-                </p> --}}
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="icheck-primary">
+                                        <input type="checkbox" id="remember" name="remember">
+                                        <label for="remember">Recuérdame</label>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
+        </main>
+
+        <footer class="login-public-footer">
+            <p class="footer-title text-muted">Accesos públicos</p>
+            <div class="footer-links">
+                <a href="{{ route('publico.logistica.solicitud') }}" class="btn landing-access-btn">
+                    <i class="fas fa-hands-helping mr-2"></i>Solicitar ayuda
+                </a>
+                <a href="{{ route('publico.logistica.galeria') }}" class="btn landing-access-btn">
+                    <i class="fas fa-images mr-2"></i>Galería de paquetes entregados
+                </a>
+                <a href="{{ route('publico.cuadrillas.reporte') }}" class="btn landing-access-btn">
+                    <i class="fas fa-bullhorn mr-2"></i>Reporte Público
+                </a>
+                <a href="{{ route('publico.cuadrillas.mapa') }}" class="btn landing-access-btn">
+                    <i class="fas fa-fire mr-2"></i>Mapa en Tiempo Real
+                </a>
+                <a href="{{ route('publico.seguimiento.info') }}" class="btn landing-access-btn">
+                    <i class="fas fa-user-friends mr-2"></i>Seguimiento Voluntarios
+                </a>
             </div>
-        </div>
+        </footer>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>

@@ -29,7 +29,7 @@
         }
         .logistica-card .card-header {
             border-bottom: 1px solid #e9ecef;
-            background: linear-gradient(135deg, rgba(13, 110, 253, 0.07) 0%, rgba(32, 201, 151, 0.08) 100%);
+            background: rgba(13, 110, 253, 0.08);
             border-radius: 14px 14px 0 0;
         }
     </style>

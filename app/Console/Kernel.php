@@ -9,8 +9,8 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        // orden correcto por dependencias
-        $schedule->command('sync:unificado-local')->everyFiveMinutes();
+        // Respaldo nocturno (cambios en inventario ya sincronizan al instante vía observers)
+        $schedule->command('sync:unificado-local')->dailyAt('03:00');
 
         $schedule->command('sync:campanias')->hourly();
         $schedule->command('sync:donaciones-dinero')->hourly();

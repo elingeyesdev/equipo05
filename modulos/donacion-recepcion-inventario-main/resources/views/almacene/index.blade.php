@@ -70,6 +70,22 @@
         <h3 class="card-title"><i class="fas fa-list"></i> Listado de Almacenes</h3>
     </div>
     <div class="card-body">
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => [[
+                'id' => 'filtroUbicacion',
+                'label' => 'Ubicación GPS',
+                'options' => [
+                    'registrada' => 'Con ubicación',
+                    'sin' => 'Sin ubicación',
+                ],
+            ]],
+            'sortOptions' => [
+                'nombre_asc' => 'Nombre (A-Z)',
+                'nombre_desc' => 'Nombre (Z-A)',
+            ],
+            'defaultSort' => 'nombre_asc',
+        ])
+
         <table id="almacenesTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
@@ -185,34 +201,27 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#almacenesTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay datos disponibles en la tabla",
-                "lengthMenu": "Mostrar _MENU_ registros por página",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+        initInventarioListTable({
+            selector: '#almacenesTable',
+            defaultOrder: [[1, 'asc']],
+            filters: [{
+                select: '#filtroUbicacion',
+                column: 3,
+                valueMap: {
+                    registrada: 'Registrada',
+                    sin: 'Sin ubicación',
+                },
+            }],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                nombre_asc: [1, 'asc'],
+                nombre_desc: [1, 'desc'],
+            },
         });
     });
 

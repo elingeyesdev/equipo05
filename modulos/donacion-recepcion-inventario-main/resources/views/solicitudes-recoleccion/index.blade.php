@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Solicitudes de Recolecci�n')
+@section('title', 'Solicitudes de Recolección')
 
 @section('content_header')
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>Solicitudes de Recolecci�n</h1>
+        <h1>Solicitudes de Recolección</h1>
     </div>
     <div class="col-sm-6">
         <a href="{{ route('inventario.solicitudes-recoleccions.create') }}" class="btn btn-primary float-right">
@@ -48,12 +48,32 @@
         <h3 class="card-title">Listado de Solicitudes</h3>
     </div>
     <div class="card-body">
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => [[
+                'id' => 'filtroEstadoSolicitud',
+                'label' => 'Filtrar por estado',
+                'options' => [
+                    'pendiente' => 'Pendiente',
+                    'en_proceso' => 'En proceso',
+                    'completada' => 'Completada',
+                    'cancelada' => 'Cancelada',
+                ],
+            ]],
+            'sortOptions' => [
+                'fecha_desc' => 'Fecha programada (más reciente)',
+                'fecha_asc' => 'Fecha programada (más antigua)',
+                'donante_asc' => 'Donante (A-Z)',
+                'donante_desc' => 'Donante (Z-A)',
+            ],
+            'defaultSort' => 'fecha_desc',
+        ])
+
         <table id="solicitudesTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
                     <th width="60px">#</th>
                     <th>Donante</th>
-                    <th>Direcci�n</th>
+                    <th>Direccin</th>
                     <th>Fecha Programada</th>
                     <th>Estado</th>
                     <th width="200px" class="text-center">Acciones</th>
@@ -72,7 +92,7 @@
                             @endif
                         </td>
                         <td>{{ $solicitud->direccion_recoleccion }}</td>
-                        <td>
+                        <td data-order="{{ \Carbon\Carbon::parse($solicitud->fecha_programada)->format('Y-m-d H:i:s') }}">
                             {{ \Carbon\Carbon::parse($solicitud->fecha_programada)->format('d/m/Y H:i') }}
                         </td>
                         <td class="text-center">
@@ -102,7 +122,7 @@
                                 </a>
                                 <form action="{{ route('inventario.solicitudes-recoleccions.destroy', $solicitud->id_solicitud) }}"
                                     method="POST" style="display: inline;"
-                                    onsubmit="return confirm('�Est� seguro de eliminar esta solicitud?');">
+                                    onsubmit="return confirm('¿Está seguro de eliminar esta solicitud?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -117,7 +137,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre p�ginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
     </div>
 </div>
 @stop
@@ -137,34 +157,31 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#solicitudesTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay solicitudes registradas",
-                "lengthMenu": "Mostrar _MENU_ registros por p�gina",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "�ltimo",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+    $(function () {
+        initInventarioListTable({
+            selector: '#solicitudesTable',
+            defaultOrder: [[3, 'desc']],
+            filters: [{
+                select: '#filtroEstadoSolicitud',
+                column: 4,
+                valueMap: {
+                    pendiente: 'Pendiente',
+                    en_proceso: 'En proceso',
+                    completada: 'Completada',
+                    cancelada: 'Cancelada',
+                },
+            }],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                fecha_desc: [3, 'desc'],
+                fecha_asc: [3, 'asc'],
+                donante_asc: [1, 'asc'],
+                donante_desc: [1, 'desc'],
+            },
         });
     });
 </script>

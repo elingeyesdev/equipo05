@@ -1,82 +1,84 @@
-/* Acentos por módulo — paleta institucional (no genérica IA) */
+/* Acentos por módulo — paleta institucional (colores sólidos) */
 
 /* Transparencia / donaciones (core) */
 body.module-transparencia.platform-ui {
     --module-accent: #0d9488;
     --module-accent-dark: #0f766e;
-    --module-gradient: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    --module-gradient: #0d9488;
 }
 
 /* Inventario */
 body.module-inventario.platform-ui {
     --module-accent: #1d4ed8;
     --module-accent-dark: #1e3a8a;
-    --module-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    --module-gradient: #1d4ed8;
 }
 
 /* Incendios */
 body.module-incendios.platform-ui {
     --module-accent: #ea580c;
     --module-accent-dark: #c2410c;
-    --module-gradient: linear-gradient(135deg, #c2410c 0%, #f97316 100%);
+    --module-gradient: #ea580c;
 }
 
 /* Rescate fauna */
 body.module-rescate.platform-ui {
     --module-accent: #15803d;
     --module-accent-dark: #166534;
-    --module-gradient: linear-gradient(135deg, #166534 0%, #22c55e 100%);
+    --module-gradient: #15803d;
 }
 
 /* Logística */
 body.module-logistica.platform-ui {
     --module-accent: #4f46e5;
     --module-accent-dark: #4338ca;
-    --module-gradient: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+    --module-gradient: #4f46e5;
 }
 
 /* Seguimiento voluntarios */
 body.module-seguimiento.platform-ui {
     --module-accent: #0891b2;
     --module-accent-dark: #0e7490;
-    --module-gradient: linear-gradient(135deg, #0e7490 0%, #22d3ee 100%);
+    --module-gradient: #0891b2;
 }
 
 /* Cuadrillas */
 body.module-cuadrillas.platform-ui {
     --module-accent: #b45309;
     --module-accent-dark: #92400e;
-    --module-gradient: linear-gradient(135deg, #92400e 0%, #d97706 100%);
+    --module-gradient: #b45309;
 }
 
 /* Primary buttons siguen acento del módulo activo */
 body[class*="module-"].platform-ui .btn-primary,
 body[class*="module-"].platform-ui .small-box.bg-primary,
 body[class*="module-"].platform-ui .card-primary:not(.card-outline) > .card-header {
-    background: var(--module-gradient) !important;
+    background: var(--module-accent) !important;
+    border-color: var(--module-accent) !important;
 }
 
 body[class*="module-"].platform-ui :root,
 body[class*="module-"].platform-ui {
     --primary: var(--module-accent);
     --primary-dark: var(--module-accent-dark);
-    --primary-gradient: var(--module-gradient);
+    --primary-gradient: var(--module-accent);
 }
 
 body[class*="module-"].platform-ui .content-header h1 i,
 body[class*="module-"].platform-ui .text-gradient {
-    background: var(--module-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--module-accent);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: currentColor;
 }
 
 body[class*="module-"].platform-ui .table thead th::after {
-    background: linear-gradient(90deg, var(--module-accent), color-mix(in srgb, var(--module-accent) 50%, #fff));
+    background: var(--module-accent);
 }
 
 body[class*="module-"].platform-ui .progress-bar {
-    background: var(--module-gradient);
+    background: var(--module-accent);
 }
 
 /* Fusion landing cards */
@@ -104,7 +106,7 @@ body[class*="module-"].platform-ui .progress-bar {
     justify-content: center;
     font-size: 1.5rem;
     color: #fff;
-    background: var(--module-gradient, var(--primary-gradient));
+    background: var(--module-accent, var(--primary, #2563eb));
     margin-bottom: 1rem;
     box-shadow: 0 8px 20px var(--shell-glow-soft, rgba(99, 102, 241, 0.25));
 }

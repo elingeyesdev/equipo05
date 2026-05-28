@@ -1,5 +1,14 @@
 @extends('adminlte::page')
 
+@php
+    $rolesFiltro = collect();
+    foreach ($usuarios as $usuarioFiltro) {
+        $rol = $usuarioFiltro->primary_role_name ?? 'Sin rol';
+        $rolesFiltro->put($rol, $rol);
+    }
+    $rolesFiltro = $rolesFiltro->sortKeys();
+@endphp
+
 @section('template_title')
     Usuarios
 @endsection
@@ -32,8 +41,40 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        @include('inventario::partials.datatables-list-toolbar', [
+                            'filters' => array_values(array_filter([
+                                [
+                                    'id' => 'filtroEstado',
+                                    'label' => 'Estado',
+                                    'options' => [
+                                        'Activo' => 'Activo',
+                                        'Inactivo' => 'Inactivo',
+                                    ],
+                                ],
+                                $rolesFiltro->isNotEmpty() ? [
+                                    'id' => 'filtroRol',
+                                    'label' => 'Rol',
+                                    'options' => $rolesFiltro->all(),
+                                ] : null,
+                                [
+                                    'id' => 'filtroGenero',
+                                    'label' => 'Género',
+                                    'options' => [
+                                        'Masculino' => 'Masculino',
+                                        'Femenino' => 'Femenino',
+                                    ],
+                                ],
+                            ])),
+                            'sortOptions' => [
+                                'fecha_desc' => 'Fecha registro (más reciente)',
+                                'fecha_asc' => 'Fecha registro (más antigua)',
+                                'nombre_asc' => 'Nombres (A-Z)',
+                                'nombre_desc' => 'Nombres (Z-A)',
+                            ],
+                            'defaultSort' => 'fecha_desc',
+                        ])
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table id="usuariosTable" class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
                                         <th>No</th>
@@ -71,7 +112,8 @@
                                                 @endif
                                             </td>
                                             <td>{{ $usuario->primary_role_name ?? 'Sin rol' }}</td>
-                                            <td>{{ $usuario->fecha_registro ? \Carbon\Carbon::parse($usuario->fecha_registro)->format('d/m/Y') : '-' }}
+                                            <td data-order="{{ $usuario->fecha_registro ? \Carbon\Carbon::parse($usuario->fecha_registro)->format('Y-m-d') : '' }}">
+                                                {{ $usuario->fecha_registro ? \Carbon\Carbon::parse($usuario->fecha_registro)->format('d/m/Y') : '-' }}
                                             </td>
 
                                             <td>
@@ -113,34 +155,44 @@
 @endsection
 
 @section('js')
+    @include('inventario::partials.datatables-inventario-init')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('table').DataTable({
-                "paging": true,
-                "pageLength": 10,
-                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-                "language": {
-                    "search": "Buscar:",
-                    "zeroRecords": "No se encontraron resultados",
-                    "emptyTable": "No hay usuarios registrados",
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                }
+        $(function () {
+            const filters = [
+                {
+                    select: '#filtroEstado',
+                    column: 9,
+                    valueMap: {
+                        Activo: 'Activo',
+                        Inactivo: 'Inactivo',
+                    },
+                },
+                {
+                    select: '#filtroGenero',
+                    column: 5,
+                },
+            ];
+
+            @if ($rolesFiltro->isNotEmpty())
+            filters.push({
+                select: '#filtroRol',
+                column: 10,
+            });
+            @endif
+
+            initInventarioListTable({
+                selector: '#usuariosTable',
+                defaultOrder: [[11, 'desc']],
+                filters: filters,
+                sortSelect: '#ordenarPor',
+                sortMap: {
+                    fecha_desc: [11, 'desc'],
+                    fecha_asc: [11, 'asc'],
+                    nombre_asc: [1, 'asc'],
+                    nombre_desc: [1, 'desc'],
+                },
             });
         });
     </script>

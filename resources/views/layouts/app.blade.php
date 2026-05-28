@@ -52,14 +52,14 @@
         .saldo-value, .summary-value { font-size: 1.3rem; font-weight: 700; }
         
         /* Colores Tarjetas */
-        .total-original, .total-donado, .total-asignado, .total-campanias { background: linear-gradient(135deg, #e0f2fe, #eef2ff); }
-        .total-utilizado, .total-especie { background: linear-gradient(135deg, #fee2e2, #fef9c3); }
-        .total-disponible, .total-monetaria, .total-registros, .total-activas { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
-        .total-meta { background: linear-gradient(135deg, #fef3c7, #fee2e2); }
+        .total-original, .total-donado, .total-asignado, .total-campanias { background: #e0f2fe; }
+        .total-utilizado, .total-especie { background: #fee2e2; }
+        .total-disponible, .total-monetaria, .total-registros, .total-activas { background: #dcfce7; }
+        .total-meta { background: #fef3c7; }
 
         .campania-badge-activa { padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; }
         .role-chip { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; background-color: #e5e7eb; color: #374151; margin: 0 0.15rem 0.15rem 0; }
-        .user-avatar-circle { width: 40px; height: 40px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; background: linear-gradient(135deg, #6366f1, #3b82f6); color: white; }
+        .user-avatar-circle { width: 40px; height: 40px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; background: #6366f1; color: white; }
     </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed {{ trim($bodyModuleClass ?? 'platform-ui module-transparencia') }}">
@@ -574,7 +574,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('logistica.estadisticas') }}" class="nav-link {{ request()->routeIs('logistica.estadisticas') || request()->routeIs('logistica.dashboard') ? 'active' : '' }}">
-                                        <i class="fas fa-tachometer-alt nav-icon"></i><p>Estadisticas</p>
+                                        <i class="fas fa-tachometer-alt nav-icon"></i><p>Estadísticas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -695,7 +695,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('seguimiento.estadisticas') }}" class="nav-link {{ request()->routeIs('seguimiento.estadisticas') || request()->routeIs('seguimiento.dashboard') ? 'active' : '' }}">
-                                        <i class="fas fa-chart-bar nav-icon"></i><p>Estadisticas</p>
+                                        <i class="fas fa-chart-bar nav-icon"></i><p>Estadísticas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -892,11 +892,13 @@
         </aside>
 
         <div class="content-wrapper">
+            @hasSection('header')
             <div class="content-header">
                 <div class="container-fluid">
                     @yield('header')
                 </div>
             </div>
+            @endif
             <section class="content">
                 <div class="container-fluid">
                     @hasSection('content_header_title')

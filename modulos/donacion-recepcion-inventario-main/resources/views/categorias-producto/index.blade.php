@@ -32,8 +32,15 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        @include('inventario::partials.datatables-list-toolbar', [
+                            'sortOptions' => [
+                                'nombre_asc' => 'Nombre (A-Z)',
+                                'nombre_desc' => 'Nombre (Z-A)',
+                            ],
+                            'defaultSort' => 'nombre_asc',
+                        ])
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table id="categoriasTable" class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
                                         <th>No</th>
@@ -85,34 +92,19 @@
 @endsection
 
 @section('js')
+    @include('inventario::partials.datatables-inventario-init')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('table').DataTable({
-                "paging": true,
-                "pageLength": 10,
-                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-                "language": {
-                    "search": "Buscar:",
-                    "zeroRecords": "No se encontraron resultados",
-                    "emptyTable": "No hay categorías registradas",
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                }
+        $(function () {
+            initInventarioListTable({
+                selector: '#categoriasTable',
+                defaultOrder: [[1, 'asc']],
+                sortSelect: '#ordenarPor',
+                sortMap: {
+                    nombre_asc: [1, 'asc'],
+                    nombre_desc: [1, 'desc'],
+                },
             });
         });
     </script>

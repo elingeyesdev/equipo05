@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Fusion;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AccesoPublicoController extends Controller
@@ -127,13 +129,124 @@ class AccesoPublicoController extends Controller
 
     public function seguimientoInfo(): View
     {
-        return $this->renderPublicTable(
-            'Seguimiento de Voluntarios',
-            'Vista pública informativa de actividad voluntaria',
-            'seguimiento',
-            'usuario',
-            'id_usuario'
-        );
+        $conn = DB::connection('seguimiento');
+        $schema = Schema::connection('seguimiento');
+
+        $stats = [
+            'voluntarios_activos' => 0,
+            'capacitaciones' => 0,
+            'solicitudes_abiertas' => 0,
+            'solicitudes_atendidas' => 0,
+        ];
+
+        $voluntarios = collect();
+        $capacitaciones = collect();
+        $actividad = collect();
+        $solicitudesPorEstado = collect();
+
+        if ($schema->hasTable('usuario')) {
+            $voluntariosQuery = $conn->table('usuario')
+                ->select(['nombre', 'apellido', 'activo', 'created_at']);
+
+            if ($schema->hasColumn('usuario', 'administrador')) {
+                $voluntariosQuery->where('administrador', false);
+            }
+
+            if ($schema->hasColumn('usuario', 'activo')) {
+                $stats['voluntarios_activos'] = (clone $voluntariosQuery)->where('activo', true)->count();
+            } else {
+                $stats['voluntarios_activos'] = $voluntariosQuery->count();
+            }
+
+            $voluntarios = $voluntariosQuery
+                ->orderByDesc('created_at')
+                ->limit(24)
+                ->get()
+                ->map(fn ($v) => $this->mapVoluntarioPublico($v));
+        }
+
+        if ($schema->hasTable('capacitacion')) {
+            $capacitaciones = $conn->table('capacitacion')
+                ->when(
+                    $schema->hasColumn('capacitacion', 'nombre'),
+                    fn ($q) => $q->orderBy('nombre'),
+                    fn ($q) => $q->orderByDesc('id_capacitacion')
+                )
+                ->limit(12)
+                ->pluck('nombre')
+                ->filter()
+                ->values();
+
+            $stats['capacitaciones'] = $schema->hasTable('capacitacion')
+                ? $conn->table('capacitacion')->count()
+                : $capacitaciones->count();
+        }
+
+        if ($schema->hasTable('solicitudes_ayuda') && $schema->hasColumn('solicitudes_ayuda', 'estado')) {
+            $solicitudesPorEstado = $conn->table('solicitudes_ayuda')
+                ->select('estado', DB::raw('count(*) as total'))
+                ->groupBy('estado')
+                ->get()
+                ->mapWithKeys(fn ($row) => [
+                    $this->etiquetaEstadoSolicitud($row->estado) => (int) $row->total,
+                ]);
+
+            $stats['solicitudes_abiertas'] = (int) $conn->table('solicitudes_ayuda')
+                ->whereIn('estado', ['pendiente', 'en_proceso', 'en proceso', 'abierta'])
+                ->count();
+
+            $stats['solicitudes_atendidas'] = (int) $conn->table('solicitudes_ayuda')
+                ->whereIn('estado', ['atendida', 'cerrada', 'completada'])
+                ->count();
+        }
+
+        if ($schema->hasTable('chat_mensajes') && $schema->hasColumn('chat_mensajes', 'mensaje')) {
+            $actividad = $conn->table('chat_mensajes')
+                ->when($schema->hasColumn('chat_mensajes', 'created_at'), fn ($q) => $q->orderByDesc('created_at'))
+                ->limit(5)
+                ->get(['mensaje', 'created_at'])
+                ->map(fn ($m) => (object) [
+                    'texto' => Str::limit(trim((string) $m->mensaje), 160),
+                    'fecha' => $m->created_at
+                        ? Carbon::parse($m->created_at)->locale('es')->diffForHumans()
+                        : null,
+                ])
+                ->filter(fn ($m) => $m->texto !== '');
+        }
+
+        return view('fusion.modulos.publico-seguimiento-voluntarios', compact(
+            'stats',
+            'voluntarios',
+            'capacitaciones',
+            'actividad',
+            'solicitudesPorEstado'
+        ));
+    }
+
+    private function mapVoluntarioPublico(object $row): object
+    {
+        $nombre = trim((string) ($row->nombre ?? ''));
+        $apellido = trim((string) ($row->apellido ?? ''));
+        $inicialApellido = $apellido !== '' ? mb_strtoupper(mb_substr($apellido, 0, 1)).'.' : '';
+
+        return (object) [
+            'nombre' => trim($nombre.' '.$inicialApellido) ?: 'Voluntario',
+            'inicial' => mb_strtoupper(mb_substr($nombre ?: 'V', 0, 1)),
+            'activo' => (bool) ($row->activo ?? true),
+            'desde' => ! empty($row->created_at)
+                ? Carbon::parse($row->created_at)->locale('es')->translatedFormat('F Y')
+                : null,
+        ];
+    }
+
+    private function etiquetaEstadoSolicitud(?string $estado): string
+    {
+        return match (Str::lower((string) $estado)) {
+            'pendiente' => 'Pendientes',
+            'en_proceso', 'en proceso' => 'En proceso',
+            'atendida', 'cerrada', 'completada' => 'Atendidas',
+            default => Str::title(str_replace('_', ' ', (string) $estado)),
+        };
     }
 
     private function renderPublicTable(

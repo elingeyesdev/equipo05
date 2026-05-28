@@ -135,8 +135,8 @@
             </span>
         </div>
         <div class="form-group mb-2 mb20">
-            <label for="telefono" class="form-label">{{ __('Telefono') }}</label>
-            <input type="text" name="telefono" class="form-control @error('telefono') is-invalid @enderror" value="{{ old('telefono', $usuario?->telefono) }}" id="telefono" placeholder="Telefono" maxlength="20">
+            <label for="telefono" class="form-label">{{ __('Teléfono') }}</label>
+            <input type="text" name="telefono" class="form-control @error('telefono') is-invalid @enderror" value="{{ old('telefono', $usuario?->telefono) }}" id="telefono" placeholder="Teléfono" maxlength="20">
             @error('telefono')
                 <span class="invalid-feedback d-block" role="alert">
                     <strong>{{ $message }}</strong>

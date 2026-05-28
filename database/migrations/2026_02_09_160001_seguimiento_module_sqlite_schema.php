@@ -12,6 +12,10 @@ return new class extends Migration
     {
         $c = $this->c;
 
+        if (Schema::connection($c)->hasTable('usuario')) {
+            return;
+        }
+
         Schema::connection($c)->create('usuario', function (Blueprint $table) {
             $table->bigIncrements('id_usuario');
             $table->string('nombre', 150)->nullable();

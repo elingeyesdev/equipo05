@@ -11,6 +11,7 @@ use App\Models\Ext\ExtEspacio;
 use App\Models\Ext\ExtProducto;
 use App\Models\TrazabilidadItem;
 use App\Support\UnifiedPostgres;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -31,6 +32,9 @@ use Modules\Inventario\Models\UbicacionesDonacione;
  */
 class UnifiedDataSyncService
 {
+    /** Evita repetir sync completo al refrescar Trazabilidad (F5). Los observers no usan esto. */
+    private const VIEW_DEBOUNCE_SECONDS = 10;
+
     public function inventarioDisponible(): bool
     {
         try {
@@ -60,6 +64,28 @@ class UnifiedDataSyncService
         });
 
         return $stats;
+    }
+
+    /**
+     * Respaldo al abrir reportes de trazabilidad (máx. 1 vez cada 10 s por sesión de navegación).
+     * Los cambios en inventario ya se reflejan al instante vía InventarioTransparenciaObserver.
+     */
+    public function syncForTrazabilidadViews(): void
+    {
+        if (! $this->inventarioDisponible()) {
+            return;
+        }
+
+        $cacheKey = 'unified_sync.trazabilidad_views';
+
+        if (Cache::has($cacheKey)) {
+            return;
+        }
+
+        $this->syncAlmacenesFromInventario();
+        $this->syncTrazabilidadItemsFromInventario(ensureDependencies: false);
+
+        Cache::put($cacheKey, true, self::VIEW_DEBOUNCE_SECONDS);
     }
 
     public function syncAlmacenesFromInventario(): int
@@ -208,15 +234,17 @@ class UnifiedDataSyncService
         }
     }
 
-    public function syncTrazabilidadItemsFromInventario(): int
+    public function syncTrazabilidadItemsFromInventario(bool $ensureDependencies = true): int
     {
         if (! $this->inventarioDisponible()) {
             return 0;
         }
 
-        $this->syncAlmacenesFromInventario();
-        $this->syncCategoriasProductosFromInventario();
-        $this->syncCampaniasFromInventario();
+        if ($ensureDependencies) {
+            $this->syncAlmacenesFromInventario();
+            $this->syncCategoriasProductosFromInventario();
+            $this->syncCampaniasFromInventario();
+        }
 
         $count = 0;
 

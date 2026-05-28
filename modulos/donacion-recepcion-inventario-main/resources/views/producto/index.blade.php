@@ -48,13 +48,38 @@
         <h3 class="card-title">Listado de Productos</h3>
     </div>
     <div class="card-body">
+        @php
+            $categoriasFiltro = collect();
+            foreach ($productos as $productoFiltro) {
+                $nombreCat = $productoFiltro->categoriasProducto?->nombre;
+                if ($nombreCat) {
+                    $categoriasFiltro->put($nombreCat, $nombreCat);
+                }
+            }
+            $categoriasFiltro = $categoriasFiltro->sortKeys();
+        @endphp
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => $categoriasFiltro->isNotEmpty() ? [[
+                'id' => 'filtroCategoria',
+                'label' => 'Filtrar por categoría',
+                'options' => $categoriasFiltro->all(),
+            ]] : [],
+            'sortOptions' => [
+                'nombre_asc' => 'Nombre (A-Z)',
+                'nombre_desc' => 'Nombre (Z-A)',
+                'categoria_asc' => 'Categoría (A-Z)',
+                'categoria_desc' => 'Categoría (Z-A)',
+            ],
+            'defaultSort' => 'nombre_asc',
+        ])
+
         <table id="productosTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
                     <th width="60px">#</th>
-                    <th>Categor�a</th>
+                    <th>Categora</th>
                     <th>Nombre</th>
-                    <th>Descripci�n</th>
+                    <th>Descripcin</th>
                     <th>Unidad de Medida</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>
@@ -69,7 +94,7 @@
                                     {{ $producto->categoriasProducto->nombre }}
                                 </span>
                             @else
-                                <span class="badge badge-secondary">Sin categor�a</span>
+                                <span class="badge badge-secondary">Sin categora</span>
                             @endif
                         </td>
                         <td><strong>{{ $producto->nombre }}</strong></td>
@@ -91,7 +116,7 @@
                                 </a>
                                 <form action="{{ route('inventario.producto.destroy', $producto->id_producto) }}" method="POST"
                                     style="display: inline;"
-                                    onsubmit="return confirm('�Est� seguro de eliminar este producto?');">
+                                    onsubmit="return confirm('¿Está seguro de eliminar este producto?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -106,7 +131,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre p�ginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
     </div>
 </div>
 @stop
@@ -126,34 +151,26 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#productosTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay datos disponibles en la tabla",
-                "lengthMenu": "Mostrar _MENU_ registros por p�gina",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "�ltimo",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+    $(function () {
+        initInventarioListTable({
+            selector: '#productosTable',
+            defaultOrder: [[2, 'asc']],
+            filters: [
+                @if ($categoriasFiltro->isNotEmpty())
+                { select: '#filtroCategoria', column: 1 },
+                @endif
+            ],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                nombre_asc: [2, 'asc'],
+                nombre_desc: [2, 'desc'],
+                categoria_asc: [1, 'asc'],
+                categoria_desc: [1, 'desc'],
+            },
         });
     });
 </script>

@@ -10,8 +10,7 @@ class AlmacenesEstructuraController extends Controller
 {
     public function index(UnifiedDataSyncService $sync)
     {
-        $sync->syncAlmacenesFromInventario();
-        $sync->syncTrazabilidadItemsFromInventario();
+        $sync->syncForTrazabilidadViews();
 
         // Trae almacenes -> estantes -> espacios -> Y AHORA LOS ITEMS DENTRO
         $almacenes = ExtAlmacen::with(['estantes.espacios.items']) 

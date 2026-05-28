@@ -15,7 +15,7 @@
 
 /* Header degradado */
 .almx-almacen__head{
-  background: linear-gradient(90deg, #4f46e5, #6366f1);
+  background: #4f46e5;
   color:#fff;
   padding: 16px 18px;
 }

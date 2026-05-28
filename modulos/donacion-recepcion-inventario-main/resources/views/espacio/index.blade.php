@@ -3,16 +3,11 @@
 @section('title', 'Espacios')
 
 @section('content_header')
-<div class="row mb-2">
-    <div class="col-sm-6">
-        <h1>Gesti�n de Espacios</h1>
-    </div>
-    <div class="col-sm-6">
-        <a href="{{ route('inventario.espacio.create') }}" class="btn btn-primary float-right">
-            Nuevo Espacio
-        </a>
-    </div>
-</div>
+@include('inventario::partials.page-toolbar', [
+    'title' => 'Gestión de Espacios',
+    'createRoute' => route('inventario.espacio.create'),
+    'createLabel' => 'Nuevo Espacio',
+])
 @stop
 
 @section('content')
@@ -48,12 +43,30 @@
         <h3 class="card-title">Listado de Espacios</h3>
     </div>
     <div class="card-body">
+        @include('inventario::partials.datatables-list-toolbar', [
+            'filters' => [[
+                'id' => 'filtroEstadoEspacio',
+                'label' => 'Filtrar por estado',
+                'options' => [
+                    'disponible' => 'Disponible',
+                    'lleno' => 'Lleno',
+                ],
+            ]],
+            'sortOptions' => [
+                'codigo_asc' => 'Código espacio (A-Z)',
+                'codigo_desc' => 'Código espacio (Z-A)',
+                'estante_asc' => 'Estante (A-Z)',
+                'estante_desc' => 'Estante (Z-A)',
+            ],
+            'defaultSort' => 'codigo_asc',
+        ])
+
         <table id="espaciosTable" class="table table-bordered table-striped table-hover">
             <thead class="thead-light">
                 <tr>
                     <th width="60px">#</th>
                     <th>Estante</th>
-                    <th>C�digo Espacio</th>
+                    <th>Cdigo Espacio</th>
                     <th class="text-center">Estado</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>
@@ -94,7 +107,7 @@
                                 </a>
                                 <form action="{{ route('inventario.espacio.destroy', $espacio->id_espacio) }}" method="POST"
                                     style="display: inline;"
-                                    onsubmit="return confirm('�Est� seguro de eliminar este espacio?');">
+                                    onsubmit="return confirm('¿Está seguro de eliminar este espacio?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
@@ -109,7 +122,7 @@
         </table>
     </div>
     <div class="card-footer">
-        <small class="text-muted">Usa los controles de la tabla para navegar entre p�ginas</small>
+        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
     </div>
 </div>
 @stop
@@ -129,34 +142,29 @@
 @stop
 
 @section('js')
+@include('inventario::partials.datatables-inventario-init')
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#espaciosTable').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "No hay datos disponibles en la tabla",
-                "lengthMenu": "Mostrar _MENU_ registros por p�gina",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "�ltimo",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+    $(function () {
+        initInventarioListTable({
+            selector: '#espaciosTable',
+            defaultOrder: [[2, 'asc']],
+            filters: [{
+                select: '#filtroEstadoEspacio',
+                column: 3,
+                valueMap: {
+                    disponible: 'DISPONIBLE',
+                    lleno: 'LLENO',
+                },
+            }],
+            sortSelect: '#ordenarPor',
+            sortMap: {
+                codigo_asc: [2, 'asc'],
+                codigo_desc: [2, 'desc'],
+                estante_asc: [1, 'asc'],
+                estante_desc: [1, 'desc'],
+            },
         });
     });
 </script>
