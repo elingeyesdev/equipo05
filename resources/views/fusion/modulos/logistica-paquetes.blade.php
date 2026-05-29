@@ -24,7 +24,12 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span style="font-size: larger; font-weight: bolder;">Paquetes</span>
-            <span class="badge badge-info">{{ $paquetes->count() }} registros</span>
+            <div class="d-flex align-items-center" style="gap: .5rem;">
+                <span class="badge badge-info">{{ $paquetes->count() }} registros</span>
+                <a href="{{ route('logistica.crud.create', ['seccion' => 'paquete']) }}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-plus"></i> Crear nuevo paquete
+                </a>
+            </div>
         </div>
         <div class="px-4 pt-3">
             <div class="btn-group btn-group-sm" role="group">
@@ -56,6 +61,18 @@
                                 <p class="mb-1"><strong>Ubicación:</strong> {{ $paquete->ubicacion_actual ?? '-' }}</p>
                                 <p class="mb-1"><strong>Creación:</strong> {{ $paquete->fecha_creacion ?? '-' }}</p>
                                 <p class="mb-0"><strong>Entrega:</strong> {{ $paquete->fecha_entrega ?? '-' }}</p>
+                            </div>
+                            <div class="card-footer bg-light d-flex justify-content-end" style="gap: .5rem;">
+                                <a href="{{ route('logistica.crud.edit', ['seccion' => 'paquete', 'id' => $paquete->id_paquete]) }}" class="btn btn-warning btn-xs" title="Editar">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form action="{{ route('logistica.crud.destroy', ['seccion' => 'paquete', 'id' => $paquete->id_paquete]) }}" method="POST" onsubmit="return confirm('¿Eliminar este paquete?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-xs" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

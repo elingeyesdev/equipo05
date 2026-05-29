@@ -65,6 +65,18 @@
                                 <p class="mb-1"><strong>Afectados:</strong> {{ $solicitud->cantidad_personas ?? '-' }}</p>
                                 <p class="mb-0"><strong>Fecha necesidad:</strong> {{ $solicitud->fecha_necesidad ?? '-' }}</p>
                             </div>
+                            <div class="card-footer bg-light d-flex justify-content-end" style="gap: .5rem;">
+                                <a href="{{ route('logistica.crud.edit', ['seccion' => 'solicitud', 'id' => $solicitud->id_solicitud]) }}" class="btn btn-warning btn-xs" title="Editar">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form action="{{ route('logistica.crud.destroy', ['seccion' => 'solicitud', 'id' => $solicitud->id_solicitud]) }}" method="POST" onsubmit="return confirm('¿Eliminar esta solicitud?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-xs" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 @empty

@@ -50,8 +50,11 @@
     <div class="row">
         <div class="col-12">
             <div class="card logistica-card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title mb-0">Logistica Transportacion Donaciones</h3>
+                    <a href="{{ route('logistica.crud.create', ['seccion' => 'solicitud']) }}" class="btn btn-primary btn-sm ml-auto">
+                        <i class="fa fa-plus"></i> Crear nueva solicitud
+                    </a>
                 </div>
                 <div class="card-body">
                     <p class="mb-3">Resumen operativo del modulo integrado desde <strong>@web</strong>.</p>
@@ -63,6 +66,7 @@
                                     <th>Estado</th>
                                     <th>Tipo Emergencia</th>
                                     <th>Fecha Necesidad</th>
+                                    <th style="width: 100px;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -72,10 +76,24 @@
                                     <td>{{ $row->estado ?? '-' }}</td>
                                     <td>{{ $row->tipo_emergencia ?? '-' }}</td>
                                     <td>{{ $row->fecha_necesidad ?? '-' }}</td>
+                                    <td>
+                                        <div class="d-flex" style="gap:.3rem;">
+                                            <a href="{{ route('logistica.crud.edit', ['seccion' => 'solicitud', 'id' => $row->id_solicitud]) }}" class="btn btn-warning btn-xs">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form action="{{ route('logistica.crud.destroy', ['seccion' => 'solicitud', 'id' => $row->id_solicitud]) }}" method="POST" onsubmit="return confirm('¿Eliminar?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-xs">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-muted">No hay solicitudes registradas todavia.</td>
+                                    <td colspan="5" class="text-muted text-center">No hay solicitudes registradas todavia.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

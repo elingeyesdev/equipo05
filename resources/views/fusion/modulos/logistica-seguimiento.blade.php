@@ -23,7 +23,12 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span style="font-size: larger; font-weight: bolder;">Historial Seguimiento de Paquetes</span>
-            <span class="badge badge-info">{{ $seguimientos->count() }} registros</span>
+            <div class="d-flex align-items-center" style="gap: .5rem;">
+                <span class="badge badge-info">{{ $seguimientos->count() }} registros</span>
+                <a href="{{ route('logistica.crud.create', ['seccion' => 'seguimiento']) }}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-plus"></i> Registrar avance
+                </a>
+            </div>
         </div>
         <div class="card-body bg-white">
             <div class="row seguimiento-grid">
@@ -44,6 +49,18 @@
                                 <p class="mb-1"><strong>Conductor:</strong> {{ $item->conductor_nombre ?? '-' }}</p>
                                 <p class="mb-1"><strong>CI conductor:</strong> {{ $item->conductor_ci ?? '-' }}</p>
                                 <p class="mb-0"><strong>Placa:</strong> {{ $item->vehiculo_placa ?? '-' }}</p>
+                            </div>
+                            <div class="card-footer bg-light d-flex justify-content-end" style="gap: .5rem;">
+                                <a href="{{ route('logistica.crud.edit', ['seccion' => 'seguimiento', 'id' => $item->id_historial]) }}" class="btn btn-warning btn-xs" title="Editar">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form action="{{ route('logistica.crud.destroy', ['seccion' => 'seguimiento', 'id' => $item->id_historial]) }}" method="POST" onsubmit="return confirm('¿Eliminar este registro de seguimiento?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-xs" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
