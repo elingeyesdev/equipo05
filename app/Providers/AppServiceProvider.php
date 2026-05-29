@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // AdminLTE/Bootstrap: evita la vista Tailwind por defecto (SVG gigantes sin estilos Tailwind).
+        Paginator::defaultView('pagination::bootstrap-4');
+        Paginator::defaultSimpleView('pagination::simple-bootstrap-4');
+
         $this->registerInventarioTransparenciaSync();
 
         if (\App\Support\UnifiedPostgres::enabled() && config('cache.default') === 'database') {

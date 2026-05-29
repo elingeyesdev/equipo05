@@ -77,8 +77,12 @@
                             </table>
                         </div>
                     </div>
+                    @if ($animals->hasPages())
+                        <div class="card-footer d-flex justify-content-center">
+                            {!! $animals->withQueryString()->links('pagination::bootstrap-4') !!}
+                        </div>
+                    @endif
                 </div>
-                {!! $animals->withQueryString()->links() !!}
             </div>
         </div>
     </div>
