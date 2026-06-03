@@ -15,6 +15,7 @@ use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
 use Illuminate\Http\JsonResponse;
 use Modules\Rescate\Models\Report;
 use Modules\Rescate\Models\Person;
+use Modules\Rescate\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Modules\Rescate\Services\User\UserTrackingService;
 
@@ -57,15 +58,8 @@ class TransferController extends Controller
         $transfers = Transfer::with(['person','center'])->paginate();
         $centers = Center::orderBy('nombre')->get(['id','nombre','latitud','longitud']);
         
-        // Filtrar personas: excluir a los que son solo ciudadanos
-        // Obtener IDs de usuarios que son solo ciudadanos
-        $onlyCitizenUserIds = \Modules\Rescate\Models\User::whereHas('roles', function ($query) {
-            $query->where('name', 'ciudadano');
-        })->whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
-        })->pluck('id');
-        
-        // Obtener personas que NO tienen usuarios solo ciudadanos
+        $onlyCitizenUserIds = User::onlyCitizenUserIds();
+
         $people = Person::where(function ($query) use ($onlyCitizenUserIds) {
             $query->whereNotIn('usuario_id', $onlyCitizenUserIds)
                   ->orWhereNull('usuario_id');
@@ -147,16 +141,9 @@ class TransferController extends Controller
         $centers = Center::orderBy('nombre')->get(['id','nombre','latitud','longitud']);
         $animals = Animal::orderByDesc('id')->get(['id','nombre']);
         
-        // Filtrar personas: excluir a los que son solo ciudadanos
-        // Obtener IDs de usuarios que son solo ciudadanos
-        $onlyCitizenUserIds = \Modules\Rescate\Models\User::whereHas('roles', function ($query) {
-            $query->where('name', 'ciudadano');
-        })->whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
-        })->pluck('id');
-        
-        // Obtener personas que NO tienen usuarios solo ciudadanos
-        $people = \Modules\Rescate\Models\Person::where(function ($query) use ($onlyCitizenUserIds) {
+        $onlyCitizenUserIds = User::onlyCitizenUserIds();
+
+        $people = Person::where(function ($query) use ($onlyCitizenUserIds) {
             $query->whereNotIn('usuario_id', $onlyCitizenUserIds)
                   ->orWhereNull('usuario_id');
         })->orderBy('nombre')
@@ -253,16 +240,9 @@ class TransferController extends Controller
         $centers = Center::orderBy('nombre')->get(['id','nombre']);
         $animals = Animal::orderByDesc('id')->get(['id','nombre']);
         
-        // Filtrar personas: excluir a los que son solo ciudadanos
-        // Obtener IDs de usuarios que son solo ciudadanos
-        $onlyCitizenUserIds = \Modules\Rescate\Models\User::whereHas('roles', function ($query) {
-            $query->where('name', 'ciudadano');
-        })->whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
-        })->pluck('id');
-        
-        // Obtener personas que NO tienen usuarios solo ciudadanos
-        $people = \Modules\Rescate\Models\Person::where(function ($query) use ($onlyCitizenUserIds) {
+        $onlyCitizenUserIds = User::onlyCitizenUserIds();
+
+        $people = Person::where(function ($query) use ($onlyCitizenUserIds) {
             $query->whereNotIn('usuario_id', $onlyCitizenUserIds)
                   ->orWhereNull('usuario_id');
         })->orderBy('nombre')

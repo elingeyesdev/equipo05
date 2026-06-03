@@ -90,9 +90,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 200);
             }
 
-            $redirectPath = $request->is('rescate/modulo*')
-                ? '/rescate/modulo/home'
-                : '/incendios/modulo';
+            $segments = $request->segments();
+            $redirectPath = count($segments) >= 3
+                ? '/'.implode('/', array_slice($segments, 0, 3))
+                : ($request->is('rescate/modulo*') ? '/rescate/modulo/home' : '/incendios/modulo');
 
             return redirect($redirectPath)->with('info', 'Información actualizada correctamente.');
         };

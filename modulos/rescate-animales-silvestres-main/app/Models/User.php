@@ -39,6 +39,23 @@ class User extends Authenticatable
         return UnifiedPostgres::enabled() ? 'usuarioid' : 'id';
     }
 
+    /**
+     * IDs de usuarios que solo tienen rol ciudadano (excluidos de listas operativas).
+     *
+     * @return \Illuminate\Support\Collection<int, int>
+     */
+    public static function onlyCitizenUserIds(): \Illuminate\Support\Collection
+    {
+        $key = self::relationKey();
+
+        return static::query()
+            ->whereHas('roles', fn ($query) => $query->where('name', 'ciudadano'))
+            ->whereDoesntHave('roles', fn ($query) => $query->whereIn('name', [
+                'admin', 'encargado', 'rescatista', 'veterinario', 'cuidador',
+            ]))
+            ->pluck($key);
+    }
+
     protected function casts(): array
     {
         if (UnifiedPostgres::enabled()) {
