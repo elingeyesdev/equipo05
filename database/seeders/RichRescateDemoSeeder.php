@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Support\DemoImageDownloader;
+use App\Support\RescateAnimalNameCleaner;
 use App\Support\UnifiedPostgres;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -67,6 +68,10 @@ class RichRescateDemoSeeder extends Seeder
 
             $this->seedBulkFauna();
             $this->downloadRescateImages();
+            $cleaned = RescateAnimalNameCleaner::cleanAll();
+            if ($cleaned > 0) {
+                $this->command?->info("Rescate: {$cleaned} nombres de animales sin sufijo demo.");
+            }
         } finally {
             config(['database.default' => $previous, 'cache.default' => $cacheDriver]);
         }
@@ -130,10 +135,9 @@ class RichRescateDemoSeeder extends Seeder
                 ]
             );
 
-            $animalName = $especieNombre.' demo '.($i + 1);
             $animal = Animal::firstOrCreate(
-                ['nombre' => $animalName, 'reporte_id' => $report->id],
-                ['sexo' => $sexo, 'descripcion' => 'Ejemplar demo para presentación docente.']
+                ['nombre' => $especieNombre, 'reporte_id' => $report->id],
+                ['sexo' => $sexo, 'descripcion' => 'Ejemplar rescatado para seguimiento clínico.']
             );
 
             AnimalFile::firstOrCreate(

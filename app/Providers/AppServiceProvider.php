@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
             \Modules\Rescate\Console\Commands\ImportNasaFirms::class,
             \Modules\Rescate\Console\Commands\CheckFocosCalor::class,
             \Modules\Rescate\Console\Commands\TestEmail::class,
+            \App\Console\Commands\CleanRescateAnimalNames::class,
         ]);
     }
 
