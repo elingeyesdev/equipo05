@@ -87,22 +87,27 @@
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline mb-1">
-                                        <input class="form-check-input" type="checkbox" id="toggleFocosCalor" checked style="margin-top: 0.25rem;">
+                                        <input class="form-check-input" type="checkbox" id="toggleFocosCalor" style="margin-top: 0.25rem;">
                                         <label class="form-check-label" for="toggleFocosCalor" style="font-size: 11px;">
-                                            <i class="fas fa-satellite"></i> {{ __('Focos') }}
+                                            <i class="fas fa-satellite"></i> {{ __('Satélite (FIRMS)') }}
                                         </label>
                                     </div>
-                                    @if(!empty($externalFireReportsFormatted) && count($externalFireReportsFormatted) > 0)
-                                    <div class="form-check form-check-inline mb-1" id="toggleExternalFireReportsContainer">
+                                    @if(!empty($operationalFiresFormatted) && count($operationalFiresFormatted) > 0)
+                                    <div class="form-check form-check-inline mb-1" id="toggleOperationalFiresContainer">
                                         <input class="form-check-input" type="checkbox" id="toggleExternalFireReports" checked style="margin-top: 0.25rem;">
                                         <label class="form-check-label" for="toggleExternalFireReports" style="font-size: 11px;">
-                                            <i class="fas fa-fire-alt"></i> {{ __('Reportes Externos') }}
+                                            <i class="fas fa-fire-alt"></i>
+                                            @if(($firesMapSource ?? '') === 'incendios')
+                                                {{ __('Incendios (módulo unificado)') }}
+                                            @else
+                                                {{ __('Incendios (API externa)') }}
+                                            @endif
                                         </label>
                                     </div>
                                     @endif
                                 </div>
                                 
-                                @if(!empty($externalFireReportsFormatted) && count($externalFireReportsFormatted) > 0)
+                                @if(!empty($operationalFiresFormatted) && count($operationalFiresFormatted) > 0)
                                 <!-- Botón para cargar predicciones -->
                                 <div class="mt-2" id="predictionsButtonContainer">
                                     <button type="button" id="btnLoadPredictions" class="btn btn-warning btn-sm btn-block" style="font-size: 11px;">
@@ -228,10 +233,17 @@
                                 </div>
                                 <div style="margin-bottom: 4px;">
                                     <span style="display: inline-block; width: 10px; height: 10px; background-color: #ff0000; border: 1px solid #fff; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.3); vertical-align: middle;"></span>
-                                    <span style="margin-left: 4px;">{{ __('Foco de Calor') }}</span>
+                                    <span style="margin-left: 4px;">{{ __('Detección satélite (FIRMS)') }}</span>
                                 </div>
+                                @if(!empty($operationalFiresFormatted) && count($operationalFiresFormatted) > 0)
                                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #dee2e6;">
-                                    <strong>{{ __('Reportes Externos') }}:</strong>
+                                    <strong>
+                                        @if(($firesMapSource ?? '') === 'incendios')
+                                            {{ __('Incendios (módulo unificado):') }}
+                                        @else
+                                            {{ __('Incendios:') }}
+                                        @endif
+                                    </strong>
                                     <div style="margin-top: 4px;">
                                         <span style="display: inline-block; width: 12px; height: 12px; background-color: #dc3545; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); vertical-align: middle;"></span>
                                         <span style="margin-left: 4px; font-size: 10px;">{{ __('Fuera de control') }}</span>
@@ -249,6 +261,7 @@
                                         <span style="margin-left: 4px; font-size: 10px;">{{ __('Controlado') }}</span>
                                     </div>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -276,8 +289,9 @@
         let showReports = true;
         let showReleases = true;
         let showPredictions = true;
-        let showFocosCalor = true;
+        let showFocosCalor = false;
         let showExternalFireReports = true;
+        let firesMapSource = @json($firesMapSource ?? 'none');
         let selectedSpeciesId = null;
         let reportStatusFilter = 'all'; // 'all', 'with_file', 'without_file'
         let weatherRequestInProgress = false; // Para evitar múltiples peticiones simultáneas
@@ -285,7 +299,7 @@
         const reportsData = @json($reports ?? []);
         const releasesData = @json($releases ?? []);
         const focosCalorData = @json($focosCalorFormatted ?? []);
-        const externalFireReportsData = @json($externalFireReportsFormatted ?? []);
+        const externalFireReportsData = @json($operationalFiresFormatted ?? []);
 
         // Área de exclusión de predicciones (ciudad)
         // Rectángulo definido por dos puntos diagonales
@@ -312,7 +326,7 @@
         // Ocultar controles de reportes externos y predicciones si no hay datos
         (function() {
             if (!externalFireReportsData || externalFireReportsData.length === 0) {
-                const toggleContainer = document.getElementById('toggleExternalFireReportsContainer');
+                const toggleContainer = document.getElementById('toggleOperationalFiresContainer');
                 const predictionsButtonContainer = document.getElementById('predictionsButtonContainer');
                 
                 if (toggleContainer) {
@@ -322,9 +336,9 @@
                     predictionsButtonContainer.style.display = 'none';
                 }
                 
-                console.log('[Mapa] No hay reportes externos disponibles, ocultando controles relacionados');
+                console.log('[Mapa] No hay focos de incendio operativos, ocultando controles relacionados');
             } else {
-                console.log(`[Mapa] ${externalFireReportsData.length} reportes externos disponibles`);
+                console.log(`[Mapa] ${externalFireReportsData.length} focos de incendio (${firesMapSource})`);
             }
         })();
 
@@ -733,11 +747,11 @@
             if (!map) return;
             
             if (!externalFireReportsData || externalFireReportsData.length === 0) {
-                console.log('[Reportes Externos] No hay datos de reportes externos para mostrar');
+                console.log('[Incendios] No hay focos operativos para mostrar');
                 return;
             }
             
-            console.log(`[Reportes Externos] Agregando ${externalFireReportsData.length} reportes externos al mapa`);
+            console.log(`[Incendios] Agregando ${externalFireReportsData.length} focos al mapa`);
             
             externalFireReportsData.forEach(function(report) {
                 if (!report.lat || !report.lng) return;
@@ -830,10 +844,15 @@
                 const fechaHora = report.fecha_hora ? new Date(report.fecha_hora).toLocaleString('es-BO') : 'N/A';
                 const creado = report.creado ? new Date(report.creado).toLocaleString('es-BO') : 'N/A';
                 
+                const isUnifiedIncendios = report.source === 'incendios';
+                const popupTitle = isUnifiedIncendios
+                    ? '{{ __('Foco de incendio (módulo unificado)') }}'
+                    : '{{ __('Reporte de incendio externo') }}';
+
                 const popupContent = `
                     <div style="min-width: 250px;">
                         <h6 style="margin: 0 0 8px 0; font-weight: bold; color: ${report.color || '#6c757d'};">
-                            <i class="fas ${iconClass}"></i> {{ __('Reporte de Incendio Externo') }}
+                            <i class="fas ${iconClass}"></i> ${popupTitle}
                             ${hasLocalReports ? '<span style="color: #dc3545; margin-left: 8px;"><i class="fas fa-exclamation-triangle"></i> {{ __('Animales en Peligro') }}</span>' : ''}
                         </h6>
                         ${isSimulated ? `
@@ -869,6 +888,13 @@
                         <div style="font-size: 11px; margin-top: 8px; padding: 6px; background-color: #f8f9fa; border-radius: 4px;">
                             <strong>{{ __('Comentario') }}:</strong><br>
                             ${report.comentario_adicional}
+                        </div>
+                        ` : ''}
+                        ${report.incendios_url ? `
+                        <div style="margin-top: 8px;">
+                            <a href="${report.incendios_url}" class="btn btn-sm btn-outline-danger" target="_blank" rel="noopener">
+                                <i class="fas fa-external-link-alt"></i> {{ __('Ver en módulo Incendios') }}
+                            </a>
                         </div>
                         ` : ''}
                         <div style="font-size: 10px; color: #6c757d; margin-top: 8px;">

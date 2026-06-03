@@ -18,6 +18,7 @@ use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
 use Modules\Rescate\Services\Report\ReportUrgencyService;
 use Modules\Rescate\Services\Fire\FocosCalorService;
 use Modules\Rescate\Services\Fire\ExternalFireReportsService;
+use Modules\Rescate\Services\Fire\MapaCampoDataService;
 use Modules\Rescate\Models\AnimalCondition;
 use Modules\Rescate\Models\IncidentType;
 use Modules\Rescate\Models\AnimalHistory;
@@ -35,7 +36,8 @@ class ReportController extends Controller
         private readonly AnimalTransferTransactionalService $transferService,
         private readonly ReportUrgencyService $urgencyService,
         private readonly FocosCalorService $focosCalorService,
-        private readonly ExternalFireReportsService $externalFireReportsService
+        private readonly ExternalFireReportsService $externalFireReportsService,
+        private readonly MapaCampoDataService $mapaCampoDataService
     ) {
         // Permitir create y store sin autenticación (para usuarios anónimos desde landing)
         $this->middleware('auth')->except(['create', 'store']);
@@ -370,127 +372,32 @@ class ReportController extends Controller
      */
     public function mapaCampo(): View
     {
-        // Obtener solo reportes/hallazgos aprobados con información de si tienen hoja de vida
-        $query = Report::with(['person', 'condicionInicial', 'incidentType'])
-            ->where('aprobado', 1)
-            ->whereNotNull('latitud')
-            ->whereNotNull('longitud')
-            ->orderByDesc('id');
+        $data = $this->mapaCampoDataService->build();
 
-        $reports = $query->get()->map(function ($report) {
-            // Verificar si el reporte tiene animales con hojas de vida (ya rescatados)
-            $tieneHojaVida = false;
-            
-            // Verificar de forma más eficiente usando una consulta directa
-            $hasAnimalFiles = AnimalFile::whereHas('animal', function ($q) use ($report) {
-                $q->where('reporte_id', $report->id);
-            })->exists();
-            
-            $tieneHojaVida = $hasAnimalFiles;
-            
-            return [
-                'id' => $report->id,
-                'latitud' => $report->latitud,
-                'longitud' => $report->longitud,
-                'urgencia' => $report->urgencia,
-                'incendio_id' => $report->incendio_id,
-                'direccion' => $report->direccion,
-                'tiene_hoja_vida' => $tieneHojaVida,
-                'condicion_inicial' => $report->condicionInicial ? [
-                    'nombre' => $report->condicionInicial->nombre,
-                ] : null,
-                'incident_type' => $report->incidentType ? [
-                    'nombre' => $report->incidentType->nombre,
-                ] : null,
-            ];
-        });
-
-        // SIEMPRE agregar reporte simulado de incendio para demostración
-        // Este reporte es independiente y siempre se muestra con su predicción
-        // Es un módulo separado que coexiste con los datos reales
-        $reports->push([
-            'id' => 'simulado',
-            'latitud' => '-17.718397',
-            'longitud' => '-60.774994',
-            'urgencia' => 5,
-            'incendio_id' => 1, // ID para cargar la predicción desde la API
-            'direccion' => 'San Jose de Chiquitos, Santa Cruz, Bolivia',
-            'tiene_hoja_vida' => false,
-            'condicion_inicial' => [
-                'nombre' => 'Hallazgo',
-            ],
-            'incident_type' => [
-                'nombre' => 'Incendio forestal',
-            ],
+        return view('report.mapa-campo', [
+            'reports' => $data['reports'],
+            'focosCalorFormatted' => $data['focosCalorFormatted'],
+            'releases' => $data['releases'],
+            'species' => $data['species'],
+            'operationalFiresFormatted' => $data['operationalFiresFormatted'],
+            'firesMapSource' => $data['firesMapSource'],
         ]);
-
-        // Obtener focos de calor (intenta primero desde API de integración, luego FIRMS)
-        $focosCalor = $this->focosCalorService->getRecentHotspotsWithFallback(2);
-        $focosCalorFormatted = $this->focosCalorService->formatForMap($focosCalor);
-
-        // No obtener animales regulares, solo los liberados (que vienen en releases)
-
-        // Obtener solo animales liberados (releases)
-        $releases = Release::with(['animalFile.species', 'animalFile.animal', 'animalFile.animalStatus'])
-            ->whereNotNull('latitud')
-            ->whereNotNull('longitud')
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(function ($release) {
-                $animalFile = $release->animalFile;
-                return [
-                    'id' => $release->id,
-                    'latitud' => $release->latitud,
-                    'longitud' => $release->longitud,
-                    'direccion' => $release->direccion,
-                    'detalle' => $release->detalle,
-                    'fecha' => $release->created_at ? $release->created_at->format('d/m/Y') : null,
-                    'especie_id' => $animalFile ? ($animalFile->especie_id ?? null) : null,
-                    'especie' => $animalFile && $animalFile->species ? [
-                        'id' => $animalFile->species->id,
-                        'nombre' => $animalFile->species->nombre,
-                    ] : null,
-                    'animal' => $animalFile && $animalFile->animal ? [
-                        'id' => $animalFile->animal->id,
-                        'nombre' => $animalFile->animal->nombre,
-                    ] : null,
-                    'imagen_url' => $release->imagen_url,
-                ];
-            });
-
-        // Obtener todas las especies para el filtro (solo de animales liberados)
-        $speciesIds = $releases->pluck('especie_id')->filter()->unique();
-        $species = Species::whereIn('id', $speciesIds)->orderBy('nombre')->get(['id', 'nombre']);
-
-        // Obtener reportes externos de incendios
-        $externalFireReports = $this->externalFireReportsService->getExternalFireReports();
-        $externalFireReportsFormatted = $this->externalFireReportsService->formatForMap($externalFireReports);
-
-        return view('report.mapa-campo', compact(
-            'reports', 
-            'focosCalorFormatted', 
-            'releases', 
-            'species',
-            'externalFireReportsFormatted'
-        ));
     }
 
     public function getExternalFireReportsApi()
     {
-        $reports = $this->externalFireReportsService->getExternalFireReports();
-        $formatted = $this->externalFireReportsService->formatForMap($reports);
+        $fires = $this->externalFireReportsService->getOperationalFiresForMap();
 
-        return response()->json($formatted);
+        return response()->json($fires['items']);
     }
 
     public function getExternalFireReportDetails(string $externalId)
     {
-        $reports = $this->externalFireReportsService->getExternalFireReports();
-        $formatted = collect($this->externalFireReportsService->formatForMap($reports));
-        $found = $formatted->firstWhere('id', $externalId);
+        $fires = $this->externalFireReportsService->getOperationalFiresForMap();
+        $found = collect($fires['items'])->firstWhere('id', is_numeric($externalId) ? (int) $externalId : $externalId);
 
-        if (!$found) {
-            return response()->json(['message' => 'Reporte externo no encontrado'], 404);
+        if (! $found) {
+            return response()->json(['message' => 'Foco de incendio no encontrado'], 404);
         }
 
         return response()->json($found);

@@ -11,20 +11,60 @@ use Illuminate\Support\Facades\Http;
  */
 class ExternalFireReportsService
 {
+    public function __construct(
+        private readonly IncendiosModuleFiresService $incendiosModuleFires
+    ) {}
+
     /**
-     * Obtener reportes de incendios externos desde la API
-     * Si falla, retorna datos simulados como fallback
-     * 
-     * @return Collection
+     * Focos operativos para el mapa de rescate (prioriza módulo Incendios unificado).
+     *
+     * @return array{source: string, items: array<int, array<string, mixed>>}
+     */
+    public function getOperationalFiresForMap(): array
+    {
+        if ($this->incendiosModuleFires->isAvailable()) {
+            $items = $this->incendiosModuleFires->formatForMap();
+            if ($items !== []) {
+                return ['source' => 'incendios', 'items' => $items];
+            }
+        }
+
+        $reports = $this->getLegacyExternalFireReports();
+        $items = $this->formatForMap($reports);
+
+        return [
+            'source' => $items !== [] ? 'external' : 'none',
+            'items' => $items,
+        ];
+    }
+
+    /**
+     * @deprecated Use getOperationalFiresForMap() for map views.
      */
     public function getExternalFireReports(): Collection
+    {
+        if ($this->incendiosModuleFires->isAvailable()) {
+            $items = $this->incendiosModuleFires->formatForMap();
+            if ($items !== []) {
+                return collect($items);
+            }
+        }
+
+        return $this->getLegacyExternalFireReports();
+    }
+
+    /**
+     * API gateway de brigadas o datos simulados (solo si no hay focos locales).
+     */
+    private function getLegacyExternalFireReports(): Collection
     {
         try {
             $apiUrl = config('services.external_fire_reports.api_url');
             
             if (empty($apiUrl)) {
-                \Log::info('ExternalFireReportsService: No hay URL configurada, usando datos simulados');
-                return $this->getSimulatedFireReports();
+                return $this->allowSimulatedFallback()
+                    ? $this->getSimulatedFireReports()
+                    : collect();
             }
 
             $maxAttempts = 2;
@@ -62,13 +102,28 @@ class ExternalFireReportsService
                 }
             }
             
-            // Si llegamos aquí, todos los intentos fallaron, usar datos simulados
-            \Log::info('ExternalFireReportsService: No se pudo conectar al endpoint, usando datos simulados como fallback');
-            return $this->getSimulatedFireReports();
+            // Si llegamos aquí, todos los intentos fallaron
+            if ($this->allowSimulatedFallback()) {
+                \Log::info('ExternalFireReportsService: usando datos simulados (APP_DEMO_SIMULATED_FIRES)');
+
+                return $this->getSimulatedFireReports();
+            }
+
+            \Log::info('ExternalFireReportsService: sin API externa ni simulados habilitados');
+
+            return collect();
         } catch (\Exception $e) {
-            \Log::error('Error en ExternalFireReportsService: ' . $e->getMessage() . ' - Usando datos simulados como fallback');
-            return $this->getSimulatedFireReports();
+            \Log::error('Error en ExternalFireReportsService: '.$e->getMessage());
+
+            return $this->allowSimulatedFallback()
+                ? $this->getSimulatedFireReports()
+                : collect();
         }
+    }
+
+    private function allowSimulatedFallback(): bool
+    {
+        return filter_var(env('APP_DEMO_SIMULATED_FIRES', false), FILTER_VALIDATE_BOOL);
     }
 
     /**
@@ -202,11 +257,11 @@ class ExternalFireReportsService
             return [];
         }
 
-        // Obtener todos los hallazgos locales que tengan incendio_id
+        // Obtener hallazgos locales vinculados por incendio_id (entero del módulo unificado)
         $localReportsWithIncendioId = Report::whereNotNull('incendio_id')
             ->where('aprobado', 1)
             ->get()
-            ->keyBy('incendio_id');
+            ->groupBy(fn (Report $report) => (string) $report->incendio_id);
 
         return $reports->map(function ($report) use ($localReportsWithIncendioId) {
             try {
@@ -223,14 +278,8 @@ class ExternalFireReportsService
                 $hasLocalReports = false;
                 $localReportsCount = 0;
                 
-                if ($externalReportId) {
-                    // Buscar coincidencias por ID del reporte externo
-                    // El incendio_id en los reportes locales debe coincidir con el id del reporte externo
-                    $matchingLocalReports = $localReportsWithIncendioId->filter(function ($localReport) use ($externalReportId) {
-                        // Comparar el incendio_id del reporte local con el id del reporte externo
-                        return $localReport->incendio_id == $externalReportId;
-                    });
-                    
+                if ($externalReportId !== null && $externalReportId !== '') {
+                    $matchingLocalReports = $localReportsWithIncendioId->get((string) $externalReportId, collect());
                     $hasLocalReports = $matchingLocalReports->isNotEmpty();
                     $localReportsCount = $matchingLocalReports->count();
                 }
@@ -252,6 +301,8 @@ class ExternalFireReportsService
                     'has_local_reports' => $hasLocalReports,
                     'local_reports_count' => $localReportsCount,
                     'simulado' => $isSimulated,
+                    'source' => $report['source'] ?? 'external',
+                    'incendios_url' => $report['incendios_url'] ?? null,
                 ];
             } catch (\Exception $e) {
                 \Log::warning('Error formateando reporte externo: ' . $e->getMessage());

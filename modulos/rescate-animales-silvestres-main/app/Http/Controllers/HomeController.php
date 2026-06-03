@@ -5,6 +5,7 @@ namespace Modules\Rescate\Http\Controllers;
 use Modules\Rescate\Services\Dashboard\DashboardService;
 use Modules\Rescate\Services\Fire\FocosCalorService;
 use Modules\Rescate\Services\Fire\ExternalFireReportsService;
+use Modules\Rescate\Services\Fire\MapaCampoDataService;
 use Modules\Rescate\Models\Species;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -22,13 +23,15 @@ class HomeController extends Controller
     protected $dashboardService;
     protected $focosCalorService;
     protected $externalFireReportsService;
+    protected $mapaCampoDataService;
 
-    public function __construct(DashboardService $dashboardService, FocosCalorService $focosCalorService, ExternalFireReportsService $externalFireReportsService)
+    public function __construct(DashboardService $dashboardService, FocosCalorService $focosCalorService, ExternalFireReportsService $externalFireReportsService, MapaCampoDataService $mapaCampoDataService)
     {
         $this->middleware('auth');
         $this->dashboardService = $dashboardService;
         $this->focosCalorService = $focosCalorService;
         $this->externalFireReportsService = $externalFireReportsService;
+        $this->mapaCampoDataService = $mapaCampoDataService;
     }
 
     public function index()
@@ -51,99 +54,7 @@ class HomeController extends Controller
      */
     private function getMapaCampoData(): array
     {
-        // Obtener reportes/hallazgos aprobados
-        $reports = \Modules\Rescate\Models\Report::with(['person', 'condicionInicial', 'incidentType'])
-            ->where('aprobado', 1)
-            ->whereNotNull('latitud')
-            ->whereNotNull('longitud')
-            ->orderByDesc('id')
-            ->get()
-            ->map(function ($report) {
-                $hasAnimalFiles = \Modules\Rescate\Models\AnimalFile::whereHas('animal', function ($q) use ($report) {
-                    $q->where('reporte_id', $report->id);
-                })->exists();
-                
-                return [
-                    'id' => $report->id,
-                    'latitud' => $report->latitud,
-                    'longitud' => $report->longitud,
-                    'urgencia' => $report->urgencia,
-                    'incendio_id' => $report->incendio_id,
-                    'direccion' => $report->direccion,
-                    'tiene_hoja_vida' => $hasAnimalFiles,
-                    'condicion_inicial' => $report->condicionInicial ? [
-                        'nombre' => $report->condicionInicial->nombre,
-                    ] : null,
-                    'incident_type' => $report->incidentType ? [
-                        'nombre' => $report->incidentType->nombre,
-                    ] : null,
-                ];
-            });
-
-        // Agregar reporte simulado de incendio (igual que en ReportController)
-        $reports->push([
-            'id' => 'simulado',
-            'latitud' => '-17.718397',
-            'longitud' => '-60.774994',
-            'urgencia' => 5,
-            'incendio_id' => 1,
-            'direccion' => 'San Jose de Chiquitos, Santa Cruz, Bolivia',
-            'tiene_hoja_vida' => false,
-            'condicion_inicial' => [
-                'nombre' => 'Hallazgo',
-            ],
-            'incident_type' => [
-                'nombre' => 'Incendio forestal',
-            ],
-        ]);
-
-        // Obtener focos de calor (intenta primero desde API de integración, luego FIRMS)
-        $focosCalor = $this->focosCalorService->getRecentHotspotsWithFallback(2);
-        $focosCalorFormatted = $this->focosCalorService->formatForMap($focosCalor);
-
-        // Obtener liberaciones
-        $releases = \Modules\Rescate\Models\Release::with(['animalFile.species', 'animalFile.animal', 'animalFile.animalStatus'])
-            ->whereNotNull('latitud')
-            ->whereNotNull('longitud')
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(function ($release) {
-                $animalFile = $release->animalFile;
-                return [
-                    'id' => $release->id,
-                    'latitud' => $release->latitud,
-                    'longitud' => $release->longitud,
-                    'direccion' => $release->direccion,
-                    'detalle' => $release->detalle,
-                    'fecha' => $release->created_at ? $release->created_at->format('d/m/Y') : null,
-                    'especie_id' => $animalFile->especie_id ?? null,
-                    'especie' => $animalFile->species ? [
-                        'id' => $animalFile->species->id,
-                        'nombre' => $animalFile->species->nombre,
-                    ] : null,
-                    'animal' => $animalFile->animal ? [
-                        'id' => $animalFile->animal->id,
-                        'nombre' => $animalFile->animal->nombre,
-                    ] : null,
-                    'imagen_url' => $release->imagen_url,
-                ];
-            });
-
-        // Obtener especies para el filtro
-        $speciesIds = $releases->pluck('especie_id')->filter()->unique();
-        $species = Species::whereIn('id', $speciesIds)->orderBy('nombre')->get(['id', 'nombre']);
-
-        // Obtener reportes externos de incendios
-        $externalFireReports = $this->externalFireReportsService->getExternalFireReports();
-        $externalFireReportsFormatted = $this->externalFireReportsService->formatForMap($externalFireReports);
-
-        return [
-            'reports' => $reports,
-            'focosCalorFormatted' => $focosCalorFormatted,
-            'releases' => $releases,
-            'species' => $species,
-            'externalFireReportsFormatted' => $externalFireReportsFormatted,
-        ];
+        return $this->mapaCampoDataService->build();
     }
 
     /**
