@@ -20,7 +20,7 @@
         {!! $errors->first('general', '<div class="alert alert-danger" role="alert"><strong>:message</strong></div>') !!}
 
         <div class="form-group mb-2 mb20">
-            <label for="imagen" class="form-label">{{ __('Imagen') }}@if(empty($report?->id)) <span class="text-danger">*</span>@endif</label>
+            <label for="imagen" class="form-label">{{ __('Imagen') }} <span class="text-muted small">({{ __('opcional') }})</span></label>
             <div class="custom-file">
                 <input type="file" accept="image/jpeg,image/jpg,image/png" name="imagen" class="custom-file-input @error('imagen') is-invalid @enderror" id="imagen">
                 <label class="custom-file-label" for="imagen" data-browse="Subir">Subir la imagen del animal</label>
@@ -28,7 +28,7 @@
             {!! $errors->first('imagen', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
             @if(!empty($report?->imagen_url))
                 <div class="mt-2">
-                    <img src="{{ asset('storage/' . $report->imagen_url) }}" alt="Imagen del reporte" style="max-height: 120px;"/>
+                    <img src="{{ rescate_media_url($report->imagen_url, 'hallazgo') }}" alt="Imagen del reporte" style="max-height: 120px;"/>
                 </div>
             @endif
         </div>

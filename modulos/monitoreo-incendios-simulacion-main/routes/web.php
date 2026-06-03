@@ -37,6 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/biomasas', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'getBiomasas'])
         ->name('dashboard.biomasas');
 
+    Route::get('/dashboard/focos', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'getFocosForMap'])
+        ->name('dashboard.focos');
+
     // Clear dashboard cache
     Route::post('/dashboard/clear-cache', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'clearCache'])
         ->name('dashboard.clear-cache');
@@ -137,10 +140,7 @@ Route::middleware('auth')->group(function () {
     Route::post('biomasas/{id}/rechazar', [Modules\Incendios\Http\Controllers\BiomasaController::class, 'rechazar'])
         ->name('biomasas.rechazar');
 
-    Route::resource('users', Modules\Incendios\Http\Controllers\UserController::class);
     Route::resource('tipo-biomasas', Modules\Incendios\Http\Controllers\TipoBiomasaController::class);
-    Route::resource('administradores', Modules\Incendios\Http\Controllers\AdministradorController::class);
-    Route::resource('voluntarios', Modules\Incendios\Http\Controllers\VoluntarioController::class);
 
     Route::post('simulaciones/save-simulation', [Modules\Incendios\Http\Controllers\SimulacioneController::class, 'saveSimulation'])
         ->name('simulaciones.save');
@@ -164,8 +164,4 @@ Route::middleware('auth')->group(function () {
         ->name('predictions.destroy');
 });
 
-// ========== HELPDESK WIDGET ==========
-// Ruta generada por: php artisan helpdeskwidget:install
-Route::get('helpdesk', function () {
-    return view('helpdesk');
-})->name('helpdesk')->middleware('auth');
+// Gestión de usuarios/voluntarios/helpdesk: centralizada en el módulo principal (transparencia).

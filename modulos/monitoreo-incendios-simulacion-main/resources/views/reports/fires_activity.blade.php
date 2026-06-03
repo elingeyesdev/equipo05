@@ -44,6 +44,16 @@
             </div>
             <div class="col-md-2">
                 <div class="form-group">
+                    <label class="d-block">&nbsp;</label>
+                    <div class="custom-control custom-checkbox mt-2">
+                        <input type="checkbox" class="custom-control-input" id="mostrar_demo" name="mostrar_demo" value="1"
+                            {{ !empty($filters['mostrar_demo']) ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="mostrar_demo">Incluir datos demo</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
                     <label>&nbsp;</label>
                     <button type="submit" class="btn btn-primary btn-block">
                         <i class="fas fa-search"></i> Filtrar
@@ -51,6 +61,10 @@
                 </div>
             </div>
         </form>
+        <p class="text-muted small mb-0">
+            Por defecto se muestran focos operativos (reportes reales). Los registros de prueba con «demo» en el nombre se ocultan.
+            La biomasa se determina por ubicación dentro de un polígono aprobado en el mapa.
+        </p>
     </div>
 </div>
 
@@ -182,14 +196,20 @@
                                     {{ number_format($fire->intensidad, 2) }}
                                 </span>
                             </td>
-                            <td>{{ $fire->biomasa->ubicacion ?? 'N/A' }}</td>
+                            <td>
+                                @if($fire->biomasa)
+                                    {{ $fire->biomasa->ubicacion ?: ('Biomasa #'.$fire->biomasa->id) }}
+                                @else
+                                    <span class="text-muted">Fuera de área registrada</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($fire->biomasa && $fire->biomasa->tipoBiomasa)
-                                    <span style="color: {{ $fire->biomasa->tipoBiomasa->color }}">
+                                    <span class="badge" style="background-color: {{ $fire->biomasa->tipoBiomasa->color }}; color: #fff;">
                                         {{ $fire->biomasa->tipoBiomasa->tipo_biomasa }}
                                     </span>
                                 @else
-                                    N/A
+                                    <span class="text-muted">—</span>
                                 @endif
                             </td>
                         </tr>
@@ -209,6 +229,9 @@
 
 @push('css')
 <style>
+    #fireTrendChart {
+        min-height: 320px;
+    }
     @media print {
         .card-tools, .content-header, .main-sidebar, .main-footer {
             display: none !important;
@@ -222,17 +245,12 @@
 @endpush
 
 @push('js')
+@include('incendios::partials.chart-scripts')
 <script>
-// Inicializar charts cuando la página esté lista
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        document.querySelectorAll('canvas[data-chart-type]').forEach(canvas => {
-            if (typeof window.initChart === 'function') {
-                console.log('Inicializando chart:', canvas.id);
-                window.initChart(canvas.id);
-            }
-        });
-    }, 300);
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+        window.initIncendiosCharts();
+    }, 200);
 });
 </script>
 @endpush

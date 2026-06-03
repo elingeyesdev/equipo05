@@ -109,7 +109,7 @@ class AnimalMedicalEvaluationTransactionalController extends Controller
 
 	public function index(): RedirectResponse
 	{
-		return Redirect::route('rescate.medical-evaluation-transactions.create');
+		return Redirect::route('rescate.medical-evaluations.index');
 	}
 
 	public function store(MedicalEvaluationProcessRequest $request): RedirectResponse

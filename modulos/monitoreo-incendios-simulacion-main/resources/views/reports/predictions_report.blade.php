@@ -147,7 +147,7 @@
                 @forelse($predictions as $prediction)
                     @php
                         $meta = $prediction->meta ?? [];
-                        $path = $prediction->path ?? [];
+                        $path = $prediction->normalizedTrajectory();
                         $inputs = $meta['input_parameters'] ?? [];
                         
                         // Get coordinates - try foco first, then path[0]

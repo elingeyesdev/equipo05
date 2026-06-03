@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS core.usuarios (
     usuarioid       BIGSERIAL PRIMARY KEY,
     email           VARCHAR(100) NOT NULL UNIQUE,
     contrasena      VARCHAR(255) NOT NULL,
+    remember_token  VARCHAR(100),
     nombre          VARCHAR(50) NOT NULL,
     apellido        VARCHAR(50) NOT NULL,
     telefono        VARCHAR(20),

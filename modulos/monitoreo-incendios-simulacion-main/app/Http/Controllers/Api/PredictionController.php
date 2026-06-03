@@ -91,15 +91,9 @@ class PredictionController extends Controller
     {
         $prediction = Prediction::with('focoIncendio')->findOrFail($id);
         
-        // Decodificar el path si está en JSON string
-        $path = $prediction->path;
-        if (is_string($path)) {
-            $path = json_decode($path, true);
-        }
-        
         $pdf = Pdf::loadView('pdfs.prediction', [
             'prediction' => $prediction,
-            'path' => $path ?? []
+            'path' => $prediction->normalizedTrajectory(),
         ]);
         
         $filename = 'prediccion_' . $prediction->id . '_' . date('YmdHis') . '.pdf';

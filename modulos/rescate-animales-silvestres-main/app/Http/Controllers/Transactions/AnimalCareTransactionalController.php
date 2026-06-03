@@ -126,7 +126,7 @@ class AnimalCareTransactionalController extends Controller
 
 	public function index(): RedirectResponse
 	{
-		return Redirect::route('rescate.animal-care-records.create');
+		return Redirect::route('rescate.cares.index');
 	}
 
 	public function store(CareProcessRequest $request): RedirectResponse

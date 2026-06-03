@@ -52,7 +52,7 @@ class PredictionsReportExport
             // Data rows
             foreach ($this->predictions as $prediction) {
                 $meta = $prediction->meta ?? [];
-                $path = $prediction->path ?? [];
+                $path = $prediction->normalizedTrajectory();
                 $inputs = $meta['input_parameters'] ?? [];
                 
                 // Get fire data - try foco first, then path[0]

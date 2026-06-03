@@ -132,8 +132,4 @@ Route::get('reportes', [ReportsController::class, 'index'])->name('reportes.inde
 Route::get('reportes/exportar-pdf', [ReportsController::class, 'exportPdf'])->name('reportes.export-pdf')->middleware('auth');
 Route::get('reportes/exportar-excel', [ReportsController::class, 'exportExcel'])->name('reportes.export-excel')->middleware('auth');
 
-// ========== HELPDESK WIDGET ==========
-// Ruta generada por: php artisan helpdeskwidget:install
-Route::get('helpdesk', function () {
-    return view('helpdesk');
-})->name('helpdesk')->middleware('auth');
+// Helpdesk: deshabilitado en este módulo (soporte centralizado en la plataforma principal).

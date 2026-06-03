@@ -112,7 +112,7 @@
                                 <div class="col-md-4">
                                     <div class="card card-outline card-secondary h-100 release-card">
                                         @if($imagenUrl)
-                                            <img class="release-card-img" src="{{ asset('storage/' . $imagenUrl) }}" alt="Imagen del animal liberado">
+                                            <img class="release-card-img" src="{{ rescate_media_url($imagenUrl, rescate_media_seed($animalFile)) }}" alt="Imagen del animal liberado">
                                         @else
                                             <div class="release-card-img d-flex align-items-center justify-content-center bg-light">
                                                 <i class="fas fa-dove fa-3x text-muted"></i>

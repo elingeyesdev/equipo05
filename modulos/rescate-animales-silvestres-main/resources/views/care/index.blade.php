@@ -44,15 +44,15 @@
                                     
                                     if ($animalFileId === 'sin_animal') {
                                         $animalName = 'Cuidados sin animal asignado';
-                                        $animalImage = asset('storage/personas/persona.png');
+                                        $animalImage = rescate_media_url(null, 'fauna');
                                         $species = '-';
                                         $status = '-';
                                         $showAnimalInfo = false;
                                     } else {
                                         $animalName = $animal?->nombre ?? ('Animal ' . ($animalFile?->animal_id ?? '-'));
                                         $animalImage = $animalFile?->imagen_url 
-                                            ? asset('storage/' . $animalFile->imagen_url) 
-                                            : asset('storage/personas/persona.png');
+                                            ? rescate_media_url($animalFile->imagen_url, rescate_media_seed($animalFile))
+                                            : rescate_media_url(null, rescate_media_seed($animalFile));
                                         $species = $animalFile?->species?->nombre ?? '-';
                                         $status = $animalFile?->animalStatus?->nombre ?? '-';
                                         $showAnimalInfo = true;

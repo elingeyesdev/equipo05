@@ -32,9 +32,12 @@ class DashboardService
         // Datos comunes para todos los roles
         $data = array_merge($data, $this->getGeneralStatistics());
 
-        // Datos específicos por rol
+        // Panel principal del módulo: KPIs operativos para cualquier usuario autenticado
+        $data = array_merge($data, $this->getAdminDashboardData());
+
+        // Datos específicos por rol (vistas secundarias)
         if ($user->hasAnyRole(['admin', 'encargado'])) {
-            $data = array_merge($data, $this->getAdminDashboardData());
+            // reservado para widgets exclusivos de administración si se añaden
         }
 
         if ($user->hasRole('veterinario')) {

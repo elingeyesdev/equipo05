@@ -3,6 +3,7 @@
 namespace Modules\Rescate\Http\Controllers;
 
 use Modules\Rescate\Models\AnimalFile;
+use App\Support\RescateMedia;
 use Modules\Rescate\Models\AnimalHistory;
 use Modules\Rescate\Models\Species;
 use Modules\Rescate\Models\AnimalStatus;
@@ -98,6 +99,8 @@ class AnimalFileController extends Controller
             if ($request->hasFile('imagen')) {
                 $path = $request->file('imagen')->store('animal_files', 'public');
                 $data['imagen_url'] = $path;
+            } elseif (empty($data['imagen_url']) && ! empty($data['especie_id'])) {
+                $data['imagen_url'] = RescateMedia::assignSpeciesImage((int) $data['especie_id']);
             }
             $animalFile = AnimalFile::create($data);
             if (!empty($animalNombre)) {

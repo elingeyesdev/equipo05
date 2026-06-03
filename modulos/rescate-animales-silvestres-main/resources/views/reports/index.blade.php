@@ -237,12 +237,18 @@
                             <tbody>
                                 @foreach($tratados as $report)
                                     <tr>
-                                        <td>{{ $report['nombre'] ?? 'Sin nombre' }}</td>
                                         <td>
-                                            <span class="badge badge-success">Tratado</span>
+                                            @if(!empty($report['animal_file_id']))
+                                                <a href="{{ route('rescate.animal-files.show', $report['animal_file_id']) }}">{{ $report['nombre'] ?? 'Sin nombre' }}</a>
+                                            @else
+                                                {{ $report['nombre'] ?? 'Sin nombre' }}
+                                            @endif
                                         </td>
-                                        <td>{{ $report['fecha_hallazgo']->format('d/m/Y H:i') }}</td>
-                                        <td>{{ $report['fecha_tratamiento'] ? $report['fecha_tratamiento']->format('d/m/Y H:i') : '-' }}</td>
+                                        <td>
+                                            <span class="badge badge-success">En tratamiento</span>
+                                        </td>
+                                        <td>{{ $report['fecha_hallazgo'] ? $report['fecha_hallazgo']->format('d/m/Y H:i') : '-' }}</td>
+                                        <td>{{ !empty($report['fecha_tratamiento']) ? $report['fecha_tratamiento']->format('d/m/Y H:i') : '-' }}</td>
                                         <td>{{ $report['tiempo_desde_tratamiento'] ?? '-' }}</td>
                                     </tr>
                                 @endforeach
@@ -279,8 +285,8 @@
                                         <td>
                                             <span class="badge badge-info">Liberado</span>
                                         </td>
-                                        <td>{{ $report['fecha_hallazgo']->format('d/m/Y H:i') }}</td>
-                                        <td>{{ $report['fecha_liberacion']->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $report['fecha_hallazgo'] ? $report['fecha_hallazgo']->format('d/m/Y H:i') : '-' }}</td>
+                                        <td>{{ !empty($report['fecha_liberacion']) ? $report['fecha_liberacion']->format('d/m/Y H:i') : '-' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

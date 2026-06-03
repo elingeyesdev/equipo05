@@ -21,12 +21,6 @@
                         </a>
                     </x-slot>
 
-                    <div class="mb-3">
-                        <a href="{{ route('incendios.predictions.create') }}" class="btn btn-success btn-sm">
-                            <i class="fas fa-plus"></i> Generar Predicción
-                        </a>
-                    </div>
-
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -47,7 +41,7 @@
                                         $meta = $prediction->meta ?? [];
                                         $riesgo = $meta['fire_risk_index'] ?? 0;
                                         $area = $meta['total_area_affected_km2'] ?? 0;
-                                        $horas = $meta['input_parameters']['prediction_hours'] ?? 0;
+                                        $horas = ($meta['input_parameters'] ?? [])['prediction_hours'] ?? 0;
                                     @endphp
                                     <tr>
                                         <td>{{ ++$i }}</td>
@@ -68,7 +62,7 @@
                                             </span>
                                         </td>
                                         <td>{{ number_format($area, 2) }} km²</td>
-                                        <td>{{ is_array($prediction->path) ? count($prediction->path) : 0 }}</td>
+                                        <td>{{ count($prediction->normalizedTrajectory()) }}</td>
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group">
                                                 <a href="{{ route('incendios.predictions.show', $prediction->id) }}" class="btn btn-info btn-sm" title="Ver">

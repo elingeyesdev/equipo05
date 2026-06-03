@@ -24,7 +24,7 @@ class ReportRequest extends FormRequest
         $isUpdate = in_array($this->method(), ['PUT', 'PATCH']);
         $rules = [
             // persona_id and aprobado are set server-side (aprobado solo en update)
-            'imagen' => [($isUpdate ? 'nullable' : 'required'), 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
+            'imagen' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:4096', new \Modules\Rescate\Rules\NotWebpImage()],
             'observaciones' => 'nullable|string',
             // ubicación solo se exige en creación
             'latitud' => $isUpdate ? 'nullable|numeric' : 'required|numeric',
@@ -47,6 +47,17 @@ class ReportRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'imagen.image' => 'La fotografía debe ser una imagen válida (JPG o PNG).',
+            'imagen.mimes' => 'Solo se permiten archivos JPG o PNG.',
+            'imagen.max' => 'La imagen no puede superar 4 MB.',
+            'latitud.required' => 'Debes marcar la ubicación en el mapa.',
+            'longitud.required' => 'Debes marcar la ubicación en el mapa.',
+        ];
     }
 
     public function withValidator($validator)

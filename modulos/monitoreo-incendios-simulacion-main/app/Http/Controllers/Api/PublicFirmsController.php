@@ -47,12 +47,14 @@ class PublicFirmsController extends Controller
                         'fecha' => $foco->fecha->toIso8601String(),
                         'fecha_humana' => $foco->fecha->diffForHumans(),
                         'ubicacion' => $foco->ubicacion,
-                        'lat' => $foco->coordenadas['lat'] ?? null,
-                        'lng' => $foco->coordenadas['lng'] ?? null,
+                        'lat' => $foco->latitude,
+                        'lng' => $foco->longitude,
                         'intensidad' => $foco->intensidad,
                         'nivel' => $this->getIntensityLevel($foco->intensidad),
                     ];
-                });
+                })
+                ->filter(fn ($f) => $f['lat'] !== null && $f['lng'] !== null)
+                ->values();
         });
 
         return response()->json([

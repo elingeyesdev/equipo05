@@ -29,7 +29,7 @@ class AnimalTransactionalController extends Controller
 	 */
 	public function index(): RedirectResponse
 	{
-		return Redirect::route('rescate.animal-records.create');
+		return Redirect::route('rescate.animal-files.index');
 	}
 
 	public function create(): View

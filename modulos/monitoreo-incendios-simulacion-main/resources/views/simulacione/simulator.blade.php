@@ -36,10 +36,10 @@
                 <div class="col-md-3">
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3 x-text="requiredVolunteers"></h3>
-                            <p>Voluntarios necesarios</p>
+                            <h3 x-text="spreadKm2"></h3>
+                            <p>Área estimada (km²)</p>
                         </div>
-                        <div class="icon"><i class="fas fa-users"></i></div>
+                        <div class="icon"><i class="fas fa-expand-arrows-alt"></i></div>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -299,7 +299,7 @@
                     <p class="text-muted">
                         Duración: <strong x-text="timeElapsed + 'h'"></strong><br>
                         Focos activos: <strong x-text="activeFires.length"></strong><br>
-                        Voluntarios: <strong x-text="requiredVolunteers"></strong>
+                        Área estimada: <strong x-text="spreadKm2 + ' km²'"></strong>
                     </p>
                     <!-- Administradores: las simulaciones son públicas por defecto -->
                     <p class="text-muted"><small>Nota: las simulaciones creadas por administradores son públicas y visibles para todos los usuarios.</small></p>
@@ -548,7 +548,7 @@ function fireSimulator() {
         allFiresHistory: [], // Historial completo de todos los focos
         simulationActive: false,
         timeElapsed: 0,
-        requiredVolunteers: 0,
+        spreadKm2: 0,
         mitigationStrategies: [],
         fireRisk: 0,
         showSaveModal: false,
@@ -593,6 +593,7 @@ function fireSimulator() {
             
             // Calculate initial fire risk
             this.calculateFireRisk();
+            this.loadRegisteredFocosFromDb();
             
             // Watch parameters for fire risk calculation
             this.$watch('temperature', () => this.calculateFireRisk());
@@ -915,8 +916,8 @@ function fireSimulator() {
                                 <td><strong>~${affectedArea} km²</strong></td>
                             </tr>
                             <tr>
-                                <td><i class="fas fa-users text-info"></i> Voluntarios sugeridos:</td>
-                                <td><strong>${this.requiredVolunteers}</strong></td>
+                                <td><i class="fas fa-expand-arrows-alt text-info"></i> Área estimada:</td>
+                                <td><strong>${this.spreadKm2} km²</strong></td>
                             </tr>
                             <tr>
                                 <td><i class="fas fa-exclamation-triangle text-warning"></i> Nivel de riesgo:</td>
@@ -1015,7 +1016,7 @@ function fireSimulator() {
                 timeElapsed: this.timeElapsed,
                 activeFires: this.fires.filter(f => f.active).length,
                 totalFires: this.fires.length,
-                volunteersNeeded: this.requiredVolunteers,
+                spreadKm2: this.spreadKm2,
                 fireRisk: this.fireRisk.toFixed(0),
                 parameters: {
                     temperature: this.temperature,
@@ -1028,7 +1029,7 @@ function fireSimulator() {
             const shareText = `📊 Resultados de Simulación SIPII:\n` +
                 `⏱️ Tiempo: ${shareData.timeElapsed}h\n` +
                 `🔥 Focos: ${shareData.activeFires}/${shareData.totalFires}\n` +
-                `👥 Voluntarios: ${shareData.volunteersNeeded}\n` +
+                `📐 Área estimada: ${shareData.spreadKm2} km²\n` +
                 `⚠️ Riesgo: ${shareData.fireRisk}%\n` +
                 `🌡️ Condiciones: ${shareData.parameters.temperature}°C, ` +
                 `${shareData.parameters.humidity}% humedad, ` +
@@ -1078,7 +1079,7 @@ function fireSimulator() {
                 
                 this.propagateFires();
                 this.updateActiveFires();
-                this.calculateVolunteers();
+                this.calculateSpreadArea();
                 this.updateMitigationStrategies();
                 
                 // Auto stop at 20h o cuando no haya focos activos
@@ -1325,13 +1326,34 @@ function fireSimulator() {
             this.fireRisk = Math.min(Math.round((tempFactor * 0.4 + humFactor * 0.3 + windFactor * 0.3) * 100), 100);
         },
         
-        calculateVolunteers() {
-            let volunteers = 0;
+        calculateSpreadArea() {
+            let km2 = 0;
             this.activeFires.forEach(fire => {
-                const area = Math.PI * Math.pow(fire.spread * 100, 2) / 100;
-                volunteers += 5 + (fire.intensity * 2) + (area * 0.1);
+                const radiusKm = (fire.spread || 1) * 0.08;
+                km2 += Math.PI * radiusKm * radiusKm;
             });
-            this.requiredVolunteers = Math.round(volunteers);
+            this.spreadKm2 = Math.round(km2 * 100) / 100;
+        },
+
+        async loadRegisteredFocosFromDb() {
+            try {
+                const response = await fetch(window.SIPII_INC.mod + '/dashboard/focos?days=90', {
+                    credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const result = await response.json();
+                if (!result.ok || !result.data?.length) {
+                    return;
+                }
+                result.data.forEach(foco => {
+                    const intensity = Math.min(5, Math.max(1, Math.round(foco.intensidad || 2)));
+                    this.addFire(foco.lat, foco.lng, intensity);
+                });
+                this.calculateSpreadArea();
+                this.calculateFireRisk();
+            } catch (e) {
+                console.warn('No se pudieron cargar focos registrados:', e);
+            }
         },
         
         updateMitigationStrategies() {
@@ -1363,7 +1385,7 @@ function fireSimulator() {
                     strategies.push("⚠️ RIESGO ALTO: Monitoreo constante requerido");
                 }
                 
-                strategies.push(`👥 Se requieren aproximadamente ${this.requiredVolunteers} voluntarios`);
+                strategies.push(`📐 Área afectada estimada: ${this.spreadKm2} km²`);
                 strategies.push(`📍 Focos activos: ${this.activeFires.length} | Hora simulada: ${this.timeElapsed}h`);
             }
             
@@ -1424,7 +1446,7 @@ function fireSimulator() {
                 admin_id: this.adminId,
                 duracion: this.timeElapsed,
                 focos_activos: this.activeFires.length,
-                num_voluntarios_enviados: this.requiredVolunteers,
+                num_voluntarios_enviados: 0,
                 estado: 'completada',
                 temperature: this.temperature,
                 humidity: this.humidity,
@@ -1541,25 +1563,24 @@ function fireSimulator() {
         
         async loadFireHotspots() {
             this.loadingFires = true;
+            let addedCount = 0;
             try {
-                // Llamar a la API de focos de calor
+                const dbRes = await fetch(window.SIPII_INC.mod + '/dashboard/focos?days=30', {
+                    credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const dbData = await dbRes.json();
+                (dbData.data || []).forEach(foco => {
+                    const intensity = Math.min(5, Math.max(1, Math.round(foco.intensidad || 2)));
+                    this.addFire(foco.lat, foco.lng, intensity);
+                    addedCount++;
+                });
+
                 const response = await fetch(window.SIPII_INC.api + '/fires?cluster=true&radius=20&days=2');
-                
-                if (!response.ok) {
-                    throw new Error('Error al obtener datos de focos de calor');
-                }
-                
-                const data = await response.json();
-                const fires = data.data || [];
-                
-                if (fires.length === 0) {
-                    showWarning('No se encontraron focos de calor en los últimos 2 días.');
-                    return;
-                }
-                
-                // Agregar focos a la simulación
-                let addedCount = 0;
-                fires.forEach(fire => {
+                if (response.ok) {
+                    const data = await response.json();
+                    const fires = data.data || [];
+                    fires.forEach(fire => {
                     // Calcular intensidad basada en FRP y tamaño del cluster
                     const clusterSize = fire.cluster_size || 1;
                     const frp = fire.frp || 5;
@@ -1585,20 +1606,24 @@ function fireSimulator() {
                             addedCount++;
                         }
                     }
-                });
-                
-                // Notificar éxito
-                const totalFires = fires.reduce((sum, f) => sum + (f.cluster_size || 1), 0);
-                const clusters = fires.filter(f => f.is_cluster).length;
-                
+                    });
+                }
+
+                if (addedCount === 0) {
+                    showWarning('No hay focos registrados ni detección satélite reciente. Cree un foco manual o importe desde NASA FIRMS.');
+                    return;
+                }
+
+                this.calculateSpreadArea();
+                this.calculateFireRisk();
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Focos de Calor Cargados',
                     html: `
                         <div style="text-align: left; padding: 10px;">
-                            <p><i class="fas fa-fire text-danger"></i> <strong>${totalFires}</strong> focos detectados</p>
-                            <p><i class="fas fa-layer-group text-primary"></i> <strong>${clusters}</strong> puntos calientes</p>
                             <p><i class="fas fa-plus-circle text-success"></i> <strong>${addedCount}</strong> focos agregados a la simulación</p>
+                            <p><i class="fas fa-fire text-danger"></i> Focos activos en mapa: <strong>${this.activeFires.length}</strong></p>
                             <p class="mt-2 text-muted" style="font-size: 0.9em;">
                                 <i class="fas fa-info-circle"></i> Los focos están listos para simular
                             </p>
@@ -1717,7 +1742,7 @@ function fireSimulator() {
                 timestamp: new Date().toISOString(),
                 location: "San José de Chiquitos",
                 duration: this.timeElapsed,
-                volunteers: this.requiredVolunteers,
+                spreadKm2: this.spreadKm2,
                 parameters: {
                     temperature: this.temperature,
                     humidity: this.humidity,

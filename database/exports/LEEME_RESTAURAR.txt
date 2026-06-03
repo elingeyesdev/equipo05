@@ -1,0 +1,76 @@
+================================================================================
+BASE DE DATOS UNIFICADA — Exportar / enviar / restaurar en otra PC
+Proyecto: equipo05-main-integration
+================================================================================
+
+QUE ARCHIVO ENVIAR
+------------------
+Un solo archivo .sql con TODO (schemas + datos), similar a dump-rescatito-*.sql:
+
+  equipo05_unificado_full_dump.sql   (~400-500 KB o mas si hay muchos datos)
+
+Incluye: core, transparencia, inventario, incendios, rescate, logistica,
+seguimiento, cuadrillas (+ PostGIS).
+
+NO enviar solo database/unified_postgresql/*.sql si quieres los datos demo:
+esos scripts crean tablas VACIAS.
+
+COMO GENERAR EL DUMP (en tu PC, con Docker encendido)
+----------------------------------------------------
+  cd database\exports
+  .\export_full_dump.ps1
+
+O manualmente:
+
+  docker exec equipo05-unificado-pg pg_dump -U postgres -d equipo05_unificado ^
+    --no-owner --no-acl -F p > equipo05_unificado_full_dump.sql
+
+COMO RESTAURAR EN OTRA PC
+-------------------------
+1) Clonar/copiar el repo equipo05-main-integration.
+
+2) Levantar PostgreSQL unificado (recomendado: mismo Docker del proyecto):
+     docker compose up -d db_unificado
+   Esperar que el contenedor este "healthy".
+
+3) Si la base ya tiene tablas de un intento anterior, recrearla (solo desarrollo):
+     docker exec -it equipo05-unificado-pg psql -U postgres -c "DROP DATABASE IF EXISTS equipo05_unificado;"
+     docker exec -it equipo05-unificado-pg psql -U postgres -c "CREATE DATABASE equipo05_unificado;"
+
+   Si es la primera vez con Docker, la base se crea sola al iniciar el contenedor.
+
+4) Restaurar el dump:
+     cd database\exports
+     .\restore_full_dump.ps1 -SqlFile ".\equipo05_unificado_full_dump.sql"
+
+   Sin script (copiar archivo al contenedor y psql):
+     docker cp equipo05_unificado_full_dump.sql equipo05-unificado-pg:/tmp/dump.sql
+     docker exec equipo05-unificado-pg psql -U postgres -d equipo05_unificado -f /tmp/dump.sql
+
+5) Configurar .env (copiar de .env.example):
+     DATABASE_UNIFIED_POSTGRES=true
+     UNIFIED_PG_HOST=127.0.0.1
+     UNIFIED_PG_PORT=5433
+     UNIFIED_PG_DATABASE=equipo05_unificado
+     UNIFIED_PG_USERNAME=postgres
+     UNIFIED_PG_PASSWORD=equipo05_unificado_dev
+     DB_CONNECTION=core
+
+6) Laravel:
+     composer install
+     php artisan key:generate
+     php artisan storage:link
+     php artisan serve
+
+ALTERNATIVA: SOLO ESTRUCTURA (sin datos)
+----------------------------------------
+  database\unified_postgresql\run_schema_all.ps1
+  (puerto 5433 si usas Docker: -PgPort 5433)
+Luego: php artisan db:seed
+
+DIFERENCIA CON dump-rescatito-*.sql
+-----------------------------------
+Ese tipo de archivo suele ser un pg_dump de UN modulo o base pequena.
+equipo05_unificado_full_dump.sql es el dump COMPLETO de los 8 schemas del sistema integrado.
+
+================================================================================

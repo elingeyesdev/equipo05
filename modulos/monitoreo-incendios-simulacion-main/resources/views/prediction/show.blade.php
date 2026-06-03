@@ -11,7 +11,7 @@
     $finalPos = $meta['final_position'] ?? [];
     $resources = $meta['estimated_resources'] ?? [];
     $recommendations = $meta['recommendations'] ?? [];
-    $trajectory = $meta['trajectory'] ?? $prediction->path ?? [];
+    $trajectory = $trajectory ?? $prediction->normalizedTrajectory();
 @endphp
 
 <div class="container-fluid">
@@ -330,7 +330,7 @@
     @if(!empty($recommendations))
     <div class="row">
         <div class="col-md-12">
-            <div class="card card-{{ $meta['fire_risk_index'] > 70 ? 'danger' : ($meta['fire_risk_index'] > 40 ? 'warning' : 'info') }}">
+            <div class="card card-{{ ($meta['fire_risk_index'] ?? 0) > 70 ? 'danger' : (($meta['fire_risk_index'] ?? 0) > 40 ? 'warning' : 'info') }}">
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-lightbulb"></i> Recomendaciones de Acción</h3>
                 </div>
@@ -506,21 +506,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($prediction->path ?? [] as $point)
+                                @forelse($trajectory as $point)
+                                @php
+                                    $intensity = (float) ($point['intensity'] ?? 0);
+                                @endphp
                                 <tr>
-                                    <td><strong>{{ $point['hour'] }}</strong></td>
-                                    <td><code>{{ $point['lat'] }}</code></td>
-                                    <td><code>{{ $point['lng'] }}</code></td>
+                                    <td><strong>{{ $point['hour'] ?? '—' }}</strong></td>
+                                    <td><code>{{ number_format((float) ($point['lat'] ?? 0), 6) }}</code></td>
+                                    <td><code>{{ number_format((float) ($point['lng'] ?? 0), 6) }}</code></td>
                                     <td>
-                                        <span class="badge badge-{{ $point['intensity'] > 7 ? 'danger' : ($point['intensity'] > 4 ? 'warning' : 'info') }}">
-                                            {{ $point['intensity'] }}
+                                        <span class="badge badge-{{ $intensity > 7 ? 'danger' : ($intensity > 4 ? 'warning' : 'info') }}">
+                                            {{ number_format($intensity, 2) }}
                                         </span>
                                     </td>
-                                    <td>{{ $point['spread_radius_km'] }}</td>
-                                    <td>{{ $point['affected_area_km2'] }}</td>
-                                    <td>{{ $point['perimeter_km'] }}</td>
+                                    <td>{{ number_format((float) ($point['spread_radius_km'] ?? 0), 3) }}</td>
+                                    <td>{{ number_format((float) ($point['affected_area_km2'] ?? 0), 3) }}</td>
+                                    <td>{{ number_format((float) ($point['perimeter_km'] ?? 0), 3) }}</td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">Sin puntos de trayectoria registrados</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

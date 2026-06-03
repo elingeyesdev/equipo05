@@ -6,14 +6,6 @@
 
 @section('content_body')
     <div class="container-fluid">
-        <div class="row mb-3">
-            <div class="col-12">
-                <a href="{{ route('incendios.biomasas.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Crear Nueva Biomasa
-                </a>
-            </div>
-        </div>
-        
         <div class="row">
             <div class="col-12">
                 @if ($message = Session::get('success'))

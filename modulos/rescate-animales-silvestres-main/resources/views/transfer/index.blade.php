@@ -63,7 +63,7 @@
                                                     @endphp
                                                     @if($report->imagen_url)
                                                         <div class="mb-2">
-                                                            <img src="{{ asset('storage/' . $report->imagen_url) }}" alt="img" style="width:100%; max-height:220px; object-fit:cover; border-radius:4px;">
+                                                            <img src="{{ rescate_media_url($report->imagen_url, 'hallazgo') }}" alt="img" style="width:100%; max-height:220px; object-fit:cover; border-radius:4px;">
                                                         </div>
                                                     @endif
                                                     <div class="mb-2">
@@ -127,7 +127,7 @@
                                                 </div>
                                                 <div class="card-body">
                                                     @if($af->imagen_url)
-                                                        <img class="internal-af-img" src="{{ asset('storage/' . $af->imagen_url) }}" alt="imagen animal">
+                                                        <img class="internal-af-img" src="{{ rescate_media_url($af->imagen_url, rescate_media_seed($af)) }}" alt="imagen animal">
                                                     @endif
                                                     <div class="text-muted small mt-2">{{ __('Click para seleccionar') }}</div>
                                                 </div>

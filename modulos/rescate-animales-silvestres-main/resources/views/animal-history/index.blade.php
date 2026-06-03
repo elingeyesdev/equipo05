@@ -80,7 +80,7 @@
                                 <div class="col-md-4">
                                     <div class="card card-outline card-secondary h-100 history-card">
                                         @if($imagenUrl)
-                                            <img class="history-card-img" src="{{ asset('storage/' . $imagenUrl) }}" alt="Imagen del animal">
+                                            <img class="history-card-img" src="{{ rescate_media_url($imagenUrl, rescate_media_seed($animalFile)) }}" alt="Imagen del animal">
                                         @else
                                             <div class="history-card-img d-flex align-items-center justify-content-center bg-light">
                                                 <i class="fas fa-history fa-3x text-muted"></i>

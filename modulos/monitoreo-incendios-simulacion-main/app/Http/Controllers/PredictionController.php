@@ -128,7 +128,8 @@ class PredictionController extends Controller
     public function show($id): View
     {
         $prediction = Prediction::with('focoIncendio')->findOrFail($id);
-        
+        $trajectory = $prediction->normalizedTrajectory();
+
         // Si hay un foco de incendio asociado, usarlo
         // Si no, crear un objeto temporal con los datos de la predicción
         if ($prediction->focoIncendio) {
@@ -137,7 +138,6 @@ class PredictionController extends Controller
             // Crear objeto foco desde los datos de la predicción
             $meta = $prediction->meta ?? [];
             $inputParams = $meta['input_parameters'] ?? [];
-            $trajectory = $prediction->path ?? [];
             $firstPoint = $trajectory[0] ?? null;
             
             $foco = (object) [
@@ -161,7 +161,7 @@ class PredictionController extends Controller
                 return $biomasa;
             });
 
-        return view('prediction.show', compact('prediction', 'foco', 'biomasas'));
+        return view('prediction.show', compact('prediction', 'foco', 'biomasas', 'trajectory'));
     }
 
     /**

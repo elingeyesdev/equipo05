@@ -12,7 +12,11 @@ use Modules\Rescate\Models\Animal;
 use Modules\Rescate\Models\AnimalFile;
 use Modules\Rescate\Models\AnimalStatus;
 use Modules\Rescate\Models\Care;
+use Modules\Rescate\Models\CareFeeding;
 use Modules\Rescate\Models\CareType;
+use Modules\Rescate\Models\FeedingFrequency;
+use Modules\Rescate\Models\FeedingPortion;
+use Modules\Rescate\Models\FeedingType;
 use Modules\Rescate\Models\Center;
 use Modules\Rescate\Models\ContactMessage;
 use Modules\Rescate\Models\IncidentType;
@@ -147,6 +151,10 @@ class RichRescateDemoSeeder extends Seeder
     public function runSpeciesImageRefresh(): void
     {
         $this->downloadRescateImages();
+
+        AnimalFile::with('species')->orderBy('id')->each(function (AnimalFile $file) {
+            \App\Support\RescateMedia::refreshAnimalFileImage($file, true);
+        });
     }
 
     /**
@@ -157,8 +165,12 @@ class RichRescateDemoSeeder extends Seeder
         $rescuer = Rescuer::where('aprobado', true)->first();
         $veterinarian = Veterinarian::where('aprobado', true)->first();
         $careType = CareType::first();
+        $careTypeAlim = CareType::whereRaw('LOWER(nombre) LIKE ?', ['%alim%'])->first() ?? $careType;
         $treatment = TreatmentType::first();
         $center = Center::first();
+        $feedType = FeedingType::first();
+        $feedFrequency = FeedingFrequency::first();
+        $feedPortion = FeedingPortion::first();
         $statusEstable = AnimalStatus::whereRaw('LOWER(nombre) LIKE ?', ['%estable%'])->first() ?? AnimalStatus::first();
 
         if (! $rescuer || ! $veterinarian || ! $careType || ! $treatment || ! $center) {
@@ -220,7 +232,7 @@ class RichRescateDemoSeeder extends Seeder
                 ]
             );
 
-            Care::firstOrCreate(
+            $care = Care::firstOrCreate(
                 ['hoja_animal_id' => $file->id, 'tipo_cuidado_id' => $careType->id, 'fecha' => $recentAt->toDateString()],
                 [
                     'descripcion' => 'Cuidado diario — '.$speciesLabel,
@@ -228,14 +240,64 @@ class RichRescateDemoSeeder extends Seeder
                 ]
             );
 
+            if ($feedType && $feedFrequency && $feedPortion && $index % 2 === 0) {
+                $feedingCare = Care::firstOrCreate(
+                    [
+                        'hoja_animal_id' => $file->id,
+                        'tipo_cuidado_id' => $careTypeAlim?->id ?? $careType->id,
+                        'fecha' => $recentAt->copy()->subDay()->toDateString(),
+                    ],
+                    [
+                        'descripcion' => 'Alimentación — '.$speciesLabel,
+                        'imagen_url' => 'cares/feeding-'.$file->id.'.jpg',
+                    ]
+                );
+                CareFeeding::firstOrCreate(
+                    ['care_id' => $feedingCare->id],
+                    [
+                        'feeding_type_id' => $feedType->id,
+                        'feeding_frequency_id' => $feedFrequency->id,
+                        'feeding_portion_id' => $feedPortion->id,
+                    ]
+                );
+            }
+
+            DB::connection('rescate')->table('animal_histories')->updateOrInsert(
+                ['animal_file_id' => $file->id],
+                [
+                    'changed_at' => $recentAt,
+                    'estado_anterior' => 'En custodia',
+                    'estado_nuevo' => 'Cuidado registrado',
+                    'observaciones' => 'Actualización demo del historial clínico',
+                    'old_values' => json_encode([], JSON_UNESCAPED_UNICODE),
+                    'new_values' => json_encode([
+                        'care' => [
+                            'descripcion' => 'Registro demo de cuidado — '.$speciesLabel,
+                            'fecha' => $recentAt->toDateString(),
+                        ],
+                    ], JSON_UNESCAPED_UNICODE),
+                ]
+            );
+
+            if ($report->latitud && $report->longitud) {
+                $angle = ($index * 37) * (M_PI / 180);
+                $radius = 0.04 + ($index % 5) * 0.012;
+                DB::connection('rescate')->table('reports')->where('id', $report->id)->update([
+                    'latitud' => -17.7833 + cos($angle) * $radius,
+                    'longitud' => -63.1821 + sin($angle) * $radius,
+                ]);
+            }
+
             if ($index % 4 === 0 && ! $file->release && $released < 6) {
+                $releaseAngle = ($index * 53) * (M_PI / 180);
+                $releaseRadius = 0.06 + ($released * 0.015);
                 Release::firstOrCreate(
                     ['animal_file_id' => $file->id],
                     [
                         'direccion' => 'Área de reintroducción demo #'.($index + 1),
                         'detalle' => 'Liberación supervisada de '.$speciesLabel,
-                        'latitud' => -17.75 + ($index * 0.01),
-                        'longitud' => -63.18 + ($index * 0.01),
+                        'latitud' => -17.7833 + cos($releaseAngle) * $releaseRadius,
+                        'longitud' => -63.1821 + sin($releaseAngle) * $releaseRadius,
                         'aprobada' => true,
                         'imagen_url' => 'releases/release-'.$file->id.'.jpg',
                     ]
@@ -256,7 +318,7 @@ class RichRescateDemoSeeder extends Seeder
             );
         }
 
-        $this->command?->info('Rescate: datos de dashboard enriquecidos (traslados, evaluaciones, liberaciones).');
+        $this->command?->info('Rescate: datos enriquecidos (traslados, evaluaciones, cuidados, alimentación, historial, liberaciones).');
     }
 
     private function downloadRescateImages(): void
@@ -286,14 +348,41 @@ class RichRescateDemoSeeder extends Seeder
             }
         }
 
-        $otherPaths = DB::connection('rescate')->table('cares')->whereNotNull('imagen_url')->pluck('imagen_url')
-            ->merge(DB::connection('rescate')->table('medical_evaluations')->whereNotNull('imagen_url')->pluck('imagen_url'))
-            ->merge(DB::connection('rescate')->table('releases')->whereNotNull('imagen_url')->pluck('imagen_url'))
-            ->unique()
-            ->filter();
+        $releaseRows = DB::connection('rescate')->table('releases as r')
+            ->join('animal_files as af', 'r.animal_file_id', '=', 'af.id')
+            ->join('species as s', 'af.especie_id', '=', 's.id')
+            ->whereNotNull('r.imagen_url')
+            ->select('r.imagen_url', 's.nombre')
+            ->get();
 
-        foreach ($otherPaths as $path) {
-            if (DemoImageDownloader::storePlaceholder((string) $path, pathinfo((string) $path, PATHINFO_FILENAME))) {
+        foreach ($releaseRows as $row) {
+            if (DemoImageDownloader::storeSpeciesImage((string) $row->imagen_url, (string) $row->nombre, true)) {
+                $downloaded++;
+            }
+        }
+
+        $carePaths = DB::connection('rescate')->table('cares as c')
+            ->join('animal_files as af', 'c.hoja_animal_id', '=', 'af.id')
+            ->join('species as s', 'af.especie_id', '=', 's.id')
+            ->whereNotNull('c.imagen_url')
+            ->select('c.imagen_url', 's.nombre')
+            ->get();
+
+        foreach ($carePaths as $row) {
+            if (DemoImageDownloader::storeSpeciesImage((string) $row->imagen_url, (string) $row->nombre, true)) {
+                $downloaded++;
+            }
+        }
+
+        $evalPaths = DB::connection('rescate')->table('medical_evaluations as me')
+            ->join('animal_files as af', 'me.animal_file_id', '=', 'af.id')
+            ->join('species as s', 'af.especie_id', '=', 's.id')
+            ->whereNotNull('me.imagen_url')
+            ->select('me.imagen_url', 's.nombre')
+            ->get();
+
+        foreach ($evalPaths as $row) {
+            if (DemoImageDownloader::storeSpeciesImage((string) $row->imagen_url, (string) $row->nombre, true)) {
                 $downloaded++;
             }
         }

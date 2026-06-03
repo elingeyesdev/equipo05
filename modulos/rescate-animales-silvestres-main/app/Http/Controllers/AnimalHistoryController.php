@@ -23,17 +23,35 @@ class AnimalHistoryController extends Controller
         $order = $request->get('order') === 'asc' ? 'asc' : 'desc';
         $histories = $this->timelineService->latestPerAnimalFileOrdered($order);
 
+        if ($histories->isEmpty()) {
+            $histories = \Modules\Rescate\Models\AnimalFile::with(['animal', 'species', 'animalStatus'])
+                ->orderBy('id', $order === 'asc' ? 'asc' : 'desc')
+                ->paginate(20)
+                ->through(function ($animalFile) {
+                    $history = new AnimalHistory([
+                        'animal_file_id' => $animalFile->id,
+                        'changed_at' => $animalFile->updated_at ?? $animalFile->created_at,
+                        'valores_nuevos' => [
+                            'care' => ['descripcion' => 'Hoja de vida activa — sin cambios auditados aún'],
+                        ],
+                        'observaciones' => ['texto' => 'Ver línea de tiempo completa'],
+                    ]);
+                    $history->id = $animalFile->id;
+                    $history->setRelation('animalFile', $animalFile);
+
+                    return $history;
+                });
+        }
+
         return view('animal-history.index', compact('histories'))
             ->with('i', ($request->input('page', 1) - 1) * $histories->perPage());
     }
 
 	public function show($id): View
 	{
-		// Intentar encontrar por ID de AnimalHistory primero
-		$animalHistory = AnimalHistory::findOrFail($id);
-		
-		// Si no se encuentra, asumir que es un animal_file_id
-		if (!$animalHistory) {
+		$animalHistory = AnimalHistory::find($id);
+
+		if (! $animalHistory) {
 			$animalFileId = (int) $id;
 			
 			// Verificar que existe el AnimalFile

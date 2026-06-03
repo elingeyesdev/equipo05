@@ -4,6 +4,7 @@ namespace Modules\Incendios\Http\Controllers;
 
 use Modules\Incendios\Models\Biomasa;
 use Modules\Incendios\Models\FocoIncendio;
+use Modules\Incendios\Services\BiomasaSpatialMatcher;
 use Modules\Incendios\Models\Prediction;
 use Modules\Incendios\Models\Simulacione;
 use Modules\Incendios\Models\User;
@@ -154,7 +155,7 @@ class DashboardController extends Controller
                 'properties' => [
                     'id' => $biomasa->id,
                     'ubicacion' => $biomasa->ubicacion ?? 'Sin ubicación',
-                    'area' => number_format($biomasa->area_m2 ?? 0, 2) . ' km²',
+                    'area' => number_format(($biomasa->area_m2 ?? 0) / 1_000_000, 4) . ' km²',
                     'densidad' => $biomasa->densidad ?? 'N/A',
                     'tipo' => $biomasa->tipoBiomasa->tipo_biomasa ?? 'N/A',
                     'color' => $biomasa->tipoBiomasa->color ?? '#28a745',
@@ -173,24 +174,57 @@ class DashboardController extends Controller
     }
 
     /**
-     * Reporte de Actividad de Focos de Incendio
+     * Focos registrados en BD para el mapa del dashboard (manuales + importados).
      */
-    public function firesActivityReport(Request $request)
+    public function getFocosForMap(Request $request)
+    {
+        $days = min(max((int) $request->query('days', 90), 1), 365);
+        $since = now()->subDays($days);
+
+        $focos = FocoIncendio::conCoordenadas()
+            ->where('fecha', '>=', $since)
+            ->orderByDesc('fecha')
+            ->get()
+            ->filter(fn (FocoIncendio $f) => $f->latitude !== null && $f->longitude !== null)
+            ->map(fn (FocoIncendio $f) => [
+                'id' => $f->id,
+                'lat' => (float) $f->latitude,
+                'lng' => (float) $f->longitude,
+                'ubicacion' => $f->ubicacion,
+                'intensidad' => (float) $f->intensidad,
+                'fecha' => $f->fecha?->format('d/m/Y H:i'),
+                'origen' => str_contains(mb_strtolower((string) $f->ubicacion), 'demo') ? 'demo' : 'registrado',
+            ])
+            ->values();
+
+        return response()->json([
+            'ok' => true,
+            'count' => $focos->count(),
+            'data' => $focos,
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder<FocoIncendio>
+     */
+    private function firesActivityQuery(Request $request)
     {
         $user = auth()->user();
         $isAdmin = true;
 
-        // Filtros
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
         $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
         $intensidadMin = $request->input('intensidad_min');
         $intensidadMax = $request->input('intensidad_max');
+        $mostrarDemo = $request->boolean('mostrar_demo');
 
-        // Query base
-        $query = FocoIncendio::whereBetween('fecha', [$fechaInicio, $fechaFin])
+        $query = FocoIncendio::whereBetween('fecha', [$fechaInicio.' 00:00:00', $fechaFin.' 23:59:59'])
             ->with(['biomasa.tipoBiomasa', 'reporter']);
 
-        // Filtrar por intensidad si se especifica
+        if (! $mostrarDemo) {
+            $query->operativos();
+        }
+
         if ($intensidadMin) {
             $query->where('intensidad', '>=', $intensidadMin);
         }
@@ -198,14 +232,30 @@ class DashboardController extends Controller
             $query->where('intensidad', '<=', $intensidadMax);
         }
 
-        // Voluntarios solo ven focos relacionados con sus biomasas
-        if (!$isAdmin) {
+        if (! $isAdmin) {
             $query->whereHas('biomasa', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
         }
 
-        $fires = $query->orderBy('fecha', 'desc')->get();
+        return $query;
+    }
+
+    /**
+     * Reporte de Actividad de Focos de Incendio
+     */
+    public function firesActivityReport(Request $request)
+    {
+        $isAdmin = true;
+
+        $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
+        $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
+        $intensidadMin = $request->input('intensidad_min');
+        $intensidadMax = $request->input('intensidad_max');
+        $mostrarDemo = $request->boolean('mostrar_demo');
+
+        $fires = $this->firesActivityQuery($request)->orderBy('fecha', 'desc')->get();
+        $fires = app(BiomasaSpatialMatcher::class)->enrichFocos($fires);
 
         // Estadísticas
         $byDate = $fires->groupBy(fn($fire) => $fire->fecha->format('Y-m-d'))
@@ -231,6 +281,7 @@ class DashboardController extends Controller
             'fecha_fin' => $fechaFin,
             'intensidad_min' => $intensidadMin,
             'intensidad_max' => $intensidadMax,
+            'mostrar_demo' => $mostrarDemo,
         ];
 
         return view('reports.fires_activity', compact('fires', 'statistics', 'filters', 'isAdmin'));
@@ -241,28 +292,14 @@ class DashboardController extends Controller
      */
     public function firesActivityExportExcel(Request $request)
     {
-        // Reutilizar la misma lógica del reporte
-        $user = auth()->user();
-        $isAdmin = true;
-
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
         $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
         $intensidadMin = $request->input('intensidad_min');
         $intensidadMax = $request->input('intensidad_max');
 
-        $query = FocoIncendio::whereBetween('fecha', [$fechaInicio, $fechaFin])
-            ->with(['biomasa.tipoBiomasa', 'reporter']);
-
-        if ($intensidadMin) $query->where('intensidad', '>=', $intensidadMin);
-        if ($intensidadMax) $query->where('intensidad', '<=', $intensidadMax);
-
-        if (!$isAdmin) {
-            $query->whereHas('biomasa', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            });
-        }
-
-        $fires = $query->orderBy('fecha', 'desc')->get();
+        $fires = app(BiomasaSpatialMatcher::class)->enrichFocos(
+            $this->firesActivityQuery($request)->orderBy('fecha', 'desc')->get()
+        );
 
         $statistics = [
             'total' => $fires->count(),
@@ -282,28 +319,14 @@ class DashboardController extends Controller
      */
     public function firesActivityExportPdf(Request $request)
     {
-        // Reutilizar la misma lógica del reporte
-        $user = auth()->user();
-        $isAdmin = true;
-
         $fechaInicio = $request->input('fecha_inicio', now()->subDays(30)->format('Y-m-d'));
         $fechaFin = $request->input('fecha_fin', now()->format('Y-m-d'));
         $intensidadMin = $request->input('intensidad_min');
         $intensidadMax = $request->input('intensidad_max');
 
-        $query = FocoIncendio::whereBetween('fecha', [$fechaInicio, $fechaFin])
-            ->with(['biomasa.tipoBiomasa', 'reporter']);
-
-        if ($intensidadMin) $query->where('intensidad', '>=', $intensidadMin);
-        if ($intensidadMax) $query->where('intensidad', '<=', $intensidadMax);
-
-        if (!$isAdmin) {
-            $query->whereHas('biomasa', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            });
-        }
-
-        $fires = $query->orderBy('fecha', 'desc')->get();
+        $fires = app(BiomasaSpatialMatcher::class)->enrichFocos(
+            $this->firesActivityQuery($request)->orderBy('fecha', 'desc')->get()
+        );
 
         $statistics = [
             'total' => $fires->count(),

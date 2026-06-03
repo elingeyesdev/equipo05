@@ -363,8 +363,7 @@
                 </thead>
                 <tbody>
                     @php
-                        $path = is_string($prediction->path) ? json_decode($prediction->path, true) : $prediction->path;
-                        $path = is_array($path) ? $path : [];
+                        $path = $prediction->normalizedTrajectory();
                         $points = array_slice($path, 0, 20);
                     @endphp
 

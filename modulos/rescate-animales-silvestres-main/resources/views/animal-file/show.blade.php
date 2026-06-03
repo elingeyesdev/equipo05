@@ -58,7 +58,7 @@
                                     <strong>{{ __('Imagen') }}:</strong>
                                     @if($animalFile->imagen_url)
                                         <div style="max-width: 100%; overflow: hidden; border-radius: 4px;">
-                                            <img src="{{ asset('storage/' . $animalFile->imagen_url) }}" alt="img" style="max-width: 100%; max-height: 180px; height: auto; width: auto; object-fit: contain; border-radius: 4px;">
+                                            <img src="{{ rescate_media_url($animalFile->imagen_url, rescate_media_seed($animalFile)) }}" alt="img" style="max-width: 100%; max-height: 180px; height: auto; width: auto; object-fit: contain; border-radius: 4px;">
                                         </div>
                                     @else
                                         <span>-</span>

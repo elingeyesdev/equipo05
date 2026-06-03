@@ -258,12 +258,17 @@
     </section>
     @include('partials.page-pad')
     @include('partials.leaflet')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
 
     <script>
     (function() {
         let map = null;
         let markers = [];
         let releaseMarkers = [];
+        let reportsCluster = null;
+        let releasesCluster = null;
         let predictionLayers = [];
         let focosCalorMarkers = [];
         let externalFireReportsMarkers = [];
@@ -351,6 +356,21 @@
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
                     maxZoom: 19 
                 }).addTo(map);
+
+                if (typeof L.markerClusterGroup === 'function') {
+                    reportsCluster = L.markerClusterGroup({
+                        maxClusterRadius: 45,
+                        spiderfyOnMaxZoom: true,
+                        showCoverageOnHover: false,
+                    });
+                    releasesCluster = L.markerClusterGroup({
+                        maxClusterRadius: 45,
+                        spiderfyOnMaxZoom: true,
+                        showCoverageOnHover: false,
+                    });
+                    map.addLayer(reportsCluster);
+                    map.addLayer(releasesCluster);
+                }
                 
                 console.log('[Mapa] Mapa inicializado correctamente');
             } catch (error) {
@@ -508,7 +528,7 @@
             weatherRequestInProgress = true;
 
             // Realizar petición a la API
-            fetch(`/api/weather?latitude=${latitude}&longitude=${longitude}`)
+            fetch(`/api/rescate/weather?latitude=${latitude}&longitude=${longitude}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -914,7 +934,11 @@
                 const marker = L.marker([lat, lng], { icon: icon });
                 
                 if (showReleases && (!selectedSpeciesId || release.especie_id == selectedSpeciesId)) {
-                    marker.addTo(map);
+                    if (releasesCluster) {
+                        releasesCluster.addLayer(marker);
+                    } else {
+                        marker.addTo(map);
+                    }
                 }
 
                 // Popup con información de la liberación
@@ -972,31 +996,34 @@
         }
 
         function updateReleaseMarkers() {
+            if (releasesCluster) {
+                releasesCluster.clearLayers();
+            }
             releaseMarkers.forEach(function(item) {
                 const release = item.release;
                 const marker = item.marker;
-                
                 const shouldShow = showReleases && (!selectedSpeciesId || release.especie_id == selectedSpeciesId);
-                
                 if (shouldShow) {
-                    if (!map.hasLayer(marker)) {
+                    if (releasesCluster) {
+                        releasesCluster.addLayer(marker);
+                    } else if (!map.hasLayer(marker)) {
                         marker.addTo(map);
                     }
-                } else {
-                    if (map.hasLayer(marker)) {
-                        map.removeLayer(marker);
-                    }
+                } else if (!releasesCluster && map.hasLayer(marker)) {
+                    map.removeLayer(marker);
                 }
             });
         }
 
 
         function updateReportsMarkers() {
+            if (reportsCluster) {
+                reportsCluster.clearLayers();
+            }
             markers.forEach(function(item) {
                 const report = item.report;
                 const marker = item.marker;
                 
-                // Aplicar filtro de estado
                 let shouldShow = showReports;
                 if (shouldShow && reportStatusFilter !== 'all') {
                     if (reportStatusFilter === 'with_file' && !report.tiene_hoja_vida) {
@@ -1007,13 +1034,13 @@
                 }
                 
                 if (shouldShow) {
-                    if (!map.hasLayer(marker)) {
+                    if (reportsCluster) {
+                        reportsCluster.addLayer(marker);
+                    } else if (!map.hasLayer(marker)) {
                         marker.addTo(map);
                     }
-                } else {
-                    if (map.hasLayer(marker)) {
-                        map.removeLayer(marker);
-                    }
+                } else if (!reportsCluster && map.hasLayer(marker)) {
+                    map.removeLayer(marker);
                 }
             });
         }
@@ -1083,7 +1110,11 @@
                 const marker = L.marker([lat, lng], { icon: icon });
                 
                 if (showReports) {
-                    marker.addTo(map);
+                    if (reportsCluster) {
+                        reportsCluster.addLayer(marker);
+                    } else {
+                        marker.addTo(map);
+                    }
                 }
 
                 // Popup con información del hallazgo

@@ -19,7 +19,12 @@ class Usuario extends Authenticatable
     public $timestamps = false;
 
     protected $fillable = [
-        'email', 'contrasena', 'nombre', 'apellido', 'telefono', 'imagenurl', 'activo', 'fecharegistro',
+        'email', 'contrasena', 'nombre', 'apellido', 'telefono', 'imagenurl', 'activo', 'fecharegistro', 'remember_token',
+    ];
+
+    protected $hidden = [
+        'contrasena',
+        'remember_token',
     ];
 
     public function getConnectionName(): ?string

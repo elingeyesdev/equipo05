@@ -70,144 +70,105 @@ class ReportsController extends Controller
      */
     private function activityReports(): View
     {
-        // Obtener todos los reportes aprobados
-        $reports = Report::where('aprobado', true)
-            ->with([
-                'animals' => function($query) {
-                    $query->with(['animalFiles' => function($q) {
-                        $q->with(['release', 'center']);
-                    }]);
-                },
-                'transfers' => function($query) {
-                    $query->where('primer_traslado', true)->with('center');
-                }
-            ])
-            ->get();
-
-        // Separar por estados
         $enPeligro = [];
         $rescatados = [];
         $tratados = [];
         $liberados = [];
-        
-        foreach ($reports as $report) {
-            // Extraer provincia de la dirección
-            $province = $this->extractProvince($report->direccion);
-            if (!$province) {
-                $province = 'Sin Provincia';
-            }
-            
-            // Determinar el estado del reporte
-            $hasFirstTransfer = $report->transfers->isNotEmpty();
+
+        $approvedReports = Report::where('aprobado', true)
+            ->with([
+                'animals.animalFiles.release',
+                'animals.animalFiles.center',
+                'transfers' => fn ($q) => $q->where('primer_traslado', true)->with('center'),
+            ])
+            ->get();
+
+        foreach ($approvedReports as $report) {
+            $province = $this->extractProvince($report->direccion) ?: 'Santa Cruz';
             $animals = $report->animals;
             $animalFiles = $animals->flatMap->animalFiles;
             $hasAnimalFile = $animalFiles->isNotEmpty();
-            
-            // Obtener nombre del animal (tomar el primero si hay varios)
-            $animalNombre = null;
-            if ($animals->isNotEmpty()) {
-                $firstAnimal = $animals->first();
-                $animalNombre = $firstAnimal->nombre ?? 'Sin nombre';
+            $hasFirstTransfer = $report->transfers->isNotEmpty();
+            $animalNombre = $animals->first()?->nombre ?? 'Sin nombre';
+            $fechaHallazgo = $report->created_at ? Carbon::parse($report->created_at) : null;
+
+            $release = $animalFiles->first(fn ($af) => $af->release !== null)?->release;
+
+            if ($release) {
+                $liberados[] = [
+                    'id' => $report->id,
+                    'province' => $province,
+                    'nombre' => $animalNombre,
+                    'fecha_hallazgo' => $fechaHallazgo,
+                    'fecha_liberacion' => $release->created_at ? Carbon::parse($release->created_at) : null,
+                    'tiempo_transcurrido' => $this->calculateTimeElapsed($fechaHallazgo),
+                ];
+                continue;
             }
-            
-            // Buscar si hay release
-            $release = null;
-            $animalFileWithRelease = $animalFiles->first(function($animalFile) {
-                return $animalFile->release !== null;
-            });
-            if ($animalFileWithRelease) {
-                $release = $animalFileWithRelease->release;
-            }
-            
-            // Obtener información del centro y fecha de traslado
-            $center = null;
-            $fechaTraslado = null;
-            if ($hasFirstTransfer) {
-                $firstTransfer = $report->transfers->first();
-                if ($firstTransfer) {
-                    if ($firstTransfer->centro_id) {
-                        $center = $firstTransfer->center;
-                    }
-                    $fechaTraslado = $firstTransfer->created_at;
-                }
-            }
-            
-            // Para tratados, obtener el centro desde la hoja de vida
-            $treatmentCenter = null;
-            $animalFileCreatedAt = null;
+
             if ($hasAnimalFile) {
                 $firstAnimalFile = $animalFiles->first();
-                if ($firstAnimalFile && $firstAnimalFile->centro_id) {
-                    $treatmentCenter = $firstAnimalFile->center;
-                }
-                // Si no tiene centro en la hoja, usar el del traslado
-                if (!$treatmentCenter && $center) {
-                    $treatmentCenter = $center;
-                }
-                $animalFileCreatedAt = $firstAnimalFile->created_at;
+                $fechaTratamiento = $firstAnimalFile->created_at
+                    ? Carbon::parse($firstAnimalFile->created_at)
+                    : null;
+                $tratados[] = [
+                    'id' => $report->id,
+                    'animal_file_id' => $firstAnimalFile->id,
+                    'province' => $province,
+                    'nombre' => $animalNombre,
+                    'fecha_hallazgo' => $fechaHallazgo,
+                    'fecha_tratamiento' => $fechaTratamiento,
+                    'centro' => $firstAnimalFile->center,
+                    'tiempo_desde_tratamiento' => $fechaTratamiento
+                        ? $this->calculateTimeElapsed($fechaTratamiento)
+                        : '-',
+                    'tiempo_transcurrido' => $this->calculateTimeElapsed($fechaHallazgo),
+                ];
+                continue;
             }
-            
-            // Calcular tiempo transcurrido desde el hallazgo
-            $tiempoTranscurrido = $this->calculateTimeElapsed($report->created_at);
-            
-            // Calcular tiempo transcurrido desde el primer tratamiento (para tratados)
-            $tiempoDesdeTratamiento = null;
-            if ($hasAnimalFile && $animalFileCreatedAt) {
-                $tiempoDesdeTratamiento = $this->calculateTimeElapsed($animalFileCreatedAt);
+
+            if ($hasFirstTransfer) {
+                $firstTransfer = $report->transfers->first();
+                $fechaTraslado = $firstTransfer->created_at
+                    ? Carbon::parse($firstTransfer->created_at)
+                    : null;
+                $rescatados[] = [
+                    'id' => $report->id,
+                    'province' => $province,
+                    'nombre' => $animalNombre,
+                    'fecha_hallazgo' => $fechaHallazgo,
+                    'fecha_traslado' => $fechaTraslado,
+                    'centro' => $firstTransfer->center,
+                    'tiempo_hallazgo_traslado' => $fechaTraslado
+                        ? $this->calculateTimeElapsed($fechaHallazgo, $fechaTraslado)
+                        : null,
+                    'tiempo_transcurrido' => $this->calculateTimeElapsed($fechaHallazgo),
+                ];
+                continue;
             }
-            
-            $reportData = [
+
+            $enPeligro[] = [
                 'id' => $report->id,
                 'province' => $province,
                 'nombre' => $animalNombre,
-                'fecha_hallazgo' => $report->created_at,
-                'tiempo_transcurrido' => $tiempoTranscurrido,
+                'fecha_hallazgo' => $fechaHallazgo,
+                'tiempo_transcurrido' => $this->calculateTimeElapsed($fechaHallazgo),
             ];
-            
-            // Clasificar según estado
-            if ($release) {
-                // Liberado
-                $reportData['fecha_liberacion'] = $release->created_at;
-                $liberados[] = $reportData;
-            } elseif ($hasAnimalFile) {
-                // Tratado
-                $reportData['centro'] = $treatmentCenter;
-                $reportData['fecha_tratamiento'] = $animalFileCreatedAt;
-                $reportData['tiempo_desde_tratamiento'] = $tiempoDesdeTratamiento;
-                $tratados[] = $reportData;
-            } elseif ($hasFirstTransfer) {
-                // Rescatado (En Traslado)
-                $reportData['centro'] = $center;
-                $reportData['fecha_traslado'] = $fechaTraslado;
-                $reportData['tiempo_hallazgo_traslado'] = $fechaTraslado ? $this->calculateTimeElapsed($report->created_at, $fechaTraslado) : null;
-                $rescatados[] = $reportData;
-            } else {
-                // En Peligro
-                $enPeligro[] = $reportData;
-            }
         }
-        
-        // Ordenar cada lista por provincia y luego por ID
-        $sortFunction = function($a, $b) {
-            if ($a['province'] !== $b['province']) {
-                return strcmp($a['province'], $b['province']);
-            }
-            return $a['id'] - $b['id'];
-        };
-        
-        usort($enPeligro, $sortFunction);
-        usort($rescatados, $sortFunction);
-        usort($tratados, $sortFunction);
-        usort($liberados, $sortFunction);
-        
-        // Calcular totales
+
+        $sortByName = fn ($a, $b) => strcmp($a['nombre'] ?? '', $b['nombre'] ?? '');
+        usort($enPeligro, $sortByName);
+        usort($rescatados, $sortByName);
+        usort($tratados, $sortByName);
+        usort($liberados, $sortByName);
+
         $totals = [
             'en_peligro' => count($enPeligro),
             'rescatados' => count($rescatados),
             'tratados' => count($tratados),
             'liberados' => count($liberados),
         ];
-        
+
         return view('reports.index', [
             'tab' => 'activity',
             'subtab' => 'states',

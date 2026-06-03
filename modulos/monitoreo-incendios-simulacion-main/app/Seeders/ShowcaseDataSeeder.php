@@ -206,9 +206,9 @@ class ShowcaseDataSeeder extends Seeder
                 'user_id' => $adminUser->id,
                 'predicted_at' => now()->subHours(5),
                 'path' => [
-                    ['lat' => -17.7532, 'lng' => -60.7123, 'time' => 0, 'affected_area_km2' => 0.7],
-                    ['lat' => -17.7540, 'lng' => -60.7140, 'time' => 2, 'affected_area_km2' => 1.5],
-                    ['lat' => -17.7550, 'lng' => -60.7158, 'time' => 4, 'affected_area_km2' => 2.3],
+                    ['lat' => -17.7532, 'lng' => -60.7123, 'hour' => 0, 'intensity' => 6.5, 'spread_radius_km' => 0.8, 'affected_area_km2' => 0.7, 'perimeter_km' => 5.0],
+                    ['lat' => -17.7540, 'lng' => -60.7140, 'hour' => 2, 'intensity' => 7.0, 'spread_radius_km' => 1.2, 'affected_area_km2' => 1.5, 'perimeter_km' => 7.5],
+                    ['lat' => -17.7550, 'lng' => -60.7158, 'hour' => 4, 'intensity' => 7.5, 'spread_radius_km' => 1.5, 'affected_area_km2' => 2.3, 'perimeter_km' => 9.4],
                 ],
                 'meta' => ['fire_risk_index' => 82, 'confidence_score' => 0.84, 'source' => 'showcase-seeder'],
             ]
@@ -220,9 +220,9 @@ class ShowcaseDataSeeder extends Seeder
                 'user_id' => $adminUser->id,
                 'predicted_at' => now()->subHours(2),
                 'path' => [
-                    ['lat' => -17.6471, 'lng' => -62.7330, 'time' => 0, 'affected_area_km2' => 0.9],
-                    ['lat' => -17.6484, 'lng' => -62.7346, 'time' => 2, 'affected_area_km2' => 2.0],
-                    ['lat' => -17.6498, 'lng' => -62.7360, 'time' => 4, 'affected_area_km2' => 3.1],
+                    ['lat' => -17.6471, 'lng' => -62.7330, 'hour' => 0, 'intensity' => 7.0, 'spread_radius_km' => 0.9, 'affected_area_km2' => 0.9, 'perimeter_km' => 5.7],
+                    ['lat' => -17.6484, 'lng' => -62.7346, 'hour' => 2, 'intensity' => 7.5, 'spread_radius_km' => 1.3, 'affected_area_km2' => 2.0, 'perimeter_km' => 8.2],
+                    ['lat' => -17.6498, 'lng' => -62.7360, 'hour' => 4, 'intensity' => 8.0, 'spread_radius_km' => 1.6, 'affected_area_km2' => 3.1, 'perimeter_km' => 10.1],
                 ],
                 'meta' => ['fire_risk_index' => 89, 'confidence_score' => 0.8, 'source' => 'showcase-seeder'],
             ]

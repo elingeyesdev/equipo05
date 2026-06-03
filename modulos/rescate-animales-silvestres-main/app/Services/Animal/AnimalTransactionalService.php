@@ -8,6 +8,7 @@ use Modules\Rescate\Models\AnimalHistory;
 use Modules\Rescate\Models\Report;
 use Modules\Rescate\Models\Transfer;
 use Illuminate\Http\UploadedFile;
+use App\Support\RescateMedia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -49,18 +50,22 @@ class AnimalTransactionalService
 			if ($image) {
 				$storedPath = $image->store('animal_files', 'public');
 				$animalFileData['imagen_url'] = $storedPath;
-			} elseif (!empty($animalData['reporte_id'])) {
-				// Si no se sube imagen, intentar copiar la del reporte
+            } elseif (! empty($animalData['reporte_id'])) {
 				$rep = Report::find($animalData['reporte_id']);
-				if ($rep && $rep->imagen_url) {
+				if ($rep && $rep->imagen_url && Storage::disk('public')->exists($rep->imagen_url)) {
 					$basename = basename($rep->imagen_url);
-					$target = 'animal_files/' . uniqid('from_report_') . '_' . $basename;
-					if (Storage::disk('public')->exists($rep->imagen_url)) {
-						if (Storage::disk('public')->copy($rep->imagen_url, $target)) {
-							$animalFileData['imagen_url'] = $target;
-							$copiedFromReport = $target;
-						}
+					$target = 'animal_files/'.uniqid('from_report_').'_'.$basename;
+					if (Storage::disk('public')->copy($rep->imagen_url, $target)) {
+						$animalFileData['imagen_url'] = $target;
+						$copiedFromReport = $target;
 					}
+				}
+			}
+
+			if (empty($animalFileData['imagen_url']) && ! empty($animalFileData['especie_id'])) {
+				$speciesPath = RescateMedia::assignSpeciesImage((int) $animalFileData['especie_id']);
+				if ($speciesPath) {
+					$animalFileData['imagen_url'] = $speciesPath;
 				}
 			}
 

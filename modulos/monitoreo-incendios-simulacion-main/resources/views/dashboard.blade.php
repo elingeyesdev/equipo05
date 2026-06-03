@@ -4,51 +4,47 @@
 @section('content_header_title', 'Panel Principal')
 
 @section('content_body')
-    {{-- Sistema de Pestañas Principal --}}
-    <div class="card card-primary card-outline card-tabs">
-        <div class="card-header p-0 pt-1 border-bottom-0">
-            <ul class="nav nav-tabs" id="mainDashboardTabs" role="tablist">
+    {{-- Accesos rápidos a submódulos (evita pestañas vacías / redundantes con el menú lateral) --}}
+    <div class="card card-primary card-outline mb-3">
+        <div class="card-header p-0 border-bottom-0 inc-dashboard-quicknav">
+            <ul class="nav nav-pills nav-fill flex-wrap" role="navigation" aria-label="Accesos del módulo incendios">
                 <li class="nav-item">
-                    <a class="nav-link active" id="monitoreo-tab" data-toggle="tab" href="#monitoreo" role="tab">
+                    <span class="nav-link active disabled" aria-current="page">
                         <i class="fas fa-map-marked-alt text-primary"></i> Monitoreo
-                    </a>
+                    </span>
                 </li>
-                @if($isAdmin ?? false)
                 <li class="nav-item">
-                    <a class="nav-link" id="incendios-tab" data-toggle="tab" href="#incendios" role="tab">
+                    <a class="nav-link" href="{{ route('incendios.focos-incendios.index') }}">
                         <i class="fas fa-fire text-danger"></i> Focos de Incendio
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="biomasas-tab" data-toggle="tab" href="#biomasas" role="tab">
+                    <a class="nav-link" href="{{ route('incendios.biomasas.index') }}">
                         <i class="fas fa-leaf text-success"></i> Biomasas
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="simulaciones-tab" data-toggle="tab" href="#simulaciones" role="tab">
+                    <a class="nav-link" href="{{ route('incendios.simulaciones.index') }}">
                         <i class="fas fa-project-diagram text-purple"></i> Simulaciones
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="usuarios-tab" data-toggle="tab" href="#usuarios" role="tab">
-                        <i class="fas fa-users text-dark"></i> Usuarios
+                    <a class="nav-link" href="{{ route('incendios.reports.fires') }}">
+                        <i class="fas fa-chart-line text-info"></i> Reportes
                     </a>
                 </li>
-                @endif
             </ul>
         </div>
-        <div class="card-body">
-            <div class="tab-content" id="mainDashboardTabsContent">
-                {{-- Pestaña 1: Monitoreo (Panel Principal) --}}
-                <div class="tab-pane fade show active" id="monitoreo" role="tabpanel">
+        <div class="card-body p-0 pt-3">
     <div class="row">
         {{-- Mapa principal con focos y biomasas --}}
         <div class="col-lg-8">
             <x-adminlte-card title="Mapa de Monitoreo" theme="light" icon="fas fa-map-marked-alt">
                 <div id="map"></div>
                 <div class="mt-2 text-sm text-muted">
-                    <i class="fas fa-fire text-danger"></i> Puntos de calor (FIRMS) &nbsp;&nbsp;
-                    <i class="fas fa-leaf text-success"></i> Áreas de biomasa
+                    <i class="fas fa-map-pin text-primary"></i> Focos registrados (manual / reportados) &nbsp;&nbsp;
+                    <i class="fas fa-satellite text-danger"></i> Detección satélite NASA FIRMS &nbsp;&nbsp;
+                    <i class="fas fa-leaf text-success"></i> Áreas de biomasa aprobadas
                 </div>
             </x-adminlte-card>
         </div>
@@ -346,213 +342,6 @@
             </x-adminlte-card>
         </div>
     </div>
-                </div>
-
-                @if($isAdmin ?? false)
-                {{-- Pestaña 2: Focos de Incendio (Solo Admin) --}}
-                <div class="tab-pane fade" id="incendios" role="tabpanel">
-                    {{-- Métricas rápidas --}}
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <div class="small-box bg-danger">
-                                <div class="inner">
-                                    <h3>{{ $monthlyComparison['current_month'] ?? 0 }}</h3>
-                                    <p>Focos de Incendio este mes</p>
-                                </div>
-                                <div class="icon"><i class="fas fa-fire"></i></div>
-                                @if(($monthlyComparison['change_percentage'] ?? 0) != 0)
-                                <a href="#" class="small-box-footer">
-                                    {{ $monthlyComparison['change_percentage'] > 0 ? '▲' : '▼' }} 
-                                    {{ abs($monthlyComparison['change_percentage']) }}% vs mes anterior
-                                </a>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small-box bg-warning">
-                                <div class="inner">
-                                    <h3>{{ $monthlyComparison['previous_month'] ?? 0 }}</h3>
-                                    <p>Mes anterior</p>
-                                </div>
-                                <div class="icon"><i class="fas fa-history"></i></div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small-box bg-info">
-                                <div class="inner">
-                                    <h3>{{ $monthlyComparison['last_year_same_month'] ?? 0 }}</h3>
-                                    <p>Mismo mes año pasado</p>
-                                </div>
-                                <div class="icon"><i class="fas fa-calendar-alt"></i></div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small-box bg-primary">
-                                <div class="inner">
-                                    <h3>{{ $fireTrends['high_confidence'] ?? 0 }}</h3>
-                                    <p>Alta confianza (7 días)</p>
-                                </div>
-                                <div class="icon"><i class="fas fa-bullseye"></i></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-8">
-                            <x-adminlte-card title="Tendencia de Focos de Incendio (Últimos 30 Días)" theme="danger" icon="fas fa-fire">
-                                <x-chart-line 
-                                    chartId="fireTrendsChart" 
-                                    :labels="$fireTrends['labels'] ?? []"
-                                    :datasets="[[
-                                        'label' => 'Puntos de Calor Detectados',
-                                        'data' => $fireTrends['counts'] ?? [],
-                                        'borderColor' => '#dc2626',
-                                        'backgroundColor' => 'rgba(220, 38, 38, 0.1)',
-                                        'tension' => 0.4,
-                                        'fill' => true
-                                    ]]"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                        <div class="col-md-4">
-                            <x-adminlte-card title="Confianza de Detección" theme="warning" icon="fas fa-bullseye">
-                                <x-chart-pie 
-                                    chartId="fireConfidenceChart" 
-                                    :labels="['Alta (≥80%)', 'Media (50-79%)', 'Baja (<50%)']"
-                                    :data="[
-                                        $fireTrends['high_confidence'] ?? 0,
-                                        $fireTrends['medium_confidence'] ?? 0,
-                                        $fireTrends['low_confidence'] ?? 0
-                                    ]"
-                                    :colors="['#10b981', '#f59e0b', '#ef4444']"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <x-adminlte-card title="Distribución Horaria (Últimos 7 Días)" theme="info" icon="fas fa-clock">
-                                <x-chart-bar 
-                                    chartId="fireHourlyChart" 
-                                    :labels="$fireHourly['labels'] ?? []"
-                                    :datasets="[[
-                                        'label' => 'Focos de Incendio detectados',
-                                        'data' => $fireHourly['counts'] ?? [],
-                                        'backgroundColor' => 'rgba(59, 130, 246, 0.7)',
-                                        'borderColor' => '#3b82f6',
-                                        'borderWidth' => 1
-                                    ]]"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                        <div class="col-md-6">
-                            <x-adminlte-card title="Top 5 Zonas de Mayor Riesgo" theme="danger" icon="fas fa-exclamation-triangle">
-                                <x-chart-bar 
-                                    chartId="riskAreasChart" 
-                                    :labels="$riskAreas['labels'] ?? []"
-                                    :datasets="[[
-                                        'label' => 'Focos de Incendio cercanos (30 días)',
-                                        'data' => $riskAreas['counts'] ?? [],
-                                        'backgroundColor' => 'rgba(220, 38, 38, 0.7)',
-                                        'borderColor' => '#dc2626',
-                                        'borderWidth' => 2
-                                    ]]"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Pestaña 3: Biomasas (Solo Admin) --}}
-                <div class="tab-pane fade" id="biomasas" role="tabpanel">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <x-adminlte-card title="Distribución por Tipo de Biomasa" theme="success" icon="fas fa-leaf">
-                                <x-chart-bar 
-                                    chartId="biomasaDistributionChart" 
-                                    :labels="$biomasaDistribution['labels'] ?? []"
-                                    :datasets="[[
-                                        'label' => 'Cantidad de Áreas',
-                                        'data' => $biomasaDistribution['counts'] ?? [],
-                                        'backgroundColor' => $biomasaDistribution['colors'] ?? []
-                                    ]]"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                        <div class="col-md-6">
-                            <x-adminlte-card title="Área Total por Tipo (Hectáreas)" theme="success" icon="fas fa-chart-area">
-                                <x-chart-pie 
-                                    chartId="biomasaAreaChart" 
-                                    :labels="$biomasaDistribution['labels'] ?? []"
-                                    :data="$biomasaDistribution['areas'] ?? []"
-                                    :backgroundColors="$biomasaDistribution['colors'] ?? []"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Pestaña 4: Simulaciones (Solo Admin) --}}
-                <div class="tab-pane fade" id="simulaciones" role="tabpanel">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <x-adminlte-card title="Riesgo de Incendio Promedio" theme="purple" icon="fas fa-gauge-high">
-                                <x-chart-gauge 
-                                    chartId="fireRiskGauge" 
-                                    :value="$simulationStats['avg_fire_risk'] ?? 0"
-                                    :max="100"
-                                    label="Nivel de Riesgo"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                        <div class="col-md-6">
-                            <x-adminlte-card title="Simulaciones por Mes (Últimos 6 Meses)" theme="info" icon="fas fa-chart-line">
-                                <x-chart-bar 
-                                    chartId="simulationsMonthlyChart" 
-                                    :labels="$simulationStats['monthly_labels'] ?? []"
-                                    :datasets="[[
-                                        'label' => 'Simulaciones Ejecutadas',
-                                        'data' => $simulationStats['monthly_counts'] ?? [],
-                                        'backgroundColor' => '#8B5CF6'
-                                    ]]"
-                                    :height="300"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Pestaña 5: Usuarios (Solo Admin) --}}
-                <div class="tab-pane fade" id="usuarios" role="tabpanel">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <x-adminlte-card title="Top 10 Usuarios más Activos (Biomasas Registradas)" theme="dark" icon="fas fa-trophy">
-                                <x-chart-bar 
-                                    chartId="userActivityChart" 
-                                    :labels="$userActivity['labels'] ?? []"
-                                    :datasets="[[
-                                        'label' => 'Biomasas Creadas',
-                                        'data' => $userActivity['counts'] ?? [],
-                                        'backgroundColor' => '#4299E1'
-                                    ]]"
-                                    :height="350"
-                                />
-                            </x-adminlte-card>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-                </div>
-            </div>
         </div>
     </div>
 @endsection
@@ -560,6 +349,19 @@
 @push('css')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
+    .inc-dashboard-quicknav .nav-link {
+        font-weight: 600;
+        border-radius: 0;
+        padding: 0.75rem 0.5rem;
+    }
+    .inc-dashboard-quicknav .nav-link:not(.disabled):hover {
+        background: rgba(255, 152, 0, 0.12);
+    }
+    .inc-dashboard-quicknav .nav-link.disabled {
+        opacity: 1;
+        color: #fff;
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+    }
     .bg-teal { background-color: #20c997 !important; color: #fff; }
     .dashboard-clima-mini .dashboard-clima-box {
         min-height: 88px;
@@ -960,29 +762,61 @@
         `;
     }
 
-    // Load fire hotspots con visualización mejorada
+    function createRegisteredFireIcon() {
+        return L.divIcon({
+            className: 'registered-fire-marker',
+            html: '<div style="background:#2563eb;width:16px;height:16px;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(37,99,235,.6);"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+        });
+    }
+
+    function createRegisteredFirePopup(foco) {
+        return `
+            <div style="min-width:200px;">
+                <strong><i class="fas fa-map-pin text-primary"></i> Foco registrado</strong>
+                <p class="mb-1 mt-2"><strong>${foco.ubicacion || 'Sin nombre'}</strong></p>
+                <small>Intensidad: <strong>${foco.intensidad}</strong></small><br>
+                <small>Fecha: ${foco.fecha || '—'}</small><br>
+                <small class="text-muted">${foco.lat.toFixed(4)}, ${foco.lng.toFixed(4)}</small>
+            </div>`;
+    }
+
+    // 1) Focos guardados en base de datos (manuales e importados)
+    fetch(window.SIPII_INC.mod + '/dashboard/focos?days=90', {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    })
+        .then(res => res.json())
+        .then(result => {
+            if (result.ok && result.data && result.data.length > 0) {
+                console.log(`📍 ${result.count} focos registrados en mapa`);
+                const bounds = [];
+                result.data.forEach(foco => {
+                    const marker = L.marker([foco.lat, foco.lng], { icon: createRegisteredFireIcon() }).addTo(map);
+                    marker.bindPopup(createRegisteredFirePopup(foco), { maxWidth: 280 });
+                    bounds.push([foco.lat, foco.lng]);
+                });
+                if (bounds.length > 0) {
+                    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
+                }
+            }
+        })
+        .catch(err => console.error('Error loading registered fires:', err));
+
+    // 2) Detección satélite NASA FIRMS (complementaria)
     fetch(window.SIPII_INC.api + '/fires')
         .then(res => res.json())
         .then(result => {
             if (result.ok && result.data && result.data.length > 0) {
-                console.log(`🔥 Cargados ${result.count} puntos calientes`);
-                
+                console.log(`🛰️ ${result.count} puntos FIRMS`);
                 result.data.forEach(fire => {
-                    const marker = L.marker(
-                        [fire.lat, fire.lng], 
-                        { icon: createFireIcon(fire) }
-                    ).addTo(map);
-                    
-                    marker.bindPopup(createFirePopup(fire), {
-                        maxWidth: 300,
-                        className: 'custom-fire-popup'
-                    });
+                    const marker = L.marker([fire.lat, fire.lng], { icon: createFireIcon(fire) }).addTo(map);
+                    marker.bindPopup(createFirePopup(fire), { maxWidth: 300, className: 'custom-fire-popup' });
                 });
-            } else {
-                console.log('ℹ️ No se encontraron focos de calor en los últimos 2 días');
             }
         })
-        .catch(err => console.error('Error loading fires:', err));
+        .catch(err => console.error('Error loading FIRMS:', err));
 
     // Variables globales para filtrado
     let allBiomasas = null;
@@ -1138,74 +972,9 @@
         initDashboard();
     }
 
-    // Reajustar el mapa al cambiar entre pestañas del dashboard.
-    $(document).on('shown.bs.tab', '#mainDashboardTabs a[data-toggle="tab"]', function () {
-        setTimeout(() => {
-            document.dispatchEvent(new Event('resize'));
-        }, 250);
-    });
-
-    // Chart initialization handled by global `initChart` in the layout.
-    // The tab listeners below will call the global `initChart` for canvases.
-
-    // Sistema de inicialización lazy para charts en pestañas
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🎨 Iniciando sistema de charts...');
-        console.log('Chart.js disponible:', typeof Chart !== 'undefined');
-        
-        // Listener para cuando se cambie de tab
-        const tabLinks = document.querySelectorAll('#mainDashboardTabs a[data-toggle="tab"]');
-        console.log('Tab links encontrados:', tabLinks.length);
-        
-        tabLinks.forEach(tabLink => {
-            tabLink.addEventListener('shown.bs.tab', function(event) {
-                const activeTabId = event.target.getAttribute('href');
-                const activeTab = document.querySelector(activeTabId);
-                console.log('🔄 Tab cambiada a:', activeTabId);
-                
-                if (activeTab) {
-                    setTimeout(() => {
-                        const canvases = activeTab.querySelectorAll('canvas[data-chart-type]');
-                        console.log('Canvas en nueva tab:', canvases.length);
-                        
-                        canvases.forEach(canvas => {
-                            console.log('Intentando inicializar canvas:', canvas.id);
-                            window.initChart(canvas.id);
-                        });
-                    }, 200);
-                }
-            });
-        });
-        
-        // También escuchar evento de Bootstrap directamente
-        $(document).on('shown.bs.tab', '#mainDashboardTabs a[data-toggle="tab"]', function (e) {
-            const activeTabId = $(e.target).attr('href');
-            console.log('🔄 [jQuery] Tab cambiada a:', activeTabId);
-            
-            setTimeout(() => {
-                const canvases = document.querySelectorAll(activeTabId + ' canvas[data-chart-type]');
-                console.log('[jQuery] Canvas encontrados:', canvases.length);
-                canvases.forEach(canvas => {
-                    window.initChart(canvas.id);
-                });
-            }, 200);
-        });
-        
-        // Inicializar charts visibles en la tab activa
-        setTimeout(() => {
-            const activeTab = document.querySelector('.tab-pane.active');
-            console.log('Tab activa encontrada:', activeTab ? activeTab.id : 'ninguna');
-            
-            if (activeTab) {
-                const canvases = activeTab.querySelectorAll('canvas[data-chart-type]');
-                console.log('Canvas encontrados en tab activa:', canvases.length);
-                
-                canvases.forEach(canvas => {
-                    console.log('Inicializando canvas:', canvas.id);
-                    window.initChart(canvas.id);
-                });
-            }
-        }, 500);
-    });
 </script>
+@endpush
+
+@push('js')
+@include('incendios::partials.chart-scripts')
 @endpush

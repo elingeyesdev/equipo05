@@ -24,15 +24,6 @@
                         </a>
                     </x-slot>
 
-                    <div class="mb-3">
-                        <a href="{{ route('incendios.simulaciones.create') }}" class="btn btn-success btn-sm mr-1">
-                            <i class="fas fa-plus"></i> Nueva simulación
-                        </a>
-                        <a href="{{ route('incendios.simulaciones.simulator') }}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-fire"></i> Simulador Avanzado
-                        </a>
-                    </div>
-
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>

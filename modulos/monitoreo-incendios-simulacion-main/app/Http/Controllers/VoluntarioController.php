@@ -121,7 +121,7 @@ class VoluntarioController extends Controller
             $userData['password'] = $request->password;
         }
         
-        $voluntario->user->update($userData);
+        $voluntario->user?->update($userData);
 
         // Actualizar voluntario
         $voluntario->update([

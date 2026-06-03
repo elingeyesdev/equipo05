@@ -21,7 +21,7 @@ class DemoImageDownloader
             return $relativePath;
         }
 
-        return self::storePlaceholder($relativePath, AnimalImageCatalog::seedFor($speciesOrLabel));
+        return self::storeGeneratedPlaceholder($relativePath, AnimalImageCatalog::seedFor($speciesOrLabel));
     }
 
     public static function downloadUrl(string $relativePath, string $url): ?string
@@ -50,25 +50,12 @@ class DemoImageDownloader
 
     public static function storePlaceholder(string $relativePath, string $seed): ?string
     {
-        if (Storage::disk('public')->exists($relativePath)) {
-            return $relativePath;
-        }
+        return self::storeSpeciesImage($relativePath, $seed, true);
+    }
 
-        $safeSeed = preg_replace('/[^a-zA-Z0-9_-]/', '', $seed) ?: 'demo';
-
-        try {
-            $response = Http::timeout(20)
-                ->withOptions(['allow_redirects' => true])
-                ->get('https://picsum.photos/seed/'.$safeSeed.'/640/480');
-
-            if ($response->successful() && strlen($response->body()) > 1000) {
-                Storage::disk('public')->put($relativePath, $response->body());
-
-                return $relativePath;
-            }
-        } catch (\Throwable) {
-            // fallback: imagen mínima JPEG generada con GD
-        }
+    private static function storeGeneratedPlaceholder(string $relativePath, string $seed): ?string
+    {
+        $safeSeed = preg_replace('/[^a-zA-Z0-9_-]/', '', $seed) ?: 'fauna';
 
         if (function_exists('imagecreatetruecolor')) {
             $img = imagecreatetruecolor(640, 480);

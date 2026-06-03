@@ -25,6 +25,20 @@ class FocoIncendio extends Model
         'intensidad' => 'float',
     ];
 
+    /**
+     * Focos operativos (excluye datos de prueba del seed demo).
+     */
+    public function scopeOperativos($query)
+    {
+        return $query->whereRaw('LOWER(ubicacion) NOT LIKE ?', ['%demo%'])
+            ->whereRaw('LOWER(ubicacion) NOT LIKE ?', ['%prueba%']);
+    }
+
+    public function scopeConCoordenadas($query)
+    {
+        return $query->whereNotNull('coordenadas');
+    }
+
     // You can add helpers to get latitude/longitude convenience accessors
     /**
      * The simulation this foco belongs to (nullable).

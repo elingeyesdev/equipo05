@@ -6,6 +6,7 @@ use Modules\Incendios\Models\FocosIncendio;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Modules\Incendios\Http\Requests\FocosIncendioRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Modules\Incendios\Services\FirmsDataService;
@@ -39,9 +40,10 @@ class FocosIncendioController extends Controller
     public function store(FocosIncendioRequest $request): RedirectResponse
     {
         FocosIncendio::create($request->validated());
+        Cache::forget('public_active_fires_list');
 
-        return Redirect::route('incendios.focos-incendios.index')
-            ->with('success', 'Foco de incendio creado correctamente.');
+        return Redirect::route('incendios.dashboard')
+            ->with('success', 'Foco registrado. Ya aparece en el mapa principal.');
     }
 
     /**
