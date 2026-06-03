@@ -55,35 +55,6 @@ class AppServiceProvider extends ServiceProvider
             };
 
             $view->with('bodyModuleClass', trim('platform-ui '.$moduleClass));
-
-            if (! \Illuminate\Support\Facades\Auth::check()) {
-                $view->with('contextModuleRoles', collect());
-                $view->with('showModuleContextBar', false);
-
-                return;
-            }
-
-            $inRescate = str_starts_with($path, 'rescate/modulo') || request()->routeIs('fusion.modulos.rescate');
-            $inIncendios = str_starts_with($path, 'incendios/modulo') || request()->routeIs('fusion.modulos.incendios');
-
-            if (! $inRescate && ! $inIncendios) {
-                $view->with('contextModuleRoles', collect());
-                $view->with('showModuleContextBar', false);
-
-                return;
-            }
-
-            try {
-                $view->with(
-                    'contextModuleRoles',
-                    \Spatie\Permission\Models\Role::query()->where('guard_name', 'web')->orderBy('name')->pluck('name')
-                );
-            } catch (\Throwable) {
-                $view->with('contextModuleRoles', collect());
-            }
-            $view->with('showModuleContextBar', true);
-            $view->with('moduleContextIsRescate', $inRescate);
-            $view->with('moduleContextIsIncendios', $inIncendios);
         });
 
         View::addNamespace('fusion', resource_path('views'));

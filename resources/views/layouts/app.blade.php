@@ -120,38 +120,6 @@
             </ul>
         </nav>
 
-        @auth
-        @if(!empty($showModuleContextBar) && $showModuleContextBar)
-        <div class="module-context-bar px-3 py-2 border-bottom d-flex flex-wrap align-items-center" style="gap: .5rem; font-size: 0.9rem;">
-            <span class="text-secondary mb-0">Rol de referencia en el módulo (no restringe el acceso; el login del sistema basta):</span>
-            @if(!empty($moduleContextIsRescate) && $moduleContextIsRescate)
-            <form method="post" action="{{ route('modulos.contexto.rescate') }}" class="d-inline m-0">
-                @csrf
-                <label class="sr-only" for="ctx-rescate-rol">Rol rescate</label>
-                <select id="ctx-rescate-rol" name="rol" class="custom-select custom-select-sm" style="min-width: 12rem;" onchange="this.form.submit()">
-                    <option value="__default__" {{ !session('modulo_rescate_rol') ? 'selected' : '' }}>Usar roles de mi cuenta</option>
-                    @foreach($contextModuleRoles ?? [] as $r)
-                    <option value="{{ $r }}" {{ session('modulo_rescate_rol') === $r ? 'selected' : '' }}>{{ $r }}</option>
-                    @endforeach
-                </select>
-            </form>
-            @endif
-            @if(!empty($moduleContextIsIncendios) && $moduleContextIsIncendios)
-            <form method="post" action="{{ route('modulos.contexto.incendios') }}" class="d-inline m-0">
-                @csrf
-                <label class="sr-only" for="ctx-inc-rol">Rol incendios</label>
-                <select id="ctx-inc-rol" name="rol" class="custom-select custom-select-sm" style="min-width: 12rem;" onchange="this.form.submit()">
-                    <option value="__default__" {{ !session('modulo_incendios_rol') ? 'selected' : '' }}>Usar roles de mi cuenta</option>
-                    @foreach($contextModuleRoles ?? [] as $r)
-                    <option value="{{ $r }}" {{ session('modulo_incendios_rol') === $r ? 'selected' : '' }}>{{ $r }}</option>
-                    @endforeach
-                </select>
-            </form>
-            @endif
-        </div>
-        @endif
-        @endauth
-
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="{{ route('home') }}" class="brand-link text-center">
                 <i class="fas fa-hand-holding-heart fa-lg"></i>
