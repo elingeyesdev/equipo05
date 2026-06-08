@@ -236,13 +236,17 @@ class RichRescateDemoSeeder extends Seeder
             ]);
 
             DB::connection('rescate')->table('transfers')->updateOrInsert(
-                ['reporte_id' => $report->id, 'animal_id' => $animal->id],
+                ['reporte_id' => $report->id, 'primer_traslado' => true],
                 [
-                    'rescatista_id' => $rescuer->id,
                     'persona_id' => $rescuerPerson?->id,
                     'centro_id' => $file->centro_id ?? $center->id,
-                    'observaciones' => 'Traslado demo — '.$speciesLabel,
-                    'primer_traslado' => true,
+                    'observaciones' => sprintf(
+                        'Primer traslado de %s desde %s hacia %s.',
+                        $speciesLabel,
+                        $report->direccion ?: 'punto de hallazgo',
+                        Center::find($file->centro_id ?? $center->id)?->nombre ?? 'centro de rescate'
+                    ),
+                    'animal_id' => null,
                     'latitud' => $report->latitud,
                     'longitud' => $report->longitud,
                     'created_at' => $recentAt,

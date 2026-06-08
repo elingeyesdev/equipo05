@@ -198,12 +198,12 @@ class ShowcaseDataSeeder extends Seeder
         );
 
         DB::connection('rescate')->table('transfers')->updateOrInsert(
-            ['reporte_id' => $reportFire->id, 'animal_id' => $animalZorro->id],
+            ['reporte_id' => $reportFire->id, 'primer_traslado' => true],
             [
-                'rescatista_id' => $rescuer->id,
                 'persona_id' => $rescuerPerson->id,
                 'centro_id' => $centerNorte->id,
-                'observaciones' => 'Traslado inicial coordinado con brigada local.',
+                'observaciones' => 'Primer traslado de Zorro de monte desde Zona de amortiguación del Urubó hacia Centro Norte de Rescate.',
+                'animal_id' => null,
                 'primer_traslado' => true,
                 'latitud' => -17.6891,
                 'longitud' => -63.2124,
@@ -212,12 +212,12 @@ class ShowcaseDataSeeder extends Seeder
             ]
         );
         DB::connection('rescate')->table('transfers')->updateOrInsert(
-            ['reporte_id' => $reportRoad->id, 'animal_id' => $animalPerezoso->id],
+            ['reporte_id' => $reportRoad->id, 'primer_traslado' => true],
             [
-                'rescatista_id' => $rescuer->id,
                 'persona_id' => $rescuerPerson->id,
                 'centro_id' => $centerEste->id,
-                'observaciones' => 'Traslado con inmovilización preventiva.',
+                'observaciones' => 'Primer traslado de Perezoso desde Ruta a Cotoca km 14 hacia Centro Este de Rehabilitación.',
+                'animal_id' => null,
                 'primer_traslado' => true,
                 'latitud' => -17.8042,
                 'longitud' => -63.0117,

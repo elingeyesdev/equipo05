@@ -12,6 +12,7 @@ for f in \
   04_mod_inventario_transparencia.sql \
   02_mod_incendios.sql \
   03_mod_rescate.sql \
+  03b_mod_rescate_transfers_persona.sql \
   06_mod_logistica.sql \
   07_mod_seguimiento.sql \
   08_mod_cuadrillas.sql

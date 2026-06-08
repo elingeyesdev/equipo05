@@ -16,8 +16,8 @@ class AnimalTransferHistoryService
     {
         AnimalHistory::create([
             'animal_file_id' => null,
-            'valores_antiguos' => null,
-            'valores_nuevos' => [
+            'old_values' => null,
+            'new_values' => json_encode([
                 'transfer' => [
                     'id' => $transfer->id,
                     'persona_id' => $transfer->persona_id,
@@ -27,14 +27,13 @@ class AnimalTransferHistoryService
                     'primer_traslado' => true,
                     'latitud' => $transfer->latitud ?? null,
                     'longitud' => $transfer->longitud ?? null,
-                    'created_at' => $transfer->created_at ? $transfer->created_at->toDateTimeString() : null, // Guardar fecha original del traslado
+                    'created_at' => $transfer->created_at ? $transfer->created_at->toDateTimeString() : null,
                 ],
-                // No hay hoja/centro anterior aún
-            ],
-            'observaciones' => [
-                'texto' => 'Primer traslado desde reporte de hallazgo',
-            ],
-            'changed_at' => $transfer->created_at, // Usar la fecha del traslado, no la del historial
+            ], JSON_UNESCAPED_UNICODE),
+            'estado_anterior' => 'Hallazgo aprobado',
+            'estado_nuevo' => 'En traslado',
+            'observaciones' => 'Primer traslado desde reporte de hallazgo',
+            'changed_at' => $transfer->created_at,
         ]);
     }
 
@@ -92,12 +91,12 @@ class AnimalTransferHistoryService
 
         AnimalHistory::create([
             'animal_file_id' => $animalFile->id,
-            'valores_antiguos' => $oldValues,
-            'valores_nuevos' => $newValues,
-            'observaciones' => [
-                'texto' => 'Registro de traslado entre centros',
-            ],
-            'changed_at' => $transfer->created_at, // Usar la fecha del traslado, no la del historial
+            'old_values' => $oldValues ? json_encode($oldValues, JSON_UNESCAPED_UNICODE) : null,
+            'new_values' => json_encode($newValues, JSON_UNESCAPED_UNICODE),
+            'estado_anterior' => $oldCenter?->nombre ?? 'Centro anterior',
+            'estado_nuevo' => $newCenter?->nombre ?? 'Centro destino',
+            'observaciones' => 'Registro de traslado entre centros',
+            'changed_at' => $transfer->created_at,
         ]);
     }
 }

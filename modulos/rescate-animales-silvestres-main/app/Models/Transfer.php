@@ -30,7 +30,7 @@ class Transfer extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['persona_id', 'reporte_id', 'centro_id', 'observaciones', 'primer_traslado', 'animal_id', 'latitud', 'longitud'];
+    protected $fillable = ['persona_id', 'rescatista_id', 'reporte_id', 'centro_id', 'observaciones', 'primer_traslado', 'animal_id', 'latitud', 'longitud'];
 
 
     /**
@@ -56,5 +56,14 @@ class Transfer extends Model
     {
         return $this->belongsTo(\Modules\Rescate\Models\Report::class, 'reporte_id', 'id');
     }
-    
+
+    public function animal()
+    {
+        return $this->belongsTo(\Modules\Rescate\Models\Animal::class, 'animal_id', 'id');
+    }
+
+    public function isFirstTransfer(): bool
+    {
+        return (bool) $this->primer_traslado;
+    }
 }
