@@ -55,7 +55,10 @@ class TransferController extends Controller
         }
 
         $tab = $request->string('tab')->toString() ?: 'first';
-        $transfers = Transfer::with(['person','center'])->paginate();
+        $transfers = Transfer::with(['person', 'center', 'report', 'animal'])
+            ->orderByDesc('id')
+            ->paginate(15)
+            ->withQueryString();
         $centers = Center::orderBy('nombre')->get(['id','nombre','latitud','longitud']);
         
         $onlyCitizenUserIds = User::onlyCitizenUserIds();
@@ -171,7 +174,10 @@ class TransferController extends Controller
                 if ($exists) {
                     return Redirect::back()->with('error', 'Este hallazgo ya tiene un primer traslado.');
                 }
-                $personId = Person::where('usuario_id', Auth::id())->value('id');
+                $personId = $data['persona_id'] ?? Person::where('usuario_id', Auth::id())->value('id');
+                if (! $personId) {
+                    return Redirect::back()->withInput()->with('error', 'Seleccione la persona que realiza el traslado.');
+                }
                 $payload = [
                     'persona_id' => $personId,
                     'reporte_id' => $report->id,
@@ -191,7 +197,7 @@ class TransferController extends Controller
                     \Log::warning('Error registrando tracking de traslado: ' . $e->getMessage());
                 }
                 
-                return Redirect::route('rescate.reports.index')
+                return Redirect::route('rescate.transfers.index', ['tab' => 'history'])
                     ->with('success', 'Primer traslado registrado correctamente.');
             }
             // Modo traslado interno (entre centros) usando animal_id
@@ -225,7 +231,8 @@ class TransferController extends Controller
      */
     public function show($id): View
     {
-        $transfer = Transfer::findOrFail($id);
+        $transfer = Transfer::with(['person', 'center', 'report.condicionInicial', 'animal.animalFiles.species'])
+            ->findOrFail($id);
 
         return view('transfer.show', compact('transfer'));
     }

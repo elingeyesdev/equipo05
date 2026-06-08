@@ -29,6 +29,11 @@
                             <p>{{ $message }}</p>
                         </div>
                     @endif
+                    @if ($message = Session::get('error'))
+                        <div class="alert alert-danger m-4">
+                            <p>{{ $message }}</p>
+                        </div>
+                    @endif
 
                     <div class="card-body bg-white">
                         <ul class="nav nav-pills mb-3" id="transferTabs" role="tablist">
@@ -38,9 +43,9 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ ($tab ?? 'first')==='internal' ? 'active' : '' }}" id="internal-tab" href="{{ route('rescate.transfers.index', ['tab' => 'internal']) }}" role="tab">{{ __('Traslado entre centros') }}</a>
                             </li>
-                            <!--<li class="nav-item">
-                                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab">{{ __('Historial') }}</a>
-                            </li>-->
+                            <li class="nav-item">
+                                <a class="nav-link {{ ($tab ?? 'first')==='history' ? 'active' : '' }}" id="history-tab" href="{{ route('rescate.transfers.index', ['tab' => 'history']) }}" role="tab">{{ __('Historial') }}</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             @if(($tab ?? 'first')==='first')
@@ -129,7 +134,10 @@
                                                     @if($af->imagen_url)
                                                         <img class="internal-af-img" src="{{ rescate_media_url($af->imagen_url, rescate_media_seed($af)) }}" alt="imagen animal">
                                                     @endif
-                                                    <div class="text-muted small mt-2">{{ __('Click para seleccionar') }}</div>
+                                                    <div class="small mt-2">
+                                                        <strong>{{ __('Centro actual') }}:</strong> {{ $af->center?->nombre ?? '-' }}
+                                                    </div>
+                                                    <div class="text-muted small mt-1">{{ __('Click para seleccionar') }}</div>
                                                 </div>
                                             </div>
                                         @empty
@@ -180,45 +188,68 @@
                                     </div>
                                 </div>
                             </div>
-                            @endif
-                            <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                            @elseif(($tab ?? 'first')==='history')
+                            <div class="tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover">
                                         <thead class="thead">
                                             <tr>
-                                                <th>No</th>
+                                                <th>#</th>
+                                                <th>{{ __('Tipo') }}</th>
                                                 <th>{{ __('Persona') }}</th>
-                                                <th>{{ __('Centro') }}</th>
+                                                <th>{{ __('Centro destino') }}</th>
+                                                <th>{{ __('Hallazgo / Animal') }}</th>
+                                                <th>{{ __('Fecha') }}</th>
                                                 <th>{{ __('Observaciones') }}</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($transfers as $transfer)
+                                            @forelse ($transfers as $transfer)
                                                 <tr>
-                                                    <td>{{ ++$i }}</td>
-                                                    <td>{{ $transfer->person?->nombre ?? '-' }}</td>
-                                                    <td>{{ $transfer->center?->nombre ?? $transfer->center?->id }}</td>
-                                                    <td>{{ $transfer->observaciones }}</td>
+                                                    <td>{{ $transfer->id }}</td>
                                                     <td>
-                                                        <form action="{{ route('rescate.transfers.destroy', $transfer->id) }}" method="POST">
-                                                            <a class="btn btn-sm btn-primary" href="{{ route('rescate.transfers.show', $transfer->id) }}"><i class="fa fa-fw fa-eye"></i> Ver</a>
-                                                            <a class="btn btn-sm btn-success" href="{{ route('rescate.transfers.edit', $transfer->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                        <span class="badge badge-{{ $transfer->isFirstTransfer() ? 'primary' : 'info' }}">
+                                                            {{ $transfer->isFirstTransfer() ? __('Primer traslado') : __('Entre centros') }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ $transfer->person?->nombre ?? '-' }}</td>
+                                                    <td>{{ $transfer->center?->nombre ?? '-' }}</td>
+                                                    <td>
+                                                        @if($transfer->report)
+                                                            <a href="{{ route('rescate.reports.show', $transfer->report->id) }}">{{ __('Hallazgo') }} #{{ $transfer->report->id }}</a>
+                                                        @elseif($transfer->animal)
+                                                            {{ $transfer->animal->nombre }}
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ optional($transfer->created_at)->format('d/m/Y H:i') }}</td>
+                                                    <td>{{ \Illuminate\Support\Str::limit($transfer->observaciones, 48) }}</td>
+                                                    <td class="text-nowrap">
+                                                        <a class="btn btn-sm btn-primary" href="{{ route('rescate.transfers.show', $transfer->id) }}"><i class="fa fa-fw fa-eye"></i></a>
+                                                        <a class="btn btn-sm btn-success" href="{{ route('rescate.transfers.edit', $transfer->id) }}"><i class="fa fa-fw fa-edit"></i></a>
+                                                        <form action="{{ route('rescate.transfers.destroy', $transfer->id) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                            <button type="button" class="btn btn-danger btn-sm js-confirm-delete"><i class="fa fa-fw fa-trash"></i></button>
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="8" class="text-muted">{{ __('No hay traslados registrados.') }}</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
+                                {!! $transfers->links() !!}
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>
-                {!! $transfers->withQueryString()->links() !!}
             </div>
         </div>
     </div>
