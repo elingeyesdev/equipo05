@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Support\DemoImageDownloader;
 use App\Support\RescateAnimalNameCleaner;
+use App\Support\RescateFieldLocations;
 use App\Support\UnifiedPostgres;
+use Modules\Incendios\Models\FocosIncendio;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -83,10 +85,31 @@ class RichRescateDemoSeeder extends Seeder
     {
         $center = Center::first();
         $status = AnimalStatus::first();
-        $incident = IncidentType::first();
         $person = Person::first();
+        $incidents = IncidentType::where('activo', true)->orderBy('id')->get()->keyBy('nombre');
+        $conditions = DB::connection('rescate')->table('animal_conditions')
+            ->where('activo', true)
+            ->orderBy('id')
+            ->get()
+            ->keyBy('nombre');
+        $fireIds = FocosIncendio::query()
+            ->whereNotNull('coordenadas')
+            ->orderByDesc('id')
+            ->pluck('id')
+            ->all();
 
-        if (! $center || ! $status || ! $incident || ! $person) {
+        $incidentRotation = array_values(array_filter([
+            $incidents->get('Incendio')?->id,
+            $incidents->get('Atropello')?->id,
+            $incidents->get('Otro')?->id,
+        ]));
+        $conditionIds = array_values(array_filter([
+            $conditions->get('Herido grave')?->id,
+            $conditions->get('Quemaduras')?->id,
+            $conditions->get('Desconocido')?->id,
+        ]));
+
+        if (! $center || ! $status || ! $person || $incidentRotation === []) {
             return;
         }
 
@@ -118,17 +141,24 @@ class RichRescateDemoSeeder extends Seeder
         foreach ($fauna as $i => [$especieNombre, $sexo, $seed]) {
             $species = Species::firstOrCreate(['nombre' => $especieNombre]);
 
-            $direccion = 'Av. Demo rescate #'.($i + 10).', Santa Cruz';
+            $location = RescateFieldLocations::get($i);
+            $incidentId = $incidentRotation[$i % count($incidentRotation)];
+            $incidentName = $incidents->firstWhere('id', $incidentId)?->nombre;
+            $incendioId = ($incidentName === 'Incendio' && $fireIds !== [])
+                ? $fireIds[$i % count($fireIds)]
+                : null;
+
             $report = Report::firstOrCreate(
-                ['direccion' => $direccion, 'tipo_incidente_id' => $incident->id],
+                ['direccion' => $location['direccion'], 'tipo_incidente_id' => $incidentId],
                 [
                     'persona_id' => $person->id,
-                    'aprobado' => $i % 4 === 0 ? 0 : 1,
+                    'aprobado' => $i % 5 === 0 ? 0 : 1,
                     'imagen_url' => 'reports/rich-'.$seed.'.jpg',
-                    'observaciones' => 'Reporte demo masivo: '.$especieNombre.' necesita atención.',
-                    'latitud' => -17.75 + ($i * 0.008),
-                    'longitud' => -63.18 + ($i * 0.006),
-                    'condicion_inicial_id' => DB::connection('rescate')->table('animal_conditions')->value('id'),
+                    'observaciones' => 'Hallazgo en '.$location['direccion'].': '.$especieNombre.' requiere evaluación.',
+                    'latitud' => $location['lat'],
+                    'longitud' => $location['lng'],
+                    'incendio_id' => $incendioId,
+                    'condicion_inicial_id' => $conditionIds[$i % count($conditionIds)] ?? null,
                     'tamano' => ['pequeno', 'mediano', 'grande'][rand(0, 2)],
                     'puede_moverse' => (bool) rand(0, 1),
                     'urgencia' => rand(2, 5),
@@ -283,25 +313,15 @@ class RichRescateDemoSeeder extends Seeder
                 ]
             );
 
-            if ($report->latitud && $report->longitud) {
-                $angle = ($index * 37) * (M_PI / 180);
-                $radius = 0.04 + ($index % 5) * 0.012;
-                DB::connection('rescate')->table('reports')->where('id', $report->id)->update([
-                    'latitud' => -17.7833 + cos($angle) * $radius,
-                    'longitud' => -63.1821 + sin($angle) * $radius,
-                ]);
-            }
-
-            if ($index % 4 === 0 && ! $file->release && $released < 6) {
-                $releaseAngle = ($index * 53) * (M_PI / 180);
-                $releaseRadius = 0.06 + ($released * 0.015);
+            if ($index % 7 === 0 && ! $file->release && $released < 4) {
+                $releaseArea = RescateFieldLocations::releaseArea($released);
                 Release::firstOrCreate(
                     ['animal_file_id' => $file->id],
                     [
-                        'direccion' => 'Área de reintroducción demo #'.($index + 1),
+                        'direccion' => $releaseArea['direccion'],
                         'detalle' => 'Liberación supervisada de '.$speciesLabel,
-                        'latitud' => -17.7833 + cos($releaseAngle) * $releaseRadius,
-                        'longitud' => -63.1821 + sin($releaseAngle) * $releaseRadius,
+                        'latitud' => $releaseArea['lat'],
+                        'longitud' => $releaseArea['lng'],
                         'aprobada' => true,
                         'imagen_url' => 'releases/release-'.$file->id.'.jpg',
                     ]
