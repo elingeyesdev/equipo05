@@ -9,6 +9,31 @@ if (! function_exists('rescate_media_url')) {
     }
 }
 
+if (! function_exists('rescate_report_media_seed')) {
+    /**
+     * @param  \Modules\Rescate\Models\Report|object  $report
+     */
+    function rescate_report_media_seed($report): string
+    {
+        $animal = $report->animals->first() ?? $report->animals?->first();
+        $species = $animal?->animalFiles?->first()?->species?->nombre
+            ?? $animal?->animalFiles->first()?->species?->nombre;
+
+        if ($species) {
+            return $species;
+        }
+
+        if ($report->imagen_url) {
+            $basename = pathinfo((string) $report->imagen_url, PATHINFO_FILENAME);
+            $basename = preg_replace('/^rich-/', '', (string) $basename) ?: 'fauna';
+
+            return $basename;
+        }
+
+        return $report->condicionInicial?->nombre ?: 'fauna';
+    }
+}
+
 if (! function_exists('rescate_media_seed')) {
     /**
      * @param  \Modules\Rescate\Models\AnimalFile|object|null  $animalFile

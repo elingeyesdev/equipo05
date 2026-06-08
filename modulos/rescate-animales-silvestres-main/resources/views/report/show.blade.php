@@ -107,7 +107,7 @@
                                     <strong>{{ __('Imagen del hallazgo') }}:</strong>
                                     @if($report->imagen_url)
                                         <div style="max-width: 100%; overflow: hidden; border-radius: 4px;">
-                                            <img src="{{ asset('storage/' . $report->imagen_url) }}" alt="img" style="max-width: 100%; max-height: 180px; height: auto; width: auto; object-fit: contain; border-radius: 4px;">
+                                            <img src="{{ rescate_media_url($report->imagen_url, rescate_report_media_seed($report)) }}" alt="img" style="max-width: 100%; max-height: 180px; height: auto; width: auto; object-fit: contain; border-radius: 4px;">
                                         </div>
                                     @else
                                         <span>-</span>

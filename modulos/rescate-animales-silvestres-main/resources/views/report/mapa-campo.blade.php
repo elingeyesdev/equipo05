@@ -297,6 +297,8 @@
         let weatherRequestInProgress = false; // Para evitar múltiples peticiones simultáneas
 
         const reportsData = @json($reports ?? []);
+        const reportShowBaseUrl = @json(url('/rescate/modulo/reports'));
+        const focusReportId = @json(request('report'));
         const releasesData = @json($releases ?? []);
         const focosCalorData = @json($focosCalorFormatted ?? []);
         const externalFireReportsData = @json($operationalFiresFormatted ?? []);
@@ -394,6 +396,7 @@
 
             // Agregar marcadores de hallazgos aprobados
             addReportsMarkers();
+            focusReportOnMap();
             
             // Agregar marcadores de animales liberados
             addReleaseMarkers();
@@ -1199,7 +1202,7 @@
                                     Este reporte muestra la funcionalidad de predicción de incendios
                                 </div>-->
                             ` : `
-                                <a href="${window.location.origin}/reports/${report.id}" class="btn btn-sm btn-primary" target="_blank" style="color: white;">
+                                <a href="${reportShowBaseUrl}/${report.id}" class="btn btn-sm btn-primary" style="color: white;">
                                     <i class="fas fa-eye"></i> Ver detalles
                                 </a>
                             `}
@@ -1224,6 +1227,33 @@
             });
 
             // Las predicciones se cargan solo cuando se presiona el botón "Ver Predicciones"
+        }
+
+        function focusReportOnMap() {
+            if (!focusReportId || !map) {
+                return;
+            }
+
+            const targetId = String(focusReportId);
+            const entry = markers.find(function(item) {
+                return String(item.report.id) === targetId;
+            });
+
+            if (!entry) {
+                console.warn('[Reportes] Hallazgo no encontrado en el mapa:', focusReportId);
+                return;
+            }
+
+            const lat = parseFloat(entry.report.latitud);
+            const lng = parseFloat(entry.report.longitud);
+            if (isNaN(lat) || isNaN(lng)) {
+                return;
+            }
+
+            map.setView([lat, lng], 14);
+            setTimeout(function() {
+                entry.marker.openPopup();
+            }, 350);
         }
 
         function loadAllPredictions() {

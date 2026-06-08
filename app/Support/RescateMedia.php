@@ -13,7 +13,7 @@ class RescateMedia
     {
         if ($storagePath && Storage::disk('public')->exists($storagePath)) {
             $size = Storage::disk('public')->size($storagePath);
-            if ($size > 8000 && ! self::looksLikeRandomPlaceholder($storagePath)) {
+            if ($size > 3000 && ! self::looksLikeRandomPlaceholder($storagePath)) {
                 return asset('storage/'.$storagePath);
             }
         }
@@ -63,6 +63,6 @@ class RescateMedia
         $basename = strtolower(basename($storagePath));
 
         return str_contains($basename, 'picsum')
-            || preg_match('/^(rich-|demo-|from_report_|copy_)/', $basename) === 1;
+            || preg_match('/^(demo-|from_report_|copy_)/', $basename) === 1;
     }
 }

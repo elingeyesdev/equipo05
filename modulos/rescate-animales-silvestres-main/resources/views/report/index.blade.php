@@ -144,7 +144,7 @@
                                 <div class="col-md-4">
                                     <div class="card card-outline card-secondary h-100 report-card">
                                         @if($report->imagen_url)
-                                            <img class="report-card-img" src="{{ rescate_media_url($report->imagen_url, 'report-'.$report->id) }}" alt="imagen hallazgo">
+                                            <img class="report-card-img" src="{{ rescate_media_url($report->imagen_url, rescate_report_media_seed($report)) }}" alt="imagen hallazgo">
                                         @endif
                                         <div class="card-header d-flex justify-content-between align-items-center">
                                             <h3 class="card-title mb-0" title="{{ $report->condicionInicial?->nombre }}">
@@ -166,6 +166,13 @@
                                                     <b>{{ __('Incidente:') }}</b>
                                                     <span class="float-right">{{ $report->incidentType?->nombre ?? '-' }}</span>
                                                 </li>
+                                                @if($report->direccion)
+                                                <li class="list-group-item">
+                                                    <i class="fas fa-map-marker-alt text-muted mr-2"></i>
+                                                    <b>{{ __('Ubicación:') }}</b>
+                                                    <span class="float-right text-right" style="max-width: 58%;">{{ \Illuminate\Support\Str::limit($report->direccion, 42) }}</span>
+                                                </li>
+                                                @endif
                                                 <li class="list-group-item">
                                                     <i class="fas fa-{{ (int)$report->aprobado === 1 ? 'check-circle' : 'clock' }} text-muted mr-2"></i>
                                                     <b>{{ __('Aprobado:') }}</b>
@@ -203,14 +210,26 @@
                                                 $isOnlyCitizen = Auth::user()->hasRole('ciudadano') && !Auth::user()->hasAnyRole(['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
                                             @endphp
                                             @if($isOnlyCitizen)
-                                            <a class="btn btn-primary btn-sm w-100" href="{{ route('rescate.reports.show', $report->id) }}">
-                                                <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
-                                            </a>
+                                            <div class="d-flex w-100">
+                                                <a class="btn btn-primary btn-sm flex-fill" href="{{ route('rescate.reports.show', $report->id) }}">
+                                                    <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
+                                                </a>
+                                                @if((int)$report->aprobado === 1 && $report->latitud && $report->longitud && Auth::user()->hasAnyRole(['admin', 'encargado']))
+                                                <a class="btn btn-info btn-sm flex-fill ml-2" href="{{ route('rescate.reports.mapa-campo', ['report' => $report->id]) }}" title="{{ __('Ver en mapa') }}">
+                                                    <i class="fas fa-map-marked-alt"></i>
+                                                </a>
+                                                @endif
+                                            </div>
                                             @else
                                             <form action="{{ route('rescate.reports.destroy', $report->id) }}" method="POST" class="mb-0 d-flex w-100">
                                                 <a class="btn btn-primary btn-sm" href="{{ route('rescate.reports.show', $report->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                                 </a>
+                                                @if((int)$report->aprobado === 1 && $report->latitud && $report->longitud && Auth::user()->hasAnyRole(['admin', 'encargado']))
+                                                <a class="btn btn-info btn-sm" href="{{ route('rescate.reports.mapa-campo', ['report' => $report->id]) }}" title="{{ __('Ver en mapa') }}">
+                                                    <i class="fas fa-map-marked-alt"></i>
+                                                </a>
+                                                @endif
                                                 @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
                                                 <button type="button" 
                                                         class="btn btn-success btn-sm {{ (int)$report->aprobado === 1 ? 'disabled' : '' }}" 

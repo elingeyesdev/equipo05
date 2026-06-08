@@ -55,6 +55,7 @@ class ReportController extends Controller
             'condicionInicial', 
             'incidentType', 
             'firstTransfer.center',
+            'animals.animalFiles.species',
             'animals.animalFiles.release',
             'transfers' => function($query) {
                 $query->where('primer_traslado', true);
@@ -256,6 +257,8 @@ class ReportController extends Controller
         $report = Report::with([
             'firstTransfer.center', 
             'incidentType',
+            'condicionInicial',
+            'animals.animalFiles.species',
             'animals.animalFiles.release',
             'transfers' => function($query) {
                 $query->where('primer_traslado', true);
