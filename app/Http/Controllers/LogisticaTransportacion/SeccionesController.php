@@ -26,6 +26,7 @@ class SeccionesController extends Controller
             'usuario' => ['titulo' => 'Voluntarios', 'tabla' => 'usuario', 'pk' => 'id'],
             'rol' => ['titulo' => 'Roles', 'tabla' => 'rol', 'pk' => 'id'],
             'estado' => ['titulo' => 'Estados', 'tabla' => 'estado', 'pk' => 'id_estado'],
+            'reporte' => ['titulo' => 'Reportes', 'tabla' => 'reporte', 'pk' => 'id_reporte'],
             'solicitud' => ['titulo' => 'Solicitudes', 'tabla' => 'solicitud', 'pk' => 'id_solicitud'],
             'paquete' => ['titulo' => 'Paquetes', 'tabla' => 'paquete', 'pk' => 'id_paquete'],
             'seguimiento' => ['titulo' => 'Seguimiento de Paquetes', 'tabla' => 'historial_seguimiento_donaciones', 'pk' => 'id_historial'],
