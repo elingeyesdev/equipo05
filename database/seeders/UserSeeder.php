@@ -46,8 +46,11 @@ class UserSeeder extends Seeder
         foreach ($usuarios as $u) {
             $passwordSinEncriptar = explode('@', $u['email'])[0];
 
-            $nuevoUsuario = Usuario::query()->where('email', $u['email'])->first();
+            $nuevoUsuario = Usuario::query()->whereRaw('LOWER(email) = ?', [strtolower($u['email'])])->first();
             if ($nuevoUsuario) {
+                if (! Hash::check($passwordSinEncriptar, (string) $nuevoUsuario->contrasena)) {
+                    $nuevoUsuario->update(['contrasena' => Hash::make($passwordSinEncriptar)]);
+                }
                 if (! $nuevoUsuario->hasRole($u['rol'])) {
                     $nuevoUsuario->assignRole($u['rol']);
                 }
@@ -60,10 +63,9 @@ class UserSeeder extends Seeder
                 'nombre'     => $u['nombre'],
                 'apellido'   => $u['apellido'],
                 'email'      => $u['email'],
-                // AQUÍ SE ASIGNA LA CONTRASEÑA REAL:
-                'contrasena' => Hash::make($passwordSinEncriptar), 
+                'contrasena' => Hash::make($passwordSinEncriptar),
                 'telefono'   => '70000000',
-                'activo'     => true
+                'activo'     => true,
             ]);
 
             // 3. Asignamos el rol

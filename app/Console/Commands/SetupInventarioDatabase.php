@@ -42,6 +42,10 @@ class SetupInventarioDatabase extends Command
         ], $this->output);
 
         $this->info(Artisan::output());
+
+        $sync = app(\App\Services\Auth\CoreUserProvisioningService::class)->syncAllInventarioUsers();
+        $this->info("Usuarios inventario sincronizados a core: {$sync['synced']}");
+
         $this->info('Listo. Prueba /inventario/home en el navegador.');
 
         return self::SUCCESS;

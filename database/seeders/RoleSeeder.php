@@ -41,6 +41,10 @@ class RoleSeeder extends Seeder
                 'name' => 'Donante',
                 'descripcion' => 'Usuario registrado para realizar donaciones.',
             ],
+            [
+                'name' => 'Ciudadano',
+                'descripcion' => 'Usuario registrado en módulos comunitarios (rescate, reportes públicos).',
+            ],
         ];
 
         foreach ($roles as $rol) {

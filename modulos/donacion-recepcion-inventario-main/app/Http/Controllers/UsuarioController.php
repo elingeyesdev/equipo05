@@ -3,6 +3,7 @@
 namespace Modules\Inventario\Http\Controllers;
 
 use Modules\Inventario\Models\Usuario;
+use App\Services\Auth\CoreUserProvisioningService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Modules\Inventario\Http\Requests\UsuarioRequest;
@@ -53,6 +54,11 @@ class UsuarioController extends Controller
             $this->assignInventarioRole((int) $usuario->id_usuario, (string) $request->rol);
         }
 
+        app(CoreUserProvisioningService::class)->syncFromInventario(
+            $usuario->fresh(),
+            $request->input('rol')
+        );
+
         return Redirect::route('inventario.usuario.index')
             ->with('success', 'Usuario creado exitosamente.');
     }
@@ -97,6 +103,11 @@ class UsuarioController extends Controller
             $this->assignInventarioRole((int) $usuario->id_usuario, (string) $request->rol);
         }
 
+        app(CoreUserProvisioningService::class)->syncFromInventario(
+            $usuario->fresh(),
+            $request->input('rol')
+        );
+
         return Redirect::route('inventario.usuario.index')
             ->with('success', 'Usuario actualizado exitosamente.');
     }
@@ -110,6 +121,8 @@ class UsuarioController extends Controller
             ->delete();
 
         $usuario->delete();
+
+        app(CoreUserProvisioningService::class)->deactivateByEmail($usuario->correo);
 
         return Redirect::route('inventario.usuario.index')
             ->with('success', 'Usuario eliminado exitosamente.');

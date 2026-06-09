@@ -3,84 +3,54 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Usuario; // Importamos el modelo para ayudar al editor
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    /**
-     * 1. Mostrar el formulario de Login
-     */
     public function showLoginForm()
     {
-        // Si el usuario ya está logueado, lo mandamos al dashboard directamente
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
-        
+
         return view('auth.login');
     }
 
-    /**
-     * 2. Procesar el Login
-     */
     public function login(Request $request)
     {
-        // Validamos los datos del formulario
-        $credentials = $request->validate([
+        $request->validate([
             'email' => ['required', 'email'],
             'contrasena' => ['required'],
         ]);
 
-        // INTENTO DE LOGIN
-        // Laravel espera 'password', así que mapeamos tu campo 'contrasena'
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->contrasena], $request->filled('remember'))) {
-            
-            $request->session()->regenerate();
+        $email = strtolower(trim($request->email));
 
-            // Obtenemos el usuario autenticado
-            /** @var \App\Models\Usuario $user */ 
-            $user = Auth::user(); 
-            // ^ El comentario de arriba arregla el error visual "Undefined method hasRole"
+        /** @var Usuario|null $user */
+        $user = Usuario::query()
+            ->whereRaw('LOWER(email) = ?', [$email])
+            ->first();
 
-            // ----------------------------------------------------
-            // LÓGICA DE REDIRECCIÓN POR ROLES (Spatie)
-            // ----------------------------------------------------
-            
-            // 1. Admin -> Dashboard General
-            if ($user->hasRole('admin')) {
-                return redirect()->intended('dashboard');
-            }
-
-            // 2. Almacenero -> Gestión de Almacén
-            if ($user->hasRole('almacenero')) {
-                return redirect()->route('almacenes.estructura');
-            }
-
-            // 3. Reportes -> Bandeja de Mensajes (o Reportes)
-            if ($user->hasRole('reportes')) {
-                return redirect()->route('mensajes.index');
-            }
-
-            // 4. Donante -> Historial de Donaciones
-            if ($user->hasRole('donante')) {
-                return redirect()->route('donaciones.index');
-            }
-
-            // Fallback: Si tiene un rol raro o ninguno, al dashboard por defecto
-            return redirect()->intended('dashboard');
+        if (! $user || ! Hash::check($request->contrasena, (string) $user->contrasena)) {
+            return back()->withErrors([
+                'email' => 'Las credenciales no coinciden con nuestros registros.',
+            ])->onlyInput('email');
         }
 
-        // SI FALLA EL LOGIN (Contraseña incorrecta o email no existe)
-        return back()->withErrors([
-            'email' => 'Las credenciales no coinciden con nuestros registros.',
-        ])->onlyInput('email');
+        if (! $user->activo) {
+            return back()->withErrors([
+                'email' => 'Tu cuenta está inactiva. Contacta al administrador.',
+            ])->onlyInput('email');
+        }
+
+        Auth::login($user, $request->filled('remember'));
+        $request->session()->regenerate();
+
+        return $this->redirectAfterLogin($user);
     }
 
-    /**
-     * 3. Cerrar sesión
-     */
     public function logout(Request $request)
     {
         Auth::logout();
@@ -89,5 +59,26 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login');
+    }
+
+    private function redirectAfterLogin(Usuario $user)
+    {
+        if ($user->hasAnyRole(['Administrador', 'admin', 'administrador'])) {
+            return redirect()->intended('dashboard');
+        }
+
+        if ($user->hasAnyRole(['Almacenero', 'almacenero', 'Almacenista', 'almacenista'])) {
+            return redirect()->route('almacenes.estructura');
+        }
+
+        if ($user->hasAnyRole(['Reportes', 'reportes'])) {
+            return redirect()->route('mensajes.index');
+        }
+
+        if ($user->hasAnyRole(['Donante', 'donante'])) {
+            return redirect()->route('donaciones.index');
+        }
+
+        return redirect()->intended('dashboard');
     }
 }

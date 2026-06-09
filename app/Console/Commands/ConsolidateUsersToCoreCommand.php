@@ -62,6 +62,7 @@ class ConsolidateUsersToCoreCommand extends Command
         ]);
         $migrated += $this->copyIncendiosUsers();
         $migrated += $this->copyRescateUsers();
+        $migrated += $this->copyInventarioUsers();
         $this->copySpatieFromSchema('transparencia');
         $this->copySpatieFromSchema('rescate');
         $this->rewireForeignKeys();
@@ -158,6 +159,36 @@ class ConsolidateUsersToCoreCommand extends Command
                 'fecharegistro' => $row->created_at ?? now(),
                 'created_at' => $row->created_at,
                 'updated_at' => $row->updated_at,
+            ];
+            $this->upsertCoreUser($payload);
+            $count++;
+        }
+
+        return $count;
+    }
+
+    private function copyInventarioUsers(): int
+    {
+        if (! $this->tableExists('inventario', 'usuarios')) {
+            return 0;
+        }
+
+        $rows = DB::connection('core')->select('SELECT * FROM inventario.usuarios');
+        $count = 0;
+        foreach ($rows as $row) {
+            $email = strtolower(trim((string) ($row->correo ?? '')));
+            if ($email === '') {
+                continue;
+            }
+
+            $payload = [
+                'email' => $email,
+                'contrasena' => $row->contrasena,
+                'nombre' => mb_substr((string) ($row->nombres ?? 'Usuario'), 0, 50),
+                'apellido' => mb_substr((string) ($row->apellidos ?? '-'), 0, 50),
+                'telefono' => $row->telefono ?? null,
+                'activo' => ($row->estado ?? 'Activo') === 'Activo',
+                'fecharegistro' => $row->fecha_registro ?? now(),
             ];
             $this->upsertCoreUser($payload);
             $count++;

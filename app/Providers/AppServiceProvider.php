@@ -68,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
         View::addLocation(base_path('modulos/monitoreo-incendios-simulacion-main/resources/views'));
         View::addLocation(base_path('modulos/rescate-animales-silvestres-main/resources/views'));
 
+        if (class_exists(\Modules\Inventario\Models\Usuario::class)) {
+            \Modules\Inventario\Models\Usuario::observe(\App\Observers\InventarioUsuarioCoreSyncObserver::class);
+        }
+
     }
 
     private function registerInventarioTransparenciaSync(): void

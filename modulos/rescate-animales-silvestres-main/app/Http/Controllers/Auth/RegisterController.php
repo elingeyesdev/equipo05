@@ -3,6 +3,7 @@
 namespace Modules\Rescate\Http\Controllers\Auth;
 
 use App\Models\Usuario;
+use App\Support\IntegratedCoreAuth;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
 {
+    use IntegratedCoreAuth;
+
     /**
      * Create a new controller instance.
      *
@@ -173,7 +176,7 @@ class RegisterController extends Controller
         ]);
 
         if (method_exists($usuario, 'assignRole')) {
-            $role = Role::firstOrCreate(['name' => 'ciudadano', 'guard_name' => 'web']);
+            $role = Role::firstOrCreate(['name' => 'Ciudadano', 'guard_name' => 'web']);
             $usuario->assignRole($role);
         }
 

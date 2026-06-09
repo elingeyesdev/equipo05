@@ -22,6 +22,11 @@ class Usuario extends Authenticatable
         'email', 'contrasena', 'nombre', 'apellido', 'telefono', 'imagenurl', 'activo', 'fecharegistro', 'remember_token',
     ];
 
+    public function setEmailAttribute(?string $value): void
+    {
+        $this->attributes['email'] = $value !== null ? strtolower(trim($value)) : null;
+    }
+
     protected $hidden = [
         'contrasena',
         'remember_token',
