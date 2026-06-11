@@ -140,13 +140,12 @@ class RichLogisticaDemoSeeder extends Seeder
         // 7. Conductores
         if (Schema::connection('logistica')->hasTable('conductor')) {
              for ($c = 1; $c <= 12; $c++) {
-                $ci = rand(1000000, 9999999);
-                if ($db->table('conductor')->where('ci', $ci)->exists()) continue;
+                $nombre = ['Ricardo', 'Mario', 'Hugo', 'Javier', 'Marcelo', 'Marcos'][rand(0, 5)];
+                $apellido = ['Cabrera', 'Villca', 'Tapia', 'Siles', 'Mercado', 'Rojas'][rand(0, 5)];
+                if ($db->table('conductor')->where('nombre', $nombre)->where('apellido', $apellido)->exists()) continue;
                 $db->table('conductor')->insert([
-                    'nombre' => ['Ricardo', 'Mario', 'Hugo', 'Javier', 'Marcelo', 'Marcos'][rand(0, 5)],
-                    'apellido' => ['Cabrera', 'Villca', 'Tapia', 'Siles', 'Mercado', 'Rojas'][rand(0, 5)],
-                    'ci' => $ci,
-                    'telefono' => '71'.rand(1000000, 9999999),
+                    'nombre' => $nombre,
+                    'apellido' => $apellido,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);

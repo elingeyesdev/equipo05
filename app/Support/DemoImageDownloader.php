@@ -16,18 +16,14 @@ class DemoImageDownloader
             }
         }
 
-        $url = AnimalImageCatalog::urlFor($speciesOrLabel);
-        if (self::downloadUrl($relativePath, $url) !== null) {
-            return $relativePath;
-        }
-
+        // Bypass external HTTP requests to avoid slow/hanging WSL/Docker network timeouts
         return self::storeGeneratedPlaceholder($relativePath, AnimalImageCatalog::seedFor($speciesOrLabel));
     }
 
     public static function downloadUrl(string $relativePath, string $url): ?string
     {
         try {
-            $response = Http::timeout(25)
+            $response = Http::timeout(1)
                 ->withOptions(['allow_redirects' => true])
                 ->withHeaders(['User-Agent' => 'Equipo05-DemoSeeder/1.0'])
                 ->get($url);

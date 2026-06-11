@@ -13,40 +13,77 @@ class ModuloController extends Controller
     public function index(): View
     {
         $connection = 'seguimiento';
-        $tablasResumen = [
-            'usuario' => 'Voluntarios',
-            'evaluacion' => 'Evaluaciones',
-            'capacitacion' => 'Capacitaciones',
-            'necesidad' => 'Necesidades',
-            'solicitudes_ayuda' => 'Ayudas Solicitadas',
-            'chat_mensajes' => 'Mensajes de Chat',
-        ];
+        $db = DB::connection($connection);
 
-        $resumen = [];
-        foreach ($tablasResumen as $tabla => $label) {
-            $resumen[] = [
-                'label' => $label,
-                'total' => Schema::connection($connection)->hasTable($tabla)
-                    ? DB::connection($connection)->table($tabla)->count()
-                    : 0,
-            ];
-        }
+        $voluntariosActivos = Schema::connection($connection)->hasTable('usuario')
+            ? $db->table('usuario')->where('activo', true)->count()
+            : 0;
 
-        $voluntariosRecientes = collect();
+        $voluntariosInactivos = Schema::connection($connection)->hasTable('usuario')
+            ? $db->table('usuario')->where('activo', false)->count()
+            : 0;
+
+        $alertasRecientes = Schema::connection($connection)->hasTable('solicitudes_ayuda')
+            ? $db->table('solicitudes_ayuda')->count()
+            : 0;
+
+        $evaluacionesCompletadas = Schema::connection($connection)->hasTable('evaluacion')
+            ? $db->table('evaluacion')->count()
+            : 0;
+
+        $ultimosVoluntarios = collect();
         if (Schema::connection($connection)->hasTable('usuario')) {
-            $query = DB::connection($connection)->table('usuario');
+            $query = $db->table('usuario');
             if (Schema::connection($connection)->hasColumn('usuario', 'created_at')) {
                 $query->orderByDesc('created_at');
             } elseif (Schema::connection($connection)->hasColumn('usuario', 'id_usuario')) {
                 $query->orderByDesc('id_usuario');
             }
+            $ultimosVoluntarios = $query->limit(3)->get();
+        }
 
-            $voluntariosRecientes = $query->limit(10)->get();
+        $ultimosReportes = collect();
+        if (Schema::connection($connection)->hasTable('solicitudes_ayuda')) {
+            $query = $db->table('solicitudes_ayuda');
+            if (Schema::connection($connection)->hasColumn('solicitudes_ayuda', 'created_at')) {
+                $query->orderByDesc('created_at');
+            } elseif (Schema::connection($connection)->hasColumn('solicitudes_ayuda', 'id')) {
+                $query->orderByDesc('id');
+            }
+            $ultimosReportes = $query->limit(3)->get();
+        }
+
+        $universidadesData = collect();
+        if (Schema::connection($connection)->hasTable('universidad')) {
+            $universidadesData = $db->table('universidad')
+                ->select('nombre as label', DB::raw('0 as total'))
+                ->get();
+        }
+
+        $necesidadesData = collect();
+        if (Schema::connection($connection)->hasTable('necesidad')) {
+            $necesidadesData = $db->table('necesidad')
+                ->select('nombre as label', DB::raw('0 as total'))
+                ->get();
+        }
+
+        $capacitacionesData = collect();
+        if (Schema::connection($connection)->hasTable('capacitacion')) {
+            $capacitacionesData = $db->table('capacitacion')
+                ->select('nombre as label', DB::raw('0 as total'))
+                ->get();
         }
 
         return view('fusion.modulos.seguimiento-voluntarios', [
-            'resumen' => $resumen,
-            'voluntariosRecientes' => $voluntariosRecientes,
+            'voluntariosActivos' => $voluntariosActivos,
+            'voluntariosInactivos' => $voluntariosInactivos,
+            'alertasRecientes' => $alertasRecientes,
+            'evaluacionesCompletadas' => $evaluacionesCompletadas,
+            'ultimosVoluntarios' => $ultimosVoluntarios,
+            'ultimosReportes' => $ultimosReportes,
+            'universidadesData' => $universidadesData,
+            'necesidadesData' => $necesidadesData,
+            'capacitacionesData' => $capacitacionesData,
         ]);
     }
 

@@ -34,7 +34,6 @@ class RichCuadrillasDemoSeeder extends Seeder
             } else {
                 $cursoIds[] = $db->table('curso')->insertGetId([
                     'nombre' => $nombre,
-                    'descripcion' => 'Descripción detallada del curso de ' . $nombre,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ], 'id_curso');
@@ -59,9 +58,6 @@ class RichCuadrillasDemoSeeder extends Seeder
                 for ($j = 1; $j <= rand(5, 12); $j++) {
                     $db->table('inscrito')->insert([
                         'id_curso' => $cursoId,
-                        'nombre_completo' => 'Cursante '.rand(1, 100),
-                        'ci' => rand(1000000, 9999999),
-                        'estado' => ['aprobado', 'cursando', 'reprobado'][rand(0, 2)],
                         'created_at' => $now->copy()->subDays(rand(1, 60)),
                         'updated_at' => $now,
                     ]);
@@ -76,8 +72,6 @@ class RichCuadrillasDemoSeeder extends Seeder
                 if ($db->table('equipo')->where('nombre', $nombre)->exists()) continue;
                 $db->table('equipo')->insert([
                     'nombre' => $nombre,
-                    'zona_asignada' => 'Sector ' . ['Norte', 'Sur', 'Este', 'Oeste', 'Central'][rand(0, 4)],
-                    'capacidad' => rand(5, 15) . ' personas',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
@@ -91,8 +85,6 @@ class RichCuadrillasDemoSeeder extends Seeder
                 if ($db->table('comunario')->where('nombre', $nombre)->exists()) continue;
                 $db->table('comunario')->insert([
                     'nombre' => $nombre,
-                    'comunidad' => ['Roboré', 'San Matías', 'San Ignacio', 'Puerto Suárez'][rand(0, 3)],
-                    'telefono' => '7'.rand(1000000, 9999999),
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
@@ -105,7 +97,6 @@ class RichCuadrillasDemoSeeder extends Seeder
                 $db->table('foco_calor')->insert([
                     'latitud' => -17.5 - (rand(1, 100) * 0.01),
                     'longitud' => -63.1 - (rand(1, 100) * 0.008),
-                    'intensidad' => rand(30, 100) . '%',
                     'created_at' => $now->subHours(rand(1, 168)),
                     'updated_at' => $now,
                 ]);
@@ -126,7 +117,6 @@ class RichCuadrillasDemoSeeder extends Seeder
                 if ($db->table('noticia')->where('titulo', $titulo)->exists()) continue;
                 $db->table('noticia')->insert([
                     'titulo' => $titulo,
-                    'contenido' => 'Cuerpo de la noticia referente a ' . $titulo,
                     'created_at' => $now->subDays(rand(1, 10)),
                     'updated_at' => $now,
                 ]);
@@ -138,8 +128,6 @@ class RichCuadrillasDemoSeeder extends Seeder
             for ($r = 1; $r <= 20; $r++) {
                 $db->table('reporte')->insert([
                     'titulo' => 'Reporte Situacional #' . rand(100, 999),
-                    'descripcion' => 'Informe de avance sobre la situación en el sector ' . $r,
-                    'tipo' => ['informativo', 'operativo', 'emergencia'][rand(0, 2)],
                     'created_at' => $now->subHours(rand(1, 72)),
                     'updated_at' => $now,
                 ]);
@@ -147,7 +135,6 @@ class RichCuadrillasDemoSeeder extends Seeder
         }
 
         $this->command?->info('Cuadrillas: Datos demo ampliados significativamente (mínimo 20 por tabla).');
-
         $this->command?->info('Cuadrillas: cursos, equipos, comunarios y focos demo ampliados.');
     }
 }
