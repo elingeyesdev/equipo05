@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('template_title')
-    Categorias Productos
+    Categorías de donación
 @endsection
 
 @section('content')
@@ -11,75 +11,83 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                            <span id="card_title">
-                                {{ __('Categorias Productos') }}
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                            <span>
+                                <i class="fas fa-layer-group mr-1"></i>
+                                Categorías de productos donados
                             </span>
-
-                            <div class="float-right">
-                                <a href="{{ route('inventario.categorias-producto.create') }}"
-                                    class="btn btn-primary btn-sm float-right" data-placement="left">
-                                    {{ __('Create New') }}
+                            @if ($puedeGestionar ?? false)
+                                <a href="{{ route('inventario.categorias-producto.create') }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Registrar categoría
                                 </a>
-                            </div>
+                            @endif
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
 
                     <div class="card-body bg-white">
                         @include('inventario::partials.datatables-list-toolbar', [
-                            'sortOptions' => [
-                                'nombre_asc' => 'Nombre (A-Z)',
-                                'nombre_desc' => 'Nombre (Z-A)',
+                            'filters' => [
+                                [
+                                    'id' => 'filtroPrioridad',
+                                    'label' => 'Prioridad',
+                                    'placeholder' => 'Todas',
+                                    'options' => ['Alta' => 'Alta', 'Media' => 'Media', 'Baja' => 'Baja'],
+                                ],
+                                [
+                                    'id' => 'filtroTipo',
+                                    'label' => 'Tipo',
+                                    'placeholder' => 'Todos',
+                                    'options' => \Modules\Inventario\Models\CategoriasProducto::TIPOS_CATEGORIA,
+                                ],
                             ],
-                            'defaultSort' => 'nombre_asc',
+                            'sortOptions' => [
+                                'prioridad_asc' => 'Prioridad (alta primero)',
+                                'nombre_asc' => 'Nombre (A-Z)',
+                                'codigo_asc' => 'Código (A-Z)',
+                            ],
+                            'defaultSort' => 'prioridad_asc',
                         ])
+
                         <div class="table-responsive">
                             <table id="categoriasTable" class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Nombre</th>
-
+                                        <th>#</th>
+                                        <th>Código</th>
+                                        <th>Categoría</th>
+                                        <th>Tipo</th>
+                                        <th>Prioridad</th>
+                                        <th>Perecedero</th>
+                                        <th>Vencimiento</th>
+                                        <th>Productos</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($categoriasProductos as $categoriasProducto)
+                                    @foreach ($categoriasProductos as $idx => $cat)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
-                                            <td>{{ $categoriasProducto->nombre }}</td>
-
+                                            <td>{{ $idx + 1 }}</td>
+                                            <td><code>{{ $cat->codigo }}</code></td>
+                                            <td>{{ $cat->nombre }}</td>
+                                            <td>{{ \Modules\Inventario\Models\CategoriasProducto::TIPOS_CATEGORIA[$cat->tipo_categoria] ?? $cat->tipo_categoria }}</td>
                                             <td>
-                                                <form
-                                                    action="{{ route('inventario.categorias-producto.destroy', $categoriasProducto->id_categoria) }}"
-                                                    method="POST">
-                                                    <a class="btn btn-sm btn-primary "
-                                                        href="{{ route('inventario.categorias-producto.show', $categoriasProducto->id_categoria) }}"><i
-                                                            class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success"
-                                                        href="{{ route('inventario.categorias-producto.edit', $categoriasProducto->id_categoria) }}"><i
-                                                            class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i
-                                                            class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
-                                                </form>
+                                                @php $badge = match($cat->prioridad) { 'alta' => 'danger', 'media' => 'warning', default => 'secondary' }; @endphp
+                                                <span class="badge badge-{{ $badge }}">{{ $cat->etiquetaPrioridad() }}</span>
+                                            </td>
+                                            <td>{{ $cat->es_perecedero ? 'Sí' : 'No' }}</td>
+                                            <td>{{ $cat->requiere_fecha_vencimiento ? 'Sí' : 'No' }}</td>
+                                            <td>{{ $cat->productos_count ?? 0 }}</td>
+                                            <td class="text-nowrap">
+                                                <a class="btn btn-sm btn-primary" href="{{ route('inventario.categorias-producto.show', $cat->id_categoria) }}" title="Ver"><i class="fa fa-eye"></i></a>
+                                                @if ($puedeGestionar ?? false)
+                                                    <a class="btn btn-sm btn-success" href="{{ route('inventario.categorias-producto.edit', $cat->id_categoria) }}" title="Editar"><i class="fa fa-edit"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Usa los controles de la tabla para navegar entre páginas</small>
                     </div>
                 </div>
             </div>
@@ -99,17 +107,18 @@
         $(function () {
             initInventarioListTable({
                 selector: '#categoriasTable',
-                defaultOrder: [[1, 'asc']],
+                defaultOrder: [[4, 'asc']],
                 sortSelect: '#ordenarPor',
                 sortMap: {
-                    nombre_asc: [1, 'asc'],
-                    nombre_desc: [1, 'desc'],
+                    prioridad_asc: [[4, 'asc'], [2, 'asc']],
+                    nombre_asc: [2, 'asc'],
+                    codigo_asc: [1, 'asc'],
                 },
+                filters: [
+                    { select: '#filtroPrioridad', column: 4 },
+                    { select: '#filtroTipo', column: 3 },
+                ],
             });
         });
     </script>
 @endsection
-
-
-
-

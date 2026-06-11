@@ -17,7 +17,24 @@ class CategoriaController extends Controller
             $categorias = CategoriasProducto::with(['productos' => function($query) {
                 $query->select('id_producto', 'id_categoria', 'nombre', 'descripcion', 'unidad_medida');
             }])
-            ->select('id_categoria', 'nombre')
+            ->select(
+                'id_categoria',
+                'nombre',
+                'codigo',
+                'descripcion',
+                'tipo_categoria',
+                'unidad_medida',
+                'es_perecedero',
+                'requiere_fecha_vencimiento',
+                'prioridad',
+                'condiciones_almacenamiento',
+                'recomendaciones_uso',
+                'observaciones',
+                'color',
+                'icono',
+                'estado'
+            )
+            ->ordenEmergencia()
             ->get();
 
             return response()->json([

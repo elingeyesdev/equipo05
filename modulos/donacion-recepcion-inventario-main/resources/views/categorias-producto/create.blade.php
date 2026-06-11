@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('template_title')
-    {{ __('Create') }} Categorias Producto
+    Registrar categoría de donación
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Categorias Producto</span>
+                        <span class="card-title">Registrar categoría de donación</span>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('inventario.categorias-producto.store') }}"  role="form" enctype="multipart/form-data">

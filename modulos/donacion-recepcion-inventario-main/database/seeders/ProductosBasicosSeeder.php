@@ -14,16 +14,15 @@ class ProductosBasicosSeeder extends Seeder
     public function run(): void
     {
         // First, ensure we have a category for food items
-        $categoriaAlimentos = DB::table('categorias_productos')->where('nombre', 'Alimentos')->first();
+        $categoriaAlimentos = DB::table('categorias_productos')->where('codigo', 'CAT-ALIM-NP')->first();
         if (!$categoriaAlimentos) {
-            DB::table('categorias_productos')->insert([
-                'nombre' => 'Alimentos'
-            ]);
-            $categoriaAlimentos = DB::table('categorias_productos')->where('nombre', 'Alimentos')->first();
-            $idCategoriaAlimentos = $categoriaAlimentos->id_categoria;
-        } else {
-            $idCategoriaAlimentos = $categoriaAlimentos->id_categoria;
+            $data = \Modules\Inventario\Support\CategoriaProductoDefaults::rowFor('Alimentos no perecederos');
+            $data['created_at'] = now();
+            $data['updated_at'] = now();
+            DB::table('categorias_productos')->insert($data);
+            $categoriaAlimentos = DB::table('categorias_productos')->where('codigo', 'CAT-ALIM-NP')->first();
         }
+        $idCategoriaAlimentos = $categoriaAlimentos->id_categoria;
 
         // Common donation products
         $productos = [

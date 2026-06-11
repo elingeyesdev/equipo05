@@ -12,7 +12,7 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Producto</span>
+                        <span class="card-title">Registrar producto en catálogo</span>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('inventario.producto.store') }}"  role="form" enctype="multipart/form-data">

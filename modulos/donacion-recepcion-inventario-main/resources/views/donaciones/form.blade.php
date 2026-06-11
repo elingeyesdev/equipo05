@@ -338,16 +338,16 @@ document.addEventListener('DOMContentLoaded', function(){
         const productId = select ? select.value : null;
         const categoria = productId ? productosCategorias[productId] : null;
         
-        const isFoodProduct = categoria === 'Alimentos';
-        const isClothingProduct = categoria === 'Ropa';
+        const requiresExpiry = categoria && categoria.requiere_fecha_vencimiento;
+        const isClothingProduct = categoria && (categoria.requiere_talla || categoria.tipo_categoria === 'VESTIMENTA');
         
         // Get the fields for this specific row
         const fechaCaducidadInput = row.querySelector('.fecha-caducidad-input');
         const tallaSelect = row.querySelector('.talla-select');
         
-        // Handle fecha_caducidad field (only enabled for food products)
+        // Handle fecha_caducidad field (enabled when category requires expiry date)
         if (fechaCaducidadInput) {
-            if (isFoodProduct) {
+            if (requiresExpiry) {
                 fechaCaducidadInput.removeAttribute('readonly');
                 fechaCaducidadInput.style.backgroundColor = '';
                 fechaCaducidadInput.style.pointerEvents = '';

@@ -43,22 +43,19 @@ class DonacioneController extends Controller
         $donantes = Donante::pluck('nombre', 'id_donante');
         $campanas = Campana::pluck('nombre', 'id_campana');
         $puntos = PuntosRecoleccion::pluck('nombre', 'id_punto');
-        $productos = Producto::pluck('nombre', 'id_producto');
+        $productos = Producto::activos()->ordenPrioridad()->pluck('nombre', 'id_producto');
         $espacios = Espacio::where('estado', 'disponible')->pluck('codigo_espacio', 'id_espacio');
 
         // Get products with their unit measurements for auto-fill
         $productosData = Producto::with('categoriaProducto')->select('id_producto', 'nombre', 'unidad_medida', 'id_categoria')->get();
         $productosUnidades = $productosData->pluck('unidad_medida', 'id_producto')->toArray();
 
-        // Map productos to their categories for frontend logic
-        $productosCategorias = $productosData->mapWithKeys(function ($producto) {
-            return [$producto->id_producto => $producto->categoriaProducto ? $producto->categoriaProducto->nombre : null];
-        })->toArray();
+        $productosCategorias = $this->mapProductosCategorias($productosData);
 
         // Provide an empty model instance so the form can safely access $donacion
         $donacion = new Donacione();
         $almacenes = \Modules\Inventario\Models\Almacene::pluck('nombre', 'id_almacen');
-        $categorias = \Modules\Inventario\Models\CategoriasProducto::pluck('nombre', 'id_categoria');
+        $categorias = \Modules\Inventario\Models\CategoriasProducto::activas()->orderBy('nombre')->pluck('nombre', 'id_categoria');
 
         // Find the "Central" warehouse as default
         $almacenCentral = \Modules\Inventario\Models\Almacene::where('nombre', 'LIKE', '%Central%')->first();
@@ -197,20 +194,17 @@ class DonacioneController extends Controller
         $donantes = Donante::pluck('nombre', 'id_donante');
         $campanas = Campana::pluck('nombre', 'id_campana');
         $puntos = PuntosRecoleccion::pluck('nombre', 'id_punto');
-        $productos = Producto::pluck('nombre', 'id_producto');
+        $productos = Producto::activos()->ordenPrioridad()->pluck('nombre', 'id_producto');
         $espacios = Espacio::where('estado', 'disponible')->pluck('codigo_espacio', 'id_espacio');
 
         // Get products with their unit measurements for auto-fill
         $productosData = Producto::with('categoriaProducto')->select('id_producto', 'nombre', 'unidad_medida', 'id_categoria')->get();
         $productosUnidades = $productosData->pluck('unidad_medida', 'id_producto')->toArray();
 
-        // Map productos to their categories for frontend logic
-        $productosCategorias = $productosData->mapWithKeys(function ($producto) {
-            return [$producto->id_producto => $producto->categoriaProducto ? $producto->categoriaProducto->nombre : null];
-        })->toArray();
+        $productosCategorias = $this->mapProductosCategorias($productosData);
 
         $almacenes = \Modules\Inventario\Models\Almacene::pluck('nombre', 'id_almacen');
-        $categorias = \Modules\Inventario\Models\CategoriasProducto::pluck('nombre', 'id_categoria');
+        $categorias = \Modules\Inventario\Models\CategoriasProducto::activas()->orderBy('nombre')->pluck('nombre', 'id_categoria');
 
         // Find the "Central" warehouse as default
         $almacenCentral = \Modules\Inventario\Models\Almacene::where('nombre', 'LIKE', '%Central%')->first();
@@ -339,6 +333,17 @@ class DonacioneController extends Controller
         }
 
         return Redirect::route('inventario.donaciones.index')->with('success', 'Donación eliminada correctamente.');
+    }
+
+    private function mapProductosCategorias($productosData): array
+    {
+        return $productosData->mapWithKeys(function ($producto) {
+            if (! $producto->categoriaProducto) {
+                return [$producto->id_producto => null];
+            }
+
+            return [$producto->id_producto => $producto->categoriaProducto->toDonacionMeta()];
+        })->toArray();
     }
 }
 

@@ -2,42 +2,41 @@
 
 namespace Modules\Inventario\Http\Controllers;
 
-use Modules\Inventario\Models\Producto;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Modules\Inventario\Http\Requests\ProductoRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Modules\Inventario\Http\Requests\ProductoRequest;
+use Modules\Inventario\Models\CategoriasProducto;
+use Modules\Inventario\Models\Producto;
 
 class ProductoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): View
     {
-        $productos = Producto::paginate();
+        $productos = Producto::with('categoriaProducto')
+            ->withCount('donacionDetalles')
+            ->ordenPrioridad()
+            ->get();
 
-        return view('inventario::producto.index', compact('productos'))
-            ->with('i', ($request->input('page', 1) - 1) * $productos->perPage());
+        $stats = Producto::estadisticasCatalogo();
+
+        $categoriasFiltro = CategoriasProducto::activas()
+            ->orderBy('nombre')
+            ->pluck('nombre', 'nombre');
+
+        return view('inventario::producto.index', compact('productos', 'stats', 'categoriasFiltro'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): View
     {
         $producto = new Producto();
+        $categorias = CategoriasProducto::activas()->orderBy('nombre')->pluck('nombre', 'id_categoria');
+        $categoriasMeta = $this->categoriasMetaMap();
 
-        // load categories for FK select
-        $categorias = \Modules\Inventario\Models\CategoriasProducto::pluck('nombre', 'id_categoria');
-
-        return view('inventario::producto.create', compact('producto', 'categorias'));
+        return view('inventario::producto.create', compact('producto', 'categorias', 'categoriasMeta'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(ProductoRequest $request)
     {
         $producto = Producto::create($request->validated());
@@ -46,60 +45,61 @@ class ProductoController extends Controller
             return response()->json([
                 'success' => true,
                 'producto' => $producto,
-                'message' => 'Producto creado exitosamente'
+                'message' => 'Producto registrado correctamente',
             ]);
         }
 
         return Redirect::route('inventario.producto.index')
-            ->with('success', 'Producto creado exitosamente.');
+            ->with('success', 'Producto registrado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id): View
     {
-        $producto = Producto::findOrFail($id);
+        $producto = Producto::with('categoriaProducto')
+            ->withCount('donacionDetalles')
+            ->findOrFail($id);
 
         return view('inventario::producto.show', compact('producto'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id): View
     {
-        $producto = Producto::find($id);
+        $producto = Producto::findOrFail($id);
+        $categorias = CategoriasProducto::activas()->orderBy('nombre')->pluck('nombre', 'id_categoria');
+        $categoriasMeta = $this->categoriasMetaMap();
 
-        // load categories for FK select
-        $categorias = \Modules\Inventario\Models\CategoriasProducto::pluck('nombre', 'id_categoria');
-
-        return view('inventario::producto.edit', compact('producto', 'categorias'));
+        return view('inventario::producto.edit', compact('producto', 'categorias', 'categoriasMeta'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(ProductoRequest $request, Producto $producto): RedirectResponse
     {
         $producto->update($request->validated());
 
         return Redirect::route('inventario.producto.index')
-            ->with('success', 'Producto actualizado exitosamente.');
+            ->with('success', 'Producto actualizado correctamente.');
     }
 
     public function destroy($id): RedirectResponse
     {
-        Producto::find($id)->delete();
+        $producto = Producto::withCount('donacionDetalles')->findOrFail($id);
+
+        if ($producto->donacion_detalles_count > 0) {
+            return Redirect::back()
+                ->with('error', 'No se puede eliminar este producto porque ya tiene movimientos o registros asociados. Puede cambiar su estado a inactivo.');
+        }
+
+        $producto->delete();
 
         return Redirect::route('inventario.producto.index')
-            ->with('success', 'Producto eliminado exitosamente.');
+            ->with('success', 'Producto eliminado correctamente.');
+    }
+
+    private function categoriasMetaMap(): array
+    {
+        return CategoriasProducto::activas()
+            ->orderBy('nombre')
+            ->get()
+            ->mapWithKeys(fn (CategoriasProducto $cat) => [$cat->id_categoria => $cat->toProductoMeta()])
+            ->toArray();
     }
 }
-
-
-
-
-
-
-

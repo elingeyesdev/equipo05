@@ -144,7 +144,9 @@ class UnifiedDataSyncService
         CategoriasProducto::with('productos')->orderBy('id_categoria')->each(function (CategoriasProducto $cat) use (&$count) {
             $categoriaLocal = ExtCategoriaProducto::updateOrCreate(
                 ['idexterno' => $cat->id_categoria],
-                ['nombre' => $cat->nombre]
+                [
+                    'nombre' => $cat->nombre,
+                ]
             );
             $count++;
 

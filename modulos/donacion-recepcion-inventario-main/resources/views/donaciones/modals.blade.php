@@ -69,8 +69,28 @@
                         <input type="text" name="nombre" id="category_nombre" class="form-control" required>
                     </div>
                     <div class="form-group">
+                        <label for="category_codigo">Código (CAT-…)</label>
+                        <input type="text" name="codigo" id="category_codigo" class="form-control text-uppercase" maxlength="24" placeholder="CAT-OTRO">
+                    </div>
+                    <div class="form-group">
+                        <label for="category_tipo">Tipo</label>
+                        <select name="tipo_categoria" id="category_tipo" class="form-control">
+                            @foreach (\Modules\Inventario\Models\CategoriasProducto::TIPOS_CATEGORIA as $value => $label)
+                                <option value="{{ $value }}" @selected($value === 'OTRO')>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category_prioridad">Prioridad</label>
+                        <select name="prioridad" id="category_prioridad" class="form-control">
+                            @foreach (\Modules\Inventario\Models\CategoriasProducto::PRIORIDADES as $value => $label)
+                                <option value="{{ $value }}" @selected($value === 'media')>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="category_descripcion">Descripción</label>
-                        <textarea name="descripcion" id="category_descripcion" class="form-control" rows="3"></textarea>
+                        <textarea name="descripcion" id="category_descripcion" class="form-control" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('template_title')
-    {{ __('Update') }} Categorias Producto
+    Editar categoría de donación
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Categorias Producto</span>
+                        <span class="card-title"><i class="fas fa-edit"></i> Editar categoría de donación</span>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('inventario.categorias-producto.update', $categoriasProducto->id_categoria) }}"  role="form" enctype="multipart/form-data">

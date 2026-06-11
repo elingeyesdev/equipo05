@@ -12,7 +12,7 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Producto</span>
+                        <span class="card-title">Editar producto del catálogo</span>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('inventario.producto.update', $producto->id_producto) }}"  role="form" enctype="multipart/form-data">

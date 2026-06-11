@@ -29,14 +29,17 @@ class RichInventarioDemoSeeder extends Seeder
 
     private function seedCatalogos($db, Carbon $now): void
     {
-        $categorias = ['Alimentos', 'Higiene', 'Ropa', 'Medicamentos', 'Herramientas', 'Agua'];
         $catIds = [];
-        foreach ($categorias as $nombre) {
-            $row = $db->table('categorias_productos')->where('nombre', $nombre)->first();
+        $nowStr = $now->toDateTimeString();
+        foreach (\Modules\Inventario\Support\CategoriaProductoDefaults::catalogoEmergencia() as $item) {
+            $row = $db->table('categorias_productos')->where('codigo', $item['codigo'])->first();
             if ($row) {
                 $catIds[] = $row->id_categoria;
             } else {
-                $catIds[] = $db->table('categorias_productos')->insertGetId(['nombre' => $nombre], 'id_categoria');
+                $data = $item;
+                $data['created_at'] = $nowStr;
+                $data['updated_at'] = $nowStr;
+                $catIds[] = $db->table('categorias_productos')->insertGetId($data, 'id_categoria');
             }
         }
 

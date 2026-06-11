@@ -36,7 +36,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('categorias-producto', Modules\Inventario\Http\Controllers\CategoriasProductoController::class);
+    Route::get('categorias-producto', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'index'])->name('categorias-producto.index');
+    Route::get('categorias-producto/create', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'create'])->name('categorias-producto.create');
+    Route::post('categorias-producto', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'store'])->name('categorias-producto.store');
+    Route::get('categorias-producto/{categorias_producto}/edit', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'edit'])->name('categorias-producto.edit');
+    Route::put('categorias-producto/{categorias_producto}', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'update'])->name('categorias-producto.update');
+    Route::delete('categorias-producto/{categorias_producto}', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'destroy'])->name('categorias-producto.destroy');
+    Route::get('categorias-producto/{categorias_producto}', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'show'])->name('categorias-producto.show');
 });
 
 Route::middleware(['auth'])->group(function () {
