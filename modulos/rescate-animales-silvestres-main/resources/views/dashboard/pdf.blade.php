@@ -367,7 +367,7 @@
 
     <div class="container">
         @php
-            $isAdmin = $usuario->hasAnyRole(['admin', 'encargado']);
+            $isAdmin = \App\Support\AccessControl::userHasRole($usuario, 'Administrador');
         @endphp
         @if($isAdmin)
             <!-- SECCIÓN 1: RESUMEN -->

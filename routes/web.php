@@ -86,37 +86,39 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/fusion/fase1', [Fase1IntegracionController::class, 'index'])->name('fusion.fase1.index');
     Route::get('/incendios', function () {
         return redirect()->route('incendios.dashboard');
-    })->name('fusion.modulos.incendios');
+    })->middleware('module.access:incendios')->name('fusion.modulos.incendios');
 
     Route::get('/rescate', function () {
         return redirect()->route('rescate.home');
-    })->name('fusion.modulos.rescate');
+    })->middleware('module.access:rescate')->name('fusion.modulos.rescate');
 
     Route::get('/logistica', function () {
         return redirect()->route('logistica.dashboard');
-    })->name('fusion.modulos.logistica');
+    })->middleware('module.access:logistica')->name('fusion.modulos.logistica');
 
     Route::get('/seguimiento', function () {
         return redirect()->route('seguimiento.dashboard');
-    })->name('fusion.modulos.seguimiento');
+    })->middleware('module.access:seguimiento')->name('fusion.modulos.seguimiento');
 
     Route::get('/cuadrillas', function () {
         return redirect()->route('cuadrillas.dashboard');
-    })->name('fusion.modulos.cuadrillas');
+    })->middleware('module.access:cuadrillas')->name('fusion.modulos.cuadrillas');
 
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
     // ====================================================
 
 
-    Route::get('/sincronizar/campanias', [ApiCampaniaSyncController::class, 'sync'])->name('api.campanias.sync');
-    Route::get('/sincronizar/donaciones-dinero', [ApiDonacionSyncController::class, 'syncDinero'])->name('api.donaciones.dinero.sync');
-    
-    Route::prefix('integracion-externa')->group(function () {
-        Route::get('/sync/categorias', [IntegracionExternaController::class, 'syncCategoriasProductos'])->name('integracion.sync.categorias');
-        Route::get('/sync/almacenes', [IntegracionExternaController::class, 'syncAlmacenes'])->name('integracion.sync.almacenes');
-        Route::get('/sync/all', [IntegracionExternaController::class, 'syncAll'])->name('integracion.sync.all');
-        Route::get('/sync/trazabilidad-especie', [TrazabilidadSyncController::class, 'syncEspecie'])->name('integracion.sync.trazabilidad.especie');
+    Route::middleware(['role:Administrador'])->group(function () {
+        Route::get('/sincronizar/campanias', [ApiCampaniaSyncController::class, 'sync'])->name('api.campanias.sync');
+        Route::get('/sincronizar/donaciones-dinero', [ApiDonacionSyncController::class, 'syncDinero'])->name('api.donaciones.dinero.sync');
+
+        Route::prefix('integracion-externa')->group(function () {
+            Route::get('/sync/categorias', [IntegracionExternaController::class, 'syncCategoriasProductos'])->name('integracion.sync.categorias');
+            Route::get('/sync/almacenes', [IntegracionExternaController::class, 'syncAlmacenes'])->name('integracion.sync.almacenes');
+            Route::get('/sync/all', [IntegracionExternaController::class, 'syncAll'])->name('integracion.sync.all');
+            Route::get('/sync/trazabilidad-especie', [TrazabilidadSyncController::class, 'syncEspecie'])->name('integracion.sync.trazabilidad.especie');
+        });
     });
 
     // ====================================================
@@ -137,9 +139,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ====================================================
-    // GRUPO C: ADMINISTRADOR | REPORTES
+    // GRUPO C: ADMINISTRACIÓN DE DONACIONES MONETARIAS
     // ====================================================
-    Route::group(['middleware' => ['role:Administrador|Reportes']], function () {
+    Route::group(['middleware' => ['role:Administrador']], function () {
         
         // --- DONACIONES & ASIGNACIONES ---
         Route::resource('donaciones', DonacionController::class)->except(['show']);
@@ -174,9 +176,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ====================================================
-    // GRUPO D: COMPARTIDO (ADMIN | ALMACENERO | REPORTES)
+    // GRUPO D: TRAZABILIDAD Y MENSAJERÍA (ADMIN | ALMACENERO)
     // ====================================================
-    Route::group(['middleware' => ['role:Administrador|Almacenero|Reportes']], function () {
+    Route::group(['middleware' => ['role:Administrador|Almacenero']], function () {
         
         // --- REPORTES INTERNOS TRAZABILIDAD ---
         // Aquí es donde faltaban las rutas 'paquete' y 'paquete.ajax'
@@ -223,7 +225,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('inventario')
     ->as('inventario.')
-    ->middleware(['inventario.db'])
+    ->middleware(['auth', 'inventario.db', 'module.access:inventario'])
     ->group(function () {
         require base_path('modulos/donacion-recepcion-inventario-main/routes/web.php');
     });
@@ -239,35 +241,35 @@ Route::prefix('incendios/modulo')
 
 Route::prefix('incendios/modulo')
     ->as('incendios.')
-    ->middleware(['auth', 'incendios.db'])
+    ->middleware(['auth', 'incendios.db', 'module.access:incendios'])
     ->group(function () {
         require base_path('modulos/monitoreo-incendios-simulacion-main/routes/web.php');
     });
 
 Route::prefix('rescate/modulo')
     ->as('rescate.')
-    ->middleware(['auth', 'rescate.db'])
+    ->middleware(['auth', 'rescate.db', 'module.access:rescate'])
     ->group(function () {
         require base_path('modulos/rescate-animales-silvestres-main/routes/web.php');
     });
 
 Route::prefix('logistica/modulo')
     ->as('logistica.')
-    ->middleware(['auth', 'logistica.db'])
+    ->middleware(['auth', 'logistica.db', 'module.access:logistica'])
     ->group(function () {
         require base_path('modulos/logistica-transportacion-donaciones-main/routes/web.php');
     });
 
 Route::prefix('seguimiento/modulo')
     ->as('seguimiento.')
-    ->middleware(['auth', 'seguimiento.db'])
+    ->middleware(['auth', 'seguimiento.db', 'module.access:seguimiento'])
     ->group(function () {
         require base_path('modulos/seguimiento-voluntarios-comunarios-main/routes/web.php');
     });
 
 Route::prefix('cuadrillas/modulo')
     ->as('cuadrillas.')
-    ->middleware(['auth', 'cuadrillas.db'])
+    ->middleware(['auth', 'cuadrillas.db', 'module.access:cuadrillas'])
     ->group(function () {
         require base_path('modulos/cuadrillas-incendios-kardex-cursos-Alas-Chiquitanas/routes/web.php');
     });

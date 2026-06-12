@@ -14,6 +14,8 @@ class ProductoController extends Controller
 {
     public function index(Request $request): View
     {
+        $this->assertAnyPermission('inventario.productos.gestionar', 'inventario.paquetes.ver', 'inventario.paquetes.gestionar');
+
         $productos = Producto::with('categoriaProducto')
             ->withCount('donacionDetalles')
             ->ordenPrioridad()
@@ -30,6 +32,7 @@ class ProductoController extends Controller
 
     public function create(): View
     {
+        $this->assertPermission('inventario.productos.gestionar');
         $producto = new Producto();
         $categorias = CategoriasProducto::activas()->orderBy('nombre')->pluck('nombre', 'id_categoria');
         $categoriasMeta = $this->categoriasMetaMap();
@@ -39,6 +42,7 @@ class ProductoController extends Controller
 
     public function store(ProductoRequest $request)
     {
+        $this->assertPermission('inventario.productos.gestionar');
         $producto = Producto::create($request->validated());
 
         if ($request->wantsJson()) {
@@ -55,6 +59,7 @@ class ProductoController extends Controller
 
     public function show($id): View
     {
+        $this->assertAnyPermission('inventario.productos.gestionar', 'inventario.paquetes.ver');
         $producto = Producto::with('categoriaProducto')
             ->withCount('donacionDetalles')
             ->findOrFail($id);
@@ -64,6 +69,7 @@ class ProductoController extends Controller
 
     public function edit($id): View
     {
+        $this->assertPermission('inventario.productos.gestionar');
         $producto = Producto::findOrFail($id);
         $categorias = CategoriasProducto::activas()->orderBy('nombre')->pluck('nombre', 'id_categoria');
         $categoriasMeta = $this->categoriasMetaMap();
@@ -73,6 +79,7 @@ class ProductoController extends Controller
 
     public function update(ProductoRequest $request, Producto $producto): RedirectResponse
     {
+        $this->assertPermission('inventario.productos.gestionar');
         $producto->update($request->validated());
 
         return Redirect::route('inventario.producto.index')
@@ -81,6 +88,7 @@ class ProductoController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        $this->assertPermission('inventario.productos.gestionar');
         $producto = Producto::withCount('donacionDetalles')->findOrFail($id);
 
         if ($producto->donacion_detalles_count > 0) {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\AccessControl;
 use App\Support\UnifiedPostgres;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -90,5 +91,20 @@ class Usuario extends Authenticatable
     public function mensajesRecibidos()
     {
         return $this->hasMany(Mensaje::class, 'usuariodestino', 'usuarioid');
+    }
+
+    public function primaryRoleName(): ?string
+    {
+        return $this->getRoleNames()->first();
+    }
+
+    public function canAccessModule(string $module): bool
+    {
+        return AccessControl::userCanAccessModule($this, $module);
+    }
+
+    public function canManage(string $permission): bool
+    {
+        return $this->hasRole('Administrador') || $this->can($permission);
     }
 }

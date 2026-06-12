@@ -15,11 +15,13 @@
                 @endif
 
                 <x-adminlte-card title="Administradores" theme="warning" icon="fas fa-user-shield">
+                    @canOperateIncendios
                     <x-slot name="toolsSlot">
                         <a href="{{ route('incendios.administradores.create') }}" class="btn btn-success btn-sm">
                             <i class="fas fa-plus"></i> Crear Nuevo
                         </a>
                     </x-slot>
+                    @endcanOperateIncendios
 
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
@@ -50,6 +52,7 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @canOperateIncendios
                                             <div class="btn-group btn-group-sm" role="group">
                                                 <a href="{{ route('incendios.administradores.show', $administrador->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                     <i class="fas fa-eye"></i>
@@ -66,15 +69,22 @@
                                                     </button>
                                                 </form>
                                             </div>
+                                            @elsecanOperateIncendios
+                                            <a href="{{ route('incendios.administradores.show', $administrador->id) }}" class="btn btn-info btn-sm" title="Ver">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @endcanOperateIncendios
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center text-muted py-4">
                                             No hay administradores registrados.
+                                            @canOperateIncendios
                                             <a href="{{ route('incendios.administradores.create') }}" class="btn btn-success btn-sm ml-2">
                                                 <i class="fas fa-plus"></i> Crear primero
                                             </a>
+                                            @endcanOperateIncendios
                                         </td>
                                     </tr>
                                 @endforelse

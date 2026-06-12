@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
             config(['database.default' => UnifiedPostgres::coreAuthConnection()]);
             try {
                 $this->call([
-                    RoleSeeder::class,
-                    UserSeeder::class,
+                    AccessControlSeeder::class,
+                    AccessControlDemoUsersSeeder::class,
                 ]);
             } finally {
                 config(['database.default' => $previous]);

@@ -2,6 +2,8 @@
 
 namespace Modules\Rescate\Http\Controllers;
 
+use App\Support\AccessControl;
+use App\Support\RescateAccess;
 use App\Support\UnifiedValidation;
 use Modules\Rescate\Models\Person;
 use Illuminate\Http\RedirectResponse;
@@ -27,6 +29,8 @@ class PersonController extends Controller
      */
     public function index(Request $request): View
     {
+        RescateAccess::assertCanManagePeople();
+
         $query = Person::with('user.roles');
 
         // Filtro por nombre
@@ -76,6 +80,8 @@ class PersonController extends Controller
      */
     public function create(): View
     {
+        RescateAccess::assertCanManagePeople();
+
         $person = new Person();
         $centers = \Modules\Rescate\Models\Center::orderBy('nombre')->get(['id', 'nombre', 'latitud', 'longitud']);
 
@@ -87,6 +93,8 @@ class PersonController extends Controller
      */
     public function store(PersonRequest $request): RedirectResponse
     {
+        RescateAccess::assertCanManagePeople();
+
         $data = $request->validated();
 
         $names = UnifiedValidation::splitNombreCompleto($data['nombre']);
@@ -115,8 +123,10 @@ class PersonController extends Controller
         $person = Person::create($personData);
         
         // Asignar rol de ciudadano por defecto
-        $role = Role::firstOrCreate(['name' => 'ciudadano', 'guard_name' => 'web']);
-        $user->assignRole($role);
+        AccessControl::syncSingleRole(
+            \App\Models\Usuario::findOrFail($user->getKey()),
+            'Ciudadano'
+        );
         
         // Lógica de asignación de rol cuidador
         // Solo se asigna el rol si:
@@ -163,16 +173,15 @@ class PersonController extends Controller
         $person = Person::with(['rescuers', 'veterinarians', 'user.roles', 'cuidadorCenter'])->findOrFail($id);
         
         // Verificar si la persona es admin
-        $personIsAdmin = $person->user && $person->user->hasRole('admin');
+        $personIsAdmin = $person->user && AccessControl::userHasRole($person->user, 'Administrador');
         
         // Verificar si ya tiene registros de rescatista o veterinario
         $hasRescuer = $person->rescuers->isNotEmpty();
         $hasVeterinarian = $person->veterinarians->isNotEmpty();
         
-        // Verificar si el usuario actual es admin o encargado
-        $isAdmin = Auth::check() && Auth::user()->hasRole('admin');
-        $isEncargado = Auth::check() && Auth::user()->hasRole('encargado');
-        $canApproveCuidador = $isAdmin || $isEncargado;
+        $isAdmin = Auth::check() && AccessControl::userHasRole(Auth::user(), 'Administrador');
+        $isEncargado = false;
+        $canApproveCuidador = AccessControl::userHasAnyRole(Auth::user(), ['Administrador', 'Veterinario']);
         
         // Verificar si hay solicitud de cuidador pendiente
         $cuidadorPendiente = (int)$person->es_cuidador === 1 && empty($person->cuidador_motivo_revision);
@@ -196,6 +205,8 @@ class PersonController extends Controller
      */
     public function edit($id): View
     {
+        RescateAccess::assertCanManagePeople();
+
         $person = Person::with('cuidadorCenter')->findOrFail($id);
         $centers = \Modules\Rescate\Models\Center::orderBy('nombre')->get(['id', 'nombre', 'latitud', 'longitud']);
 
@@ -240,8 +251,7 @@ class PersonController extends Controller
             
             // Si es un encargado (y no admin), solo puede cambiar campos de aprobación de cuidador
             $user = Auth::user();
-            if ($user && $user->hasRole('encargado') && !$user->hasRole('admin')) {
-                // El encargado solo puede modificar cuidador_aprobado y cuidador_motivo_revision
+            if ($user && AccessControl::userHasRole($user, 'Veterinario') && ! AccessControl::userHasRole($user, 'Administrador')) {
                 $allowedFields = ['cuidador_aprobado', 'cuidador_motivo_revision'];
                 $data = array_intersect_key($data, array_flip($allowedFields));
             }
@@ -283,15 +293,13 @@ class PersonController extends Controller
             $shouldHaveRole = $esCuidador && $tieneMotivo && $aprobado;
             
             if ($shouldHaveRole) {
-                // Asignar rol cuidador
-                $role = Role::firstOrCreate(['name' => 'cuidador', 'guard_name' => 'web']);
-                if (!$person->user->hasRole('cuidador')) {
-                    $person->user->assignRole($role);
-                }
+                AccessControl::syncSingleRole(
+                    \App\Models\Usuario::findOrFail($person->user->getKey()),
+                    'Cuidador'
+                );
             } else {
-                // Remover rol si no cumple las condiciones
-                if ($person->user->hasRole('cuidador')) {
-                    $person->user->removeRole('cuidador');
+                if ($person->user && AccessControl::userHasRole($person->user, 'Cuidador')) {
+                    \App\Models\Usuario::findOrFail($person->user->getKey())->syncRoles([]);
                 }
             }
         }
@@ -315,7 +323,7 @@ class PersonController extends Controller
             
             if ($action === 'approve') {
                 $message = 'Solicitud de cuidador aprobada correctamente.';
-                if ($person->user && $person->user->hasRole('cuidador')) {
+                if ($person->user && AccessControl::userHasRole($person->user, 'Cuidador')) {
                     $message .= ' El rol de cuidador ha sido asignado.';
                 }
             } else {
@@ -331,6 +339,8 @@ class PersonController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        RescateAccess::assertCanManagePeople();
+
         Person::findOrFail($id)->delete();
 
         return Redirect::route('rescate.people.index')
@@ -342,32 +352,10 @@ class PersonController extends Controller
      */
     public function convertToEncargado($id): RedirectResponse
     {
-        $person = Person::with('user')->findOrFail($id);
+        RescateAccess::assertCanManagePeople();
 
-        // Verificar que la persona tenga un usuario asociado
-        if (!$person->user) {
-            return Redirect::back()
-                ->with('error', 'La persona no tiene un usuario asociado.');
-        }
-
-        // Verificar que no sea admin
-        if ($person->user->hasRole('admin')) {
-            return Redirect::back()
-                ->with('error', 'No se puede convertir un administrador en encargado.');
-        }
-
-        // Verificar que no tenga ya el rol de encargado
-        if ($person->user->hasRole('encargado')) {
-            return Redirect::back()
-                ->with('info', 'La persona ya tiene el rol de encargado.');
-        }
-
-        // Asignar rol de encargado
-        $role = Role::firstOrCreate(['name' => 'encargado', 'guard_name' => 'web']);
-        $person->user->assignRole($role);
-
-        return Redirect::route('rescate.people.show', $person->id)
-            ->with('success', 'La persona ha sido convertida en encargado correctamente.');
+        return Redirect::back()
+            ->with('warning', 'El rol encargado fue eliminado. Asigne un rol operativo específico (Rescatista, Veterinario, etc.) desde Administración de usuarios.');
     }
 
 }

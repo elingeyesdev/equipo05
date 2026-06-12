@@ -11,7 +11,7 @@ class ProductoRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->canManage('inventario.productos.gestionar') ?? false;
     }
 
     public function rules(): array

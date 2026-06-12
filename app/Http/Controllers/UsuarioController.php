@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Support\AccessControl;
 use App\Support\UnifiedValidation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
@@ -18,8 +19,8 @@ class UsuarioController extends Controller
     }
 
     public function create() {
-        // pluck para obtener solo nombre e id (optimización)
-        $roles = Role::pluck('name', 'name')->all(); 
+        $roles = array_combine(AccessControl::FINAL_ROLES, AccessControl::FINAL_ROLES);
+
         return view('usuarios.create', compact('roles'));
     }
 
@@ -33,11 +34,12 @@ class UsuarioController extends Controller
             'imagenurl' => 'nullable|string|max:255',
             'activo' => 'boolean', 
             'fecharegistro' => 'nullable|date',
-            'roles' => 'array' 
+            'roles' => ['nullable', 'array', 'max:1'],
+            'roles.*' => ['string', Rule::in(AccessControl::FINAL_ROLES)],
         ]);
 
         // CORRECCIÓN: Quitamos 'roles' del input para que no intente guardarlo en la tabla usuarios
-        $input = $request->except(['roles']); 
+        $input = $request->except(['roles']);
         
         // Encriptamos
         $input['contrasena'] = Hash::make($input['contrasena']); 
@@ -47,8 +49,7 @@ class UsuarioController extends Controller
 
         // Asignamos los roles (Spatie)
         if ($request->filled('roles')) {
-            // Como usamos pluck('name', 'name'), aquí recibes los nombres (ej: ['Admin', 'Donante'])
-            $usuario->assignRole($request->input('roles')); 
+            AccessControl::syncSingleRole($usuario, (string) $request->input('roles.0'));
         }
 
         return redirect()->route('usuarios.index')->with('success','Usuario creado exitosamente.');
@@ -56,10 +57,8 @@ class UsuarioController extends Controller
 
     public function edit($id) {
         $usuario = Usuario::findOrFail($id);
-        $roles = Role::pluck('name', 'name')->all();
-        
-        // Obtenemos los roles actuales del usuario para marcar los checkbox en la vista
-        $userRoles = $usuario->roles->pluck('name','name')->all();
+        $roles = array_combine(AccessControl::FINAL_ROLES, AccessControl::FINAL_ROLES);
+        $userRoles = $usuario->roles->pluck('name', 'name')->all();
 
         return view('usuarios.edit', compact('usuario','roles', 'userRoles'));
     }
@@ -73,7 +72,8 @@ class UsuarioController extends Controller
             'nombre' => 'required|string|max:50',
             'apellido' => 'required|string|max:50',
             'telefono' => 'nullable|string|max:20',
-            'roles' => 'array'
+            'roles' => ['nullable', 'array', 'max:1'],
+            'roles.*' => ['string', Rule::in(AccessControl::FINAL_ROLES)],
         ]);
 
         $input = $request->except(['contrasena', 'roles']);
@@ -87,18 +87,29 @@ class UsuarioController extends Controller
 
         // 4. Sincronizar roles (Quita los viejos y pone los nuevos)
         if ($request->has('roles')) {
-            $usuario->syncRoles($request->input('roles'));
-        } else {
-            // Si el array de roles viene vacío, le quitamos todos los roles (opcional)
-            // $usuario->syncRoles([]); 
+            AccessControl::syncSingleRole($usuario, (string) ($request->input('roles.0') ?? ''));
         }
 
         return redirect()->route('usuarios.index')->with('success','Usuario actualizado.');
     }
 
     public function destroy($id) {
-        // En lugar de borrar físico, a veces es mejor desactivarlo, pero si prefieres borrar:
-        Usuario::findOrFail($id)->delete();
+        $usuario = Usuario::findOrFail($id);
+        /** @var Usuario|null $authUser */
+        $authUser = Auth::user();
+
+        if ($authUser && (int) $authUser->usuarioid === (int) $usuario->usuarioid) {
+            return redirect()->route('usuarios.index')->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
+        if ($usuario->hasRole('Administrador')) {
+            $adminsActivos = Usuario::role('Administrador')->where('activo', true)->count();
+            if ($adminsActivos <= 1 && $usuario->activo) {
+                return redirect()->route('usuarios.index')->with('error', 'No se puede eliminar al último administrador activo.');
+            }
+        }
+
+        $usuario->delete();
         return redirect()->route('usuarios.index')->with('success','Usuario eliminado.');
     }
 }

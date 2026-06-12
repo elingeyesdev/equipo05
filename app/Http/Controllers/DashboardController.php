@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller; // Importante extender del base
+use App\Http\Controllers\Controller;
 use App\Models\Campania;
 use App\Models\Donacion;
 use App\Models\Usuario;
 use App\Models\Mensaje;
 use App\Models\Asignacion;
+use App\Support\AccessControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -19,29 +20,11 @@ class DashboardController extends Controller
         /** @var \App\Models\Usuario $user */
         $user = Auth::user();
 
-        // -----------------------------------------------------------
-        // 1. LÓGICA DE REDIRECCIÓN (El Semáforo)
-        // -----------------------------------------------------------
-
-        // ROL: ALMACENERO -> Gestión de Almacenes
-        if ($user->hasRole('Almacenero')) {
-            return redirect()->route('almacenes.estructura');
+        if (! $user->hasRole('Administrador')) {
+            return redirect(AccessControl::redirectPathFor($user));
         }
 
-        // ROL: REPORTES -> Bandeja de Mensajes
-        if ($user->hasRole('Reportes')) {
-            return redirect()->route('mensajes.index');
-        }
-
-        // ROL: ADMIN -> Ve estadísticas completas
-        if ($user->hasRole('Administrador')) {
-            return $this->dashboardAdmin();
-        }
-
-        // ROL: DONANTE (o cualquier otro) -> Ve bienvenida simple
-        // No lanzamos 403 para evitar bucles de redirección.
-        // En lugar de view('dashboard')
-        return view('dashboard.index');
+        return $this->dashboardAdmin();
     }
 
     /**

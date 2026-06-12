@@ -14,7 +14,9 @@ class CategoriasProductoRequest extends FormRequest
             return true;
         }
 
-        return $this->user()?->hasRole('Administrador') ?? false;
+        $user = $this->user();
+
+        return $user?->canManage('inventario.categorias.gestionar') ?? false;
     }
 
     public function rules(): array
@@ -94,11 +96,11 @@ class CategoriasProductoRequest extends FormRequest
             throw new \Illuminate\Http\Exceptions\HttpResponseException(
                 response()->json([
                     'success' => false,
-                    'message' => 'Solo administradores pueden gestionar categorías.',
+                    'message' => 'Solo almaceneros o administradores pueden gestionar categorías.',
                 ], 403)
             );
         }
 
-        abort(403, 'Solo administradores pueden gestionar categorías.');
+        abort(403, 'Solo almaceneros o administradores pueden gestionar categorías.');
     }
 }

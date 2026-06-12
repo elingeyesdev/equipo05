@@ -18,11 +18,11 @@
                                 <a href="{{ route('rescate.reports.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
                                     {{ __('Crear nuevo') }}
                                 </a>
-                                @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+                                @canApproveRescateReports
                                 <a href="{{ route('rescate.reports.mapa-campo') }}" class="btn btn-info btn-sm float-right mr-3" data-placement="left">
                                     <i class="fas fa-map-marked-alt"></i> {{ __('Mapa de Campo') }}
                                 </a>
-                                @endif
+                                @endcanApproveRescateReports
                             </div>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                     <div class="card-body bg-white">
                         <form method="GET" class="mb-3 js-auto-filter-form">
                             <div class="form-row">
-                                <div class="{{ Auth::user()->hasAnyRole(['admin', 'encargado']) ? 'col-md-3' : 'col-md-4' }}">
+                                <div class="{{ \App\Support\AccessControl::canApproveRescateReports() ? 'col-md-3' : 'col-md-4' }}">
                                     <label class="mb-1">
                                         {{ __('Urgencia') }}
                                         <button type="button" class="btn btn-link btn-sm p-0 ml-1 align-baseline" data-toggle="tooltip" title="{{ __('Qué tan pronto se debe rescatar al animal. 1–2: Baja (situación estable), 3: Media (requiere seguimiento), 4–5: Alta (atención rápida).') }}">¿{{ __('Qué es urgencia') }}?</button>
@@ -47,7 +47,7 @@
                                         <option value="baja" {{ request('urgencia_nivel')==='baja'?'selected':'' }}>{{ __('Baja') }}</option>
                                     </select>
                                 </div>
-                                @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+                                @canApproveRescateReports
                                 <div class="col-md-3">
                                     <label class="mb-1">{{ __('Reportante') }}</label>
                                     <select name="persona_id" class="form-control">
@@ -59,8 +59,8 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                @endif
-                                <div class="{{ Auth::user()->hasAnyRole(['admin', 'encargado']) ? 'col-md-3' : 'col-md-4' }}">
+                                @endcanApproveRescateReports
+                                <div class="{{ \App\Support\AccessControl::canApproveRescateReports() ? 'col-md-3' : 'col-md-4' }}">
                                     <label class="mb-1">{{ __('Tipo de incidente') }}</label>
                                     <select name="tipo_incidente_id" class="form-control">
                                         <option value="">{{ __('Todos') }}</option>
@@ -71,7 +71,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="{{ Auth::user()->hasAnyRole(['admin', 'encargado']) ? 'col-md-3' : 'col-md-4' }}">
+                                <div class="{{ \App\Support\AccessControl::canApproveRescateReports() ? 'col-md-3' : 'col-md-4' }}">
                                     <label class="mb-1">{{ __('Aprobado') }}</label>
                                     <select name="aprobado" class="form-control">
                                         <option value="">{{ __('Todos') }}</option>
@@ -207,14 +207,14 @@
                                         </div>
                                         <div class="card-footer">
                                             @php
-                                                $isOnlyCitizen = Auth::user()->hasRole('ciudadano') && !Auth::user()->hasAnyRole(['admin', 'encargado', 'rescatista', 'veterinario', 'cuidador']);
+                                                $isOnlyCitizen = \App\Support\AccessControl::isOnlyRescateCitizen();
                                             @endphp
                                             @if($isOnlyCitizen)
                                             <div class="d-flex w-100">
                                                 <a class="btn btn-primary btn-sm flex-fill" href="{{ route('rescate.reports.show', $report->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                                 </a>
-                                                @if((int)$report->aprobado === 1 && $report->latitud && $report->longitud && Auth::user()->hasAnyRole(['admin', 'encargado']))
+                                                @if((int)$report->aprobado === 1 && $report->latitud && $report->longitud && \App\Support\AccessControl::canApproveRescateReports())
                                                 <a class="btn btn-info btn-sm flex-fill ml-2" href="{{ route('rescate.reports.mapa-campo', ['report' => $report->id]) }}" title="{{ __('Ver en mapa') }}">
                                                     <i class="fas fa-map-marked-alt"></i>
                                                 </a>
@@ -225,12 +225,12 @@
                                                 <a class="btn btn-primary btn-sm" href="{{ route('rescate.reports.show', $report->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                                 </a>
-                                                @if((int)$report->aprobado === 1 && $report->latitud && $report->longitud && Auth::user()->hasAnyRole(['admin', 'encargado']))
+                                                @if((int)$report->aprobado === 1 && $report->latitud && $report->longitud && \App\Support\AccessControl::canApproveRescateReports())
                                                 <a class="btn btn-info btn-sm" href="{{ route('rescate.reports.mapa-campo', ['report' => $report->id]) }}" title="{{ __('Ver en mapa') }}">
                                                     <i class="fas fa-map-marked-alt"></i>
                                                 </a>
                                                 @endif
-                                                @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+                                                @canApproveRescateReports
                                                 <button type="button" 
                                                         class="btn btn-success btn-sm {{ (int)$report->aprobado === 1 ? 'disabled' : '' }}" 
                                                         data-toggle="modal" 
@@ -239,14 +239,14 @@
                                                         title="{{ (int)$report->aprobado === 1 ? __('Este hallazgo ya está aprobado') : __('Aprobar o rechazar este hallazgo') }}">
                                                     <i class="fa fa-fw fa-check"></i> {{ __('Aprobar') }}
                                                 </button>
-                                                @endif
-                                                @if(Auth::user()->hasRole('admin'))
+                                                @endcanApproveRescateReports
+                                                @canDeleteRescateReports
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-danger btn-sm js-confirm-delete">
                                                     <i class="fa fa-fw fa-trash"></i> {{ __('Eliminar') }}
                                                 </button>
-                                                @endif
+                                                @endcanDeleteRescateReports
                                             </form>
                                             @endif
                                         </div>
@@ -307,7 +307,7 @@
     
     {{-- Modales de aprobación para cada reporte --}}
     @foreach ($reports as $report)
-        @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+        @canApproveRescateReports
         <div class="modal fade" id="modalAprobarReport{{ $report->id }}" tabindex="-1" role="dialog" aria-labelledby="modalAprobarReport{{ $report->id }}Label" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -338,7 +338,7 @@
                 </div>
             </div>
         </div>
-        @endif
+        @endcanApproveRescateReports
     @endforeach
     <script>
     document.addEventListener('DOMContentLoaded', function(){
@@ -364,7 +364,7 @@
 
         // Manejar aprobación/rechazo de reportes
         @foreach ($reports as $report)
-            @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+            @canApproveRescateReports
             (function() {
                 var form = document.getElementById('formAprobarReport{{ $report->id }}');
                 var actionInput = document.getElementById('actionReport{{ $report->id }}');
@@ -404,7 +404,7 @@
                     });
                 }
             })();
-            @endif
+            @endcanApproveRescateReports
         @endforeach
     });
     </script>

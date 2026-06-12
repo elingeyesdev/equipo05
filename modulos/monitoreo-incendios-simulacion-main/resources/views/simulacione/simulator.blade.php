@@ -268,8 +268,8 @@
         </div>
     </div>
 
-    <!-- Modal de guardar - Solo para administradores -->
-    @role('administrador')
+    <!-- Modal de guardar - Solo para operadores de incendios -->
+    @canOperateIncendios
     <div class="modal" :class="{'show d-block': showSaveModal}" tabindex="-1" x-show="showSaveModal" 
          style="background: rgba(0,0,0,0.5);">
         <div class="modal-dialog">
@@ -311,7 +311,7 @@
             </div>
         </div>
     </div>
-    @endrole
+    @endcanOperateIncendios
 
     <!-- Modal de historial -->
     <div class="modal" :class="{'show d-block': showHistory}" tabindex="-1" x-show="showHistory" 
@@ -892,7 +892,7 @@ function fireSimulator() {
             const totalFires = this.fires.length;
             const affectedArea = (totalFires * 0.01).toFixed(2); // Estimación simple
             
-            const isAdmin = {{ auth()->user()->hasRole('administrador') ? 'true' : 'false' }};
+            const isAdmin = {{ \App\Support\AccessControl::canOperateIncendios() ? 'true' : 'false' }};
             
             const self = this;
             

@@ -61,12 +61,14 @@
                             @endif
                         </div>
 
-                        @if($veterinarian->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
+                        @if($veterinarian->aprobado === null)
+                        @canManageRescatePeople
                         <div class="form-group mb-3">
                             <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalAprobarVeterinarian">
                                 <i class="fa fa-check-circle"></i> Aprobar/Rechazar solicitud
                             </button>
                         </div>
+                        @endcanManageRescatePeople
                         @endif
                     </div>
                 </div>
@@ -74,7 +76,8 @@
         </div>
     </div>
 
-    @if($veterinarian->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
+    @canManageRescatePeople
+    @if($veterinarian->aprobado === null)
     {{-- Modal para aprobar/rechazar solicitud de veterinario --}}
     <div class="modal fade" id="modalAprobarVeterinarian" tabindex="-1" role="dialog" aria-labelledby="modalAprobarVeterinarianLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -164,6 +167,7 @@
     });
     </script>
     @endif
+    @endcanManageRescatePeople
 
     @include('partials.page-pad')
 @endsection

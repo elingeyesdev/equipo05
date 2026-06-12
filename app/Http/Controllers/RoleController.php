@@ -2,88 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\AccessControl;
 use Illuminate\Http\Request;
-// CORRECCIÓN: Usamos el modelo de Spatie, NO App\Models\Role
-use App\Models\Role; 
-use App\Http\Controllers\Controller;
+use App\Models\Role;
 
 class RoleController extends Controller
 {
-    /**
-     * Mostrar lista de roles
-     */
     public function index()
     {
-        $roles = Role::all(); // Usa Spatie
+        $roles = Role::query()
+            ->whereIn('name', AccessControl::FINAL_ROLES)
+            ->orderBy('name')
+            ->get();
+
         return view('roles.index', compact('roles'));
     }
 
-    /**
-     * Mostrar formulario de creación
-     */
     public function create()
     {
-        return view('roles.create');
+        abort(403, 'Los roles operativos están definidos por el sistema.');
     }
 
-    /**
-     * Guardar nuevo rol
-     */
     public function store(Request $request)
     {
-        // Spatie usa 'name' en la BD, pero tu form manda 'nombre'
-        $request->validate([
-            'nombre' => 'required|unique:roles,name', 
-        ]);
-
-        Role::create([
-            'name' => $request->nombre,
-            'guard_name' => 'web',
-            'descripcion' => $request->descripcion // Nuestro campo extra
-        ]);
-
-        return redirect()->route('roles.index')
-            ->with('success', 'Rol creado exitosamente.');
+        abort(403, 'Los roles operativos están definidos por el sistema.');
     }
 
-    /**
-     * Mostrar formulario de edición
-     */
     public function edit($id)
     {
-        $role = Role::findById($id); // Helper de Spatie
+        $role = Role::findById($id);
+
+        abort_unless(in_array($role->name, AccessControl::FINAL_ROLES, true), 404);
+
         return view('roles.edit', compact('role'));
     }
 
-    /**
-     * Actualizar rol
-     */
     public function update(Request $request, $id)
     {
         $role = Role::findById($id);
 
+        abort_unless(in_array($role->name, AccessControl::FINAL_ROLES, true), 404);
+
         $request->validate([
-            'nombre' => 'required|unique:roles,name,' . $role->id,
+            'descripcion' => 'nullable|string|max:255',
         ]);
 
         $role->update([
-            'name' => $request->nombre,
-            'descripcion' => $request->descripcion
+            'descripcion' => $request->descripcion,
         ]);
 
         return redirect()->route('roles.index')
-            ->with('success', 'Rol actualizado correctamente.');
+            ->with('success', 'Descripción del rol actualizada.');
     }
 
-    /**
-     * Eliminar rol
-     */
     public function destroy($id)
     {
-        $role = Role::findById($id);
-        $role->delete();
-
-        return redirect()->route('roles.index')
-            ->with('success', 'Rol eliminado correctamente.');
+        abort(403, 'No se pueden eliminar roles operativos del sistema.');
     }
 }

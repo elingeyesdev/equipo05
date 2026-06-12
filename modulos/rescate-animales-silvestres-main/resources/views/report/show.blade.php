@@ -18,7 +18,8 @@
                             </h3>
                         </div>
                         <div class="d-flex flex-wrap align-items-center" style="gap:.35rem;">
-                            @if(Auth::user()->hasAnyRole(['admin', 'encargado']) && (int)$report->aprobado !== 1)
+                            @canApproveRescateReports
+                            @if((int)$report->aprobado !== 1)
                             <button type="button"
                                     class="btn btn-outline-light btn-sm border-white mr-0"
                                     data-toggle="modal"
@@ -27,6 +28,7 @@
                                 <i class="fa fa-check"></i> {{ __('Aprobar/Rechazar') }}
                             </button>
                             @endif
+                            @endcanApproveRescateReports
                             <a class="btn btn-outline-light btn-sm border-white" href="{{ route('rescate.reports.edit', $report->id) }}"><i class="fas fa-edit"></i> Editar</a>
                             <a class="btn btn-outline-light btn-sm border-white" href="{{ route('rescate.reports.index') }}"><i class="fas fa-arrow-left"></i> Volver</a>
                         </div>
@@ -153,7 +155,8 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 {{-- Modal de aprobación para el reporte --}}
-@if(Auth::user()->hasAnyRole(['admin', 'encargado']) && (int)$report->aprobado !== 1)
+@canApproveRescateReports
+@if((int)$report->aprobado !== 1)
 <div class="modal fade" id="modalAprobarReport{{ $report->id }}" tabindex="-1" role="dialog" aria-labelledby="modalAprobarReport{{ $report->id }}Label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -228,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endif
+@endcanApproveRescateReports
 
 @include('partials.page-pad')
 @endsection

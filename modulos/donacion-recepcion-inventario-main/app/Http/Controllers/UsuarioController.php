@@ -142,7 +142,7 @@ class UsuarioController extends Controller
 
     private function ensureInventarioRoles(): void
     {
-        $defaultRoles = ['Administrador', 'Almacenero', 'Reportes', 'Voluntario', 'Donante'];
+        $defaultRoles = \App\Support\AccessControl::FINAL_ROLES;
 
         foreach ($defaultRoles as $roleName) {
             DB::connection('inventario')

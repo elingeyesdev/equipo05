@@ -22,6 +22,7 @@ class ReportesController extends Controller
 
     public function index()
     {
+        $this->assertPermission('inventario.reportes.ver');
         return view('inventario::reportes.index');
     }
 

@@ -563,10 +563,10 @@
     {{-- =========================================================== --}}
     
     @php
-        $isOnlyCitizen = Auth::user()->hasRole('ciudadano') && !($canViewAdminDashboard ?? false) && !Auth::user()->hasAnyRole(['rescatista', 'veterinario', 'cuidador']);
+        $isOnlyCitizen = \App\Support\AccessControl::isOnlyRescateCitizen() && !($canViewAdminDashboard ?? false);
     @endphp
 
-    @if($isOnlyCitizen || Auth::user()->hasAnyRole(['rescatista', 'veterinario', 'cuidador']))
+    @if($isOnlyCitizen || \App\Support\AccessControl::userHasAnyRole(auth()->user(), ['Rescatista', 'Veterinario', 'Cuidador']))
     <div class="row mt-0 align-items-stretch">        
         <div class="col-md-3 col-sm-6 col-12 d-flex">
             <div class="card bg-gradient-info text-white shadow-sm mb-3 w-100">
@@ -620,7 +620,7 @@
         </div>
 
         <div class="col-md-3 col-sm-6 col-12 d-flex">
-            @if(Auth::user()->hasRole('cuidador') && !($canViewAdminDashboard ?? false))
+            @if(\App\Support\AccessControl::userHasRole(auth()->user(), 'Cuidador') && !($canViewAdminDashboard ?? false))
             <div class="card card-outline card-primary shadow-sm mb-3 w-100">
                 <div class="card-body">
                      <div class="d-flex justify-content-between">
@@ -660,7 +660,7 @@
     {{-- =========================================================== --}}
     {{-- SECCIÓN: KPIs PARA VETERINARIOS --}}
     {{-- =========================================================== --}}
-    @if(Auth::user()->hasRole('veterinario') && !($canViewAdminDashboard ?? false))
+    @if(\App\Support\AccessControl::userHasRole(auth()->user(), 'Veterinario') && !($canViewAdminDashboard ?? false))
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card shadow-sm mb-2">
@@ -696,7 +696,7 @@
     {{-- =========================================================== --}}
     {{-- SECCIÓN: KPIs PARA RESCATISTAS --}}
     {{-- =========================================================== --}}
-    @if(Auth::user()->hasRole('rescatista') && !($canViewAdminDashboard ?? false))
+    @if(\App\Support\AccessControl::userHasRole(auth()->user(), 'Rescatista') && !($canViewAdminDashboard ?? false))
         <div class="row mt-2">
             <div class="col-12">
                 <div class="card shadow-sm mb-2">
@@ -737,13 +737,13 @@
                         <p class="lead text-muted">Bienvenido al Sistema de Rescate de Animales.</p>
                         
                         <div class="d-flex justify-content-center mt-4">
-                            @if(Auth::user()->hasRole('veterinario'))
+                            @if(\App\Support\AccessControl::userHasRole(auth()->user(), 'Veterinario'))
                                 <div class="px-4 border-right">
                                     <h5 class="font-weight-bold text-success">{{ $myAnimalFiles ?? 0 }}</h5>
                                     <small class="text-uppercase text-muted">Mis Pacientes</small>
                                 </div>
                             @endif
-                            @if(Auth::user()->hasRole('rescatista'))
+                            @if(\App\Support\AccessControl::userHasRole(auth()->user(), 'Rescatista'))
                                 <div class="px-4">
                                     <h5 class="font-weight-bold text-primary">{{ $myTransfers ?? 0 }}</h5>
                                     <small class="text-uppercase text-muted">Mis Traslados</small>

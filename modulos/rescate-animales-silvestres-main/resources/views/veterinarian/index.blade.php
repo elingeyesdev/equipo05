@@ -15,11 +15,13 @@
                             <span id="card_title">
                                 {{ __('Veterinarians') }}
                             </span>
+                            @canManageRescatePeople
                             <div class="float-right">
                                 <a href="{{ route('rescate.veterinarians.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
                                     <i class="fas fa-plus"></i> Nuevo veterinario
                                 </a>
                             </div>
+                            @endcanManageRescatePeople
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -141,7 +143,8 @@
     
     {{-- Modales de aprobación para cada veterinario --}}
     @foreach ($veterinarians as $veterinarian)
-        @if($veterinarian->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
+        @if($veterinarian->aprobado === null)
+        @canManageRescatePeople
         <div class="modal fade" id="modalAprobarVeterinarian{{ $veterinarian->id }}" tabindex="-1" role="dialog" aria-labelledby="modalAprobarVeterinarian{{ $veterinarian->id }}Label" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -184,13 +187,15 @@
                 </div>
             </div>
         </div>
+        @endcanManageRescatePeople
         @endif
     @endforeach
     <script>
     document.addEventListener('DOMContentLoaded', function(){
         // Manejar aprobación/rechazo de veterinarios
         @foreach ($veterinarians as $veterinarian)
-            @if($veterinarian->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
+            @if($veterinarian->aprobado === null)
+        @canManageRescatePeople
             (function() {
                 var form = document.getElementById('formAprobarVeterinarian{{ $veterinarian->id }}');
                 var actionInput = document.getElementById('actionVeterinarian{{ $veterinarian->id }}');
@@ -238,6 +243,7 @@
                     });
                 }
             })();
+            @endcanManageRescatePeople
             @endif
         @endforeach
     });

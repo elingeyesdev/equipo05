@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
+use App\Support\AccessControl;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
         // AdminLTE/Bootstrap: evita la vista Tailwind por defecto (SVG gigantes sin estilos Tailwind).
         Paginator::defaultView('pagination::bootstrap-4');
         Paginator::defaultSimpleView('pagination::simple-bootstrap-4');
+
+        $this->registerBladeRbacDirectives();
 
         $this->registerInventarioTransparenciaSync();
 
@@ -72,6 +76,20 @@ class AppServiceProvider extends ServiceProvider
             \Modules\Inventario\Models\Usuario::observe(\App\Observers\InventarioUsuarioCoreSyncObserver::class);
         }
 
+    }
+
+    private function registerBladeRbacDirectives(): void
+    {
+        Blade::if('canRole', fn (string $role) => AccessControl::userHasRole(auth()->user(), $role));
+        Blade::if('canAnyRole', fn (...$roles) => AccessControl::userHasAnyRole(auth()->user(), $roles));
+        Blade::if('canManageRescatePeople', fn () => AccessControl::canManageRescatePeople());
+        Blade::if('canApproveRescateStaff', fn () => AccessControl::canApproveRescateStaff());
+        Blade::if('canApproveRescateReports', fn () => AccessControl::canApproveRescateReports());
+        Blade::if('canManageRescateReports', fn () => AccessControl::canManageRescateReports());
+        Blade::if('canDeleteRescateReports', fn () => AccessControl::canDeleteRescateReports());
+        Blade::if('canManageVeterinaryReleases', fn () => AccessControl::canManageVeterinaryReleases());
+        Blade::if('canOperateIncendios', fn () => AccessControl::canOperateIncendios());
+        Blade::if('isOnlyRescateCitizen', fn () => AccessControl::isOnlyRescateCitizen());
     }
 
     private function registerInventarioTransparenciaSync(): void

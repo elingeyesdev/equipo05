@@ -4,6 +4,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Support\AccessControl;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -22,6 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'module.access' => \App\Http\Middleware\EnsureModuleAccess::class,
+            'permission.check' => \App\Http\Middleware\EnsurePermission::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'inventario.db' => \App\Http\Middleware\UseInventarioConnection::class,
             'incendios.db' => \App\Http\Middleware\UseIncendiosConnection::class,
@@ -38,8 +41,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
             // Si la petición es desde el navegador (no API)
             if (! $request->isJson()) {
-                // Redirigir al dashboard con mensaje de error
-                return redirect()->route('dashboard')
+                $user = $request->user();
+                $target = $user
+                    ? AccessControl::redirectPathFor($user)
+                    : route('login');
+
+                return redirect($target)
                     ->with('error', 'No tienes permisos para acceder a esa sección.');
             }
         });
@@ -47,7 +54,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // También capturamos la excepción específica de Spatie por si acaso
         $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, Request $request) {
             if (! $request->isJson()) {
-                return redirect()->route('dashboard')
+                $user = $request->user();
+                $target = $user
+                    ? AccessControl::redirectPathFor($user)
+                    : route('login');
+
+                return redirect($target)
                     ->with('error', 'No tienes el rol necesario para entrar ahí.');
             }
         });

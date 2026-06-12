@@ -76,7 +76,7 @@
             </ul>
 
             <ul class="navbar-nav ml-auto">
-                @hasanyrole('Administrador|Reportes')
+                @role('Administrador')
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <i class="fas fa-plus-circle"></i>
@@ -97,7 +97,7 @@
                         </a>
                         @endrole
 
-                        @hasanyrole('Administrador|Reportes')
+                        @can('admin.usuarios.gestionar')
                         <a href="{{ route('donaciones.create') }}" class="dropdown-item">
                             <i class="fas fa-hand-holding-heart mr-2"></i> Donación
                         </a>
@@ -107,10 +107,10 @@
                         <a href="{{ route('mensajes.create') }}" class="dropdown-item">
                             <i class="fas fa-envelope mr-2"></i> Mensaje
                         </a>
-                        @endhasanyrole
+                        @endcan
                     </div>
                 </li>
-                @endhasanyrole
+                @endrole
 
                 <li class="nav-item">
                     <a class="nav-link" data-widget="fullscreen" href="#" role="button">
@@ -142,9 +142,24 @@
                 </div>
 
                 <nav class="mt-2">
+                    @php
+                        use App\Support\AccessControl;
+                        $__u = auth()->user();
+                        $__showAdmin = AccessControl::showSidebarModule($__u, 'admin');
+                        $__showInventario = AccessControl::showSidebarModule($__u, 'inventario');
+                        $__showInventarioDonante = AccessControl::showSidebarModule($__u, 'inventario_donante');
+                        $__showIncendios = AccessControl::showSidebarModule($__u, 'incendios');
+                        $__showIncendiosCiudadano = AccessControl::showSidebarModule($__u, 'incendios_ciudadano');
+                        $__showLogistica = AccessControl::showSidebarModule($__u, 'logistica');
+                        $__showSeguimiento = AccessControl::showSidebarModule($__u, 'seguimiento');
+                        $__showCuadrillas = AccessControl::showSidebarModule($__u, 'cuadrillas');
+                        $__showRescate = AccessControl::showSidebarModule($__u, 'rescate');
+                        $__showSync = AccessControl::showSidebarModule($__u, 'sync');
+                    @endphp
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <li class="nav-header">PROYECTOS</li>
 
+                        @if($__showAdmin)
                         <li class="nav-item {{ request()->routeIs('dashboard') || request()->routeIs('roles.*') || request()->routeIs('usuarios.*') || request()->routeIs('campanias.*') || request()->routeIs('donaciones.*') || request()->routeIs('estados.*') || request()->routeIs('asignaciones.*') || request()->routeIs('gateway.trazabilidad.*') || request()->routeIs('reportes.trazabilidad.*') || request()->routeIs('mensajes.*') || request()->routeIs('chat.*') || request()->routeIs('saldosdonaciones.*') || request()->routeIs('reporte.cierreCaja*') ? 'menu-open' : '' }}" data-sidebar-key="mod-transparencia">
                             <a href="#" class="nav-link {{ request()->routeIs('dashboard') || request()->routeIs('roles.*') || request()->routeIs('usuarios.*') || request()->routeIs('campanias.*') || request()->routeIs('donaciones.*') || request()->routeIs('estados.*') || request()->routeIs('asignaciones.*') || request()->routeIs('gateway.trazabilidad.*') || request()->routeIs('reportes.trazabilidad.*') || request()->routeIs('mensajes.*') || request()->routeIs('chat.*') || request()->routeIs('saldosdonaciones.*') || request()->routeIs('reporte.cierreCaja*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-layer-group"></i>
@@ -203,7 +218,35 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+                        @if($__showInventarioDonante)
+                        <li class="nav-item {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') ? 'menu-open' : '' }}" data-sidebar-key="mod-donante">
+                            <a href="#" class="nav-link {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-hand-holding-heart"></i>
+                                <p><span class="sidebar-menu-label">Mis donaciones</span> <i class="fas fa-angle-left right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('inventario.donaciones.index') }}" class="nav-link {{ request()->routeIs('inventario.donaciones.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Mis donaciones</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('inventario.campana.index') }}" class="nav-link {{ request()->routeIs('inventario.campana.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Campañas públicas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('inventario.puntos-recoleccion.index') }}" class="nav-link {{ request()->routeIs('inventario.puntos-recoleccion.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Puntos de recolección</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+
+                        @if($__showInventario)
                         <li class="nav-item {{ request()->routeIs('inventario.*') ? 'menu-open' : '' }}" data-sidebar-key="mod-inventario">
                             <a href="#" class="nav-link {{ request()->routeIs('inventario.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-warehouse"></i>
@@ -287,7 +330,25 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+                        @if($__showIncendiosCiudadano)
+                        <li class="nav-item {{ request()->routeIs('incendios.*') ? 'menu-open' : '' }}" data-sidebar-key="mod-ciudadano">
+                            <a href="#" class="nav-link {{ request()->routeIs('incendios.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-fire"></i>
+                                <p><span class="sidebar-menu-label">Alertas y mis reportes</span> <i class="fas fa-angle-left right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.dashboard') }}" class="nav-link {{ request()->routeIs('incendios.dashboard') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Alertas y mapa</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+
+                        @if($__showIncendios)
                         <li class="nav-item {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'menu-open' : '' }}" data-sidebar-key="mod-incendios">
                             <a href="#" class="nav-link {{ request()->routeIs('incendios.*') || request()->routeIs('fusion.modulos.incendios') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-fire"></i>
@@ -336,7 +397,9 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+                        @if($__showRescate)
                         <li class="nav-item {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'menu-open' : '' }}" data-sidebar-key="mod-rescate">
                             <a href="#" class="nav-link {{ request()->routeIs('rescate.*') || request()->routeIs('fusion.modulos.rescate') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-paw"></i>
@@ -405,7 +468,9 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+                        @if($__showLogistica)
                         <li class="nav-item {{ request()->routeIs('logistica.*') || request()->routeIs('fusion.modulos.logistica') ? 'menu-open' : '' }}" data-sidebar-key="mod-logistica">
                             <a href="#" class="nav-link {{ request()->routeIs('logistica.*') || request()->routeIs('fusion.modulos.logistica') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-truck"></i>
@@ -526,7 +591,9 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+                        @if($__showSeguimiento)
                         <li class="nav-item {{ request()->routeIs('seguimiento.*') || request()->routeIs('fusion.modulos.seguimiento') ? 'menu-open' : '' }}" data-sidebar-key="mod-seguimiento">
                             <a href="#" class="nav-link {{ request()->routeIs('seguimiento.*') || request()->routeIs('fusion.modulos.seguimiento') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-users"></i>
@@ -595,7 +662,9 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+                        @if($__showCuadrillas)
                         <li class="nav-item {{ request()->routeIs('cuadrillas.*') || request()->routeIs('fusion.modulos.cuadrillas') ? 'menu-open' : '' }}" data-sidebar-key="mod-cuadrillas">
                             <a href="#" class="nav-link {{ request()->routeIs('cuadrillas.*') || request()->routeIs('fusion.modulos.cuadrillas') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-fire"></i>
@@ -685,7 +754,9 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+                        @if($__showSync)
                         <li class="nav-header">SISTEMA</li>
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link">
@@ -715,6 +786,7 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
                         <li class="nav-item">
                             <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

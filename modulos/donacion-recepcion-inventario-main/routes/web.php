@@ -12,12 +12,12 @@ Route::get('/', function () {
 Route::get('/home', [Modules\Inventario\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Rutas solo para Administrador
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'permission.check:admin.usuarios.gestionar'])->group(function () {
     Route::resource('usuario', Modules\Inventario\Http\Controllers\UsuarioController::class);
 });
 
-// Rutas para gestionar campañas (solo Administrador) - DEBE IR ANTES de las rutas con parámetros
-Route::middleware(['auth'])->group(function () {
+// Rutas para gestionar campañas (Almacenero / Administrador)
+Route::middleware(['auth', 'permission.check:inventario.dashboard.ver'])->group(function () {
     Route::get('campana/create', [Modules\Inventario\Http\Controllers\CampanaController::class, 'create'])->name('campana.create');
     Route::post('campana', [Modules\Inventario\Http\Controllers\CampanaController::class, 'store'])->name('campana.store');
     Route::get('campana/{campana}/edit', [Modules\Inventario\Http\Controllers\CampanaController::class, 'edit'])->name('campana.edit');
@@ -25,8 +25,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('campana/{campana}', [Modules\Inventario\Http\Controllers\CampanaController::class, 'destroy'])->name('campana.destroy');
 });
 
-// Rutas para ver campañas (Administrador y Voluntario) - DESPUÉS de las rutas específicas
-Route::middleware(['auth'])->group(function () {
+// Rutas para ver campañas (Donante: públicas; operativos: dashboard inventario)
+Route::middleware(['auth', 'permission.check:donante.campanas.ver|inventario.dashboard.ver'])->group(function () {
     Route::get('campana', [Modules\Inventario\Http\Controllers\CampanaController::class, 'index'])->name('campana.index');
     Route::get('campana/{campana}', [Modules\Inventario\Http\Controllers\CampanaController::class, 'show'])->name('campana.show');
 });
@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('puntos-recoleccion', Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'permission.check:inventario.categorias.gestionar|inventario.dashboard.ver'])->group(function () {
     Route::get('categorias-producto', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'index'])->name('categorias-producto.index');
     Route::get('categorias-producto/create', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'create'])->name('categorias-producto.create');
     Route::post('categorias-producto', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'store'])->name('categorias-producto.store');
@@ -49,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('producto', Modules\Inventario\Http\Controllers\ProductoController::class);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'permission.check:inventario.donaciones.registrar'])->group(function () {
     Route::resource('donante', Modules\Inventario\Http\Controllers\DonanteController::class);
 });
 
@@ -101,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Rutas de reportes
     Route::get('reportes', [Modules\Inventario\Http\Controllers\ReportesController::class, 'index'])->name('reportes.index');
-    Route::get('reportes/donaciones-periodo', [Modules\Inventario\Http\Controllers\ReportesController::class, 'donacionesPorPeriodo'])->name('reportes.donaciones.periodo');
+    Route::get('reportes/donaciones-periodo', [Modules\Inventario\Http\Controllers\ReportesController::class, 'donacionesPorPeriodo'])->middleware('permission.check:inventario.reportes.ver')->name('reportes.donaciones.periodo');
     Route::get('reportes/inventario-almacen', [Modules\Inventario\Http\Controllers\ReportesController::class, 'inventarioPorAlmacen'])->name('reportes.inventario.almacen');
     Route::get('reportes/solicitudes-recoleccion', [Modules\Inventario\Http\Controllers\ReportesController::class, 'solicitudesRecoleccion'])->name('reportes.solicitudes');
     Route::get('reportes/salidas-productos', [Modules\Inventario\Http\Controllers\ReportesController::class, 'salidasProductos'])->name('reportes.salidas');

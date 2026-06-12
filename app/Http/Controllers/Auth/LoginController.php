@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
+use App\Support\AccessControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,10 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            /** @var Usuario $user */
+            $user = Auth::user();
+
+            return redirect(AccessControl::redirectPathFor($user));
         }
 
         return view('auth.login');
@@ -48,7 +52,7 @@ class LoginController extends Controller
         Auth::login($user, $request->filled('remember'));
         $request->session()->regenerate();
 
-        return $this->redirectAfterLogin($user);
+        return redirect()->intended(AccessControl::redirectPathFor($user));
     }
 
     public function logout(Request $request)
@@ -59,26 +63,5 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login');
-    }
-
-    private function redirectAfterLogin(Usuario $user)
-    {
-        if ($user->hasAnyRole(['Administrador', 'admin', 'administrador'])) {
-            return redirect()->intended('dashboard');
-        }
-
-        if ($user->hasAnyRole(['Almacenero', 'almacenero', 'Almacenista', 'almacenista'])) {
-            return redirect()->route('almacenes.estructura');
-        }
-
-        if ($user->hasAnyRole(['Reportes', 'reportes'])) {
-            return redirect()->route('mensajes.index');
-        }
-
-        if ($user->hasAnyRole(['Donante', 'donante'])) {
-            return redirect()->route('donaciones.index');
-        }
-
-        return redirect()->intended('dashboard');
     }
 }

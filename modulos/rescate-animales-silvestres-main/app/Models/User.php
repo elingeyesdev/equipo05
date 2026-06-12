@@ -49,9 +49,13 @@ class User extends Authenticatable
         $key = self::relationKey();
 
         return static::query()
-            ->whereHas('roles', fn ($query) => $query->where('name', 'ciudadano'))
+            ->whereHas('roles', fn ($query) => $query->whereIn('name', ['Ciudadano', 'ciudadano']))
             ->whereDoesntHave('roles', fn ($query) => $query->whereIn('name', [
-                'admin', 'encargado', 'rescatista', 'veterinario', 'cuidador',
+                'Administrador', 'admin', 'administrador',
+                'Operador de Incendios', 'encargado',
+                'Rescatista', 'rescatista',
+                'Veterinario', 'veterinario',
+                'Cuidador', 'cuidador',
             ]))
             ->pluck($key);
     }

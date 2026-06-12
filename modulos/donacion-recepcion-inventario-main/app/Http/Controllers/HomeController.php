@@ -28,22 +28,28 @@ class HomeController extends Controller
         // Detectar el rol del usuario autenticado
         $user = auth()->user();
 
-        // Si es almacenista, mostrar dashboard específico
-        if ($user->hasRole('Almacenista')) {
+        if ($user->hasRole('Donante')) {
+            return redirect()->route('inventario.donaciones.index');
+        }
+
+        if ($user->hasRole('Coordinador Logístico')) {
+            return redirect()->route('logistica.dashboard');
+        }
+
+        if (! $user->hasAnyRole(['Almacenero', 'Administrador'])) {
+            abort(403);
+        }
+
+        // Si es almacenero, mostrar dashboard específico
+        if ($user->hasRole('Almacenero')) {
             return $this->dashboardAlmacenista();
         }
 
-        // Si es voluntario, mostrar dashboard específico
-        if ($user->hasRole('Voluntario')) {
-            return $this->dashboardVoluntario();
-        }
-
-        // Dashboard general para Administrador
         return $this->dashboardGeneral();
     }
 
     /**
-     * Dashboard general para Administrador y Voluntario
+     * Dashboard general para Administrador
      */
     private function dashboardGeneral()
     {

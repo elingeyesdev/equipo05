@@ -15,11 +15,13 @@
                             <span id="card_title">
                                 {{ __('Rescuers') }}
                             </span>
+                            @canManageRescatePeople
                             <div class="float-right">
                                 <a href="{{ route('rescate.rescuers.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
                                     <i class="fas fa-plus"></i> Nuevo rescatista
                                 </a>
                             </div>
+                            @endcanManageRescatePeople
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -138,7 +140,8 @@
     
     {{-- Modales de aprobación para cada rescatista --}}
     @foreach ($rescuers as $rescuer)
-        @if($rescuer->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
+        @if($rescuer->aprobado === null)
+        @canManageRescatePeople
         <div class="modal fade" id="modalAprobarRescuer{{ $rescuer->id }}" tabindex="-1" role="dialog" aria-labelledby="modalAprobarRescuer{{ $rescuer->id }}Label" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -181,13 +184,15 @@
                 </div>
             </div>
         </div>
+        @endcanManageRescatePeople
         @endif
     @endforeach
     <script>
     document.addEventListener('DOMContentLoaded', function(){
         // Manejar aprobación/rechazo de rescatistas
         @foreach ($rescuers as $rescuer)
-            @if($rescuer->aprobado === null && Auth::user()->hasAnyRole(['admin', 'encargado']))
+            @if($rescuer->aprobado === null)
+        @canManageRescatePeople
             (function() {
                 var form = document.getElementById('formAprobarRescuer{{ $rescuer->id }}');
                 var actionInput = document.getElementById('actionRescuer{{ $rescuer->id }}');
@@ -235,6 +240,7 @@
                     });
                 }
             })();
+            @endcanManageRescatePeople
             @endif
         @endforeach
     });

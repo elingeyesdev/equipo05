@@ -13,13 +13,13 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title">{{ __('Liberaciones') }}</span>
-                            @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
+                            @canManageVeterinaryReleases
                             <div class="float-right">
                                 <a href="{{ route('rescate.releases.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
                                     {{ __('Crear nueva') }}
                                 </a>
                             </div>
-                            @endif
+                            @endcanManageVeterinaryReleases
                         </div>
                     </div>
                     @if ($message = Session::get('success'))

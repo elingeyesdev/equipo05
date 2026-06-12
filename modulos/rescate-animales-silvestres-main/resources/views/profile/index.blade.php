@@ -630,8 +630,8 @@
 
                             {{-- TAB CONTACTAR ADMINISTRACIÓN --}}
                             <div class="tab-pane" id="contactar">
-                                @if(Auth::user()->hasAnyRole(['admin', 'encargado']))
-                                    {{-- Vista para admin/encargado: mostrar mensajes recibidos --}}
+                                @canManageRescatePeople
+                                    {{-- Vista para administración: mostrar mensajes recibidos --}}
                                     <h4 class="mb-3">Mensajes de contacto</h4>
                                     <p class="text-muted mb-4">
                                         Aquí puedes ver todos los mensajes que los usuarios han enviado a la administración.
@@ -751,7 +751,7 @@
                                             <i class="fas fa-info-circle"></i> No hay mensajes de contacto.
                                         </div>
                                     @endif
-                                @else
+                                @elsecanManageRescatePeople
                                     {{-- Vista para usuarios normales: formulario de contacto --}}
                                     <h4 class="mb-3">Contactar a administración</h4>
                                     <p class="text-muted mb-4">
@@ -804,7 +804,7 @@
                                             </button>
                                         </div>
                                     </form>
-                                @endif
+                                @endcanManageRescatePeople
                             </div>
                         </div>
                     </div>

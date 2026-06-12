@@ -2,13 +2,28 @@
 
 namespace Modules\Inventario\Http\Requests;
 
+use App\Support\OwnershipScope;
 use Illuminate\Foundation\Http\FormRequest;
 
 class DonacioneRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $user = $this->user();
+
+        return $user && (
+            $user->hasRole('Administrador')
+            || $user->hasRole('Almacenero')
+            || $user->hasRole('Donante')
+        );
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->user()?->hasRole('Donante')) {
+            $donante = OwnershipScope::ensureInventarioDonanteProfile($this->user());
+            $this->merge(['id_donante' => $donante->id_donante]);
+        }
     }
 
     public function rules(): array

@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
+use App\Support\AccessControl;
 use App\Support\UnifiedPostgres;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -118,19 +119,17 @@ class CoreUserProvisioningService
 
     public function assignCoreRole(Usuario $user, string $roleName): void
     {
-        $canonical = $this->canonicalRoleName($roleName);
-        if ($canonical === '') {
+        $canonical = AccessControl::normalizeLegacyRole($roleName);
+        if ($canonical === null || $canonical === '') {
             return;
         }
 
         Role::query()->firstOrCreate(
-            ['name' => $canonical, 'guard_name' => 'web'],
+            ['name' => $canonical, 'guard_name' => AccessControl::GUARD],
             ['descripcion' => 'Rol sincronizado desde módulo']
         );
 
-        if (! $user->hasRole($canonical)) {
-            $user->assignRole($canonical);
-        }
+        AccessControl::syncSingleRole($user, $canonical);
     }
 
     public function normalizeEmail(?string $email): string
@@ -156,28 +155,5 @@ class CoreUserProvisioningService
         }
 
         return Hash::make($hash !== '' ? $hash : Str::random(32));
-    }
-
-    private function canonicalRoleName(string $roleName): string
-    {
-        $roleName = trim($roleName);
-        if ($roleName === '') {
-            return '';
-        }
-
-        $map = [
-            'admin' => 'Administrador',
-            'administrador' => 'Administrador',
-            'almacenero' => 'Almacenero',
-            'almacenista' => 'Almacenero',
-            'reportes' => 'Reportes',
-            'voluntario' => 'Voluntario',
-            'donante' => 'Donante',
-            'ciudadano' => 'Ciudadano',
-        ];
-
-        $lower = strtolower($roleName);
-
-        return $map[$lower] ?? ucfirst($lower);
     }
 }

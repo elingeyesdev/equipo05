@@ -2,6 +2,7 @@
 
 namespace Modules\Inventario\Http\Controllers;
 
+use App\Support\OwnershipScope;
 use Modules\Inventario\Http\Requests\DonacioneRequest;
 use Modules\Inventario\Models\Donacione;
 use Modules\Inventario\Models\DonacionesDinero;
@@ -22,16 +23,21 @@ class DonacioneController extends Controller
 {
     public function index(Request $request): View
     {
-        $donaciones = Donacione::with(['donante'])->paginate();
+        $baseQuery = OwnershipScope::scopedDonacionesQuery(auth()->user());
+        $donaciones = (clone $baseQuery)->with(['donante'])->paginate();
 
-        // Calculate statistics
-        $totalDonaciones = Donacione::count();
-        $donacionesDinero = Donacione::where('tipo', 'dinero')->count();
-        $donacionesEspecie = Donacione::where('tipo', 'especie')->count();
+        $totalDonaciones = (clone $baseQuery)->count();
+        $donacionesDinero = (clone $baseQuery)->where('tipo', 'dinero')->count();
+        $donacionesEspecie = (clone $baseQuery)->where('tipo', 'especie')->count();
 
-        // Calculate total money amount
         $montoTotal = DB::connection('inventario')->table('donaciones_dinero')
             ->join('donaciones', 'donaciones_dinero.id_donacion', '=', 'donaciones.id_donacion')
+            ->when(auth()->user()?->hasRole('Donante'), function ($query) {
+                $donanteId = OwnershipScope::inventarioDonanteId(auth()->user());
+                if ($donanteId) {
+                    $query->where('donaciones.id_donante', $donanteId);
+                }
+            })
             ->sum('donaciones_dinero.monto');
 
         return view('inventario::donaciones.index', compact('donaciones', 'totalDonaciones', 'donacionesDinero', 'donacionesEspecie', 'montoTotal'))
@@ -40,7 +46,16 @@ class DonacioneController extends Controller
 
     public function create(): View
     {
-        $donantes = Donante::pluck('nombre', 'id_donante');
+        OwnershipScope::assertCanMutateDonacion(auth()->user());
+
+        $donanteProfile = null;
+        if (auth()->user()?->hasRole('Donante')) {
+            $donanteProfile = OwnershipScope::ensureInventarioDonanteProfile(auth()->user());
+        }
+
+        $donantes = auth()->user()?->hasRole('Donante')
+            ? collect([$donanteProfile->id_donante => $donanteProfile->nombre])
+            : Donante::pluck('nombre', 'id_donante');
         $campanas = Campana::pluck('nombre', 'id_campana');
         $puntos = PuntosRecoleccion::pluck('nombre', 'id_punto');
         $productos = Producto::activos()->ordenPrioridad()->pluck('nombre', 'id_producto');
@@ -69,6 +84,8 @@ class DonacioneController extends Controller
 
     public function store(DonacioneRequest $request): RedirectResponse
     {
+        OwnershipScope::assertCanMutateDonacion(auth()->user());
+
         $data = $request->validated();
 
         \Log::info('=== INICIO STORE DONACION ===');
@@ -180,16 +197,23 @@ class DonacioneController extends Controller
     {
         $donacion = Donacione::with(['detalles.producto', 'dinero', 'donante'])->find($id);
 
-        if (!$donacion) {
+        if (! $donacion) {
             return redirect()->route('inventario.donaciones.index')->with('error', 'Donación no encontrada.');
         }
+
+        OwnershipScope::assertCanAccessDonacion(auth()->user(), $donacion);
 
         return view('inventario::donaciones.show', compact('donacion'));
     }
 
     public function edit($id): View
     {
-        $donacion = Donacione::with(['detalles'])->find($id);
+        $donacion = Donacione::with(['detalles'])->findOrFail($id);
+        OwnershipScope::assertCanMutateDonacion(auth()->user(), $donacion);
+
+        if (auth()->user()?->hasRole('Donante')) {
+            abort(403, 'Los donantes no pueden editar donaciones registradas.');
+        }
 
         $donantes = Donante::pluck('nombre', 'id_donante');
         $campanas = Campana::pluck('nombre', 'id_campana');
@@ -218,6 +242,9 @@ class DonacioneController extends Controller
 
     public function update(DonacioneRequest $request, Donacione $donacione): RedirectResponse
     {
+        OwnershipScope::assertCanMutateDonacion(auth()->user(), $donacione);
+        abort_if(auth()->user()?->hasRole('Donante'), 403);
+
         $data = $request->validated();
 
         try {
@@ -314,17 +341,23 @@ class DonacioneController extends Controller
 
     public function destroy(Request $request, $id): RedirectResponse
     {
-        // Validate deletion reason
+        abort_if(auth()->user()?->hasRole('Donante'), 403);
+
         $request->validate([
-            'deleted_reason' => 'required|string|min:10|max:500'
+            'deleted_reason' => 'required|string|min:10|max:500',
         ], [
             'deleted_reason.required' => 'El motivo de eliminación es obligatorio.',
             'deleted_reason.min' => 'El motivo debe tener al menos 10 caracteres.',
-            'deleted_reason.max' => 'El motivo no puede exceder 500 caracteres.'
+            'deleted_reason.max' => 'El motivo no puede exceder 500 caracteres.',
         ]);
 
         $donacion = Donacione::find($id);
         if ($donacion) {
+            OwnershipScope::assertCanMutateDonacion(auth()->user(), $donacion);
+            abort_unless(
+                auth()->user()?->hasAnyRole(['Administrador', 'Almacenero']),
+                403
+            );
             // Store deletion metadata and soft delete (no se borran los detalles para mantener trazabilidad)
             $donacion->deleted_reason = $request->deleted_reason;
             $donacion->deleted_by = auth()->user()->ci ?? null;

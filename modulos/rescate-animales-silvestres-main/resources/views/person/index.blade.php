@@ -18,11 +18,11 @@
                             </span>
 
                              <div class="float-right">
-                                @if(Auth::user()->hasRole('admin'))
+                                @canManageRescatePeople
                                 <a href="{{ route('rescate.people.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
                                   <i class="fas fa-plus"></i> Nueva persona
                                 </a>
-                                @endif
+                                @endcanManageRescatePeople
                               </div>
                         </div>
                     </div>
@@ -157,7 +157,7 @@
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                            @if(Auth::user()->hasRole('admin'))
+                                            @canManageRescatePeople
                                             <form action="{{ route('rescate.people.destroy', $person->id) }}" method="POST" class="mb-0 d-flex w-100">
                                                 <a class="btn btn-sm btn-primary" href="{{ route('rescate.people.show', $person->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> Ver
@@ -171,11 +171,11 @@
                                                     <i class="fa fa-fw fa-trash"></i> Eliminar
                                                 </button>
                                             </form>
-                                            @else
+                                            @elsecanManageRescatePeople
                                             <a class="btn btn-sm btn-primary w-100" href="{{ route('rescate.people.show', $person->id) }}">
                                                 <i class="fa fa-fw fa-eye"></i> Ver
                                             </a>
-                                            @endif
+                                            @endcanManageRescatePeople
                                         </div>
                                     </div>
                                 </div>

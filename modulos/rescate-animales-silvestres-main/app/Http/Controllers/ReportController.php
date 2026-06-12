@@ -2,6 +2,8 @@
 
 namespace Modules\Rescate\Http\Controllers;
 
+use App\Support\AccessControl;
+use App\Support\RescateAccess;
 use Modules\Rescate\Models\Report;
 use Modules\Rescate\Models\Person;
 use Modules\Rescate\Models\Center;
@@ -62,6 +64,8 @@ class ReportController extends Controller
             }
         ])
             ->orderByDesc('id');
+
+        RescateAccess::scopeReportsQuery($query, auth()->user());
 
         // Filters
         if ($request->filled('urgencia_nivel')) {
@@ -178,12 +182,16 @@ class ReportController extends Controller
                 }
             }
 
-            // Enviar correo a todos los encargados y administradores
-            $adminsAndEncargados = User::whereHas('roles', function ($query) {
-                $query->whereIn('name', ['admin', 'encargado']);
+            // Enviar correo a administradores y personal operativo de rescate
+            $adminsAndStaff = User::whereHas('roles', function ($query) {
+                $query->whereIn('name', [
+                    'Administrador', 'admin', 'administrador',
+                    'Rescatista', 'rescatista',
+                    'Veterinario', 'veterinario',
+                ]);
             })->get();
 
-            foreach ($adminsAndEncargados as $user) {
+            foreach ($adminsAndStaff as $user) {
                 try {
                     Mail::to($user->email)->send(new NewReportNotification($report));
                 } catch (\Exception $e) {
@@ -264,6 +272,8 @@ class ReportController extends Controller
                 $query->where('primer_traslado', true);
             }
         ])->findOrFail($id);
+
+        RescateAccess::assertCanViewReport($report);
         
         // Obtener focos de calor cercanos (por proximidad, no por ID)
         $nearbyFocosCalor = $report->getNearbyFocosCalor(20, 7);
@@ -276,6 +286,9 @@ class ReportController extends Controller
      */
     public function edit($id): View
     {
+        RescateAccess::assertCanManageReports();
+        abort_if(AccessControl::userHasRole(auth()->user(), 'Ciudadano'), 403);
+
         $report = Report::findOrFail($id);
 
         $conditions = AnimalCondition::where('activo', true)->orderBy('nombre')->get(['id','nombre']);
@@ -289,6 +302,9 @@ class ReportController extends Controller
      */
     public function update(ReportRequest $request, Report $report): RedirectResponse
     {
+        RescateAccess::assertCanManageReports();
+        abort_if(AccessControl::userHasRole(auth()->user(), 'Ciudadano'), 403);
+
         $data = $request->validated();
         if ($request->hasFile('imagen')) {
             $path = $request->file('imagen')->store('reports', 'public');
@@ -308,6 +324,8 @@ class ReportController extends Controller
      */
     public function approve(Request $request, Report $report): RedirectResponse
     {
+        RescateAccess::assertCanApproveReports();
+
         $validated = $request->validate([
             'action' => 'required|in:approve,reject',
         ]);
@@ -364,6 +382,8 @@ class ReportController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        RescateAccess::assertCanDeleteReports();
+
         Report::findOrFail($id)->delete();
 
         return Redirect::route('rescate.reports.index')

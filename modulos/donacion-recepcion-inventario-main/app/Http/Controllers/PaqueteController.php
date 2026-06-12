@@ -21,6 +21,7 @@ class PaqueteController extends Controller
      */
     public function index(Request $request): View
     {
+        $this->assertAnyPermission('inventario.paquetes.gestionar', 'inventario.paquetes.ver');
         $paquetes = Paquete::paginate();
 
         return view('inventario::paquete.index', compact('paquetes'))

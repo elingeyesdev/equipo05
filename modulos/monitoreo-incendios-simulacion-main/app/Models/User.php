@@ -159,20 +159,28 @@ class User extends Authenticatable
 
     public function isVoluntario()
     {
-        return $this->hasRole('voluntario') || $this->voluntario()->exists();
+        return $this->hasAnyRole(['Voluntario', 'voluntario']) || $this->voluntario()->exists();
     }
 
     public function isAdministrador()
     {
-        return $this->hasRole('administrador') || $this->administrador()->exists();
+        return $this->hasAnyRole(['Administrador', 'administrador', 'admin']) || $this->administrador()->exists();
+    }
+
+    public function isOperadorIncendios()
+    {
+        return $this->hasAnyRole(['Operador de Incendios', 'encargado']);
     }
 
     public function getRoleType()
     {
-        if ($this->hasRole('administrador')) {
+        if ($this->isAdministrador()) {
             return 'administrador';
         }
-        if ($this->hasRole('voluntario')) {
+        if ($this->isOperadorIncendios()) {
+            return 'operador_incendios';
+        }
+        if ($this->isVoluntario()) {
             return 'voluntario';
         }
 
@@ -198,6 +206,7 @@ class User extends Authenticatable
         $role = $this->getRoleType();
         $roleLabel = match ($role) {
             'administrador' => 'Administrador',
+            'operador_incendios' => 'Operador de Incendios',
             'voluntario' => 'Voluntario',
             default => 'Usuario',
         };
