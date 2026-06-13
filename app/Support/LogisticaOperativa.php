@@ -20,7 +20,7 @@ class LogisticaOperativa
             ->leftJoin('solicitante', 'solicitud.id_solicitante', '=', 'solicitante.id_solicitante')
             ->leftJoin('destino', 'solicitud.id_destino', '=', 'destino.id_destino')
             ->leftJoin('paquete as pkg', 'pkg.id_solicitud', '=', 'solicitud.id_solicitud')
-            ->leftJoin('estado as est_pkg', 'pkg.estado_id', '=', 'estado.id_estado')
+            ->leftJoin('estado as est_pkg', 'pkg.estado_id', '=', 'est_pkg.id_estado')
             ->select([
                 'solicitud.id_solicitud',
                 'solicitud.codigo_seguimiento',
