@@ -41,7 +41,7 @@
                     <div class="col-md-3">
                         <div class="card mb-3 shadow-sm bg-white seguimiento-card estado-{{ $estadoClass }}">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <strong>Paquete {{ $item->paquete_codigo ?? $item->codigo_seguimiento ?? $item->id_paquete }}</strong>
+                                <strong>Paquete {{ $item->paquete_ref ?? ('#'.str_pad((string) ($item->id_paquete ?? 0), 4, '0', STR_PAD_LEFT)) }}</strong>
                                 <span class="badge {{ $badgeClass }} text-uppercase">{{ $item->estado ?? '-' }}</span>
                             </div>
                             <div class="card-body">

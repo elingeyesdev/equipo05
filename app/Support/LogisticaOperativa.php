@@ -57,7 +57,7 @@ class LogisticaOperativa
             });
         }
 
-        return $query->get()->map(fn ($row) => self::presentarSolicitud($row));
+        return $query->get()->map(fn ($row) => self::presentarSolicitud($row, self::perspectivaActual()));
     }
 
     public static function paquetesOperativos(bool $incluirDemo = false): Collection
@@ -79,6 +79,7 @@ class LogisticaOperativa
                 'paquete.fecha_entrega',
                 'paquete.updated_at',
                 'solicitud.codigo_seguimiento',
+                'solicitud.id_solicitud',
                 'solicitud.tipo_emergencia',
                 'solicitante.nombre as solicitante_nombre',
                 'solicitante.apellido as solicitante_apellido',
@@ -94,7 +95,7 @@ class LogisticaOperativa
             });
         }
 
-        return $query->get()->map(fn ($row) => self::presentarPaquete($row));
+        return $query->get()->map(fn ($row) => self::presentarPaquete($row, self::perspectivaActual()));
     }
 
     public static function seguimientosOperativos(bool $incluirDemo = false): Collection
@@ -116,7 +117,7 @@ class LogisticaOperativa
                 'historial_seguimiento_donaciones.conductor_nombre',
                 'historial_seguimiento_donaciones.conductor_ci',
                 'paquete.codigo as paquete_codigo',
-                'solicitud.codigo_seguimiento',
+                'solicitud.id_solicitud',
             ])
             ->orderByDesc('historial_seguimiento_donaciones.fecha_actualizacion');
 
@@ -129,22 +130,39 @@ class LogisticaOperativa
 
         return $query->get()->map(function ($row) {
             $row->fecha_actualizacion = self::formatearFecha($row->fecha_actualizacion ?? null);
+            $row->paquete_ref = self::refPaquete((int) ($row->id_paquete ?? 0));
+            $row->solicitud_ref = self::refSolicitud((int) ($row->id_solicitud ?? 0));
 
             return $row;
         });
     }
 
+    public static function perspectivaActual(): string
+    {
+        $user = auth()->user();
+
+        return AccessControl::enfoqueLogistica($user instanceof \App\Models\Usuario ? $user : null);
+    }
+
     /** @return array<string, mixed> */
-    public static function presentarSolicitud(object $row): array
+    public static function presentarSolicitud(object $row, string $perspectiva = 'transporte'): array
     {
         $estadoRaw = strtolower(trim((string) ($row->estado ?? 'pendiente')));
         $filtro = self::clasificarEstadoSolicitud($estadoRaw);
         $badge = self::badgeEstadoSolicitud($filtro);
+        $integrado = $perspectiva === 'integrado';
 
-        $inventario = self::paqueteInventarioPorCodigo($row->codigo_seguimiento ?? null);
+        $inventario = $integrado
+            ? self::paqueteInventarioPorCodigo($row->codigo_seguimiento ?? null)
+            : [];
+
+        $envio = $integrado
+            ? self::etiquetaEnvioIntegrado($row, $filtro, $inventario)
+            : self::etiquetaEnvioTransporte($row, $filtro);
 
         return [
             'id_solicitud' => $row->id_solicitud,
+            'ref' => self::refSolicitud((int) $row->id_solicitud),
             'codigo_seguimiento' => $row->codigo_seguimiento ?: ('SOL-'.$row->id_solicitud),
             'estado' => $row->estado ?? 'pendiente',
             'estado_label' => ucfirst(str_replace('_', ' ', $estadoRaw)),
@@ -163,25 +181,51 @@ class LogisticaOperativa
             'destino_comunidad' => $row->destino_comunidad ?? '—',
             'destino_provincia' => $row->destino_provincia ?? '—',
             'destino_direccion' => $row->destino_direccion ?? '',
+            'paquete_logistica_id' => $row->paquete_logistica_id ?? null,
+            'paquete_logistica_ref' => ! empty($row->paquete_logistica_id)
+                ? self::refPaquete((int) $row->paquete_logistica_id)
+                : null,
             'paquete_logistica_codigo' => $row->paquete_logistica_codigo ?? null,
             'paquete_estado' => $row->paquete_estado ?? null,
+            'paquete_estado_badge' => ! empty($row->paquete_estado)
+                ? self::badgeEstadoPaquete(self::clasificarEstadoPaquete(strtolower((string) $row->paquete_estado)))
+                : null,
+            'inventario_vinculado' => $integrado && ! empty($inventario),
             'inventario_paquete_codigo' => $inventario['codigo_paquete'] ?? null,
-            'inventario_paquete_estado' => $inventario['estado'] ?? null,
+            'inventario_paquete_estado' => isset($inventario['estado'])
+                ? ucfirst(str_replace('_', ' ', (string) $inventario['estado']))
+                : null,
+            'envio_label' => $envio['label'],
+            'envio_badge' => $envio['badge'],
+            'envio_detalle' => $envio['detalle'] ?? null,
+            'vista_integrada' => $integrado,
         ];
     }
 
     /** @return array<string, mixed> */
-    public static function presentarPaquete(object $row): array
+    public static function presentarPaquete(object $row, string $perspectiva = 'transporte'): array
     {
         $estadoRaw = strtolower((string) ($row->estado_nombre ?? 'pendiente'));
         $filtro = self::clasificarEstadoPaquete($estadoRaw);
+        $integrado = $perspectiva === 'integrado';
 
-        $inventario = self::paqueteInventarioPorCodigo($row->codigo_seguimiento ?? $row->codigo ?? null);
+        $inventario = $integrado
+            ? self::paqueteInventarioPorCodigo($row->codigo_seguimiento ?? $row->codigo ?? null)
+            : [];
+
+        $estadoNombre = $integrado
+            ? ($row->estado_nombre ?? 'Pendiente')
+            : self::etiquetaEstadoPaqueteTransporte($estadoRaw, $filtro);
 
         return [
             'id_paquete' => $row->id_paquete,
+            'ref' => self::refPaquete((int) $row->id_paquete),
+            'id_solicitud' => $row->id_solicitud ?? null,
+            'solicitud_ref' => ! empty($row->id_solicitud)
+                ? self::refSolicitud((int) $row->id_solicitud)
+                : null,
             'codigo' => $row->codigo ?? ('PKG-'.$row->id_paquete),
-            'estado_nombre' => $row->estado_nombre ?? 'Pendiente',
+            'estado_nombre' => $estadoNombre,
             'estado_filtro' => $filtro,
             'estado_badge' => self::badgeEstadoPaquete($filtro),
             'ubicacion_actual' => $row->ubicacion_actual ?? '—',
@@ -191,8 +235,82 @@ class LogisticaOperativa
             'solicitante_nombre' => trim(($row->solicitante_nombre ?? '').' '.($row->solicitante_apellido ?? '')) ?: '—',
             'solicitante_ci' => $row->solicitante_ci ?? '—',
             'codigo_seguimiento' => $row->codigo_seguimiento ?? '—',
+            'inventario_vinculado' => $integrado && ! empty($inventario),
             'inventario_paquete_codigo' => $inventario['codigo_paquete'] ?? null,
+            'inventario_paquete_estado' => isset($inventario['estado'])
+                ? ucfirst(str_replace('_', ' ', (string) $inventario['estado']))
+                : null,
+            'vista_integrada' => $integrado,
         ];
+    }
+
+    /** @param array{codigo_paquete?: string, estado?: string}|array{} $inventario */
+    /** @return array{label: string, badge: string, detalle?: string|null} */
+    private static function etiquetaEnvioIntegrado(object $row, string $filtro, array $inventario): array
+    {
+        $base = self::etiquetaEnvioTransporte($row, $filtro);
+        if (! empty($inventario['estado'])) {
+            $base['detalle'] = 'Inv.: '.ucfirst(str_replace('_', ' ', (string) $inventario['estado']));
+        }
+
+        if (! empty($row->paquete_estado) && $integradoLabel = trim((string) $row->paquete_estado)) {
+            $base['label'] = $integradoLabel;
+        }
+
+        return $base;
+    }
+
+    /** @return array{label: string, badge: string} */
+    private static function etiquetaEnvioTransporte(object $row, string $filtro): array
+    {
+        $paqueteEstado = strtolower((string) ($row->paquete_estado ?? ''));
+
+        if ($filtro === 'rechazada' || $filtro === 'negada') {
+            return ['label' => 'No aplica', 'badge' => 'secondary'];
+        }
+
+        if ($filtro === 'entregada' || str_contains($paqueteEstado, 'entreg')) {
+            return ['label' => 'Entregado', 'badge' => 'success'];
+        }
+
+        if ($filtro === 'en_ruta' || str_contains($paqueteEstado, 'transit') || str_contains($paqueteEstado, 'tráns') || str_contains($paqueteEstado, 'camino')) {
+            return ['label' => 'En tránsito', 'badge' => 'info'];
+        }
+
+        if ($filtro === 'aprobada' || str_contains($paqueteEstado, 'almac') || str_contains($paqueteEstado, 'armad') || str_contains($paqueteEstado, 'pendiente')) {
+            if (empty($row->paquete_logistica_id)) {
+                return ['label' => 'Esperando armado', 'badge' => 'secondary'];
+            }
+
+            return ['label' => 'En preparación', 'badge' => 'secondary'];
+        }
+
+        return ['label' => 'Sin despacho', 'badge' => 'secondary'];
+    }
+
+    private static function etiquetaEstadoPaqueteTransporte(string $estadoRaw, string $filtro): string
+    {
+        if ($filtro === 'entregado' || str_contains($estadoRaw, 'entreg')) {
+            return 'Entregado';
+        }
+        if ($filtro === 'camino' || str_contains($estadoRaw, 'transit') || str_contains($estadoRaw, 'tráns') || str_contains($estadoRaw, 'camino')) {
+            return 'En tránsito';
+        }
+        if (str_contains($estadoRaw, 'almac') || str_contains($estadoRaw, 'armad') || str_contains($estadoRaw, 'pendiente')) {
+            return 'En preparación';
+        }
+
+        return 'Pendiente';
+    }
+
+    public static function refSolicitud(int $id): string
+    {
+        return '#'.str_pad((string) max($id, 0), 4, '0', STR_PAD_LEFT);
+    }
+
+    public static function refPaquete(int $id): string
+    {
+        return '#'.str_pad((string) max($id, 0), 4, '0', STR_PAD_LEFT);
     }
 
     /** @return array{codigo_paquete?: string, estado?: string}|array{} */

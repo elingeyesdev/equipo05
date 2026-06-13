@@ -110,3 +110,94 @@ body[class*="module-"].platform-ui .progress-bar {
     margin-bottom: 1rem;
     box-shadow: 0 8px 20px var(--shell-glow-soft, rgba(99, 102, 241, 0.25));
 }
+
+/* Logística — tablas operativas legibles en pantalla completa */
+body.module-logistica.platform-ui section.content > .container-fluid {
+    padding: 1rem 1.25rem 1.5rem;
+    max-width: 100%;
+}
+
+body.module-logistica.platform-ui .card-body {
+    padding: 1rem 1.1rem;
+}
+
+body.module-logistica.platform-ui .logistica-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+body.module-logistica.platform-ui .logistica-filtros .btn {
+    flex: 0 1 auto;
+    white-space: nowrap;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa {
+    width: 100%;
+    min-width: 920px;
+    table-layout: fixed;
+    font-size: 0.875rem;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa thead th {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0.55rem 0.45rem;
+    font-size: 0.72rem;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa tbody td {
+    vertical-align: top;
+    padding: 0.55rem 0.45rem;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-ref { width: 3.5rem; }
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-estado { width: 6.5rem; }
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-caso { width: 16%; }
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-emergencia { width: 14%; }
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-num { width: 4rem; text-align: center; }
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-fecha { width: 6.5rem; white-space: nowrap; }
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-envio { width: 8.5rem; }
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-acciones {
+    width: 4.5rem;
+    position: sticky;
+    right: 0;
+    background: #fff;
+    z-index: 2;
+    box-shadow: -6px 0 10px rgba(15, 23, 42, 0.06);
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa thead th.col-acciones {
+    background: var(--gray-800, #343a40);
+    z-index: 3;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa tbody tr:nth-child(even) .col-acciones {
+    background: rgba(0, 0, 0, 0.025);
+}
+
+body.module-logistica.platform-ui .logistica-scroll-hint {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 992px) {
+    body.module-logistica.platform-ui .logistica-scroll-hint {
+        display: block;
+    }
+}
+
+@media (min-width: 993px) {
+    body.module-logistica.platform-ui .logistica-scroll-hint {
+        display: none;
+    }
+}

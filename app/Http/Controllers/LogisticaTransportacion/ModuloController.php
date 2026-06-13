@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\LogisticaTransportacion;
 
 use App\Http\Controllers\Controller;
+use App\Support\AccessControl;
 use App\Support\LogisticaOperativa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -46,10 +47,12 @@ class ModuloController extends Controller
         }
 
         $solicitudesRecientes = LogisticaOperativa::solicitudesOperativas()->take(10);
+        $vistaIntegrada = AccessControl::vistaIntegradaModulos(auth()->user());
 
         return view('fusion.modulos.logistica', [
             'resumen' => $resumen,
             'solicitudesRecientes' => $solicitudesRecientes,
+            'vistaIntegrada' => $vistaIntegrada,
         ]);
     }
 

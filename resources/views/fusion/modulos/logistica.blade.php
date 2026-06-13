@@ -57,44 +57,49 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <p class="mb-3">Panel operativo de transporte y entrega de donaciones. Las solicitudes mostradas excluyen registros de demostración (<code>LOG-DEMO-*</code>).</p>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-striped">
+                    <p class="mb-3">Panel operativo de transporte y entrega de donaciones.</p>
+                    <div class="table-responsive logistica-tabla-scroll">
+                        <table class="table table-sm table-striped logistica-tabla-operativa">
                             <thead class="thead-light">
                                 <tr>
-                                    <th>Código</th>
-                                    <th>Estado</th>
-                                    <th>Solicitante</th>
-                                    <th>Emergencia</th>
-                                    <th>Destino</th>
-                                    <th>Fecha necesidad</th>
-                                    <th>Inventario</th>
-                                    <th style="width: 90px;">Acciones</th>
+                                    <th class="col-ref">Nº</th>
+                                    <th class="col-estado">Estado</th>
+                                    <th class="col-caso">Solicitante / Destino</th>
+                                    <th class="col-emergencia">Emergencia</th>
+                                    <th class="col-fecha">Fecha</th>
+                                    @if($vistaIntegrada ?? false)
+                                    <th class="col-envio">Inventario</th>
+                                    @endif
+                                    <th class="col-acciones">Acc.</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($solicitudesRecientes as $row)
                                 <tr>
-                                    <td><code>{{ $row['codigo_seguimiento'] }}</code></td>
-                                    <td><span class="badge badge-{{ $row['estado_badge'] }}">{{ $row['estado_label'] }}</span></td>
-                                    <td>{{ $row['solicitante_nombre'] }}</td>
-                                    <td>{{ $row['tipo_emergencia'] }}</td>
-                                    <td>{{ $row['destino_comunidad'] }}, {{ $row['destino_provincia'] }}</td>
-                                    <td>{{ $row['fecha_necesidad'] }}</td>
-                                    <td>
-                                        @if($row['inventario_paquete_codigo'])
-                                            <code>{{ $row['inventario_paquete_codigo'] }}</code>
+                                    <td class="col-ref"><span class="text-muted font-weight-bold">{{ $row['ref'] }}</span></td>
+                                    <td class="col-estado"><span class="badge badge-{{ $row['estado_badge'] }}">{{ $row['estado_label'] }}</span></td>
+                                    <td class="col-caso">
+                                        {{ $row['solicitante_nombre'] }}<br>
+                                        <small class="text-muted">{{ $row['destino_comunidad'] }}, {{ $row['destino_provincia'] }}</small>
+                                    </td>
+                                    <td class="col-emergencia">{{ $row['tipo_emergencia'] }}</td>
+                                    <td class="col-fecha">{{ $row['fecha_necesidad'] }}</td>
+                                    @if($vistaIntegrada ?? false)
+                                    <td class="col-envio">
+                                        @if($row['inventario_vinculado'] ?? false)
+                                            <span class="badge badge-secondary">{{ $row['inventario_paquete_estado'] ?? 'Vinculado' }}</span>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    @endif
+                                    <td class="col-acciones">
                                         <a href="{{ route('logistica.crud.edit', ['seccion' => 'solicitud', 'id' => $row['id_solicitud']]) }}" class="btn btn-warning btn-xs"><i class="fas fa-edit"></i></a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-muted text-center">No hay solicitudes operativas registradas.</td>
+                                    <td colspan="{{ ($vistaIntegrada ?? false) ? 7 : 6 }}" class="text-muted text-center">No hay solicitudes operativas registradas.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

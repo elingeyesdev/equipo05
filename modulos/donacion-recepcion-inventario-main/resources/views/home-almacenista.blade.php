@@ -76,6 +76,115 @@
         </div>
     </div>
 
+    {{-- Cohesión con solicitudes logísticas aprobadas --}}
+    <div class="row mb-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ $logisticaAlmacenResumen['pendientes_armado'] ?? 0 }}</h3>
+                    <p>Por armar (logística)</p>
+                </div>
+                <div class="icon"><i class="fas fa-dolly"></i></div>
+                <a href="{{ route('inventario.paquete.pendientes') }}" class="small-box-footer">Ver solicitudes <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ $logisticaAlmacenResumen['empacados'] ?? 0 }}</h3>
+                    <p>Empacados en almacén</p>
+                </div>
+                <div class="icon"><i class="fas fa-box"></i></div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>{{ $logisticaAlmacenResumen['en_transito'] ?? 0 }}</h3>
+                    <p>Despachados / en tránsito</p>
+                </div>
+                <div class="icon"><i class="fas fa-shipping-fast"></i></div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ $logisticaAlmacenResumen['entregados'] ?? 0 }}</h3>
+                    <p>Entregados (inventario)</p>
+                </div>
+                <div class="icon"><i class="fas fa-check"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7 mb-3">
+            <div class="card card-outline card-warning">
+                <div class="card-header">
+                    <h3 class="card-title mb-0"><i class="fas fa-clipboard-list"></i> Solicitudes logísticas por armar</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-sm table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nº</th>
+                                <th>Solicitante</th>
+                                <th>Destino</th>
+                                <th>Emergencia</th>
+                                <th>Estado almacén</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($logisticaPendientesArmado ?? [] as $item)
+                            <tr>
+                                <td>{{ $item['ref'] }}</td>
+                                <td>{{ $item['solicitante_nombre'] }}</td>
+                                <td>{{ $item['destino'] }}</td>
+                                <td>{{ $item['tipo_emergencia'] }}</td>
+                                <td><span class="badge badge-warning">{{ $item['estado_almacen'] }}</span></td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="5" class="text-center text-muted py-3">No hay solicitudes pendientes de armado.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="{{ route('inventario.paquete.pendientes') }}" class="btn btn-sm btn-warning">Gestionar armado</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-3">
+            <div class="card card-outline card-info">
+                <div class="card-header">
+                    <h3 class="card-title mb-0"><i class="fas fa-link"></i> Paquetes vinculados a logística</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Paquete</th>
+                                <th>Solicitud</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($logisticaPaquetesRecientes ?? [] as $pkg)
+                            <tr>
+                                <td>{{ $pkg['ref'] }}</td>
+                                <td>{{ $pkg['solicitud_ref'] }}<br><small class="text-muted">{{ $pkg['solicitante'] }}</small></td>
+                                <td><span class="badge badge-secondary">{{ $pkg['estado'] }}</span></td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="3" class="text-center text-muted py-3">Sin paquetes vinculados aún.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- SECCIÓN 2: Utilización de Almacenes y Estado de Espacios --}}
     <div class="row">
         <div class="col-md-8">

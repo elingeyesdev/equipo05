@@ -127,13 +127,14 @@ class RichLogisticaDemoSeeder extends Seeder
                 if ($db->table('vehiculo')->where('placa', $placa)->exists()) {
                     continue;
                 }
-                $db->table('vehiculo')->insert([
-                    'placa' => $placa,
-                    'modelo' => ['Volvo FMX', 'Toyota Hilux', 'Mercedes Atego', 'Nissan Patrol', 'Fuso Canter'][rand(0, 4)],
-                    'capacidad' => rand(2, 20).' Ton',
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
+                $row = ['placa' => $placa, 'created_at' => $now, 'updated_at' => $now];
+                if (Schema::connection('logistica')->hasColumn('vehiculo', 'modelo')) {
+                    $row['modelo'] = ['Volvo FMX', 'Toyota Hilux', 'Mercedes Atego', 'Nissan Patrol', 'Fuso Canter'][rand(0, 4)];
+                }
+                if (Schema::connection('logistica')->hasColumn('vehiculo', 'capacidad')) {
+                    $row['capacidad'] = rand(2, 20).' Ton';
+                }
+                $db->table('vehiculo')->insert($row);
             }
         }
 

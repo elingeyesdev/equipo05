@@ -348,7 +348,9 @@ body {
 /* ==== TABLAS ULTRA MODERNAS ==== */
 .table-responsive {
     border-radius: var(--radius-xl);
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
     box-shadow: var(--shadow-md);
     background: white;
 }

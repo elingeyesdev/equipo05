@@ -4,6 +4,7 @@ namespace Modules\Inventario\Http\Controllers;
 
 use App\Support\AccessControl;
 use App\Support\Database\YearMonthSql;
+use App\Support\InventarioOperativa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -369,6 +370,10 @@ class HomeController extends Controller
             $cantidadesTopProductos = collect([0]);
         }
 
+        $logisticaAlmacenResumen = InventarioOperativa::resumenAlmacenLogistica();
+        $logisticaPendientesArmado = InventarioOperativa::solicitudesPendientesArmado(8);
+        $logisticaPaquetesRecientes = InventarioOperativa::paquetesAlmacenRecientes(6);
+
         $coloresUtilizacion = collect($porcentajesUtilizacion)->map(function ($value) {
             if ($value >= 80) {
                 return 'rgba(220, 53, 69, 0.85)';
@@ -400,7 +405,11 @@ class HomeController extends Controller
             'movimientosRecientes',
             // Viz 5: Top Productos
             'nombresTopProductos',
-            'cantidadesTopProductos'
+            'cantidadesTopProductos',
+            // Cohesión con logística (rol almacenero)
+            'logisticaAlmacenResumen',
+            'logisticaPendientesArmado',
+            'logisticaPaquetesRecientes',
         ));
     }
 

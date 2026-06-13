@@ -4,6 +4,7 @@ namespace App\Http\Controllers\LogisticaTransportacion;
 
 use App\Http\Controllers\Controller;
 use App\Support\FusionModuloAccess;
+use App\Support\AccessControl;
 use App\Support\LogisticaOperativa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,7 +43,18 @@ class SeccionesController extends Controller
         $conn = DB::connection('logistica');
         $schema = Schema::connection('logistica');
         return match ($column) {
-            'id_licencia' => $conn->table('tipo_licencia')->select('id_tipo_licencia as id', 'tipo_licencia as nombre')->orderBy('tipo_licencia')->get()->toArray(),
+            'id_licencia' => (function () use ($conn, $schema) {
+                if (! $schema->hasTable('tipo_licencia')) {
+                    return [];
+                }
+                $nombreCol = $schema->hasColumn('tipo_licencia', 'tipo_licencia') ? 'tipo_licencia' : 'nombre';
+
+                return $conn->table('tipo_licencia')
+                    ->selectRaw("id_tipo_licencia as id, {$nombreCol} as nombre")
+                    ->orderBy($nombreCol)
+                    ->get()
+                    ->toArray();
+            })(),
             'id_tipovehiculo' => (function () use ($conn, $schema) {
                 if (! $schema->hasTable('tipo_vehiculo')) {
                     return [];
@@ -70,7 +82,18 @@ class SeccionesController extends Controller
                     ->get()
                     ->toArray();
             })(),
-            'id_marca' => $conn->table('marca')->select('id_marca as id', 'nombre_marca as nombre')->orderBy('nombre_marca')->get()->toArray(),
+            'id_marca' => (function () use ($conn, $schema) {
+                if (! $schema->hasTable('marca')) {
+                    return [];
+                }
+                $nombreCol = $schema->hasColumn('marca', 'nombre_marca') ? 'nombre_marca' : 'nombre';
+
+                return $conn->table('marca')
+                    ->selectRaw("id_marca as id, {$nombreCol} as nombre")
+                    ->orderBy($nombreCol)
+                    ->get()
+                    ->toArray();
+            })(),
             'id_solicitud' => $conn->table('solicitud')->select('id_solicitud as id', 'codigo_seguimiento as nombre')->orderByDesc('id_solicitud')->limit(200)->get()->toArray(),
             'id_solicitante' => $conn->table('solicitante')
                 ->select('id_solicitante', 'nombre', 'apellido', 'ci')
@@ -103,21 +126,42 @@ class SeccionesController extends Controller
                 ->values()
                 ->toArray(),
             'estado_id' => $conn->table('estado')->select('id_estado as id', 'nombre_estado as nombre')->orderBy('nombre_estado')->get()->toArray(),
-            'id_ubicacion' => $conn->table('ubicacion')
-                ->select('id_ubicacion', 'zona', 'latitud', 'longitud')
-                ->orderByDesc('id_ubicacion')
-                ->limit(200)
-                ->get()
-                ->map(function ($row) {
-                    $lat = $row->latitud ?? '-';
-                    $lng = $row->longitud ?? '-';
-                    return (object) [
+            'id_ubicacion' => (function () use ($conn, $schema) {
+                if (! $schema->hasTable('ubicacion')) {
+                    return [];
+                }
+
+                if ($schema->hasColumn('ubicacion', 'zona')) {
+                    return $conn->table('ubicacion')
+                        ->select('id_ubicacion', 'zona', 'latitud', 'longitud')
+                        ->orderByDesc('id_ubicacion')
+                        ->limit(200)
+                        ->get()
+                        ->map(function ($row) {
+                            $lat = $row->latitud ?? '-';
+                            $lng = $row->longitud ?? '-';
+
+                            return (object) [
+                                'id' => $row->id_ubicacion,
+                                'nombre' => $row->zona ?: "Lat {$lat}, Lng {$lng}",
+                            ];
+                        })
+                        ->values()
+                        ->toArray();
+                }
+
+                return $conn->table('ubicacion')
+                    ->select('id_ubicacion', 'descripcion')
+                    ->orderByDesc('id_ubicacion')
+                    ->limit(200)
+                    ->get()
+                    ->map(fn ($row) => (object) [
                         'id' => $row->id_ubicacion,
-                        'nombre' => $row->zona ?: "Lat {$lat}, Lng {$lng}",
-                    ];
-                })
-                ->values()
-                ->toArray(),
+                        'nombre' => $row->descripcion ?? 'Ubicación',
+                    ])
+                    ->values()
+                    ->toArray();
+            })(),
             'id_conductor' => $conn->table('conductor')
                 ->select('conductor_id', 'nombre', 'apellido', 'ci')
                 ->orderBy('nombre')
@@ -321,15 +365,17 @@ class SeccionesController extends Controller
         $totalDemoOcultos = DB::connection('logistica')->table('solicitud')
             ->where('codigo_seguimiento', 'like', 'LOG-DEMO-%')
             ->count();
+        $vistaIntegrada = AccessControl::vistaIntegradaModulos(auth()->user());
 
-        return view('fusion.modulos.logistica-solicitudes', compact('solicitudes', 'totalDemoOcultos'));
+        return view('fusion.modulos.logistica-solicitudes', compact('solicitudes', 'totalDemoOcultos', 'vistaIntegrada'));
     }
 
     public function paquetes(): View
     {
         $paquetes = LogisticaOperativa::paquetesOperativos();
+        $vistaIntegrada = AccessControl::vistaIntegradaModulos(auth()->user());
 
-        return view('fusion.modulos.logistica-paquetes', compact('paquetes'));
+        return view('fusion.modulos.logistica-paquetes', compact('paquetes', 'vistaIntegrada'));
     }
 
     public function seguimiento(): View

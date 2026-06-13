@@ -166,8 +166,8 @@
                     </div>
                     <div class="card-body">
                         <div class="info-row">
-                            <span class="info-label">Código Seguimiento:</span>
-                            <span class="badge badge-info">${solicitud.codigo_seguimiento}</span>
+                            <span class="info-label">Solicitud:</span>
+                            <span class="badge badge-info">#${String(solicitud.id_solicitud).padStart(4, '0')}</span>
                         </div>
                         
                         <div class="info-row">

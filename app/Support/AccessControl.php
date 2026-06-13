@@ -654,4 +654,16 @@ class AccessControl
 
         return null;
     }
+
+    /** Vista cruzada logística ↔ inventario: solo administrador. */
+    public static function vistaIntegradaModulos(?Usuario $user): bool
+    {
+        return $user !== null && self::userHasRole($user, 'Administrador');
+    }
+
+    /** Enfoque de pantallas logísticas: transporte (coordinador) o integrado (admin). */
+    public static function enfoqueLogistica(?Usuario $user): string
+    {
+        return self::vistaIntegradaModulos($user) ? 'integrado' : 'transporte';
+    }
 }
