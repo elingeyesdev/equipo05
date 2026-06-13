@@ -34,6 +34,9 @@
       <div class="col-sm-12 text-center">
         <h1 class="m-0 text-primary font-weight-bold">Dashboard - Seguimiento de Voluntarios</h1>
         <p class="text-muted mb-0">Visualización de estadísticas y actividad del módulo</p>
+        @if($gestionCompleta ?? false)
+          <p class="mb-0 mt-1"><span class="badge badge-primary">Acceso completo — Administrador / Coordinador</span></p>
+        @endif
       </div>
     </div>
   </div>
@@ -96,6 +99,59 @@
         </div>
       </div>
     </div>
+
+    @if($gestionCompleta ?? false)
+    <div class="row mb-2">
+      <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+        <div class="small-box bg-primary shadow-sm">
+          <div class="inner">
+            <h3>{{ $totalAdministradores ?? 0 }}</h3>
+            <p>Administradores del módulo</p>
+          </div>
+          <div class="icon"><i class="fas fa-user-shield"></i></div>
+          <a href="{{ route('seguimiento.administradores') }}" class="small-box-footer">
+            Gestionar <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+        <div class="small-box bg-teal shadow-sm">
+          <div class="inner">
+            <h3>{{ $totalUniversidades ?? 0 }}</h3>
+            <p>Universidades vinculadas</p>
+          </div>
+          <div class="icon"><i class="fas fa-university"></i></div>
+          <a href="{{ route('seguimiento.universidades') }}" class="small-box-footer">
+            Ver catálogo <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+        <div class="small-box bg-warning shadow-sm">
+          <div class="inner">
+            <h3>{{ $consultasAbiertas ?? 0 }}</h3>
+            <p>Consultas abiertas / en proceso</p>
+          </div>
+          <div class="icon"><i class="fas fa-life-ring"></i></div>
+          <a href="{{ route('seguimiento.helpdesk') }}" class="small-box-footer">
+            Centro de soporte <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+        <div class="small-box bg-indigo shadow-sm" style="background-color:#6610f2!important;">
+          <div class="inner">
+            <h3>{{ $conversacionesChat ?? 0 }}</h3>
+            <p>Conversaciones activas</p>
+          </div>
+          <div class="icon"><i class="fas fa-comments"></i></div>
+          <a href="{{ route('seguimiento.chat-consulta') }}" class="small-box-footer">
+            Abrir chat <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    @endif
 
     {{-- PANELES INFORMATIVOS --}}
     <div class="row mb-4">

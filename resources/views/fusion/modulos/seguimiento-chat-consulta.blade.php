@@ -64,14 +64,22 @@
           <div class="card-body chat-window" style="min-height: 380px; max-height: 480px; overflow-y: auto; background: #f8fafc;">
             @if($voluntarioActivo)
               @forelse($mensajes as $msg)
-                @php $esCoordinador = ($msg->remitente_tipo ?? 'voluntario') === 'coordinador'; @endphp
-                <div class="d-flex mb-3 {{ $esCoordinador ? 'justify-content-end' : '' }}">
+                @php
+                  $tipo = $msg->remitente_tipo ?? 'voluntario';
+                  $esStaff = in_array($tipo, ['coordinador', 'administrador'], true);
+                  $autorLabel = match ($tipo) {
+                      'administrador' => 'Administración',
+                      'coordinador' => 'Coordinación',
+                      default => 'Voluntario',
+                  };
+                @endphp
+                <div class="d-flex mb-3 {{ $esStaff ? 'justify-content-end' : '' }}">
                   <div>
-                    <div class="chat-bubble {{ $esCoordinador ? 'chat-bubble-right' : 'chat-bubble-left' }}">
+                    <div class="chat-bubble {{ $esStaff ? 'chat-bubble-right' : 'chat-bubble-left' }}">
                       {{ $msg->mensaje }}
                     </div>
-                    <div class="chat-meta text-muted small {{ $esCoordinador ? 'text-right' : '' }}">
-                      {{ $esCoordinador ? 'Coordinación' : 'Voluntario' }}
+                    <div class="chat-meta text-muted small {{ $esStaff ? 'text-right' : '' }}">
+                      {{ $autorLabel }}
                       · {{ $msg->created_at ? \Carbon\Carbon::parse($msg->created_at)->format('d/m/Y H:i') : '' }}
                     </div>
                   </div>

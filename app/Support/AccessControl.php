@@ -66,7 +66,7 @@ class AccessControl
         'inventario' => ['Almacenero', 'Coordinador Logístico', 'Donante'],
         'incendios' => ['Operador de Incendios', 'Jefe de Cuadrilla', 'Rescatista', 'Coordinador de Voluntarios', 'Coordinador Logístico', 'Almacenero', 'Ciudadano'],
         'logistica' => ['Coordinador Logístico', 'Almacenero', 'Operador de Incendios'],
-        'seguimiento' => ['Coordinador de Voluntarios', 'Voluntario', 'Operador de Incendios'],
+        'seguimiento' => ['Administrador', 'Coordinador de Voluntarios', 'Voluntario', 'Operador de Incendios'],
         'cuadrillas' => ['Jefe de Cuadrilla', 'Operador de Incendios'],
         'rescate' => ['Rescatista', 'Veterinario', 'Cuidador', 'Ciudadano'],
         'donante' => ['Donante'],
@@ -408,6 +408,7 @@ class AccessControl
     public static function roleOperationalPrefixes(): array
     {
         return [
+            'Administrador' => ['admin.', 'voluntarios.', 'voluntario.'],
             'Operador de Incendios' => ['incendios.'],
             'Almacenero' => ['inventario.', 'donante.'],
             'Coordinador Logístico' => ['logistica.'],
@@ -653,6 +654,12 @@ class AccessControl
         }
 
         return null;
+    }
+
+    /** Acceso operativo completo al módulo seguimiento (admin + coordinador). */
+    public static function gestionSeguimientoCompleta(?Usuario $user): bool
+    {
+        return $user !== null && self::userHasAnyRole($user, ['Administrador', 'Coordinador de Voluntarios']);
     }
 
     /** Vista cruzada logística ↔ inventario: solo administrador. */

@@ -56,6 +56,10 @@ class FusionModuloAccess
             return;
         }
 
+        if ($module === 'seguimiento' && AccessControl::userHasRole($user, 'Coordinador de Voluntarios')) {
+            return;
+        }
+
         $writePermissions = match ($module) {
             'logistica' => [
                 'logistica.solicitudes.gestionar',

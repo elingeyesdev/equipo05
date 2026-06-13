@@ -92,6 +92,33 @@ class ModuloController extends Controller
                 ->map(fn ($row) => (object) ['label' => $row->label, 'total' => 1]);
         }
 
+        $totalAdministradores = Schema::connection($connection)->hasTable('usuario')
+            ? $db->table('usuario')->where('administrador', true)->count()
+            : 0;
+
+        $totalUniversidades = Schema::connection($connection)->hasTable('universidad')
+            ? $db->table('universidad')->count()
+            : 0;
+
+        $consultasAbiertas = 0;
+        if (Schema::connection($connection)->hasTable('consultas')) {
+            $consultasAbiertas = Schema::connection($connection)->hasColumn('consultas', 'estado')
+                ? $db->table('consultas')->whereIn('estado', ['abierta', 'en_proceso'])->count()
+                : $db->table('consultas')->count();
+        }
+
+        $conversacionesChat = 0;
+        if (Schema::connection($connection)->hasTable('chat_mensajes')) {
+            if (Schema::connection($connection)->hasColumn('chat_mensajes', 'conversacion_id')) {
+                $conversacionesChat = $db->table('chat_mensajes')
+                    ->whereNotNull('conversacion_id')
+                    ->distinct()
+                    ->count('conversacion_id');
+            } else {
+                $conversacionesChat = $db->table('chat_mensajes')->count() > 0 ? 1 : 0;
+            }
+        }
+
         return view('fusion.modulos.seguimiento-voluntarios', [
             'voluntariosActivos' => $voluntariosActivos,
             'voluntariosInactivos' => $voluntariosInactivos,
@@ -102,6 +129,11 @@ class ModuloController extends Controller
             'universidadesData' => $universidadesData,
             'necesidadesData' => $necesidadesData,
             'capacitacionesData' => $capacitacionesData,
+            'totalAdministradores' => $totalAdministradores,
+            'totalUniversidades' => $totalUniversidades,
+            'consultasAbiertas' => $consultasAbiertas,
+            'conversacionesChat' => $conversacionesChat,
+            'gestionCompleta' => \App\Support\AccessControl::gestionSeguimientoCompleta(auth()->user()),
         ]);
     }
 

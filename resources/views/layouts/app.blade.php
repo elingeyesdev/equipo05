@@ -651,7 +651,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('seguimiento.chat-consulta') }}" class="nav-link {{ request()->routeIs('seguimiento.chat-consulta') ? 'active' : '' }}">
+                                    <a href="{{ route('seguimiento.chat-consulta') }}" class="nav-link {{ request()->routeIs('seguimiento.chat-consulta') || request()->routeIs('seguimiento.chat.enviar') ? 'active' : '' }}">
                                         <i class="fas fa-comments nav-icon"></i><p>Chat de Voluntarios</p>
                                     </a>
                                 </li>

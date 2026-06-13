@@ -431,7 +431,9 @@ class SeccionesController extends Controller
             $row['conversacion_id'] = $voluntario->id_usuario;
         }
         if (Schema::connection($connection)->hasColumn('chat_mensajes', 'remitente_tipo')) {
-            $row['remitente_tipo'] = 'coordinador';
+            $row['remitente_tipo'] = \App\Support\AccessControl::userHasRole(auth()->user(), 'Administrador')
+                ? 'administrador'
+                : 'coordinador';
         }
 
         DB::connection($connection)->table('chat_mensajes')->insert($row);
