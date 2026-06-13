@@ -23,6 +23,7 @@ class RichUnifiedDemoSeeder extends Seeder
             RichIncendiosDemoSeeder::class,
             RichRescateDemoSeeder::class,
             RichLogisticaDemoSeeder::class,
+            LogisticaOperativaSeeder::class,
             RichSeguimientoDemoSeeder::class,
             RichCuadrillasDemoSeeder::class,
             PatchDemoDashboardSeeder::class,
