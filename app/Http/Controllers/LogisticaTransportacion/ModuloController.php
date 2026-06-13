@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\LogisticaTransportacion;
 
 use App\Http\Controllers\Controller;
+use App\Support\LogisticaOperativa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -24,24 +25,27 @@ class ModuloController extends Controller
 
         $resumen = [];
         foreach ($tablasResumen as $tabla => $label) {
-            $resumen[] = [
-                'label' => $label,
-                'total' => Schema::connection($connection)->hasTable($tabla)
-                    ? DB::connection($connection)->table($tabla)->count()
-                    : 0,
-            ];
+            $total = 0;
+            if (Schema::connection($connection)->hasTable($tabla)) {
+                $q = DB::connection($connection)->table($tabla);
+                if ($tabla === 'solicitud') {
+                    $q->where(function ($w) {
+                        $w->whereNull('codigo_seguimiento')
+                            ->orWhere('codigo_seguimiento', 'not like', 'LOG-DEMO-%');
+                    });
+                }
+                if ($tabla === 'paquete') {
+                    $q->where(function ($w) {
+                        $w->whereNull('codigo')
+                            ->orWhere('codigo', 'not like', 'PKG-LOG-DEMO-%');
+                    });
+                }
+                $total = $q->count();
+            }
+            $resumen[] = ['label' => $label, 'total' => $total];
         }
 
-        $solicitudesRecientes = [];
-        if (Schema::connection($connection)->hasTable('solicitud')) {
-            $query = DB::connection($connection)->table('solicitud');
-            if (Schema::connection($connection)->hasColumn('solicitud', 'created_at')) {
-                $query->orderByDesc('created_at');
-            } else {
-                $query->orderByDesc('id_solicitud');
-            }
-            $solicitudesRecientes = $query->limit(10)->get();
-        }
+        $solicitudesRecientes = LogisticaOperativa::solicitudesOperativas()->take(10);
 
         return view('fusion.modulos.logistica', [
             'resumen' => $resumen,

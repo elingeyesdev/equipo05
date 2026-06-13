@@ -51,54 +51,56 @@
         <div class="col-12">
             <div class="card logistica-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0">Logistica Transportacion Donaciones</h3>
+                    <h3 class="card-title mb-0">Logística — transporte de donaciones</h3>
                     <a href="{{ route('logistica.crud.create', ['seccion' => 'solicitud']) }}" class="btn btn-primary btn-sm ml-auto">
                         <i class="fa fa-plus"></i> Crear nueva solicitud
                     </a>
                 </div>
                 <div class="card-body">
-                    <p class="mb-3">Resumen operativo del modulo integrado desde <strong>@web</strong>.</p>
+                    <p class="mb-3">Panel operativo de transporte y entrega de donaciones. Las solicitudes mostradas excluyen registros de demostración (<code>LOG-DEMO-*</code>).</p>
                     <div class="table-responsive">
                         <table class="table table-sm table-striped">
-                            <thead>
+                            <thead class="thead-light">
                                 <tr>
-                                    <th>ID Solicitud</th>
+                                    <th>Código</th>
                                     <th>Estado</th>
-                                    <th>Tipo Emergencia</th>
-                                    <th>Fecha Necesidad</th>
-                                    <th style="width: 100px;">Acciones</th>
+                                    <th>Solicitante</th>
+                                    <th>Emergencia</th>
+                                    <th>Destino</th>
+                                    <th>Fecha necesidad</th>
+                                    <th>Inventario</th>
+                                    <th style="width: 90px;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($solicitudesRecientes as $row)
                                 <tr>
-                                    <td>{{ $row->id_solicitud ?? '-' }}</td>
-                                    <td>{{ $row->estado ?? '-' }}</td>
-                                    <td>{{ $row->tipo_emergencia ?? '-' }}</td>
-                                    <td>{{ $row->fecha_necesidad ?? '-' }}</td>
+                                    <td><code>{{ $row['codigo_seguimiento'] }}</code></td>
+                                    <td><span class="badge badge-{{ $row['estado_badge'] }}">{{ $row['estado_label'] }}</span></td>
+                                    <td>{{ $row['solicitante_nombre'] }}</td>
+                                    <td>{{ $row['tipo_emergencia'] }}</td>
+                                    <td>{{ $row['destino_comunidad'] }}, {{ $row['destino_provincia'] }}</td>
+                                    <td>{{ $row['fecha_necesidad'] }}</td>
                                     <td>
-                                        <div class="d-flex" style="gap:.3rem;">
-                                            <a href="{{ route('logistica.crud.edit', ['seccion' => 'solicitud', 'id' => $row->id_solicitud]) }}" class="btn btn-warning btn-xs">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <form action="{{ route('logistica.crud.destroy', ['seccion' => 'solicitud', 'id' => $row->id_solicitud]) }}" method="POST" onsubmit="return confirm('¿Eliminar?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-xs">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
+                                        @if($row['inventario_paquete_codigo'])
+                                            <code>{{ $row['inventario_paquete_codigo'] }}</code>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('logistica.crud.edit', ['seccion' => 'solicitud', 'id' => $row['id_solicitud']]) }}" class="btn btn-warning btn-xs"><i class="fas fa-edit"></i></a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-muted text-center">No hay solicitudes registradas todavia.</td>
+                                    <td colspan="8" class="text-muted text-center">No hay solicitudes operativas registradas.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+                    <a href="{{ route('logistica.solicitud') }}" class="btn btn-outline-primary btn-sm">Ver todas las solicitudes</a>
                 </div>
             </div>
         </div>
