@@ -22,7 +22,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $paquetes->total() }}</h3>
+                <h3>{{ $paquetes->count() }}</h3>
                 <p>Total de Paquetes</p>
             </div>
             <div class="icon">

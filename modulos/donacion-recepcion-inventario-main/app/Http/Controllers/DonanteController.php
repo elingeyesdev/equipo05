@@ -19,10 +19,10 @@ class DonanteController extends Controller
      */
     public function index(Request $request): View
     {
-        $donantes = Donante::paginate();
+        $donantes = Donante::orderBy('nombre')->get();
 
         return view('inventario::donante.index', compact('donantes'))
-            ->with('i', ($request->input('page', 1) - 1) * $donantes->perPage());
+            ->with('i', 0);
     }
 
     /**

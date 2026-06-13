@@ -45,19 +45,21 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="id_recolector">Recolector</label>
+                    <label for="id_recolector">Recolector <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
                         </div>
                         <select name="id_recolector" class="form-control @error('id_recolector') is-invalid @enderror"
-                            id="id_recolector">
+                            id="id_recolector" required>
                             <option value="">Seleccione un recolector</option>
-                            @foreach($usuarios ?? [] as $usuario)
+                            @forelse($usuarios ?? [] as $usuario)
                                 <option value="{{ $usuario->id_usuario }}" {{ old('id_recolector', $solicitudesRecoleccion?->id_recolector) == $usuario->id_usuario ? 'selected' : '' }}>
                                     {{ $usuario->nombres }} {{ $usuario->apellidos }}
                                 </option>
-                            @endforeach
+                            @empty
+                                <option value="" disabled>No hay recolectores registrados</option>
+                            @endforelse
                         </select>
                         @error('id_recolector')
                             <span class="invalid-feedback" role="alert">

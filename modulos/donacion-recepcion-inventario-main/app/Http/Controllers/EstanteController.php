@@ -16,10 +16,10 @@ class EstanteController extends Controller
      */
     public function index(Request $request): View
     {
-        $estantes = Estante::paginate();
+        $estantes = Estante::with('almacene')->orderBy('codigo_estante')->get();
 
         return view('inventario::estante.index', compact('estantes'))
-            ->with('i', ($request->input('page', 1) - 1) * $estantes->perPage());
+            ->with('i', 0);
     }
 
     /**

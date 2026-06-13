@@ -22,7 +22,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $solicitudesRecoleccions->total() }}</h3>
+                <h3>{{ $solicitudesRecoleccions->count() }}</h3>
                 <p>Total de Solicitudes</p>
             </div>
             <div class="icon">
@@ -73,7 +73,7 @@
                 <tr>
                     <th width="60px">#</th>
                     <th>Donante</th>
-                    <th>Direccin</th>
+                    <th>Dirección</th>
                     <th>Fecha Programada</th>
                     <th>Estado</th>
                     <th width="200px" class="text-center">Acciones</th>

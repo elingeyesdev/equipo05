@@ -18,10 +18,10 @@ class UsuarioController extends Controller
      */
     public function index(Request $request): View
     {
-        $usuarios = Usuario::paginate();
+        $usuarios = Usuario::orderBy('nombres')->get();
 
         return view('inventario::usuario.index', compact('usuarios'))
-            ->with('i', ($request->input('page', 1) - 1) * $usuarios->perPage());
+            ->with('i', 0);
     }
 
     /**

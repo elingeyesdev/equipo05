@@ -20,10 +20,10 @@ class EspacioController extends Controller
             'estante.almacene',
             'ubicacionesDonaciones.detalle.producto',
             'ubicacionesDonaciones.detalle.donacion'
-        ])->paginate();
+        ])->orderBy('codigo_espacio')->get();
 
         return view('inventario::espacio.index', compact('espacios'))
-            ->with('i', ($request->input('page', 1) - 1) * $espacios->perPage());
+            ->with('i', 0);
     }
 
     /**

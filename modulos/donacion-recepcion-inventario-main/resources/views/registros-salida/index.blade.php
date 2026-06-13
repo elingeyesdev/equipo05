@@ -16,7 +16,7 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Total Salidas</span>
                         <span class="info-box-number">
-                            {{ $registrosSalidas->total() }}
+                            {{ $registrosSalidas->count() }}
                         </span>
                     </div>
                 </div>

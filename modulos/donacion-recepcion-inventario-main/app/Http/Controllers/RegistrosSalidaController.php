@@ -17,10 +17,10 @@ class RegistrosSalidaController extends Controller
      */
     public function index(Request $request): View
     {
-        $registrosSalidas = RegistrosSalida::with('paquete')->orderBy('fecha_salida', 'desc')->paginate();
+        $registrosSalidas = RegistrosSalida::with('paquete')->orderBy('fecha_salida', 'desc')->get();
 
         return view('inventario::registros-salida.index', compact('registrosSalidas'))
-            ->with('i', ($request->input('page', 1) - 1) * $registrosSalidas->perPage());
+            ->with('i', 0);
     }
 
     /**

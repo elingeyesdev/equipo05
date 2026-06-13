@@ -18,11 +18,15 @@ class ReportesController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->assertPermission('inventario.reportes.ver');
+
+            return $next($request);
+        });
     }
 
     public function index()
     {
-        $this->assertPermission('inventario.reportes.ver');
         return view('inventario::reportes.index');
     }
 

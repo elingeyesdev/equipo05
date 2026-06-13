@@ -205,6 +205,49 @@ class SeccionesController extends Controller
         return $columns;
     }
 
+    private function normalizeCrudPayload(string $tabla, array $data): array
+    {
+        $schema = Schema::connection('logistica');
+
+        foreach ($data as $column => $value) {
+            $type = null;
+
+            try {
+                $type = $schema->getColumnType($tabla, $column);
+            } catch (\Throwable) {
+                // Columna no disponible en el esquema actual.
+            }
+
+            if ($type === 'boolean' || $type === 'bool') {
+                $data[$column] = $this->castBooleanValue($value);
+                continue;
+            }
+
+            if ($value === '') {
+                $data[$column] = null;
+            }
+        }
+
+        return $data;
+    }
+
+    private function castBooleanValue(mixed $value): bool
+    {
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value !== 0;
+        }
+
+        return in_array(strtolower((string) $value), ['1', 'true', 'on', 'yes', 'si', 'sí'], true);
+    }
+
     public function solicitudCreate(): View
     {
         return view('fusion.modulos.logistica-solicitud-create');
@@ -237,7 +280,7 @@ class SeccionesController extends Controller
             'email' => null,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ], 'id_solicitante');
 
         $destinoId = $conn->table('destino')->insertGetId([
             'comunidad' => $data['comunidad'],
@@ -245,7 +288,7 @@ class SeccionesController extends Controller
             'direccion' => $data['direccion'] ?? null,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ], 'id_destino');
 
         $codigo = 'SOL-' . now()->format('YmdHis');
 
@@ -425,9 +468,7 @@ class SeccionesController extends Controller
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
         $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
-        $data = collect($request->only($columns))
-            ->map(fn ($value) => $value === '' ? null : $value)
-            ->toArray();
+        $data = $this->normalizeCrudPayload($tabla, $request->only($columns));
 
         if ($config['tabla'] === 'paquete' && empty($data['codigo'])) {
             $data['codigo'] = 'PKG-' . now()->format('YmdHis');
@@ -486,9 +527,7 @@ class SeccionesController extends Controller
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
         $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
-        $data = collect($request->only($columns))
-            ->map(fn ($value) => $value === '' ? null : $value)
-            ->toArray();
+        $data = $this->normalizeCrudPayload($tabla, $request->only($columns));
 
         if (Schema::connection('logistica')->hasColumn($tabla, 'updated_at')) {
             $data['updated_at'] = now();

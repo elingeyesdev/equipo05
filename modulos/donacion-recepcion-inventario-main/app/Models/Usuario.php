@@ -73,10 +73,20 @@ class Usuario extends Authenticatable
         'fecha_registro'
     ];
 
-    /**
-     * Campos ocultos en serialización JSON
-     */
     protected $hidden = ['contrasena', 'remember_token'];
+
+    public static function recolectoresActivos()
+    {
+        return static::query()
+            ->where('is_recolector', true)
+            ->where(function ($query) {
+                $query->whereNull('estado')
+                    ->orWhere('estado', 'activo')
+                    ->orWhere('estado', 'Activo');
+            })
+            ->orderBy('nombres')
+            ->orderBy('apellidos');
+    }
 
     /**
      * Método requerido por Authenticatable para obtener la contraseña

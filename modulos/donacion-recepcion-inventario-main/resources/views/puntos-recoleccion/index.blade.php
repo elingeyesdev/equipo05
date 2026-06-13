@@ -22,7 +22,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>{{ $puntosRecoleccions->total() }}</h3>
+                <h3>{{ $puntosRecoleccions->count() }}</h3>
                 <p>Puntos Activos</p>
             </div>
             <div class="icon">
@@ -69,7 +69,7 @@
                 <tr>
                     <th width="60px">#</th>
                     <th>Nombre</th>
-                    <th>Direccin</th>
+                    <th>Dirección</th>
                     <th>Contacto</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>

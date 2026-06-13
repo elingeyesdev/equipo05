@@ -22,10 +22,10 @@ class PaqueteController extends Controller
     public function index(Request $request): View
     {
         $this->assertAnyPermission('inventario.paquetes.gestionar', 'inventario.paquetes.ver');
-        $paquetes = Paquete::paginate();
+        $paquetes = Paquete::orderByDesc('fecha_creacion')->get();
 
         return view('inventario::paquete.index', compact('paquetes'))
-            ->with('i', ($request->input('page', 1) - 1) * $paquetes->perPage());
+            ->with('i', 0);
     }
 
     /**

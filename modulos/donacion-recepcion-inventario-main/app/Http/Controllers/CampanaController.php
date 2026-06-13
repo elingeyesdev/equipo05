@@ -16,10 +16,10 @@ class CampanaController extends Controller
      */
     public function index(Request $request): View
     {
-        $campanas = Campana::paginate();
+        $campanas = Campana::orderByDesc('fecha_inicio')->get();
 
         return view('inventario::campana.index', compact('campanas'))
-            ->with('i', ($request->input('page', 1) - 1) * $campanas->perPage());
+            ->with('i', 0);
     }
 
     /**

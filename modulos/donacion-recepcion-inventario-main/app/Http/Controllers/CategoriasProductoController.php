@@ -18,14 +18,14 @@ class CategoriasProductoController extends Controller
             ->ordenEmergencia()
             ->get();
 
-        $puedeGestionar = $this->esAdministrador();
+        $puedeGestionar = auth()->user()?->canManage('inventario.categorias.gestionar') ?? false;
 
         return view('inventario::categorias-producto.index', compact('categoriasProductos', 'puedeGestionar'));
     }
 
     public function create(): View
     {
-        $this->abortSiNoEsAdministrador();
+        $this->assertPermission('inventario.categorias.gestionar');
 
         $categoriasProducto = new CategoriasProducto();
 
@@ -34,6 +34,7 @@ class CategoriasProductoController extends Controller
 
     public function store(CategoriasProductoRequest $request)
     {
+        $this->assertPermission('inventario.categorias.gestionar');
         $categoria = CategoriasProducto::create(array_merge($request->validated(), ['estado' => 'activo']));
         $this->registrarHistorial($categoria, 'creado', null, $categoria->toArray());
 
@@ -55,14 +56,14 @@ class CategoriasProductoController extends Controller
             ->withCount('productos')
             ->findOrFail($id);
 
-        $puedeGestionar = $this->esAdministrador();
+        $puedeGestionar = auth()->user()?->canManage('inventario.categorias.gestionar') ?? false;
 
         return view('inventario::categorias-producto.show', compact('categoriasProducto', 'puedeGestionar'));
     }
 
     public function edit($id): View
     {
-        $this->abortSiNoEsAdministrador();
+        $this->assertPermission('inventario.categorias.gestionar');
 
         $categoriasProducto = CategoriasProducto::findOrFail($id);
 
@@ -71,6 +72,7 @@ class CategoriasProductoController extends Controller
 
     public function update(CategoriasProductoRequest $request, CategoriasProducto $categoriasProducto): RedirectResponse
     {
+        $this->assertPermission('inventario.categorias.gestionar');
         $antes = $categoriasProducto->toArray();
         $categoriasProducto->update($request->validated());
         $this->registrarHistorial($categoriasProducto, 'actualizado', $antes, $categoriasProducto->fresh()->toArray());
@@ -81,7 +83,7 @@ class CategoriasProductoController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        $this->abortSiNoEsAdministrador();
+        $this->assertPermission('inventario.categorias.gestionar');
 
         $categoria = CategoriasProducto::withCount('productos')->findOrFail($id);
 
@@ -95,18 +97,6 @@ class CategoriasProductoController extends Controller
 
         return Redirect::route('inventario.categorias-producto.index')
             ->with('success', 'Categoría eliminada exitosamente.');
-    }
-
-    private function esAdministrador(): bool
-    {
-        return auth()->user()?->hasRole('Administrador') ?? false;
-    }
-
-    private function abortSiNoEsAdministrador(): void
-    {
-        if (! $this->esAdministrador()) {
-            abort(403, 'Solo administradores pueden gestionar categorías de donación.');
-        }
     }
 
     private function registrarHistorial(

@@ -45,7 +45,7 @@ class AccesoPublicoController extends Controller
             'email' => null,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ], 'id_solicitante');
 
         $destinoId = $conn->table('destino')->insertGetId([
             'comunidad' => $data['comunidad'],
@@ -53,7 +53,7 @@ class AccesoPublicoController extends Controller
             'direccion' => $data['direccion'] ?? null,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ], 'id_destino');
 
         $codigo = 'SOL-' . now()->format('YmdHis');
 

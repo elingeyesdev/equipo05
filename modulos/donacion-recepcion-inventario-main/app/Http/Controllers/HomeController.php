@@ -359,6 +359,27 @@ class HomeController extends Controller
         $nombresTopProductos = $topProductosAlmacenados->pluck('nombre');
         $cantidadesTopProductos = $topProductosAlmacenados->pluck('cantidad');
 
+        if ($nombresCategorias->isEmpty()) {
+            $nombresCategorias = collect(['Sin inventario']);
+            $cantidadesCategorias = collect([1]);
+        }
+
+        if ($nombresTopProductos->isEmpty()) {
+            $nombresTopProductos = collect(['Sin productos']);
+            $cantidadesTopProductos = collect([0]);
+        }
+
+        $coloresUtilizacion = collect($porcentajesUtilizacion)->map(function ($value) {
+            if ($value >= 80) {
+                return 'rgba(220, 53, 69, 0.85)';
+            }
+            if ($value >= 50) {
+                return 'rgba(255, 193, 7, 0.85)';
+            }
+
+            return 'rgba(40, 167, 69, 0.85)';
+        })->values();
+
         return view('inventario::home-almacenista', compact(
             // KPIs
             'totalAlmacenes',
@@ -370,6 +391,7 @@ class HomeController extends Controller
             // Viz 1: Utilización por Almacén
             'nombresAlmacenes',
             'porcentajesUtilizacion',
+            'coloresUtilizacion',
             // Viz 2: Productos por Categoría
             'nombresCategorias',
             'cantidadesCategorias',

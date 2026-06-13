@@ -277,7 +277,7 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
-    $(function () {
+    document.addEventListener('DOMContentLoaded', function () {
         // VIZ 1: Utilización por Almacén (Horizontal Bar Chart)
         var utilizacionCtx = document.getElementById('utilizacionChart').getContext('2d');
         new Chart(utilizacionCtx, {
@@ -287,25 +287,20 @@
                 datasets: [{
                     label: 'Porcentaje de Ocupación',
                     data: {!! json_encode($porcentajesUtilizacion) !!},
-                    backgroundColor: function (context) {
-                        var value = context.parsed.y;
-                        if (value >= 80) return 'rgba(220, 53, 69, 0.8)';  // Rojo
-                        if (value >= 50) return 'rgba(255, 193, 7, 0.8)';  // Amarillo
-                        return 'rgba(40, 167, 69, 0.8)';  // Verde
-                    },
-                    borderColor: function (context) {
-                        var value = context.parsed.y;
-                        if (value >= 80) return 'rgb(220, 53, 69)';
-                        if (value >= 50) return 'rgb(255, 193, 7)';
-                        return 'rgb(40, 167, 69)';
-                    },
-                    borderWidth: 1
+                    backgroundColor: {!! json_encode($coloresUtilizacion) !!},
+                    borderColor: {!! json_encode($coloresUtilizacion) !!},
+                    minBarLength: 6
                 }]
             },
             options: {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                datasets: {
+                    bar: {
+                        minBarLength: 8
+                    }
+                },
                 plugins: {
                     legend: {
                         display: false

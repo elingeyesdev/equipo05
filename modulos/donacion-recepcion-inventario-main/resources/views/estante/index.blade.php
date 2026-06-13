@@ -17,7 +17,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $estantes->total() }}</h3>
+                <h3>{{ $estantes->count() }}</h3>
                 <p>Total de Estantes</p>
             </div>
             <div class="icon">
@@ -72,9 +72,9 @@
             <thead class="thead-light">
                 <tr>
                     <th width="60px">#</th>
-                    <th>Almacn</th>
-                    <th>Cdigo Estante</th>
-                    <th>Descripcin</th>
+                    <th>Almacén</th>
+                    <th>Código Estante</th>
+                    <th>Descripción</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>
             </thead>

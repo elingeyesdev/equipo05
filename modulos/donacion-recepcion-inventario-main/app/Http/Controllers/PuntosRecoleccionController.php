@@ -16,10 +16,10 @@ class PuntosRecoleccionController extends Controller
      */
     public function index(Request $request): View
     {
-        $puntosRecoleccions = PuntosRecoleccion::paginate();
+        $puntosRecoleccions = PuntosRecoleccion::orderBy('nombre')->get();
 
         return view('inventario::puntos-recoleccion.index', compact('puntosRecoleccions'))
-            ->with('i', ($request->input('page', 1) - 1) * $puntosRecoleccions->perPage());
+            ->with('i', 0);
     }
 
     /**

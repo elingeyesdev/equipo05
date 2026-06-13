@@ -26,10 +26,12 @@ class SolicitudesRecoleccionController extends Controller
      */
     public function index(Request $request): View
     {
-        $solicitudesRecoleccions = SolicitudesRecoleccion::paginate();
+        $solicitudesRecoleccions = SolicitudesRecoleccion::with(['donante', 'usuario'])
+            ->orderByDesc('fecha_programada')
+            ->get();
 
         return view('inventario::solicitudes-recoleccion.index', compact('solicitudesRecoleccions'))
-            ->with('i', ($request->input('page', 1) - 1) * $solicitudesRecoleccions->perPage());
+            ->with('i', 0);
     }
 
     /**
@@ -39,7 +41,7 @@ class SolicitudesRecoleccionController extends Controller
     {
         $solicitudesRecoleccion = new SolicitudesRecoleccion();
         $donantes = Donante::all();
-        $usuarios = Usuario::all();
+        $usuarios = Usuario::recolectoresActivos()->get();
 
         return view('inventario::solicitudes-recoleccion.create', compact('solicitudesRecoleccion', 'donantes', 'usuarios'));
     }
@@ -72,7 +74,7 @@ class SolicitudesRecoleccionController extends Controller
     {
         $solicitudesRecoleccion = SolicitudesRecoleccion::find($id);
         $donantes = Donante::all();
-        $usuarios = Usuario::all();
+        $usuarios = Usuario::recolectoresActivos()->get();
         
         // Data for donation form
         $productos = Producto::pluck('nombre', 'id_producto');

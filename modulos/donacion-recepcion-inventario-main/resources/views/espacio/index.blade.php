@@ -17,7 +17,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $espacios->total() }}</h3>
+                <h3>{{ $espacios->count() }}</h3>
                 <p>Total de Espacios</p>
             </div>
             <div class="icon">
@@ -66,7 +66,7 @@
                 <tr>
                     <th width="60px">#</th>
                     <th>Estante</th>
-                    <th>Cdigo Espacio</th>
+                    <th>Código Espacio</th>
                     <th class="text-center">Estado</th>
                     <th width="200px" class="text-center">Acciones</th>
                 </tr>

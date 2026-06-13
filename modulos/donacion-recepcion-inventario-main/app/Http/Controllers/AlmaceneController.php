@@ -16,10 +16,10 @@ class AlmaceneController extends Controller
      */
     public function index(Request $request): View
     {
-        $almacenes = Almacene::paginate();
+        $almacenes = Almacene::orderBy('nombre')->get();
 
         return view('inventario::almacene.index', compact('almacenes'))
-            ->with('i', ($request->input('page', 1) - 1) * $almacenes->perPage());
+            ->with('i', 0);
     }
 
     /**

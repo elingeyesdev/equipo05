@@ -24,7 +24,7 @@ class DonacioneController extends Controller
     public function index(Request $request): View
     {
         $baseQuery = OwnershipScope::scopedDonacionesQuery(auth()->user());
-        $donaciones = (clone $baseQuery)->with(['donante'])->paginate();
+        $donaciones = (clone $baseQuery)->with(['donante'])->orderByDesc('fecha')->get();
 
         $totalDonaciones = (clone $baseQuery)->count();
         $donacionesDinero = (clone $baseQuery)->where('tipo', 'dinero')->count();
@@ -41,7 +41,7 @@ class DonacioneController extends Controller
             ->sum('donaciones_dinero.monto');
 
         return view('inventario::donaciones.index', compact('donaciones', 'totalDonaciones', 'donacionesDinero', 'donacionesEspecie', 'montoTotal'))
-            ->with('i', ($request->input('page', 1) - 1) * $donaciones->perPage());
+            ->with('i', 0);
     }
 
     public function create(): View

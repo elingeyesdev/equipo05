@@ -16,7 +16,7 @@
     <div class="col-lg-4 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $donantes->total() }}</h3>
+                <h3>{{ $donantes->count() }}</h3>
                 <p>Total de Donantes</p>
             </div>
             <div class="icon">

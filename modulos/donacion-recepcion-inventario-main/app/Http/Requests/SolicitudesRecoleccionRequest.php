@@ -3,54 +3,39 @@
 namespace Modules\Inventario\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SolicitudesRecoleccionRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
-    {        
+    {
         return [
-			'id_donante' => 'required|integer|exists:inventario.donantes,id_donante',
-			'id_recolector' => [
-                'nullable',
+            'id_donante' => 'required|integer|exists:inventario.donantes,id_donante',
+            'id_recolector' => [
+                'required',
                 'integer',
-                'exists:inventario.usuarios,id_usuario',
-                'required_if:estado,en_proceso',
+                Rule::exists('inventario.usuarios', 'id_usuario')->where(function ($query) {
+                    $query->where('is_recolector', true);
+                }),
             ],
-			'direccion_recoleccion' => 'required|string',
-			'fecha_programada' => [
-                'nullable',
-                'date',
-                'required_if:estado,en_proceso',
-            ],
-			'observaciones' => 'nullable|string',
-			'estado' => 'nullable|string|max:30',
+            'direccion_recoleccion' => 'required|string',
+            'fecha_programada' => 'required|date',
+            'observaciones' => 'nullable|string',
+            'estado' => 'nullable|string|max:30',
         ];
     }
-    
+
     public function messages(): array
     {
         return [
-            'id_recolector.required_if' => 'Debe asignar un recolector para cambiar el estado a "En Proceso".',
-            'fecha_programada.required_if' => 'Debe asignar una fecha programada para cambiar el estado a "En Proceso".',
+            'id_recolector.required' => 'Debe seleccionar un recolector activo.',
+            'id_recolector.exists' => 'El recolector seleccionado no es válido o no está habilitado.',
+            'fecha_programada.required' => 'Debe asignar una fecha programada.',
         ];
     }
 }
-
-
-
-
-
-

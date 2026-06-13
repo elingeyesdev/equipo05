@@ -24,7 +24,7 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>{{ $campanas->total() }}</h3>
+                <h3>{{ $campanas->count() }}</h3>
                 <p>Total de Campañas</p>
             </div>
             <div class="icon">
