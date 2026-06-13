@@ -2,16 +2,18 @@
 
 namespace Modules\Inventario\Http\Controllers;
 
-use Modules\Inventario\Http\Controllers\Controller;
+use App\Support\AccessControl;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Modules\Inventario\Models\Donacione;
-use Modules\Inventario\Models\Producto;
+use Illuminate\Support\Collection;
 use Modules\Inventario\Models\Almacene;
 use Modules\Inventario\Models\Campana;
-use Modules\Inventario\Models\SolicitudesRecoleccion;
+use Modules\Inventario\Models\DonacionDetalle;
+use Modules\Inventario\Models\Donacione;
+use Modules\Inventario\Models\Paquete;
 use Modules\Inventario\Models\RegistrosSalida;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Modules\Inventario\Models\SolicitudesRecoleccion;
+use Modules\Inventario\Models\UbicacionesDonacione;
 
 class ReportesController extends Controller
 {
@@ -19,7 +21,7 @@ class ReportesController extends Controller
     {
         $this->middleware('auth');
         $this->middleware(function ($request, $next) {
-            $this->assertPermission('inventario.reportes.ver');
+            abort_unless(AccessControl::userCan(auth()->user(), 'inventario.reportes.ver'), 403);
 
             return $next($request);
         });
@@ -66,7 +68,7 @@ class ReportesController extends Controller
             ];
         });
 
-        if ($request->formato === 'pdf') {
+        if ($this->formatoEs($request, 'pdf')) {
             return $this->exportarPDF('donaciones_periodo', compact(
                 'donaciones',
                 'totalDonaciones',
@@ -76,7 +78,7 @@ class ReportesController extends Controller
             ));
         }
 
-        if ($request->formato === 'excel') {
+        if ($this->formatoEs($request, 'excel')) {
             return $this->exportarExcel('donaciones_periodo', $donaciones);
         }
 
@@ -113,41 +115,11 @@ class ReportesController extends Controller
             ->whereHas('donacionDetalle.producto') // Solo ubicaciones con producto válido
             ->get();
 
-        // Agrupar por producto para calcular totales
-        $productosAgrupados = $ubicaciones->groupBy(function ($ubicacion) {
-            return $ubicacion->donacionDetalle->id_producto ?? 0;
-        })
-            ->filter(function ($grupo, $key) {
-                return $key > 0; // Filtrar productos con ID 0 o null
-            })
-            ->map(function ($grupo) {
-                $primerItem = $grupo->first();
-                $detalle = $primerItem->donacionDetalle;
+        $productosAgrupados = $this->agruparProductosPorUbicacion($ubicaciones);
 
-                // Agrupar ubicaciones por almacén/estante/espacio y sumar cantidades
-                $ubicacionesAgrupadas = $grupo->groupBy(function ($ub) {
-                    $almacen = $ub->espacio->estante->almacene->nombre ?? 'N/A';
-                    $estante = $ub->espacio->estante->codigo_estante ?? 'N/A';
-                    $espacio = $ub->espacio->codigo_espacio ?? 'N/A';
-                    return $almacen . '|' . $estante . '|' . $espacio;
-                })->map(function ($ubicacionesGrupo) {
-                    $primera = $ubicacionesGrupo->first();
-                    return [
-                        'almacen' => $primera->espacio->estante->almacene->nombre ?? 'N/A',
-                        'estante' => $primera->espacio->estante->codigo_estante ?? 'N/A',
-                        'espacio' => $primera->espacio->codigo_espacio ?? 'N/A',
-                        'cantidad' => $ubicacionesGrupo->sum('cantidad_ubicada')
-                    ];
-                })->values();
-
-                return (object) [
-                    'id_producto' => $detalle->id_producto ?? 0,
-                    'nombre_producto' => $detalle->producto->nombre ?? 'N/A',
-                    'categoria' => $detalle->producto->categoriaProducto->nombre ?? 'N/A',
-                    'cantidad_total' => $grupo->sum('cantidad_ubicada'),
-                    'ubicaciones' => $ubicacionesAgrupadas
-                ];
-            })->values();
+        if ($productosAgrupados->isEmpty()) {
+            $productosAgrupados = $this->stockDisponiblePorProducto($almacenId);
+        }
 
         $totalProductos = $productosAgrupados->count();
         $cantidadTotal = $productosAgrupados->sum('cantidad_total');
@@ -155,11 +127,11 @@ class ReportesController extends Controller
         $productosCategoria = $productosAgrupados->groupBy('categoria')->map(function ($grupo) {
             return [
                 'cantidad' => $grupo->sum('cantidad_total'),
-                'items' => $grupo->count()
+                'items' => $grupo->count(),
             ];
         });
 
-        if ($request->formato === 'pdf') {
+        if ($this->formatoEs($request, 'pdf')) {
             return $this->exportarPDF('inventario_almacen', compact(
                 'almacenes',
                 'productosAgrupados',
@@ -170,7 +142,7 @@ class ReportesController extends Controller
             ));
         }
 
-        if ($request->formato === 'excel') {
+        if ($this->formatoEs($request, 'excel')) {
             return $this->exportarExcel('inventario_almacen', $productosAgrupados);
         }
 
@@ -201,14 +173,17 @@ class ReportesController extends Controller
                 ]);
             })
             ->when($request->estado, function ($query) use ($request) {
-                return $query->where('estado', $request->estado);
+                $estado = mb_strtolower(trim($request->estado));
+
+                return $query->whereRaw('LOWER(COALESCE(estado, \'\')) = ?', [$estado]);
             })
+            ->orderByDesc('fecha_programada')
             ->get();
 
         $totalSolicitudes = $solicitudes->count();
         $solicitudesPorEstado = $solicitudes->groupBy('estado')->map->count();
 
-        if ($request->formato === 'pdf') {
+        if ($this->formatoEs($request, 'pdf')) {
             return $this->exportarPDF('solicitudes_recoleccion', compact(
                 'solicitudes',
                 'totalSolicitudes',
@@ -217,7 +192,7 @@ class ReportesController extends Controller
             ));
         }
 
-        if ($request->formato === 'excel') {
+        if ($this->formatoEs($request, 'excel')) {
             return $this->exportarExcel('solicitudes_recoleccion', $solicitudes);
         }
 
@@ -238,38 +213,22 @@ class ReportesController extends Controller
         ]);
 
         $salidas = RegistrosSalida::with([
-            'paquete.detalles.donacionDetalle.producto'
+            'paquete.paqueteDetalles.donacionDetalle.producto',
         ])
             ->when($request->fecha_inicio && $request->fecha_fin, function ($query) use ($request) {
                 return $query->whereBetween('fecha_salida', [
-                    $request->fecha_inicio . ' 00:00:00',
-                    $request->fecha_fin . ' 23:59:59'
+                    $request->fecha_inicio.' 00:00:00',
+                    $request->fecha_fin.' 23:59:59',
                 ]);
             })
+            ->orderByDesc('fecha_salida')
             ->get();
 
         $totalSalidas = $salidas->count();
-        $cantidadTotal = $salidas->sum(function ($salida) {
-            return $salida->paquete->detalles->sum('cantidad_usada');
-        });
+        $salidasDetalladas = $salidas->map(fn ($salida) => $this->mapSalidaDetallada($salida));
+        $cantidadTotal = $salidasDetalladas->sum(fn ($salida) => collect($salida['productos'])->sum('cantidad'));
 
-        // Agrupar productos por salida
-        $salidasDetalladas = $salidas->map(function ($salida) {
-            return [
-                'id_salida' => $salida->id_salida,
-                'fecha_salida' => $salida->fecha_salida,
-                'destino' => $salida->destino,
-                'paquete_codigo' => $salida->paquete->codigo_paquete ?? 'N/A',
-                'productos' => $salida->paquete->detalles->map(function ($detalle) {
-                    return [
-                        'nombre' => $detalle->donacionDetalle->producto->nombre ?? 'N/A',
-                        'cantidad' => $detalle->cantidad_usada
-                    ];
-                })
-            ];
-        });
-
-        if ($request->formato === 'pdf') {
+        if ($this->formatoEs($request, 'pdf')) {
             return $this->exportarPDF('salidas_productos', compact(
                 'salidasDetalladas',
                 'totalSalidas',
@@ -278,7 +237,7 @@ class ReportesController extends Controller
             ));
         }
 
-        if ($request->formato === 'excel') {
+        if ($this->formatoEs($request, 'excel')) {
             return $this->exportarExcel('salidas_productos', $salidasDetalladas);
         }
 
@@ -314,7 +273,7 @@ class ReportesController extends Controller
                 ->sum(fn($d) => $d->dinero->monto ?? 0);
         });
 
-        if ($request->formato === 'pdf') {
+        if ($this->formatoEs($request, 'pdf')) {
             return $this->exportarPDF('campanas_reporte', compact(
                 'campanas',
                 'totalCampanas',
@@ -323,7 +282,7 @@ class ReportesController extends Controller
             ));
         }
 
-        if ($request->formato === 'excel') {
+        if ($this->formatoEs($request, 'excel')) {
             return $this->exportarExcel('campanas_reporte', $campanas);
         }
 
@@ -340,7 +299,7 @@ class ReportesController extends Controller
     {
         // Get all distribution records with their packages
         $salidas = RegistrosSalida::with([
-            'paquete.detalles.donacionDetalle.producto'
+            'paquete.paqueteDetalles.donacionDetalle.producto',
         ])
             ->when($request->fecha_inicio && $request->fecha_fin, function ($query) use ($request) {
                 return $query->whereBetween('fecha_salida', [
@@ -357,12 +316,9 @@ class ReportesController extends Controller
             ->orderBy('fecha_salida', 'desc')
             ->get();
 
-        // Get all packages
-        $totalPaquetes = \Modules\Inventario\Models\Paquete::count();
-
-        // KPIs
+        $totalPaquetes = Paquete::count();
         $totalDistribuido = $salidas->count();
-        $pendienteDistribucion = $totalPaquetes - $totalDistribuido;
+        $pendienteDistribucion = max(0, $totalPaquetes - $totalDistribuido);
 
         // Top destinations
         $destinosFrecuentes = $salidas->groupBy('destino')
@@ -386,28 +342,8 @@ class ReportesController extends Controller
             ->sortKeys()
             ->take(12);
 
-        // Prepare detailed data
-        $salidasDetalladas = $salidas->map(function ($salida) {
-            $productos = $salida->paquete ? $salida->paquete->detalles->map(function ($detalle) {
-                return [
-                    'nombre' => $detalle->donacionDetalle->producto->nombre ?? 'N/A',
-                    'cantidad' => $detalle->cantidad_usada
-                ];
-            })->values() : collect();
+        $salidasDetalladas = $salidas->map(fn ($salida) => $this->mapSalidaDetallada($salida, true));
 
-            return [
-                'id_salida' => $salida->id_salida,
-                'codigo_paquete' => $salida->paquete->codigo_paquete ?? 'N/A',
-                'fecha_salida' => $salida->fecha_salida,
-                'destino' => $salida->destino,
-                'encargado' => $salida->encargado,
-                'observaciones' => $salida->observaciones,
-                'productos' => $productos,
-                'total_items' => $productos->sum('cantidad')
-            ];
-        });
-
-        // Get unique destinations and responsibles for filters
         $destinosUnicos = RegistrosSalida::select('destino')
             ->distinct()
             ->whereNotNull('destino')
@@ -420,7 +356,7 @@ class ReportesController extends Controller
             ->orderBy('encargado')
             ->pluck('encargado');
 
-        if ($request->formato === 'pdf') {
+        if ($this->formatoEs($request, 'pdf')) {
             return $this->exportarPDF('distribucion_paquetes', compact(
                 'salidasDetalladas',
                 'totalDistribuido',
@@ -430,7 +366,7 @@ class ReportesController extends Controller
             ));
         }
 
-        if ($request->formato === 'excel') {
+        if ($this->formatoEs($request, 'excel')) {
             return $this->exportarExcel('distribucion_paquetes', $salidasDetalladas);
         }
 
@@ -449,11 +385,113 @@ class ReportesController extends Controller
         ));
     }
 
+    private function formatoEs(Request $request, string $formato): bool
+    {
+        return strtolower((string) $request->input('formato', 'ver')) === $formato;
+    }
+
+    private function agruparProductosPorUbicacion(Collection $ubicaciones): Collection
+    {
+        return $ubicaciones->groupBy(fn ($ubicacion) => $ubicacion->donacionDetalle->id_producto ?? 0)
+            ->filter(fn ($grupo, $key) => $key > 0)
+            ->map(function ($grupo) {
+                $detalle = $grupo->first()->donacionDetalle;
+
+                $ubicacionesAgrupadas = $grupo->groupBy(function ($ub) {
+                    $almacen = $ub->espacio->estante->almacene->nombre ?? 'N/A';
+                    $estante = $ub->espacio->estante->codigo_estante ?? 'N/A';
+                    $espacio = $ub->espacio->codigo_espacio ?? 'N/A';
+
+                    return $almacen.'|'.$estante.'|'.$espacio;
+                })->map(function ($ubicacionesGrupo) {
+                    $primera = $ubicacionesGrupo->first();
+
+                    return [
+                        'almacen' => $primera->espacio->estante->almacene->nombre ?? 'N/A',
+                        'estante' => $primera->espacio->estante->codigo_estante ?? 'N/A',
+                        'espacio' => $primera->espacio->codigo_espacio ?? 'N/A',
+                        'cantidad' => $ubicacionesGrupo->sum(fn ($ub) => (int) ($ub->cantidad_ubicada ?? 1)),
+                    ];
+                })->values();
+
+                return (object) [
+                    'id_producto' => $detalle->id_producto ?? 0,
+                    'nombre_producto' => $detalle->producto->nombre ?? 'N/A',
+                    'categoria' => $detalle->producto->categoriaProducto->nombre ?? 'Sin categoría',
+                    'cantidad_total' => $ubicacionesAgrupadas->sum('cantidad'),
+                    'ubicaciones' => $ubicacionesAgrupadas,
+                ];
+            })->values();
+    }
+
+    private function stockDisponiblePorProducto(?int $almacenId): Collection
+    {
+        $detalles = DonacionDetalle::with(['producto.categoriaProducto', 'paqueteDetalles', 'donacion'])
+            ->whereHas('donacion', fn ($q) => $q->where('tipo', 'especie'))
+            ->get();
+
+        return $detalles->groupBy('id_producto')
+            ->map(function ($grupo) {
+                $detalle = $grupo->first();
+                $disponible = $grupo->sum(function ($item) {
+                    $usado = $item->paqueteDetalles->sum('cantidad_usada');
+
+                    return max(0, (int) $item->cantidad - (int) $usado);
+                });
+
+                return (object) [
+                    'id_producto' => $detalle->id_producto,
+                    'nombre_producto' => $detalle->producto->nombre ?? 'N/A',
+                    'categoria' => $detalle->producto->categoriaProducto->nombre ?? 'Sin categoría',
+                    'cantidad_total' => $disponible,
+                    'ubicaciones' => collect([[
+                        'almacen' => 'Stock disponible',
+                        'estante' => '—',
+                        'espacio' => '—',
+                        'cantidad' => $disponible,
+                    ]]),
+                ];
+            })
+            ->filter(fn ($item) => $item->cantidad_total > 0)
+            ->values();
+    }
+
+    private function mapSalidaDetallada(RegistrosSalida $salida, bool $incluirMeta = false): array
+    {
+        $productos = collect();
+        if ($salida->paquete) {
+            $productos = $salida->paquete->paqueteDetalles->map(function ($detalle) {
+                return [
+                    'nombre' => $detalle->donacionDetalle->producto->nombre ?? 'N/A',
+                    'cantidad' => (int) $detalle->cantidad_usada,
+                ];
+            })->values();
+        }
+
+        $data = [
+            'id_salida' => $salida->id_salida,
+            'fecha_salida' => $salida->fecha_salida,
+            'destino' => $salida->destino,
+            'paquete_codigo' => $salida->paquete->codigo_paquete ?? 'N/A',
+            'productos' => $productos,
+        ];
+
+        if ($incluirMeta) {
+            $data['codigo_paquete'] = $salida->paquete->codigo_paquete ?? 'N/A';
+            $data['encargado'] = $salida->encargado;
+            $data['observaciones'] = $salida->observaciones;
+            $data['total_items'] = $productos->sum('cantidad');
+        }
+
+        return $data;
+    }
+
     private function exportarPDF($vista, $data)
     {
         $pdf = app('dompdf.wrapper');
-        $pdf->loadView("reportes.pdf.{$vista}", $data);
-        return $pdf->download("reporte_{$vista}_" . date('Y-m-d') . '.pdf');
+        $pdf->loadView("inventario::reportes.pdf.{$vista}", $data);
+
+        return $pdf->download("reporte_{$vista}_".date('Y-m-d').'.pdf');
     }
 
     private function exportarExcel($nombre, $datos)

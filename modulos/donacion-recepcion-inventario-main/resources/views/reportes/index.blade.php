@@ -90,10 +90,10 @@
                         <label>Estado</label>
                         <select name="estado" class="form-control">
                             <option value="">Todos</option>
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="En proceso">En proceso</option>
-                            <option value="Completada">Completada</option>
-                            <option value="Cancelada">Cancelada</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en_proceso">En proceso</option>
+                            <option value="completada">Completada</option>
+                            <option value="cancelada">Cancelada</option>
                         </select>
                     </div>
                     <div class="form-group">

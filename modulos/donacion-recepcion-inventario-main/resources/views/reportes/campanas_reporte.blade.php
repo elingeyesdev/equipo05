@@ -14,6 +14,7 @@
                 <strong>Estado:</strong> {{ ucfirst($request->estado ?? 'Todas') }}
             </h3>
             <div class="card-tools">
+                @include('inventario::reportes.partials.export-toolbar', ['routeName' => 'inventario.reportes.campanas'])
                 <a href="{{ route('inventario.reportes.index') }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>

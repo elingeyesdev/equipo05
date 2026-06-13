@@ -14,6 +14,7 @@
                 <strong>Almacén:</strong> {{ $almacenId ? \Modules\Inventario\Models\Almacene::find($almacenId)->nombre : 'Todos' }}
             </h3>
             <div class="card-tools">
+                @include('inventario::reportes.partials.export-toolbar', ['routeName' => 'inventario.reportes.inventario.almacen'])
                 <a href="{{ route('inventario.reportes.index') }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>

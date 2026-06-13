@@ -8,7 +8,15 @@
 @section('title', 'Dashboard de Distribución')
 
 @section('content_header')
-<h1><i class="fas fa-shipping-fast"></i> Dashboard de Distribución de Paquetes</h1>
+<div class="d-flex flex-wrap justify-content-between align-items-center">
+    <h1 class="m-0"><i class="fas fa-shipping-fast"></i> Dashboard de Distribución de Paquetes</h1>
+    <div class="mt-2 mt-md-0">
+        @include('inventario::reportes.partials.export-toolbar', ['routeName' => 'inventario.reportes.distribucion'])
+        <a href="{{ route('inventario.reportes.index') }}" class="btn btn-sm btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
 @stop
 
 @section('content')
@@ -155,6 +163,9 @@
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-table"></i> Detalle de Distribuciones</h3>
         <div class="card-tools">
+            <button type="button" class="btn btn-sm btn-danger" onclick="exportarPdf()">
+                <i class="fas fa-file-pdf"></i> PDF
+            </button>
             <button type="button" class="btn btn-sm btn-success" onclick="exportarExcel()">
                 <i class="fas fa-file-excel"></i> Exportar Excel
             </button>
@@ -321,11 +332,18 @@
         }
     });
 
-    // Export to Excel function
-    function exportarExcel() {
+    function exportarConFormato(formato) {
         const params = new URLSearchParams(window.location.search);
-        params.set('formato', 'excel');
+        params.set('formato', formato);
         window.location.href = '{{ route("inventario.reportes.distribucion") }}?' + params.toString();
+    }
+
+    function exportarExcel() {
+        exportarConFormato('excel');
+    }
+
+    function exportarPdf() {
+        exportarConFormato('pdf');
     }
 
 </script>

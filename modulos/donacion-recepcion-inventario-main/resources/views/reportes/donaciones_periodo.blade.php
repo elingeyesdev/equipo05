@@ -14,6 +14,7 @@
                 <strong>Período:</strong> {{ $request->fecha_inicio }} al {{ $request->fecha_fin }}
             </h3>
             <div class="card-tools">
+                @include('inventario::reportes.partials.export-toolbar', ['routeName' => 'inventario.reportes.donaciones.periodo'])
                 <a href="{{ route('inventario.reportes.index') }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>

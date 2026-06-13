@@ -17,6 +17,7 @@
                 @if($request->fecha_fin) Hasta: {{ $request->fecha_fin }} @endif
             </h3>
             <div class="card-tools">
+                @include('inventario::reportes.partials.export-toolbar', ['routeName' => 'inventario.reportes.solicitudes'])
                 <a href="{{ route('inventario.reportes.index') }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
@@ -70,14 +71,15 @@
                                 <td>
                                     @php
                                         $badgeClass = match($solicitud->estado) {
-                                            'Pendiente' => 'warning',
-                                            'En proceso' => 'info',
-                                            'Completada' => 'success',
-                                            'Cancelada' => 'danger',
+                                            'pendiente' => 'warning',
+                                            'en_proceso' => 'info',
+                                            'completada' => 'success',
+                                            'cancelada' => 'danger',
                                             default => 'secondary'
                                         };
+                                        $estadoLabel = ucfirst(str_replace('_', ' ', $solicitud->estado ?? 'pendiente'));
                                     @endphp
-                                    <span class="badge badge-{{ $badgeClass }}">{{ $solicitud->estado }}</span>
+                                    <span class="badge badge-{{ $badgeClass }}">{{ $estadoLabel }}</span>
                                 </td>
                                 <td>
                                     @if($solicitud->usuario)

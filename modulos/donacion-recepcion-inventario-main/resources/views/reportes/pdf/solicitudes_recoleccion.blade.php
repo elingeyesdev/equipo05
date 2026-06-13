@@ -80,14 +80,15 @@
                     <td>
                         @php
                             $clase = match($solicitud->estado) {
-                                'Pendiente' => 'pendiente',
-                                'En proceso' => 'en-proceso',
-                                'Completada' => 'completada',
-                                'Cancelada' => 'cancelada',
+                                'pendiente' => 'pendiente',
+                                'en_proceso' => 'en-proceso',
+                                'completada' => 'completada',
+                                'cancelada' => 'cancelada',
                                 default => 'pendiente'
                             };
+                            $estadoLabel = ucfirst(str_replace('_', ' ', $solicitud->estado ?? 'pendiente'));
                         @endphp
-                        <span class="badge badge-{{ $clase }}">{{ $solicitud->estado }}</span>
+                        <span class="badge badge-{{ $clase }}">{{ $estadoLabel }}</span>
                     </td>
                     <td>
                         @if($solicitud->usuario)
@@ -125,14 +126,15 @@
                             <td>
                                 @php
                                     $clase = match($estado) {
-                                        'Pendiente' => 'pendiente',
-                                        'En proceso' => 'en-proceso',
-                                        'Completada' => 'completada',
-                                        'Cancelada' => 'cancelada',
+                                        'pendiente' => 'pendiente',
+                                        'en_proceso' => 'en-proceso',
+                                        'completada' => 'completada',
+                                        'cancelada' => 'cancelada',
                                         default => 'pendiente'
                                     };
+                                    $estadoLabel = ucfirst(str_replace('_', ' ', $estado));
                                 @endphp
-                                <span class="badge badge-{{ $clase }}">{{ $estado }}</span>
+                                <span class="badge badge-{{ $clase }}">{{ $estadoLabel }}</span>
                             </td>
                             <td class="text-center"><strong>{{ $cantidad }}</strong></td>
                             <td class="text-center">{{ round(($cantidad / $totalSolicitudes) * 100, 1) }}%</td>
