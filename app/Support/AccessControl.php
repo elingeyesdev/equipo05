@@ -617,19 +617,16 @@ class AccessControl
         }
 
         return match ($module) {
-            'admin' => $role === 'Administrador',
+            'admin' => false,
             'inventario' => $role === 'Almacenero',
             'inventario_donante' => $role === 'Donante',
-            'incendios' => in_array($role, [
-                'Operador de Incendios', 'Jefe de Cuadrilla', 'Rescatista',
-                'Coordinador de Voluntarios', 'Coordinador Logístico', 'Almacenero', 'Ciudadano',
-            ], true),
+            'incendios' => $role === 'Operador de Incendios',
             'incendios_ciudadano' => $role === 'Ciudadano',
-            'logistica' => in_array($role, ['Coordinador Logístico', 'Almacenero', 'Operador de Incendios'], true),
-            'seguimiento' => in_array($role, ['Coordinador de Voluntarios', 'Voluntario', 'Operador de Incendios'], true),
-            'cuadrillas' => in_array($role, ['Jefe de Cuadrilla', 'Operador de Incendios'], true),
+            'logistica' => $role === 'Coordinador Logístico',
+            'seguimiento' => in_array($role, ['Coordinador de Voluntarios', 'Voluntario'], true),
+            'cuadrillas' => $role === 'Jefe de Cuadrilla',
             'rescate' => in_array($role, ['Rescatista', 'Veterinario', 'Cuidador', 'Ciudadano'], true),
-            'sync' => $role === 'Administrador',
+            'sync' => false,
             default => false,
         };
     }
