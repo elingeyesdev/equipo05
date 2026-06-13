@@ -52,6 +52,9 @@ class SeccionesController extends Controller
                 'registro' => null,
             ]);
         }
+        if ($this->isVoluntarioSection($seccion)) {
+            return $this->voluntarioFormView($seccion, null);
+        }
         return $this->traitCrudCreate($seccion);
     }
 
@@ -111,6 +114,18 @@ class SeccionesController extends Controller
                 'primaryKey' => $config['pk'],
                 'registro' => $registro,
             ]);
+        }
+        if ($this->isVoluntarioSection($seccion)) {
+            $secciones = $this->seccionesConfig();
+            $config = $secciones[$seccion];
+            $registro = DB::connection($this->moduloConnection())
+                ->table($config['tabla'])
+                ->where($config['pk'], $id)
+                ->where('administrador', false)
+                ->first();
+            abort_unless($registro, 404);
+
+            return $this->voluntarioFormView($seccion, $registro);
         }
         return $this->traitCrudEdit($seccion, $id);
     }
@@ -202,14 +217,31 @@ class SeccionesController extends Controller
             return redirect()->route('seguimiento.administradores')->with('success', 'Administrador creado correctamente.');
         }
 
+        if ($this->isVoluntarioSection($seccion)) {
+            $connection = $this->moduloConnection();
+            $data = $this->validatedVoluntarioData($request);
+            $data['created_at'] = now();
+            $data['updated_at'] = now();
+
+            DB::connection($connection)->table('usuario')->insert($data);
+
+            return redirect()
+                ->route($seccion === 'voluntarios-inactivos' ? 'seguimiento.voluntarios-inactivos' : 'seguimiento.voluntarios')
+                ->with('success', 'Voluntario creado correctamente.');
+        }
+
         // Fallback to trait logic
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
         $connection = $this->moduloConnection();
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
+        $columns = $this->normalizeCrudColumns($seccion, $this->columnsForCrud($config['tabla'], $config['pk']));
         $data = $this->prepareStoreData($tabla, collect($request->only($columns))
             ->map(fn ($value) => $value === '' ? null : $value)
             ->toArray());
+
+        if (in_array($seccion, ['voluntarios', 'voluntarios-inactivos'], true)) {
+            $data['administrador'] = false;
+        }
 
         if (Schema::connection($connection)->hasColumn($tabla, 'created_at')) {
             $data['created_at'] = now();
@@ -319,7 +351,174 @@ class SeccionesController extends Controller
             return redirect()->route('seguimiento.administradores')->with('success', 'Administrador actualizado correctamente.');
         }
 
-        return $this->traitCrudUpdate($request, $seccion, $id);
+        if ($this->isVoluntarioSection($seccion)) {
+            $secciones = $this->seccionesConfig();
+            $config = $secciones[$seccion];
+            $connection = $this->moduloConnection();
+
+            $exists = DB::connection($connection)
+                ->table($config['tabla'])
+                ->where($config['pk'], $id)
+                ->where('administrador', false)
+                ->exists();
+            abort_unless($exists, 404);
+
+            $data = $this->validatedVoluntarioData($request);
+            unset($data['administrador']);
+            $data['updated_at'] = now();
+
+            DB::connection($connection)
+                ->table($config['tabla'])
+                ->where($config['pk'], $id)
+                ->update($data);
+
+            return redirect()
+                ->route($seccion === 'voluntarios-inactivos' ? 'seguimiento.voluntarios-inactivos' : 'seguimiento.voluntarios')
+                ->with('success', 'Voluntario actualizado correctamente.');
+        }
+
+        $secciones = $this->seccionesConfig();
+        $config = $secciones[$seccion];
+        $tabla = $config['tabla'];
+        $connection = $this->moduloConnection();
+        $columns = $this->normalizeCrudColumns($seccion, $this->columnsForCrud($config['tabla'], $config['pk']));
+        $data = $this->prepareStoreData($tabla, collect($request->only($columns))
+            ->map(fn ($value) => $value === '' ? null : $value)
+            ->toArray());
+
+        if (in_array($seccion, ['voluntarios', 'voluntarios-inactivos'], true)) {
+            unset($data['administrador']);
+        }
+
+        if (Schema::connection($connection)->hasColumn($tabla, 'updated_at')) {
+            $data['updated_at'] = now();
+        }
+
+        DB::connection($connection)
+            ->table($tabla)
+            ->where($config['pk'], $id)
+            ->update($data);
+
+        return redirect()->route("seguimiento.{$seccion}")->with('success', 'Registro actualizado correctamente.');
+    }
+
+    protected function normalizeCrudColumns(string $seccion, array $columns): array
+    {
+        if (in_array($seccion, ['voluntarios', 'voluntarios-inactivos'], true)) {
+            $columns = array_values(array_filter($columns, fn ($column) => $column !== 'administrador'));
+            $preferred = ['nombre', 'apellido', 'email', 'ci', 'tipo_sangre', 'telefono', 'activo'];
+            $ordered = array_values(array_filter($preferred, fn ($column) => in_array($column, $columns, true)));
+            $rest = array_values(array_diff($columns, $ordered));
+
+            return array_merge($ordered, $rest);
+        }
+
+        return $columns;
+    }
+
+    protected function prepareStoreData(string $tabla, array $data): array
+    {
+        $schema = Schema::connection($this->moduloConnection());
+
+        foreach ($data as $column => $value) {
+            try {
+                $type = $schema->getColumnType($tabla, $column);
+            } catch (\Throwable) {
+                continue;
+            }
+
+            if (in_array($type, ['boolean', 'bool'], true)) {
+                $data[$column] = $this->castBooleanValue($value);
+            }
+        }
+
+        return $data;
+    }
+
+    private function castBooleanValue(mixed $value): bool
+    {
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value !== 0;
+        }
+
+        return in_array(strtolower((string) $value), ['1', 'true', 'on', 'yes', 'si', 'sí', 'activo'], true);
+    }
+
+    private function isVoluntarioSection(string $seccion): bool
+    {
+        return in_array($seccion, ['voluntarios', 'voluntarios-inactivos'], true);
+    }
+
+    private function tiposSangreValidos(): array
+    {
+        return ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
+    }
+
+    private function voluntarioFormView(string $seccion, ?object $registro): View
+    {
+        $config = $this->seccionesConfig()[$seccion];
+
+        return view('fusion.modulos.seguimiento-voluntarios-form', [
+            'seccion' => $seccion,
+            'tituloSeccion' => $config['titulo'],
+            'primaryKey' => $config['pk'],
+            'registro' => $registro,
+            'tiposSangre' => $this->tiposSangreValidos(),
+        ]);
+    }
+
+    private function validatedVoluntarioData(Request $request): array
+    {
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'min:2', 'max:150'],
+            'apellido' => ['required', 'string', 'min:2', 'max:150'],
+            'email' => ['required', 'email', 'max:150'],
+            'ci' => ['required', 'string', 'regex:/^[0-9]{6,8}$/'],
+            'ext' => ['nullable', 'string', 'max:3'],
+            'telefono' => ['nullable', 'string', 'regex:/^[0-9]{7,8}$/'],
+            'tipo_sangre' => ['nullable', 'string', 'in:'.implode(',', $this->tiposSangreValidos())],
+            'activo' => ['nullable', 'in:0,1'],
+        ], [
+            'ci.regex' => 'La cédula debe tener entre 6 y 8 dígitos numéricos.',
+            'telefono.regex' => 'El teléfono debe tener 7 u 8 dígitos numéricos.',
+            'tipo_sangre.in' => 'Seleccione un tipo de sangre válido (O+, A-, etc.).',
+        ]);
+
+        $ci = $validated['ci'];
+        if (! empty($validated['ext'])) {
+            $ci .= ' '.$validated['ext'];
+        }
+
+        $data = [
+            'nombre' => $validated['nombre'],
+            'apellido' => $validated['apellido'],
+            'email' => $validated['email'],
+            'ci' => $ci,
+            'telefono' => $validated['telefono'] ?? null,
+            'tipo_sangre' => $validated['tipo_sangre'] ?? null,
+            'activo' => $request->input('activo', '1') === '1',
+            'administrador' => false,
+        ];
+
+        if (! Schema::connection($this->moduloConnection())->hasColumn('usuario', 'ci')) {
+            unset($data['ci']);
+        }
+        if (! Schema::connection($this->moduloConnection())->hasColumn('usuario', 'tipo_sangre')) {
+            unset($data['tipo_sangre']);
+        }
+        if (! Schema::connection($this->moduloConnection())->hasColumn('usuario', 'telefono')) {
+            unset($data['telefono']);
+        }
+
+        return $data;
     }
 
     protected function moduloConnection(): string

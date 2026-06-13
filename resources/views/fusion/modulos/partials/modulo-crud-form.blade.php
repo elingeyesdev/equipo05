@@ -64,6 +64,28 @@
                                 <input type="number" step="any" name="{{ $column }}" id="modulo-coordenadas-lat" class="form-control" value="{{ old($column, data_get($registro, $column)) }}" placeholder="{{ $placeholder }}">
                             @elseif($coordenadasMapaActivo && $column === 'longitud')
                                 <input type="number" step="any" name="{{ $column }}" id="modulo-coordenadas-lng" class="form-control" value="{{ old($column, data_get($registro, $column)) }}" placeholder="{{ $placeholder }}">
+                            @elseif(in_array($column, ['activo', 'administrador', 'usado'], true))
+                                @php
+                                    $rawBool = old($column, data_get($registro, $column, $registro ? null : '1'));
+                                    $boolVal = filter_var($rawBool, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                                    if ($boolVal === null && $rawBool !== null && $rawBool !== '') {
+                                        $boolVal = in_array(strtolower((string) $rawBool), ['1', 'true', 'si', 'sí', 'activo'], true);
+                                    }
+                                    if ($boolVal === null) {
+                                        $boolVal = true;
+                                    }
+                                @endphp
+                                <select name="{{ $column }}" class="form-control">
+                                    <option value="1" {{ $boolVal ? 'selected' : '' }}>Sí</option>
+                                    <option value="0" {{ ! $boolVal ? 'selected' : '' }}>No</option>
+                                </select>
+                            @elseif($column === 'tipo_sangre')
+                                <select name="{{ $column }}" class="form-control">
+                                    <option value="">Seleccione tipo de sangre...</option>
+                                    @foreach(['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'] as $tipo)
+                                        <option value="{{ $tipo }}" {{ old($column, data_get($registro, $column)) === $tipo ? 'selected' : '' }}>{{ $tipo }}</option>
+                                    @endforeach
+                                </select>
                             @elseif(str_contains($column, 'descripcion') || str_contains($column, 'contenido') || str_contains($column, 'insumo') || str_contains($column, 'observacion'))
                                 <textarea name="{{ $column }}" rows="3" class="form-control" placeholder="{{ $placeholder }}">{{ old($column, data_get($registro, $column)) }}</textarea>
                             @elseif(str_contains($column, 'cantidad') || str_contains($column, 'capacidad') || str_contains($column, 'puntaje') || str_contains($column, 'nota'))
