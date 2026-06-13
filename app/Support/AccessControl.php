@@ -400,6 +400,74 @@ class AccessControl
         return false;
     }
 
+    /** Permisos operativos del módulo inventario para el rol Almacenero. */
+    public static function isInventarioOperationalPermission(string $permission): bool
+    {
+        return str_starts_with($permission, 'inventario.')
+            || $permission === 'admin.usuarios.gestionar'
+            || str_starts_with($permission, 'donante.');
+    }
+
+    public static function userCan(?Usuario $user, string $permission): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        if ($user->hasRole('Administrador')) {
+            return true;
+        }
+
+        if (self::userHasRole($user, 'Almacenero') && self::isInventarioOperationalPermission($permission)) {
+            return true;
+        }
+
+        return $user->can($permission);
+    }
+
+    /** @param list<string> $permissions */
+    public static function userCanAny(?Usuario $user, array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            $permission = trim($permission);
+            if ($permission !== '' && self::userCan($user, $permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function syncRolePermissionsIfStale(): void
+    {
+        static $synced = false;
+        if ($synced) {
+            return;
+        }
+
+        try {
+            foreach (self::flattenPermissions() as $permissionName) {
+                \Spatie\Permission\Models\Permission::firstOrCreate(
+                    ['name' => $permissionName, 'guard_name' => self::GUARD]
+                );
+            }
+
+            foreach (self::rolePermissionMap() as $roleName => $permissions) {
+                $role = \Spatie\Permission\Models\Role::findByName($roleName, self::GUARD);
+                $current = $role->permissions->pluck('name')->sort()->values()->all();
+                $expected = collect($permissions)->sort()->values()->all();
+                if ($current !== $expected) {
+                    $role->syncPermissions($permissions);
+                }
+            }
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        } catch (\Throwable) {
+            // La BD puede no estar lista en instalaciones parciales.
+        }
+
+        $synced = true;
+    }
+
     public static function canManageRescatePeople(): bool
     {
         return self::userHasRole(auth()->user(), 'Administrador');

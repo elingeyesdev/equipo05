@@ -2,6 +2,7 @@
 
 namespace Modules\Inventario\Http\Controllers;
 
+use App\Support\AccessControl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -18,7 +19,7 @@ class CategoriasProductoController extends Controller
             ->ordenEmergencia()
             ->get();
 
-        $puedeGestionar = auth()->user()?->canManage('inventario.categorias.gestionar') ?? false;
+        $puedeGestionar = AccessControl::userCan(auth()->user(), 'inventario.categorias.gestionar');
 
         return view('inventario::categorias-producto.index', compact('categoriasProductos', 'puedeGestionar'));
     }
@@ -56,7 +57,7 @@ class CategoriasProductoController extends Controller
             ->withCount('productos')
             ->findOrFail($id);
 
-        $puedeGestionar = auth()->user()?->canManage('inventario.categorias.gestionar') ?? false;
+        $puedeGestionar = AccessControl::userCan(auth()->user(), 'inventario.categorias.gestionar');
 
         return view('inventario::categorias-producto.show', compact('categoriasProducto', 'puedeGestionar'));
     }

@@ -12,7 +12,7 @@ Route::get('/', function () {
 Route::get('/home', [Modules\Inventario\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Usuarios del módulo inventario (Administrador / Almacenero)
-Route::middleware(['auth', 'permission.check:admin.usuarios.gestionar|inventario.usuarios.gestionar'])->group(function () {
+Route::middleware(['auth', 'permission.check:admin.usuarios.gestionar|inventario.usuarios.gestionar|inventario.dashboard.ver'])->group(function () {
     Route::resource('usuario', Modules\Inventario\Http\Controllers\UsuarioController::class);
 });
 
@@ -44,11 +44,11 @@ Route::middleware(['auth', 'permission.check:inventario.categorias.gestionar|inv
     Route::get('categorias-producto/{categorias_producto}', [Modules\Inventario\Http\Controllers\CategoriasProductoController::class, 'show'])->name('categorias-producto.show');
 });
 
-Route::middleware(['auth', 'permission.check:inventario.productos.gestionar|inventario.paquetes.ver|inventario.paquetes.gestionar'])->group(function () {
+Route::middleware(['auth', 'permission.check:inventario.productos.gestionar|inventario.paquetes.ver|inventario.paquetes.gestionar|inventario.dashboard.ver'])->group(function () {
     Route::resource('producto', Modules\Inventario\Http\Controllers\ProductoController::class);
 });
 
-Route::middleware(['auth', 'permission.check:inventario.donantes.gestionar|inventario.donaciones.registrar'])->group(function () {
+Route::middleware(['auth', 'permission.check:inventario.donantes.gestionar|inventario.donaciones.registrar|inventario.dashboard.ver'])->group(function () {
     Route::resource('donante', Modules\Inventario\Http\Controllers\DonanteController::class);
 });
 

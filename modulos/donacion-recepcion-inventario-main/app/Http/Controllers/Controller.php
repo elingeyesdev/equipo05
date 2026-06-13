@@ -14,25 +14,12 @@ class Controller extends BaseController
 
     protected function assertPermission(string $permission): void
     {
-        abort_unless(auth()->user()?->canManage($permission), 403);
+        abort_unless(AccessControl::userCan(auth()->user(), $permission), 403);
     }
 
     protected function assertAnyPermission(string ...$permissions): void
     {
-        $user = auth()->user();
-        abort_unless($user, 403);
-
-        if ($user->hasRole('Administrador')) {
-            return;
-        }
-
-        foreach ($permissions as $permission) {
-            if ($user->can($permission)) {
-                return;
-            }
-        }
-
-        abort(403);
+        abort_unless(AccessControl::userCanAny(auth()->user(), $permissions), 403);
     }
 
     protected function assertAlmaceneroOrAdmin(): void
