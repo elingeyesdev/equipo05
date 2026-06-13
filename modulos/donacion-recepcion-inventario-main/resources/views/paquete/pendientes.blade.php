@@ -82,9 +82,9 @@
 
 @section('js')
 <script>
-    const API_BASE_URL = "{{ env('API_BASE_URL_ADS', 'http://192.168.22.128:8000') }}";
+    const PENDIENTES_URL = @json(route('gateway.logistica.paquetes.pendientes'));
+    const CREAR_PAQUETE_URL = @json(route('inventario.paquete.create'));
     
-    // Cargar solicitudes al inicio
     document.addEventListener('DOMContentLoaded', function() {
         cargarSolicitudes();
     });
@@ -94,12 +94,17 @@
         const error = document.getElementById('error');
         const container = document.getElementById('solicitudesContainer');
         
-        // Mostrar loading
         loading.style.display = 'block';
         error.style.display = 'none';
         container.innerHTML = '';
         
-        fetch(`${API_BASE_URL}/api/gateway/logistica/paquetes/pendientes`)
+        fetch(PENDIENTES_URL, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'same-origin',
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al cargar las solicitudes');
@@ -250,7 +255,7 @@
         sessionStorage.setItem('codigo_seguimiento', codigoSeguimiento);
         
         // Redirigir al formulario de creación de paquete
-        window.location.href = '/paquete/create';
+        window.location.href = CREAR_PAQUETE_URL;
     }
 </script>
 @stop

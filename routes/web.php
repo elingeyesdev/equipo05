@@ -223,6 +223,17 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+Route::middleware(['auth', 'module.access:inventario', 'logistica.db'])
+    ->prefix('api/gateway/logistica')
+    ->group(function () {
+        Route::get('paquetes/pendientes', [\App\Http\Controllers\Fusion\GatewayLogisticaController::class, 'paquetesPendientes'])
+            ->name('gateway.logistica.paquetes.pendientes');
+        Route::patch('paquetes/{id}/armar', [\App\Http\Controllers\Fusion\GatewayLogisticaController::class, 'armarPaquete'])
+            ->name('gateway.logistica.paquetes.armar');
+        Route::get('paquetes/destino-voluntario/{codigo}', [\App\Http\Controllers\Fusion\GatewayLogisticaController::class, 'destinoVoluntario'])
+            ->name('gateway.logistica.paquetes.destino-voluntario');
+    });
+
 Route::prefix('inventario')
     ->as('inventario.')
     ->middleware(['auth', 'inventario.db', 'module.access:inventario'])

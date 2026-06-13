@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputEncargado = document.getElementById('encargado');
     const alertDatos = document.getElementById('alert-datos-externos');
     const alertMensaje = document.getElementById('alert-mensaje');
-    const apiBaseUrl = '{{ env("API_BASE_URL_ADS") }}';
 
     selectPaquete.addEventListener('change', async function() {
         const selectedOption = this.options[this.selectedIndex];
@@ -125,7 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!codigoPaquete) return;
 
         try {
-            const response = await fetch(`${apiBaseUrl}/api/gateway/logistica/paquetes/destino-voluntario/${codigoPaquete}`);
+            const destinoBaseUrl = @json(url('/api/gateway/logistica/paquetes/destino-voluntario'));
+            const response = await fetch(`${destinoBaseUrl}/${encodeURIComponent(codigoPaquete)}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'same-origin',
+            });
             
             if (response.ok) {
                 const data = await response.json();

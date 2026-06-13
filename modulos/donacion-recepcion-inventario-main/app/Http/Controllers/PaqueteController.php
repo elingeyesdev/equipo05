@@ -220,8 +220,7 @@ class PaqueteController extends Controller
     private function notificarSistemaExterno($idPaqueteExterno, $primeraUbicacion)
     {
         try {
-            $apiBaseUrl = env('API_BASE_URL_ADS', 'http://192.168.22.128:8000');
-            $url = "{$apiBaseUrl}/api/gateway/logistica/paquetes/{$idPaqueteExterno}/armar";
+            $url = route('gateway.logistica.paquetes.armar', ['id' => $idPaqueteExterno]);
 
             // Obtener CI del usuario logueado
             $ciUsuario = auth()->user()->ci ?? 'Sin CI';
