@@ -387,8 +387,8 @@
               if (empty($iniciales)) {
                   $iniciales = 'V';
               }
-              $estadoClass = $voluntario->activo ? 'activo' : 'inactivo';
-              $estadoLabel = $voluntario->activo ? 'Activo' : 'Inactivo';
+              $estadoClass = data_get($voluntario, 'activo') ? 'activo' : 'inactivo';
+              $estadoLabel = data_get($voluntario, 'activo') ? 'Activo' : 'Inactivo';
             @endphp
             <a href="{{ route('seguimiento.crud.edit', ['seccion' => $seccion, 'id' => $voluntario->id_usuario]) }}" class="card-voluntario">
               <div class="avatar">
@@ -401,7 +401,7 @@
                     {{ $estadoLabel }}
                   </span>
                 </div>
-                <p>CI: {{ $voluntario->ci }} &nbsp; | &nbsp; Tipo de Sangre: {{ $voluntario->tipo_sangre ?? 'N/D' }}</p>
+                <p>CI: {{ data_get($voluntario, 'ci', 'N/D') }} &nbsp; | &nbsp; Tipo de Sangre: {{ data_get($voluntario, 'tipo_sangre', 'N/D') }}</p>
               </div>
             </a>
           @empty

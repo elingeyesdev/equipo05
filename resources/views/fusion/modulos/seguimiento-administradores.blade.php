@@ -432,11 +432,11 @@
               <i class="fas fa-envelope"></i> {{ $admin->email ?: 'Sin correo electrónico' }}
             </p>
             <p class="admin-detail-item">
-              <i class="fas fa-id-card"></i> CI: {{ $admin->ci ?: 'Sin Cédula de Identidad' }}
+              <i class="fas fa-id-card"></i> CI: {{ data_get($admin, 'ci') ?: 'Sin Cédula de Identidad' }}
             </p>
-            @if(!empty($admin->telefono))
+            @if(!empty(data_get($admin, 'telefono')))
               <p class="admin-detail-item">
-                <i class="fas fa-phone"></i> Tel: {{ $admin->telefono }}
+                <i class="fas fa-phone"></i> Tel: {{ data_get($admin, 'telefono') }}
               </p>
             @endif
           </div>

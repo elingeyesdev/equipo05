@@ -217,8 +217,9 @@
       @php
         $ciNumero = '';
         $ciExt = '';
-        if ($registro && !empty($registro->ci)) {
-            $parts = explode(' ', trim($registro->ci));
+        $ciRegistro = data_get($registro, 'ci');
+        if ($registro && !empty($ciRegistro)) {
+            $parts = explode(' ', trim($ciRegistro));
             $ciNumero = $parts[0] ?? '';
             $ciExt = $parts[1] ?? '';
         }
@@ -333,7 +334,7 @@
                 id="telefono" 
                 class="form-control-custom" 
                 placeholder="Ej: 71234567" 
-                value="{{ old('telefono', $registro->telefono ?? '') }}"
+                value="{{ old('telefono', data_get($registro, 'telefono', '')) }}"
                 pattern="[0-9]{7,8}"
                 title="Debe ingresar de 7 a 8 dígitos numéricos"
               >

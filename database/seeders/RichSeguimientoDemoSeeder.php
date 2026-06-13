@@ -29,17 +29,26 @@ class RichSeguimientoDemoSeeder extends Seeder
 
             if ($db->table('usuario')->where('email', $email)->exists()) continue;
 
-            $db->table('usuario')->insert([
+            $row = [
                 'nombre' => $nombre,
                 'apellido' => $apellido,
                 'email' => $email,
                 'activo' => (bool) rand(0, 1),
                 'administrador' => ($i === 0),
-                'ci' => (string) rand(5000000, 9999999),
-                'tipo_sangre' => ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'][rand(0, 7)],
                 'created_at' => $now->subDays(rand(1, 60)),
                 'updated_at' => $now,
-            ]);
+            ];
+            if (Schema::connection('seguimiento')->hasColumn('usuario', 'ci')) {
+                $row['ci'] = (string) rand(5000000, 9999999);
+            }
+            if (Schema::connection('seguimiento')->hasColumn('usuario', 'tipo_sangre')) {
+                $row['tipo_sangre'] = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'][rand(0, 7)];
+            }
+            if (Schema::connection('seguimiento')->hasColumn('usuario', 'telefono')) {
+                $row['telefono'] = '7'.rand(1000000, 9999999);
+            }
+
+            $db->table('usuario')->insert($row);
         }
 
         // 2. Capacitaciones
