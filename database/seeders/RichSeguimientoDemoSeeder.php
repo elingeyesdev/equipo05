@@ -34,7 +34,7 @@ class RichSeguimientoDemoSeeder extends Seeder
                 'apellido' => $apellido,
                 'email' => $email,
                 'activo' => (bool) rand(0, 1),
-                'administrador' => ($i === 0),
+                'administrador' => false,
                 'created_at' => $now->subDays(rand(1, 60)),
                 'updated_at' => $now,
             ];
@@ -103,7 +103,139 @@ class RichSeguimientoDemoSeeder extends Seeder
         }
 
         // Obtener ids de voluntarios para relacionar
-        $voluntariosIds = $db->table('usuario')->pluck('id_usuario')->toArray();
+        $voluntariosIds = $db->table('usuario')->where('administrador', false)->pluck('id_usuario')->toArray();
+
+        // 3b. Administradores del modulo
+        $adminsDemo = [
+            ['nombre' => 'Patricia', 'apellido' => 'Vargas', 'email' => 'patricia.vargas@seguimiento.bo', 'ci' => '4567890', 'telefono' => '71234501'],
+            ['nombre' => 'Ricardo', 'apellido' => 'Salazar', 'email' => 'ricardo.salazar@seguimiento.bo', 'ci' => '5678901', 'telefono' => '71234502'],
+            ['nombre' => 'Gabriela', 'apellido' => 'Condori', 'email' => 'gabriela.condori@seguimiento.bo', 'ci' => '6789012', 'telefono' => '71234503'],
+            ['nombre' => 'Hugo', 'apellido' => 'Aguilar', 'email' => 'hugo.aguilar@seguimiento.bo', 'ci' => '7890123', 'telefono' => '71234504'],
+        ];
+        foreach ($adminsDemo as $admin) {
+            if ($db->table('usuario')->where('email', $admin['email'])->exists()) {
+                $db->table('usuario')->where('email', $admin['email'])->update([
+                    'administrador' => true,
+                    'activo' => true,
+                    'updated_at' => $now,
+                ]);
+                continue;
+            }
+            $row = [
+                'nombre' => $admin['nombre'],
+                'apellido' => $admin['apellido'],
+                'email' => $admin['email'],
+                'activo' => true,
+                'administrador' => true,
+                'created_at' => $now->copy()->subDays(rand(30, 120)),
+                'updated_at' => $now,
+            ];
+            if (Schema::connection('seguimiento')->hasColumn('usuario', 'ci')) {
+                $row['ci'] = $admin['ci'];
+            }
+            if (Schema::connection('seguimiento')->hasColumn('usuario', 'telefono')) {
+                $row['telefono'] = $admin['telefono'];
+            }
+            if (Schema::connection('seguimiento')->hasColumn('usuario', 'tipo_sangre')) {
+                $row['tipo_sangre'] = 'O+';
+            }
+            $db->table('usuario')->insert($row);
+        }
+
+        // 3c. Universidades
+        $universidadesDemo = [
+            ['nombre' => 'Universidad Mayor de San Simón', 'sigla' => 'UMSS', 'ciudad' => 'Cochabamba'],
+            ['nombre' => 'Universidad Autónoma Gabriel René Moreno', 'sigla' => 'UAGRM', 'ciudad' => 'Santa Cruz'],
+            ['nombre' => 'Universidad Mayor de San Andrés', 'sigla' => 'UMSA', 'ciudad' => 'La Paz'],
+            ['nombre' => 'Universidad Católica Boliviana', 'sigla' => 'UCB', 'ciudad' => 'La Paz'],
+            ['nombre' => 'Universidad Privada de Santa Cruz de la Sierra', 'sigla' => 'UPSA', 'ciudad' => 'Santa Cruz'],
+            ['nombre' => 'Universidad Autónoma Tomás Frías', 'sigla' => 'UATF', 'ciudad' => 'Potosí'],
+            ['nombre' => 'Universidad Tecnica de Oruro', 'sigla' => 'UTO', 'ciudad' => 'Oruro'],
+            ['nombre' => 'Universidad Autónoma Juan Misael Saracho', 'sigla' => 'UAJMS', 'ciudad' => 'Tarija'],
+        ];
+        $universidadIds = [];
+        if (Schema::connection('seguimiento')->hasTable('universidad')) {
+            foreach ($universidadesDemo as $uni) {
+                $existing = $db->table('universidad')->where('nombre', $uni['nombre'])->first();
+                if ($existing) {
+                    $update = ['updated_at' => $now];
+                    if (Schema::connection('seguimiento')->hasColumn('universidad', 'sigla')) {
+                        $update['sigla'] = $uni['sigla'];
+                    }
+                    if (Schema::connection('seguimiento')->hasColumn('universidad', 'ciudad')) {
+                        $update['ciudad'] = $uni['ciudad'];
+                    }
+                    $db->table('universidad')->where('id_universidad', $existing->id_universidad)->update($update);
+                    $universidadIds[] = $existing->id_universidad;
+                    continue;
+                }
+                $row = [
+                    'nombre' => $uni['nombre'],
+                    'created_at' => $now->copy()->subDays(rand(60, 200)),
+                    'updated_at' => $now,
+                ];
+                if (Schema::connection('seguimiento')->hasColumn('universidad', 'sigla')) {
+                    $row['sigla'] = $uni['sigla'];
+                }
+                if (Schema::connection('seguimiento')->hasColumn('universidad', 'ciudad')) {
+                    $row['ciudad'] = $uni['ciudad'];
+                }
+                $universidadIds[] = $db->table('universidad')->insertGetId($row, 'id_universidad');
+            }
+        }
+
+        if ($universidadIds !== [] && Schema::connection('seguimiento')->hasColumn('usuario', 'id_universidad')) {
+            $volSinUni = $db->table('usuario')
+                ->where('administrador', false)
+                ->whereNull('id_universidad')
+                ->pluck('id_usuario')
+                ->toArray();
+            foreach ($volSinUni as $i => $volId) {
+                $db->table('usuario')->where('id_usuario', $volId)->update([
+                    'id_universidad' => $universidadIds[$i % count($universidadIds)],
+                    'updated_at' => $now,
+                ]);
+            }
+        }
+
+        // 3d. Centro de soporte / consultas
+        if (Schema::connection('seguimiento')->hasTable('consultas') && count($voluntariosIds) > 0) {
+            if ($db->table('consultas')->count() < 5) {
+                $consultasDemo = [
+                    ['asunto' => 'Problema con acceso al portal', 'descripcion' => 'No puedo ingresar con mi correo registrado desde ayer por la tarde.', 'estado' => 'abierta', 'prioridad' => 'alta'],
+                    ['asunto' => 'Actualización de datos personales', 'descripcion' => 'Necesito cambiar mi número de teléfono y tipo de sangre en el perfil.', 'estado' => 'en_proceso', 'prioridad' => 'media'],
+                    ['asunto' => 'Certificado de capacitación', 'descripcion' => 'Solicito constancia del curso de primeros auxilios realizado el mes pasado.', 'estado' => 'resuelta', 'prioridad' => 'baja'],
+                    ['asunto' => 'Error al registrar participación', 'descripcion' => 'El formulario de participación en brigada no guarda la fecha seleccionada.', 'estado' => 'abierta', 'prioridad' => 'alta'],
+                    ['asunto' => 'Consulta sobre turnos de guardia', 'descripcion' => '¿Cómo confirmo mi disponibilidad para el fin de semana en San Matías?', 'estado' => 'en_proceso', 'prioridad' => 'media'],
+                    ['asunto' => 'Duplicidad de registro', 'descripcion' => 'Aparezco dos veces en la lista de voluntarios activos con el mismo CI.', 'estado' => 'cerrada', 'prioridad' => 'media'],
+                    ['asunto' => 'Solicitud de baja temporal', 'descripcion' => 'Por motivos académicos necesito pausar mi participación por 2 meses.', 'estado' => 'abierta', 'prioridad' => 'baja'],
+                    ['asunto' => 'Incidencia en evaluación online', 'descripcion' => 'El enlace del token de evaluación muestra error 404 al abrirlo.', 'estado' => 'resuelta', 'prioridad' => 'alta'],
+                ];
+                foreach ($consultasDemo as $idx => $consulta) {
+                    if ($db->table('consultas')->where('asunto', $consulta['asunto'])->exists()) {
+                        continue;
+                    }
+                    $row = [
+                        'asunto' => $consulta['asunto'],
+                        'created_at' => $now->copy()->subDays(rand(1, 20))->subHours($idx),
+                        'updated_at' => $now,
+                    ];
+                    if (Schema::connection('seguimiento')->hasColumn('consultas', 'descripcion')) {
+                        $row['descripcion'] = $consulta['descripcion'];
+                    }
+                    if (Schema::connection('seguimiento')->hasColumn('consultas', 'estado')) {
+                        $row['estado'] = $consulta['estado'];
+                    }
+                    if (Schema::connection('seguimiento')->hasColumn('consultas', 'prioridad')) {
+                        $row['prioridad'] = $consulta['prioridad'];
+                    }
+                    if (Schema::connection('seguimiento')->hasColumn('consultas', 'id_usuario')) {
+                        $row['id_usuario'] = $voluntariosIds[$idx % count($voluntariosIds)];
+                    }
+                    $db->table('consultas')->insert($row);
+                }
+            }
+        }
 
         // 4. Solicitudes de Ayuda
         if (Schema::connection('seguimiento')->hasTable('solicitudes_ayuda') && count($voluntariosIds) > 0) {
@@ -185,28 +317,84 @@ class RichSeguimientoDemoSeeder extends Seeder
             ]);
         }
 
-        // 5. Chat Mensajes
-        if (Schema::connection('seguimiento')->hasTable('chat_mensajes')) {
-            $mensajes = [
-                'Brigada Alpha lista para salir a zona de Roboré.',
-                'Necesitamos más suministros de agua en el punto de acopio 2.',
-                'Confirmado el traslado de personal voluntario vía aérea.',
-                'El fuego está controlado en el sector norte, procedemos con guardia de cenizas.',
-                'Solicito reporte de situation del equipo en San Matías.',
-                'Kit de primeros auxilios entregado con éxito.',
-                'Hay un nuevo foco detectado cerca de la comunidad.',
-                'Iniciando jornada de capacitación para nuevos voluntarios.'
-            ];
-            foreach ($mensajes as $mensaje) {
-                $db->table('chat_mensajes')->insert([
-                    'mensaje' => $mensaje,
-                    'created_at' => $now->subMinutes(rand(10, 5000)),
-                    'updated_at' => $now,
-                ]);
+        // 5. Chat de voluntarios (conversaciones)
+        if (Schema::connection('seguimiento')->hasTable('chat_mensajes') && count($voluntariosIds) > 0) {
+            $hasConversacion = Schema::connection('seguimiento')->hasColumn('chat_mensajes', 'conversacion_id');
+            if (! $hasConversacion || $db->table('chat_mensajes')->whereNotNull('conversacion_id')->count() < 5) {
+                if ($hasConversacion) {
+                    $db->table('chat_mensajes')->delete();
+                }
+
+                $conversaciones = [
+                    [
+                        'vol_id' => $voluntariosIds[0] ?? null,
+                        'mensajes' => [
+                            ['tipo' => 'voluntario', 'texto' => 'Buenos días, confirmo asistencia a la brigada de Roboré mañana 06:00.'],
+                            ['tipo' => 'coordinador', 'texto' => 'Recibido Patricia. Te asignamos al equipo Alpha con salida desde acopio central.'],
+                            ['tipo' => 'voluntario', 'texto' => 'Perfecto, llevo EPP completo y botiquín personal.'],
+                        ],
+                    ],
+                    [
+                        'vol_id' => $voluntariosIds[1] ?? null,
+                        'mensajes' => [
+                            ['tipo' => 'voluntario', 'texto' => 'Coordinación, ¿hay transporte confirmado para San Ignacio?'],
+                            ['tipo' => 'coordinador', 'texto' => 'Sí, camioneta 4x4 sale a las 05:30. Punto de encuentro: plaza principal.'],
+                        ],
+                    ],
+                    [
+                        'vol_id' => $voluntariosIds[2] ?? null,
+                        'mensajes' => [
+                            ['tipo' => 'voluntario', 'texto' => 'Reporto llegada al puesto de guardia en Concepción.'],
+                            ['tipo' => 'coordinador', 'texto' => 'Gracias. Mantén contacto por radio canal 3.'],
+                            ['tipo' => 'voluntario', 'texto' => 'Copy. Sin novedad en el sector asignado.'],
+                            ['tipo' => 'coordinador', 'texto' => 'Excelente trabajo. Relevo programado para las 18:00.'],
+                        ],
+                    ],
+                    [
+                        'vol_id' => $voluntariosIds[3] ?? null,
+                        'mensajes' => [
+                            ['tipo' => 'voluntario', 'texto' => 'Necesitamos más agua embotellada en el campamento norte.'],
+                            ['tipo' => 'coordinador', 'texto' => 'Logística confirma envío de 2 bidones en la próxima ronda.'],
+                        ],
+                    ],
+                    [
+                        'vol_id' => $voluntariosIds[4] ?? null,
+                        'mensajes' => [
+                            ['tipo' => 'voluntario', 'texto' => '¿A qué hora es la capacitación de hoy?'],
+                            ['tipo' => 'coordinador', 'texto' => '15:00 en el aula del centro comunitario. Duración estimada 2 horas.'],
+                            ['tipo' => 'voluntario', 'texto' => 'Estaré puntual. Gracias.'],
+                        ],
+                    ],
+                ];
+
+                $minOffset = 10;
+                foreach ($conversaciones as $conv) {
+                    if (! $conv['vol_id']) {
+                        continue;
+                    }
+                    foreach ($conv['mensajes'] as $j => $msg) {
+                        $row = [
+                            'mensaje' => $msg['texto'],
+                            'created_at' => $now->copy()->subMinutes($minOffset),
+                            'updated_at' => $now,
+                        ];
+                        $minOffset += rand(15, 120);
+                        if (Schema::connection('seguimiento')->hasColumn('chat_mensajes', 'id_usuario')) {
+                            $row['id_usuario'] = $conv['vol_id'];
+                        }
+                        if ($hasConversacion) {
+                            $row['conversacion_id'] = $conv['vol_id'];
+                        }
+                        if (Schema::connection('seguimiento')->hasColumn('chat_mensajes', 'remitente_tipo')) {
+                            $row['remitente_tipo'] = $msg['tipo'];
+                        }
+                        $db->table('chat_mensajes')->insert($row);
+                    }
+                }
             }
         }
 
         $this->command?->info('Seguimiento: Datos demo de voluntarios y solicitudes ampliados significativamente.');
-        $this->command?->info('Seguimiento: voluntarios, capacitaciones y actividad demo ampliados.');
+        $this->command?->info('Seguimiento: administradores, universidades, consultas y chat operativos.');
     }
 }

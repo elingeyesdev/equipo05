@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS seguimiento.usuario (
     telefono        VARCHAR(40),
     activo          BOOLEAN NOT NULL DEFAULT TRUE,
     administrador   BOOLEAN NOT NULL DEFAULT FALSE,
+    id_universidad  BIGINT,
     created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at      TIMESTAMP(0) WITHOUT TIME ZONE
 );
@@ -64,15 +65,20 @@ CREATE TABLE IF NOT EXISTS seguimiento.solicitudes_ayuda (
 );
 
 CREATE TABLE IF NOT EXISTS seguimiento.chat_mensajes (
-    id          BIGSERIAL PRIMARY KEY,
-    mensaje     TEXT,
-    created_at  TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at  TIMESTAMP(0) WITHOUT TIME ZONE
+    id              BIGSERIAL PRIMARY KEY,
+    mensaje         TEXT,
+    id_usuario      BIGINT,
+    conversacion_id BIGINT,
+    remitente_tipo  VARCHAR(20),
+    created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP(0) WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS seguimiento.universidad (
     id_universidad BIGSERIAL PRIMARY KEY,
     nombre         VARCHAR(200),
+    sigla          VARCHAR(20),
+    ciudad         VARCHAR(100),
     created_at     TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at     TIMESTAMP(0) WITHOUT TIME ZONE
 );
@@ -80,6 +86,10 @@ CREATE TABLE IF NOT EXISTS seguimiento.universidad (
 CREATE TABLE IF NOT EXISTS seguimiento.consultas (
     id          BIGSERIAL PRIMARY KEY,
     asunto      VARCHAR(200),
+    descripcion TEXT,
+    estado      VARCHAR(40) DEFAULT 'abierta',
+    prioridad   VARCHAR(20) DEFAULT 'media',
+    id_usuario  BIGINT,
     created_at  TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at  TIMESTAMP(0) WITHOUT TIME ZONE
 );

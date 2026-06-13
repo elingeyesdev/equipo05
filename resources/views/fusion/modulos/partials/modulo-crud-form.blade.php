@@ -64,6 +64,18 @@
                                 <input type="number" step="any" name="{{ $column }}" id="modulo-coordenadas-lat" class="form-control" value="{{ old($column, data_get($registro, $column)) }}" placeholder="{{ $placeholder }}">
                             @elseif($coordenadasMapaActivo && $column === 'longitud')
                                 <input type="number" step="any" name="{{ $column }}" id="modulo-coordenadas-lng" class="form-control" value="{{ old($column, data_get($registro, $column)) }}" placeholder="{{ $placeholder }}">
+                            @elseif($seccion === 'helpdesk' && $column === 'estado')
+                                <select name="{{ $column }}" class="form-control">
+                                    @foreach(['abierta', 'en_proceso', 'resuelta', 'cerrada'] as $estado)
+                                        <option value="{{ $estado }}" {{ old($column, data_get($registro, $column, 'abierta')) === $estado ? 'selected' : '' }}>{{ ucfirst(str_replace('_', ' ', $estado)) }}</option>
+                                    @endforeach
+                                </select>
+                            @elseif($seccion === 'helpdesk' && $column === 'prioridad')
+                                <select name="{{ $column }}" class="form-control">
+                                    @foreach(['baja', 'media', 'alta'] as $prioridad)
+                                        <option value="{{ $prioridad }}" {{ old($column, data_get($registro, $column, 'media')) === $prioridad ? 'selected' : '' }}>{{ ucfirst($prioridad) }}</option>
+                                    @endforeach
+                                </select>
                             @elseif(in_array($column, ['activo', 'administrador', 'usado'], true))
                                 @php
                                     $rawBool = old($column, data_get($registro, $column, $registro ? null : '1'));

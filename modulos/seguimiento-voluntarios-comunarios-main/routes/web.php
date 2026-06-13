@@ -19,6 +19,7 @@ Route::get('/ayudas-solicitadas', [SeccionesController::class, 'show'])->default
 Route::get('/administradores', [SeccionesController::class, 'show'])->defaults('seccion', 'administradores')->name('administradores');
 Route::get('/universidades', [SeccionesController::class, 'show'])->defaults('seccion', 'universidades')->name('universidades');
 Route::get('/chat-consulta', [SeccionesController::class, 'show'])->defaults('seccion', 'chat-consulta')->name('chat-consulta');
+Route::post('/chat-consulta/mensaje', [SeccionesController::class, 'chatEnviar'])->name('chat.enviar');
 Route::get('/helpdesk', [SeccionesController::class, 'show'])->defaults('seccion', 'helpdesk')->name('helpdesk');
 
 Route::prefix('crud/{seccion}')->group(function () {

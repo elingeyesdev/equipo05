@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class SeccionesController extends Controller
 {
@@ -402,11 +403,141 @@ class SeccionesController extends Controller
         return redirect()->route("seguimiento.{$seccion}")->with('success', 'Registro actualizado correctamente.');
     }
 
+    public function chatEnviar(Request $request): RedirectResponse
+    {
+        FusionModuloAccess::assertSeguimientoSection('chat-consulta', true);
+        $connection = $this->moduloConnection();
+
+        $validated = $request->validate([
+            'conversacion_id' => ['required', 'integer'],
+            'mensaje' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $voluntario = DB::connection($connection)->table('usuario')
+            ->where('id_usuario', $validated['conversacion_id'])
+            ->where('administrador', false)
+            ->first();
+        abort_unless($voluntario, 404);
+
+        $row = [
+            'mensaje' => trim($validated['mensaje']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        if (Schema::connection($connection)->hasColumn('chat_mensajes', 'id_usuario')) {
+            $row['id_usuario'] = $voluntario->id_usuario;
+        }
+        if (Schema::connection($connection)->hasColumn('chat_mensajes', 'conversacion_id')) {
+            $row['conversacion_id'] = $voluntario->id_usuario;
+        }
+        if (Schema::connection($connection)->hasColumn('chat_mensajes', 'remitente_tipo')) {
+            $row['remitente_tipo'] = 'coordinador';
+        }
+
+        DB::connection($connection)->table('chat_mensajes')->insert($row);
+
+        return redirect()
+            ->route('seguimiento.chat-consulta', ['conversacion' => $voluntario->id_usuario])
+            ->with('success', 'Mensaje enviado.');
+    }
+
+    private function chatConsultaView(string $connection, ?int $conversacionActiva): View
+    {
+        $hasConversacion = Schema::connection($connection)->hasColumn('chat_mensajes', 'conversacion_id');
+
+        if ($hasConversacion) {
+            $conversacionIds = DB::connection($connection)->table('chat_mensajes')
+                ->whereNotNull('conversacion_id')
+                ->select('conversacion_id', DB::raw('MAX(created_at) as ultimo_mensaje_at'))
+                ->groupBy('conversacion_id')
+                ->orderByDesc('ultimo_mensaje_at')
+                ->get();
+
+            $conversaciones = $conversacionIds->map(function ($row) use ($connection) {
+                $usuario = DB::connection($connection)->table('usuario')
+                    ->where('id_usuario', $row->conversacion_id)
+                    ->first();
+                $ultimo = DB::connection($connection)->table('chat_mensajes')
+                    ->where('conversacion_id', $row->conversacion_id)
+                    ->orderByDesc('created_at')
+                    ->value('mensaje');
+
+                return (object) [
+                    'conversacion_id' => $row->conversacion_id,
+                    'nombre' => $usuario->nombre ?? 'Voluntario',
+                    'apellido' => $usuario->apellido ?? '',
+                    'ultimo_mensaje_at' => $row->ultimo_mensaje_at,
+                    'ultimo_mensaje' => $ultimo,
+                ];
+            });
+        } else {
+            $conversaciones = DB::connection($connection)->table('usuario')
+                ->where('administrador', false)
+                ->where('activo', true)
+                ->select('id_usuario as conversacion_id', 'nombre', 'apellido')
+                ->orderBy('nombre')
+                ->limit(10)
+                ->get()
+                ->map(function ($u) {
+                    $u->ultimo_mensaje = null;
+                    $u->ultimo_mensaje_at = null;
+
+                    return $u;
+                });
+        }
+
+        if (! $conversacionActiva && $conversaciones->isNotEmpty()) {
+            $conversacionActiva = (int) $conversaciones->first()->conversacion_id;
+        }
+
+        $voluntarioActivo = null;
+        $mensajes = collect();
+        if ($conversacionActiva) {
+            $voluntarioActivo = DB::connection($connection)->table('usuario')
+                ->where('id_usuario', $conversacionActiva)
+                ->where('administrador', false)
+                ->first();
+
+            $msgQuery = DB::connection($connection)->table('chat_mensajes');
+            if ($hasConversacion) {
+                $msgQuery->where('conversacion_id', $conversacionActiva);
+            } elseif (Schema::connection($connection)->hasColumn('chat_mensajes', 'id_usuario')) {
+                $msgQuery->where('id_usuario', $conversacionActiva);
+            }
+            $mensajes = $msgQuery->orderBy('created_at')->get();
+        }
+
+        return view('fusion.modulos.seguimiento-chat-consulta', [
+            'seccion' => 'chat-consulta',
+            'tituloSeccion' => 'Chat de Voluntarios',
+            'conversaciones' => $conversaciones,
+            'conversacionActiva' => $conversacionActiva,
+            'voluntarioActivo' => $voluntarioActivo,
+            'mensajes' => $mensajes,
+        ]);
+    }
+
     protected function normalizeCrudColumns(string $seccion, array $columns): array
     {
         if (in_array($seccion, ['voluntarios', 'voluntarios-inactivos'], true)) {
             $columns = array_values(array_filter($columns, fn ($column) => $column !== 'administrador'));
             $preferred = ['nombre', 'apellido', 'email', 'ci', 'tipo_sangre', 'telefono', 'activo'];
+            $ordered = array_values(array_filter($preferred, fn ($column) => in_array($column, $columns, true)));
+            $rest = array_values(array_diff($columns, $ordered));
+
+            return array_merge($ordered, $rest);
+        }
+
+        if ($seccion === 'universidades') {
+            $preferred = ['nombre', 'sigla', 'ciudad'];
+            $ordered = array_values(array_filter($preferred, fn ($column) => in_array($column, $columns, true)));
+            $rest = array_values(array_diff($columns, $ordered));
+
+            return array_merge($ordered, $rest);
+        }
+
+        if ($seccion === 'helpdesk') {
+            $preferred = ['asunto', 'descripcion', 'prioridad', 'estado', 'id_usuario'];
             $ordered = array_values(array_filter($preferred, fn ($column) => in_array($column, $columns, true)));
             $rest = array_values(array_diff($columns, $ordered));
 
@@ -519,6 +650,24 @@ class SeccionesController extends Controller
         }
 
         return $data;
+    }
+
+    protected function getOptionsForColumn(string $column): array
+    {
+        if ($column === 'id_usuario') {
+            return DB::connection($this->moduloConnection())
+                ->table('usuario')
+                ->where('administrador', false)
+                ->orderBy('nombre')
+                ->get(['id_usuario as id', 'nombre', 'apellido'])
+                ->map(fn ($u) => (object) [
+                    'id' => $u->id,
+                    'nombre' => trim($u->nombre.' '.$u->apellido),
+                ])
+                ->all();
+        }
+
+        return [];
     }
 
     protected function moduloConnection(): string
@@ -688,6 +837,56 @@ class SeccionesController extends Controller
                     'primaryKey' => $pk,
                     'administradores' => $admins,
                 ]);
+            }
+
+            if ($seccion === 'universidades') {
+                $query = DB::connection($connection)->table('universidad');
+                if (Schema::connection($connection)->hasColumn('universidad', 'nombre')) {
+                    $query->orderBy('nombre');
+                }
+                $universidades = $query->get()->map(function ($uni) use ($connection) {
+                    $uni->voluntarios_count = Schema::connection($connection)->hasColumn('usuario', 'id_universidad')
+                        ? DB::connection($connection)->table('usuario')->where('id_universidad', $uni->id_universidad)->where('administrador', false)->count()
+                        : 0;
+
+                    return $uni;
+                });
+                $totalVoluntarios = Schema::connection($connection)->hasColumn('usuario', 'id_universidad')
+                    ? DB::connection($connection)->table('usuario')->whereNotNull('id_universidad')->where('administrador', false)->count()
+                    : 0;
+
+                return view('fusion.modulos.seguimiento-universidades', [
+                    'seccion' => $seccion,
+                    'tituloSeccion' => $config['titulo'],
+                    'universidades' => $universidades,
+                    'totalVoluntarios' => $totalVoluntarios,
+                ]);
+            }
+
+            if ($seccion === 'helpdesk') {
+                $query = DB::connection($connection)->table('consultas')
+                    ->leftJoin('usuario', 'consultas.id_usuario', '=', 'usuario.id_usuario')
+                    ->select('consultas.*', 'usuario.nombre as vol_nombre', 'usuario.apellido as vol_apellido')
+                    ->orderByDesc('consultas.created_at');
+                $consultas = $query->get();
+                $conteoEstados = ['abierta' => 0, 'en_proceso' => 0, 'resuelta' => 0, 'cerrada' => 0];
+                foreach ($consultas as $c) {
+                    $est = strtolower($c->estado ?? 'abierta');
+                    if (isset($conteoEstados[$est])) {
+                        $conteoEstados[$est]++;
+                    }
+                }
+
+                return view('fusion.modulos.seguimiento-helpdesk', [
+                    'seccion' => $seccion,
+                    'tituloSeccion' => $config['titulo'],
+                    'consultas' => $consultas,
+                    'conteoEstados' => $conteoEstados,
+                ]);
+            }
+
+            if ($seccion === 'chat-consulta') {
+                return $this->chatConsultaView($connection, request()->integer('conversacion') ?: null);
             }
 
             if ($seccion === 'voluntarios' || $seccion === 'voluntarios-inactivos') {
