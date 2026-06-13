@@ -400,12 +400,76 @@ class AccessControl
         return false;
     }
 
-    /** Permisos operativos del módulo inventario para el rol Almacenero. */
-    public static function isInventarioOperationalPermission(string $permission): bool
+    /**
+     * Prefijos de permiso con acceso operativo completo por rol (evita 403 si Spatie está desactualizado).
+     *
+     * @return array<string, list<string>>
+     */
+    public static function roleOperationalPrefixes(): array
     {
-        return str_starts_with($permission, 'inventario.')
-            || $permission === 'admin.usuarios.gestionar'
-            || str_starts_with($permission, 'donante.');
+        return [
+            'Operador de Incendios' => ['incendios.'],
+            'Almacenero' => ['inventario.', 'donante.'],
+            'Coordinador Logístico' => ['logistica.'],
+            'Coordinador de Voluntarios' => ['voluntarios.'],
+            'Jefe de Cuadrilla' => ['cuadrillas.'],
+            'Rescatista' => ['rescate.'],
+            'Veterinario' => ['veterinaria.'],
+            'Cuidador' => ['cuidados.'],
+            'Voluntario' => ['voluntario.'],
+            'Donante' => ['donante.'],
+            'Ciudadano' => ['ciudadano.'],
+        ];
+    }
+
+    public static function roleGrantsPermission(?Usuario $user, string $permission): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        foreach (self::FINAL_ROLES as $roleName) {
+            if (! self::userHasRole($user, $roleName)) {
+                continue;
+            }
+
+            $mapped = self::rolePermissionMap()[$roleName] ?? [];
+            if (in_array($permission, $mapped, true)) {
+                return true;
+            }
+
+            foreach (self::roleOperationalPrefixes()[$roleName] ?? [] as $prefix) {
+                if (str_starts_with($permission, $prefix)) {
+                    return true;
+                }
+            }
+        }
+
+        if (self::userHasRole($user, 'Almacenero') && $permission === 'admin.usuarios.gestionar') {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function assignCanonicalRole(Usuario $user, string $canonicalRole): void
+    {
+        foreach (array_merge(self::DEPRECATED_ROLES, self::roleAliases($canonicalRole)) as $alias) {
+            if ($alias !== $canonicalRole) {
+                $user->removeRole($alias);
+            }
+        }
+
+        if (! $user->hasRole($canonicalRole)) {
+            $user->assignRole($canonicalRole);
+        }
+    }
+
+    public static function removeCanonicalRole(Usuario $user, string $canonicalRole): void
+    {
+        foreach (self::roleAliases($canonicalRole) as $alias) {
+            $user->removeRole($alias);
+        }
     }
 
     public static function userCan(?Usuario $user, string $permission): bool
@@ -418,7 +482,7 @@ class AccessControl
             return true;
         }
 
-        if (self::userHasRole($user, 'Almacenero') && self::isInventarioOperationalPermission($permission)) {
+        if (self::roleGrantsPermission($user, $permission)) {
             return true;
         }
 
@@ -556,12 +620,15 @@ class AccessControl
             'admin' => $role === 'Administrador',
             'inventario' => $role === 'Almacenero',
             'inventario_donante' => $role === 'Donante',
-            'incendios' => $role === 'Operador de Incendios',
+            'incendios' => in_array($role, [
+                'Operador de Incendios', 'Jefe de Cuadrilla', 'Rescatista',
+                'Coordinador de Voluntarios', 'Coordinador Logístico', 'Almacenero', 'Ciudadano',
+            ], true),
             'incendios_ciudadano' => $role === 'Ciudadano',
-            'logistica' => $role === 'Coordinador Logístico',
-            'seguimiento' => in_array($role, ['Coordinador de Voluntarios', 'Voluntario'], true),
-            'cuadrillas' => $role === 'Jefe de Cuadrilla',
-            'rescate' => in_array($role, ['Rescatista', 'Veterinario', 'Cuidador'], true),
+            'logistica' => in_array($role, ['Coordinador Logístico', 'Almacenero', 'Operador de Incendios'], true),
+            'seguimiento' => in_array($role, ['Coordinador de Voluntarios', 'Voluntario', 'Operador de Incendios'], true),
+            'cuadrillas' => in_array($role, ['Jefe de Cuadrilla', 'Operador de Incendios'], true),
+            'rescate' => in_array($role, ['Rescatista', 'Veterinario', 'Cuidador', 'Ciudadano'], true),
             'sync' => $role === 'Administrador',
             default => false,
         };

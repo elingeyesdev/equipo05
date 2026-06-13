@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\LogisticaTransportacion\ModuloController;
 use App\Http\Controllers\LogisticaTransportacion\SeccionesController;
+use App\Support\FusionModuloAccess;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['permission.check:'.FusionModuloAccess::LOGISTICA_PERMISSIONS])->group(function () {
 Route::get('/', [ModuloController::class, 'index'])->name('dashboard');
 Route::get('/estadisticas', [ModuloController::class, 'index'])->name('estadisticas');
 
@@ -37,4 +39,5 @@ Route::prefix('crud/{seccion}')->group(function () {
     Route::get('/{id}/edit', [SeccionesController::class, 'crudEdit'])->name('crud.edit');
     Route::put('/{id}', [SeccionesController::class, 'crudUpdate'])->name('crud.update');
     Route::delete('/{id}', [SeccionesController::class, 'crudDestroy'])->name('crud.destroy');
+});
 });

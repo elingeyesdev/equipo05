@@ -2,6 +2,8 @@
 
 namespace Modules\Rescate\Http\Controllers;
 
+use App\Support\AccessControl;
+use App\Support\RescateAccess;
 use Modules\Rescate\Models\Veterinarian;
 use Modules\Rescate\Models\Person;
 use Illuminate\Http\RedirectResponse;
@@ -27,10 +29,10 @@ class VeterinarianController extends Controller
      */
     public function index(Request $request): View
     {
-        $veterinarians = Veterinarian::with(['person.user'])->paginate();
+        RescateAccess::assertCanManagePeople();
+        $veterinarians = Veterinarian::with(['person.user'])->orderByDesc('id')->get();
 
-        return view('veterinarian.index', compact('veterinarians'))
-            ->with('i', ($request->input('page', 1) - 1) * $veterinarians->perPage());
+        return view('veterinarian.index', compact('veterinarians'));
     }
 
     /**
@@ -61,7 +63,7 @@ class VeterinarianController extends Controller
 
         // Si ya se crea aprobado, asignar rol al usuario vinculado
         if ($veterinarian->aprobado === true && $veterinarian->person?->user) {
-            $veterinarian->person->user->assignRole('veterinario');
+            AccessControl::assignCanonicalRole($veterinarian->person->user, 'Veterinario');
         }
 
         // Registrar tracking de solicitud
@@ -109,7 +111,7 @@ class VeterinarianController extends Controller
 
         // Si es un encargado (y no admin), solo puede cambiar aprobación y motivo de revisión
         $user = Auth::user();
-        if ($user && $user->hasRole('encargado') && ! $user->hasRole('admin')) {
+        if ($user && AccessControl::userHasRole($user, 'Operador de Incendios') && ! AccessControl::userHasRole($user, 'Administrador')) {
             $data = Arr::only($data, ['aprobado', 'motivo_revision']);
         }
 
@@ -125,9 +127,9 @@ class VeterinarianController extends Controller
         $userModel = $veterinarian->person?->user;
         if ($userModel) {
             if ($veterinarian->aprobado === true) {
-                $userModel->assignRole('veterinario');
+                AccessControl::assignCanonicalRole($userModel, 'Veterinario');
             } elseif ($veterinarian->aprobado === false || $veterinarian->aprobado === null) {
-                $userModel->removeRole('veterinario');
+                AccessControl::removeCanonicalRole($userModel, 'Veterinario');
             }
         }
 
@@ -180,9 +182,9 @@ class VeterinarianController extends Controller
         $userModel = $veterinarian->person?->user;
         if ($userModel) {
             if ($veterinarian->aprobado === true) {
-                $userModel->assignRole('veterinario');
+                AccessControl::assignCanonicalRole($userModel, 'Veterinario');
             } elseif ($veterinarian->aprobado === false || $veterinarian->aprobado === null) {
-                $userModel->removeRole('veterinario');
+                AccessControl::removeCanonicalRole($userModel, 'Veterinario');
             }
         }
 
@@ -220,6 +222,7 @@ class VeterinarianController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        RescateAccess::assertCanManagePeople();
         Veterinarian::findOrFail($id)->delete();
 
         return Redirect::route('rescate.veterinarians.index')

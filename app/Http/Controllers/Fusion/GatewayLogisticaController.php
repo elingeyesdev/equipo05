@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Fusion;
 
 use App\Http\Controllers\Controller;
+use App\Support\FusionModuloAccess;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +11,15 @@ use Illuminate\Support\Facades\Schema;
 
 class GatewayLogisticaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            FusionModuloAccess::assertGatewayLogistica($request->user());
+
+            return $next($request);
+        });
+    }
+
     public function paquetesPendientes(): JsonResponse
     {
         if (! Schema::connection('logistica')->hasTable('paquete')) {

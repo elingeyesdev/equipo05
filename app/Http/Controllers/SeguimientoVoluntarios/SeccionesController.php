@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SeguimientoVoluntarios;
 
 use App\Http\Controllers\Concerns\HandlesFusionModuloCrud;
 use App\Http\Controllers\Controller;
+use App\Support\FusionModuloAccess;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
@@ -20,6 +21,7 @@ class SeccionesController extends Controller
 
     public function crudCreate(string $seccion): View
     {
+        FusionModuloAccess::assertSeguimientoSection($seccion, true);
         if ($seccion === 'capacitaciones') {
             $secciones = $this->seccionesConfig();
             $config = $secciones[$seccion];
@@ -55,6 +57,7 @@ class SeccionesController extends Controller
 
     public function crudEdit(string $seccion, int $id): View
     {
+        FusionModuloAccess::assertSeguimientoSection($seccion, true);
         if ($seccion === 'capacitaciones') {
             $secciones = $this->seccionesConfig();
             $config = $secciones[$seccion];
@@ -114,6 +117,7 @@ class SeccionesController extends Controller
 
     public function crudStore(Request $request, string $seccion)
     {
+        FusionModuloAccess::assertSeguimientoSection($seccion, true);
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -221,6 +225,7 @@ class SeccionesController extends Controller
 
     public function crudUpdate(Request $request, string $seccion, int $id): \Illuminate\Http\RedirectResponse
     {
+        FusionModuloAccess::assertSeguimientoSection($seccion, true);
         if ($seccion === 'capacitaciones') {
             $secciones = $this->seccionesConfig();
             $config = $secciones[$seccion];
@@ -332,6 +337,11 @@ class SeccionesController extends Controller
         return 'fusion.modulos.seguimiento-crud-form';
     }
 
+    protected function moduloWriteKey(): string
+    {
+        return 'seguimiento';
+    }
+
     protected function seccionesConfig(): array
     {
         return [
@@ -351,6 +361,7 @@ class SeccionesController extends Controller
 
     public function show(string $seccion): View
     {
+        FusionModuloAccess::assertSeguimientoSection($seccion);
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -554,7 +565,7 @@ class SeccionesController extends Controller
                 $query->orderByDesc($pk);
             }
 
-            $filas = $query->limit(20)->get($columnas);
+            $filas = $query->get($columnas);
             $total = DB::connection($connection)->table($tabla)->count();
         }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\LogisticaTransportacion;
 
 use App\Http\Controllers\Controller;
+use App\Support\FusionModuloAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -255,6 +256,7 @@ class SeccionesController extends Controller
 
     public function solicitudStore(Request $request): RedirectResponse
     {
+        FusionModuloAccess::assertLogisticaWrite();
         $data = $request->validate([
             'nombre' => ['required', 'string', 'max:120'],
             'apellido' => ['nullable', 'string', 'max:120'],
@@ -337,7 +339,6 @@ class SeccionesController extends Controller
                 'destino.direccion as destino_direccion',
             ])
             ->orderByDesc('solicitud.created_at')
-            ->limit(30)
             ->get();
 
         return view('fusion.modulos.logistica-solicitudes', compact('solicitudes'));
@@ -365,7 +366,6 @@ class SeccionesController extends Controller
                 'estado.nombre_estado as estado_nombre',
             ])
             ->orderByDesc('paquete.updated_at')
-            ->limit(30)
             ->get();
 
         return view('fusion.modulos.logistica-paquetes', compact('paquetes'));
@@ -389,7 +389,6 @@ class SeccionesController extends Controller
                 'solicitud.codigo_seguimiento',
             ])
             ->orderByDesc('historial_seguimiento_donaciones.fecha_actualizacion')
-            ->limit(30)
             ->get();
 
         return view('fusion.modulos.logistica-seguimiento', compact('seguimientos'));
@@ -421,7 +420,7 @@ class SeccionesController extends Controller
                 $query->orderByDesc($pk);
             }
 
-            $filas = $query->limit(20)->get($columnas);
+            $filas = $query->get($columnas);
             $total = DB::connection($connection)->table($tabla)->count();
         }
 
@@ -438,6 +437,7 @@ class SeccionesController extends Controller
 
     public function crudCreate(string $seccion): View
     {
+        FusionModuloAccess::assertLogisticaWrite();
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -462,6 +462,7 @@ class SeccionesController extends Controller
 
     public function crudStore(Request $request, string $seccion): RedirectResponse
     {
+        FusionModuloAccess::assertLogisticaWrite();
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -491,6 +492,7 @@ class SeccionesController extends Controller
 
     public function crudEdit(string $seccion, int $id): View
     {
+        FusionModuloAccess::assertLogisticaWrite();
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -521,6 +523,7 @@ class SeccionesController extends Controller
 
     public function crudUpdate(Request $request, string $seccion, int $id): RedirectResponse
     {
+        FusionModuloAccess::assertLogisticaWrite();
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -543,6 +546,7 @@ class SeccionesController extends Controller
 
     public function crudDestroy(string $seccion, int $id): RedirectResponse
     {
+        FusionModuloAccess::assertLogisticaWrite();
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 

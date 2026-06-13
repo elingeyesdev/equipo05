@@ -2,6 +2,7 @@
 
 namespace Modules\Rescate\Http\Controllers;
 
+use App\Support\AccessControl;
 use Modules\Rescate\Services\Dashboard\DashboardService;
 use Modules\Rescate\Services\Fire\FocosCalorService;
 use Modules\Rescate\Services\Fire\ExternalFireReportsService;
@@ -459,6 +460,8 @@ class HomeController extends Controller
 
     private function canViewAdminDashboard(): bool
     {
-        return auth()->check();
+        return AccessControl::userHasAnyRole(auth()->user(), [
+            'Administrador', 'Rescatista', 'Veterinario', 'Cuidador',
+        ]);
     }
 }

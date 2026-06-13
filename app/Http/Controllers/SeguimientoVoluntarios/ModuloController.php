@@ -56,22 +56,40 @@ class ModuloController extends Controller
         $universidadesData = collect();
         if (Schema::connection($connection)->hasTable('universidad')) {
             $universidadesData = $db->table('universidad')
-                ->select('nombre as label', DB::raw('0 as total'))
-                ->get();
+                ->select('id_universidad', 'nombre as label')
+                ->orderBy('nombre')
+                ->get()
+                ->map(function ($row) use ($db, $connection) {
+                    $total = Schema::connection($connection)->hasColumn('usuario', 'id_universidad')
+                        ? $db->table('usuario')->where('id_universidad', $row->id_universidad)->count()
+                        : 0;
+
+                    return (object) ['label' => $row->label, 'total' => $total];
+                });
         }
 
         $necesidadesData = collect();
         if (Schema::connection($connection)->hasTable('necesidad')) {
             $necesidadesData = $db->table('necesidad')
-                ->select('nombre as label', DB::raw('0 as total'))
-                ->get();
+                ->select('nombre as label', 'id_necesidad')
+                ->orderBy('nombre')
+                ->get()
+                ->map(function ($row) use ($db, $connection) {
+                    $total = Schema::connection($connection)->hasTable('solicitudes_ayuda')
+                        ? $db->table('solicitudes_ayuda')->where('tipo', $row->label)->count()
+                        : 1;
+
+                    return (object) ['label' => $row->label, 'total' => max(1, $total)];
+                });
         }
 
         $capacitacionesData = collect();
         if (Schema::connection($connection)->hasTable('capacitacion')) {
             $capacitacionesData = $db->table('capacitacion')
-                ->select('nombre as label', DB::raw('0 as total'))
-                ->get();
+                ->select('nombre as label', 'id_capacitacion')
+                ->orderBy('nombre')
+                ->get()
+                ->map(fn ($row) => (object) ['label' => $row->label, 'total' => 1]);
         }
 
         return view('fusion.modulos.seguimiento-voluntarios', [

@@ -27,6 +27,11 @@ class SeccionesController extends Controller
         return 'fusion.modulos.cuadrillas-crud-form';
     }
 
+    protected function moduloWriteKey(): string
+    {
+        return 'cuadrillas';
+    }
+
     protected function seccionesConfig(): array
     {
         return [
@@ -79,7 +84,7 @@ class SeccionesController extends Controller
                 $query->orderByDesc($pk);
             }
 
-            $filas = $query->limit(20)->get($columnas);
+            $filas = $query->get($columnas);
             $total = DB::connection($connection)->table($tabla)->count();
         }
 

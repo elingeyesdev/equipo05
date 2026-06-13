@@ -2,6 +2,8 @@
 
 namespace Modules\Rescate\Http\Controllers;
 
+use App\Support\AccessControl;
+use App\Support\RescateAccess;
 use Modules\Rescate\Models\Rescuer;
 use Modules\Rescate\Models\Person;
 use Illuminate\Http\RedirectResponse;
@@ -27,10 +29,10 @@ class RescuerController extends Controller
      */
     public function index(Request $request): View
     {
-        $rescuers = Rescuer::with(['person.user'])->paginate();
+        RescateAccess::assertCanManagePeople();
+        $rescuers = Rescuer::with(['person.user'])->orderByDesc('id')->get();
 
-        return view('rescuer.index', compact('rescuers'))
-            ->with('i', ($request->input('page', 1) - 1) * $rescuers->perPage());
+        return view('rescuer.index', compact('rescuers'));
     }
 
     /**
@@ -60,7 +62,7 @@ class RescuerController extends Controller
 
         // Si ya se crea aprobado, asignar rol al usuario vinculado
         if ($rescuer->aprobado === true && $rescuer->person?->user) {
-            $rescuer->person->user->assignRole('rescatista');
+            AccessControl::assignCanonicalRole($rescuer->person->user, 'Rescatista');
         }
 
         // Registrar tracking de solicitud
@@ -108,7 +110,7 @@ class RescuerController extends Controller
 
         // Si es un encargado (y no admin), solo puede cambiar aprobación y motivo de revisión
         $user = Auth::user();
-        if ($user && $user->hasRole('encargado') && ! $user->hasRole('admin')) {
+        if ($user && AccessControl::userHasRole($user, 'Operador de Incendios') && ! AccessControl::userHasRole($user, 'Administrador')) {
             $data = Arr::only($data, ['aprobado', 'motivo_revision']);
         }
 
@@ -124,9 +126,9 @@ class RescuerController extends Controller
         $userModel = $rescuer->person?->user;
         if ($userModel) {
             if ($rescuer->aprobado === true) {
-                $userModel->assignRole('rescatista');
+                AccessControl::assignCanonicalRole($userModel, 'Rescatista');
             } elseif ($rescuer->aprobado === false || $rescuer->aprobado === null) {
-                $userModel->removeRole('rescatista');
+                AccessControl::removeCanonicalRole($userModel, 'Rescatista');
             }
         }
 
@@ -179,9 +181,9 @@ class RescuerController extends Controller
         $userModel = $rescuer->person?->user;
         if ($userModel) {
             if ($rescuer->aprobado === true) {
-                $userModel->assignRole('rescatista');
+                AccessControl::assignCanonicalRole($userModel, 'Rescatista');
             } elseif ($rescuer->aprobado === false || $rescuer->aprobado === null) {
-                $userModel->removeRole('rescatista');
+                AccessControl::removeCanonicalRole($userModel, 'Rescatista');
             }
         }
 
@@ -219,6 +221,7 @@ class RescuerController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        RescateAccess::assertCanManagePeople();
         Rescuer::findOrFail($id)->delete();
 
         return Redirect::route('rescate.rescuers.index')

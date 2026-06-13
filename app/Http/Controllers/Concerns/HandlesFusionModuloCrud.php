@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Support\FusionModuloAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,8 @@ trait HandlesFusionModuloCrud
     abstract protected function moduloRoutePrefix(): string;
 
     abstract protected function moduloCrudView(): string;
+
+    abstract protected function moduloWriteKey(): string;
 
     abstract protected function seccionesConfig(): array;
 
@@ -45,6 +48,7 @@ trait HandlesFusionModuloCrud
 
     public function crudCreate(string $seccion): View
     {
+        FusionModuloAccess::assertCanWriteModule($this->moduloWriteKey());
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -68,6 +72,7 @@ trait HandlesFusionModuloCrud
 
     public function crudStore(Request $request, string $seccion): RedirectResponse
     {
+        FusionModuloAccess::assertCanWriteModule($this->moduloWriteKey());
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -93,6 +98,7 @@ trait HandlesFusionModuloCrud
 
     public function crudEdit(string $seccion, int $id): View
     {
+        FusionModuloAccess::assertCanWriteModule($this->moduloWriteKey());
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -123,6 +129,7 @@ trait HandlesFusionModuloCrud
 
     public function crudUpdate(Request $request, string $seccion, int $id): RedirectResponse
     {
+        FusionModuloAccess::assertCanWriteModule($this->moduloWriteKey());
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 
@@ -148,6 +155,7 @@ trait HandlesFusionModuloCrud
 
     public function crudDestroy(string $seccion, int $id): RedirectResponse
     {
+        FusionModuloAccess::assertCanWriteModule($this->moduloWriteKey());
         $secciones = $this->seccionesConfig();
         abort_unless(isset($secciones[$seccion]), 404);
 

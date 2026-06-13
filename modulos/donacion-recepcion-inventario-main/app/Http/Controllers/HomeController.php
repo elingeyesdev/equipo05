@@ -2,6 +2,7 @@
 
 namespace Modules\Inventario\Http\Controllers;
 
+use App\Support\AccessControl;
 use App\Support\Database\YearMonthSql;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,20 +29,19 @@ class HomeController extends Controller
         // Detectar el rol del usuario autenticado
         $user = auth()->user();
 
-        if ($user->hasRole('Donante')) {
+        if (AccessControl::userHasRole($user, 'Donante')) {
             return redirect()->route('inventario.donaciones.index');
         }
 
-        if ($user->hasRole('Coordinador Logístico')) {
+        if (AccessControl::userHasRole($user, 'Coordinador Logístico')) {
             return redirect()->route('logistica.dashboard');
         }
 
-        if (! $user->hasAnyRole(['Almacenero', 'Administrador'])) {
+        if (! AccessControl::userHasAnyRole($user, ['Almacenero', 'Administrador'])) {
             abort(403);
         }
 
-        // Si es almacenero, mostrar dashboard específico
-        if ($user->hasRole('Almacenero')) {
+        if (AccessControl::userHasRole($user, 'Almacenero')) {
             return $this->dashboardAlmacenista();
         }
 

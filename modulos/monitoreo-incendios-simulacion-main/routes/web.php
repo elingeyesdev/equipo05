@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\FusionModuloAccess;
 use Illuminate\Support\Facades\Route;
 
 // Authentication is centralized in the main application.
@@ -23,7 +24,7 @@ Route::get('simulaciones/public/{id}', [Modules\Incendios\Http\Controllers\Simul
     ->name('simulaciones.public');
 
 // Authenticated routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'permission.check:'.FusionModuloAccess::INCENDIOS_PERMISSIONS])->group(function () {
 
     // Dashboard - accessible to all authenticated users
     Route::get('/', [\Modules\Incendios\Http\Controllers\DashboardController::class, 'index'])
