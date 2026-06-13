@@ -113,18 +113,193 @@ class AccesoPublicoController extends Controller
 
     public function cuadrillasMapa(): View
     {
-        return view('fusion.modulos.publico-cuadrillas-mapa');
+        $countEquiposDesplegados = DB::connection('cuadrillas')
+            ->table('equipo')
+            ->whereNotNull('latitud')
+            ->whereNotNull('longitud')
+            ->count();
+
+        $countReportes = DB::connection('cuadrillas')
+            ->table('reporte')
+            ->whereNotNull('latitud')
+            ->whereNotNull('longitud')
+            ->count();
+
+        $ultimoReporteFecha = DB::connection('cuadrillas')
+            ->table('reporte')
+            ->whereNotNull('fecha_hora')
+            ->max('fecha_hora');
+
+        $ultimoReporte = 'N/A';
+        if ($ultimoReporteFecha) {
+            $ultimoReporte = Carbon::parse($ultimoReporteFecha)->format('d/m/Y');
+        }
+
+        return view('fusion.modulos.publico-cuadrillas-mapa', compact('countEquiposDesplegados', 'countReportes', 'ultimoReporte'));
     }
 
     public function cuadrillasReporte(): View
     {
-        return $this->renderPublicTable(
-            'Cuadrillas - Reporte Público',
-            'Canal de reporte ciudadano de incendios y emergencias',
-            'cuadrillas',
-            'reporte',
-            'id_reporte'
-        );
+        $tiposIncidente = DB::connection('cuadrillas')->table('tipo_incidente')->orderBy('nombre')->get();
+        $nivelesGravedad = DB::connection('cuadrillas')->table('nivel_gravedad')->orderBy('id_nivel_gravedad')->get();
+
+        return view('fusion.modulos.publico-cuadrillas-reporte', compact('tiposIncidente', 'nivelesGravedad'));
+    }
+
+    public function cuadrillasReporteStore(Request $request)
+    {
+        $request->validate([
+            'nombre_reportante' => 'required|string|max:200',
+            'telefono_contacto' => 'nullable|string|max:20',
+            'nombre_lugar' => 'nullable|string|max:200',
+            'latitud' => 'required|numeric|between:-90,90',
+            'longitud' => 'required|numeric|between:-180,180',
+            'tipo_incidente_id' => 'nullable|integer',
+            'gravedad_id' => 'nullable|integer',
+            'comentario_adicional' => 'nullable|string',
+        ]);
+
+        $estadoPendiente = DB::connection('cuadrillas')
+            ->table('estado_sistema')
+            ->whereRaw('LOWER(tabla) = ?', ['reportes'])
+            ->whereRaw('LOWER(codigo) = ?', ['pendiente'])
+            ->first();
+
+        $idReporte = DB::connection('cuadrillas')->table('reporte')->insertGetId([
+            'nombre_reportante' => $request->nombre_reportante,
+            'telefono_contacto' => $request->telefono_contacto,
+            'fecha_hora' => now(),
+            'nombre_lugar' => $request->nombre_lugar,
+            'latitud' => $request->latitud,
+            'longitud' => $request->longitud,
+            'tipo_incidente_id' => $request->tipo_incidente_id,
+            'gravedad_id' => $request->gravedad_id,
+            'comentario_adicional' => $request->comentario_adicional,
+            'cant_bomberos' => 0,
+            'cant_paramedicos' => 0,
+            'cant_veterinarios' => 0,
+            'cant_autoridades' => 0,
+            'estado_id' => $estadoPendiente->id_estado_sistema ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ], 'id_reporte');
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Reporte enviado exitosamente.',
+                'id' => $idReporte,
+            ], 201);
+        }
+
+        return redirect()->route('publico.cuadrillas.mapa')
+            ->with('success', 'Reporte enviado exitosamente. Gracias por su colaboración.');
+    }
+
+    public function cuadrillasEquiposApi(): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $equipos = DB::connection('cuadrillas')->table('equipo')
+                ->leftJoin('estado_sistema', 'equipo.estado_id', '=', 'estado_sistema.id_estado_sistema')
+                ->select([
+                    'equipo.id_equipo as id',
+                    'equipo.nombre as nombre_equipo',
+                    'equipo.cantidad_integrantes',
+                    'equipo.latitud',
+                    'equipo.longitud',
+                    'estado_sistema.nombre as estado_nombre',
+                    'estado_sistema.codigo as estado_codigo',
+                    'estado_sistema.color as estado_color',
+                ])
+                ->whereNotNull('equipo.latitud')
+                ->whereNotNull('equipo.longitud')
+                ->get()
+                ->map(function ($equipo) {
+                    return [
+                        'id' => $equipo->id,
+                        'nombre_equipo' => $equipo->nombre_equipo,
+                        'cantidad_integrantes' => $equipo->cantidad_integrantes ?? 0,
+                        'ubicacion' => [
+                            'coordinates' => [
+                                (float) $equipo->longitud,
+                                (float) $equipo->latitud
+                            ]
+                        ],
+                        'estado' => $equipo->estado_nombre ? [
+                            'nombre' => $equipo->estado_nombre,
+                            'codigo' => $equipo->estado_codigo,
+                            'color' => $equipo->estado_color
+                        ] : null
+                    ];
+                });
+
+            return response()->json($equipos);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al obtener equipos',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function cuadrillasReportesApi(): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $reportes = DB::connection('cuadrillas')->table('reporte')
+                ->leftJoin('tipo_incidente', 'reporte.tipo_incidente_id', '=', 'tipo_incidente.id_tipo_incidente')
+                ->leftJoin('nivel_gravedad', 'reporte.gravedad_id', '=', 'nivel_gravedad.id_nivel_gravedad')
+                ->leftJoin('estado_sistema', 'reporte.estado_id', '=', 'estado_sistema.id_estado_sistema')
+                ->select([
+                    'reporte.id_reporte as id',
+                    'reporte.nombre_reportante',
+                    'reporte.telefono_contacto',
+                    'reporte.fecha_hora',
+                    'reporte.nombre_lugar',
+                    'reporte.latitud',
+                    'reporte.longitud',
+                    'reporte.comentario_adicional',
+                    'tipo_incidente.nombre as tipo_incidente_nombre',
+                    'nivel_gravedad.nombre as gravedad_nombre',
+                    'estado_sistema.nombre as estado_nombre',
+                    'estado_sistema.color as estado_color',
+                ])
+                ->whereNotNull('reporte.latitud')
+                ->whereNotNull('reporte.longitud')
+                ->get()
+                ->map(function ($reporte) {
+                    return [
+                        'id' => $reporte->id,
+                        'nombre_lugar' => $reporte->nombre_lugar,
+                        'nombre_reportante' => $reporte->nombre_reportante,
+                        'telefono_contacto' => $reporte->telefono_contacto,
+                        'fecha_hora' => $reporte->fecha_hora,
+                        'comentario_adicional' => $reporte->comentario_adicional,
+                        'ubicacion' => [
+                            'coordinates' => [
+                                (float) $reporte->longitud,
+                                (float) $reporte->latitud
+                            ]
+                        ],
+                        'tipos_incidente' => $reporte->tipo_incidente_nombre ? [
+                            'nombre' => $reporte->tipo_incidente_nombre
+                        ] : null,
+                        'niveles_gravedad' => $reporte->gravedad_nombre ? [
+                            'nombre' => $reporte->gravedad_nombre
+                        ] : null,
+                        'estados_sistema' => $reporte->estado_nombre ? [
+                            'nombre' => $reporte->estado_nombre,
+                            'color' => $reporte->estado_color
+                        ] : null
+                    ];
+                });
+
+            return response()->json($reportes);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al obtener reportes',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function seguimientoInfo(): View

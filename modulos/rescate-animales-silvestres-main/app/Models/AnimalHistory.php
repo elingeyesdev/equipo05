@@ -24,6 +24,9 @@ class AnimalHistory extends Model
 
     protected $casts = [
         'changed_at' => 'datetime',
+        'observaciones' => 'json',
+        'old_values' => 'json',
+        'new_values' => 'json',
     ];
 
     public function getValoresAntiguosAttribute(): ?array
@@ -38,6 +41,16 @@ class AnimalHistory extends Model
         return $this->decodeHistoryPayload(
             $this->attributes['valores_nuevos'] ?? $this->attributes['new_values'] ?? null
         );
+    }
+
+    public function setValoresAntiguosAttribute(mixed $value): void
+    {
+        $this->attributes['old_values'] = (is_array($value) || is_object($value)) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
+    }
+
+    public function setValoresNuevosAttribute(mixed $value): void
+    {
+        $this->attributes['new_values'] = (is_array($value) || is_object($value)) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
     }
 
     public function animalFile()

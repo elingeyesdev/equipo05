@@ -246,24 +246,17 @@ class UnifiedDemoDataSeeder extends Seeder
 
     private function seedCuadrillas(): void
     {
-        $db = DB::connection('cuadrillas');
         if (! Schema::connection('cuadrillas')->hasTable('curso')) {
             return;
         }
-        if ($db->table('curso')->count() > 0) {
+        if (DB::connection('cuadrillas')->table('curso')->count() > 0) {
             return;
         }
 
-        $db->table('curso')->insert([
-            'nombre' => 'Kardex combate incendios I',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $db->table('nivel_entrenamiento')->insert([
-            'nombre' => 'Básico',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $seeder = new RichCuadrillasDemoSeeder();
+        if ($this->command) {
+            $seeder->setCommand($this->command);
+        }
+        $seeder->run();
     }
 }

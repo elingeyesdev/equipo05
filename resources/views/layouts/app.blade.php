@@ -657,7 +657,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('seguimiento.helpdesk') }}" class="nav-link {{ request()->routeIs('seguimiento.helpdesk') ? 'active' : '' }}">
-                                        <i class="fas fa-headset nav-icon"></i><p>Centro de Soporte</p>
+                                        <i class="fas fa-headset nav-icon"></i><p>Cuenta Voluntarios</p>
                                     </a>
                                 </li>
                             </ul>
@@ -682,33 +682,8 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.reportes-incendio') }}" class="nav-link {{ request()->routeIs('cuadrillas.reportes-incendio') ? 'active' : '' }}">
-                                        <i class="fas fa-fire-alt nav-icon"></i><p>Reportes de Incendio</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
                                     <a href="{{ route('cuadrillas.focos-calor') }}" class="nav-link {{ request()->routeIs('cuadrillas.focos-calor') ? 'active' : '' }}">
                                         <i class="fas fa-map-marked-alt nav-icon"></i><p>Mapa en Tiempo Real</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.recursos') }}" class="nav-link {{ request()->routeIs('cuadrillas.recursos') ? 'active' : '' }}">
-                                        <i class="fas fa-boxes nav-icon"></i><p>Recursos</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.usuarios') }}" class="nav-link {{ request()->routeIs('cuadrillas.usuarios') ? 'active' : '' }}">
-                                        <i class="fas fa-users nav-icon"></i><p>Usuarios</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.equipos') }}" class="nav-link {{ request()->routeIs('cuadrillas.equipos') ? 'active' : '' }}">
-                                        <i class="fas fa-user-friends nav-icon"></i><p>Equipos</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.comunarios') }}" class="nav-link {{ request()->routeIs('cuadrillas.comunarios') ? 'active' : '' }}">
-                                        <i class="fas fa-hands-helping nav-icon"></i><p>Comunarios de Apoyo</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -719,37 +694,6 @@
                                 <li class="nav-item">
                                     <a href="{{ route('cuadrillas.cursos') }}" class="nav-link {{ request()->routeIs('cuadrillas.cursos') ? 'active' : '' }}">
                                         <i class="fas fa-graduation-cap nav-icon"></i><p>Cursos</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.inscritos') }}" class="nav-link {{ request()->routeIs('cuadrillas.inscritos') ? 'active' : '' }}">
-                                        <i class="fas fa-user-plus nav-icon"></i><p>Inscritos</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{ request()->routeIs('cuadrillas.roles') || request()->routeIs('cuadrillas.generos') || request()->routeIs('cuadrillas.tipos-sangre') || request()->routeIs('cuadrillas.niveles-entrenamiento') || request()->routeIs('cuadrillas.niveles-gravedad') || request()->routeIs('cuadrillas.tipos-incidente') || request()->routeIs('cuadrillas.tipos-recurso') || request()->routeIs('cuadrillas.condiciones-climaticas') || request()->routeIs('cuadrillas.estados-sistema') ? 'menu-open' : '' }}" data-sidebar-key="cuadrillas-catalogos">
-                                    <a href="#" class="nav-link {{ request()->routeIs('cuadrillas.roles') || request()->routeIs('cuadrillas.generos') || request()->routeIs('cuadrillas.tipos-sangre') || request()->routeIs('cuadrillas.niveles-entrenamiento') || request()->routeIs('cuadrillas.niveles-gravedad') || request()->routeIs('cuadrillas.tipos-incidente') || request()->routeIs('cuadrillas.tipos-recurso') || request()->routeIs('cuadrillas.condiciones-climaticas') || request()->routeIs('cuadrillas.estados-sistema') ? 'active' : '' }}">
-                                        <i class="fas fa-cog nav-icon"></i><p><span class="sidebar-menu-label">Catálogos</span> <i class="fas fa-angle-left right"></i></p>
-                                    </a>
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.roles') }}" class="nav-link {{ request()->routeIs('cuadrillas.roles') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Roles</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.generos') }}" class="nav-link {{ request()->routeIs('cuadrillas.generos') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Generos</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.tipos-sangre') }}" class="nav-link {{ request()->routeIs('cuadrillas.tipos-sangre') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Tipos de Sangre</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.niveles-entrenamiento') }}" class="nav-link {{ request()->routeIs('cuadrillas.niveles-entrenamiento') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Niveles de Entrenamiento</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.niveles-gravedad') }}" class="nav-link {{ request()->routeIs('cuadrillas.niveles-gravedad') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Niveles de Gravedad</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.tipos-incidente') }}" class="nav-link {{ request()->routeIs('cuadrillas.tipos-incidente') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Tipos de Incidente</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.tipos-recurso') }}" class="nav-link {{ request()->routeIs('cuadrillas.tipos-recurso') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Tipos de Recurso</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.condiciones-climaticas') }}" class="nav-link {{ request()->routeIs('cuadrillas.condiciones-climaticas') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Condiciones Climaticas</p></a></li>
-                                        <li class="nav-item"><a href="{{ route('cuadrillas.estados-sistema') }}" class="nav-link {{ request()->routeIs('cuadrillas.estados-sistema') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Estados del Sistema</p></a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.kardex') }}" class="nav-link {{ request()->routeIs('cuadrillas.kardex') ? 'active' : '' }}">
-                                        <i class="fas fa-id-card nav-icon"></i><p>Mi Kardex</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('cuadrillas.helpdesk') }}" class="nav-link {{ request()->routeIs('cuadrillas.helpdesk') ? 'active' : '' }}">
-                                        <i class="fas fa-headset nav-icon"></i><p>Centro de Soporte</p>
                                     </a>
                                 </li>
                             </ul>

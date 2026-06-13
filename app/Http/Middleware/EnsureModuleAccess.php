@@ -14,6 +14,14 @@ class EnsureModuleAccess
      */
     public function handle(Request $request, Closure $next, string $module): Response
     {
+        $route = $request->route();
+        if ($route) {
+            $excluded = $route->excludedMiddleware();
+            if (isset($excluded['auth']) || in_array('auth', $excluded, true)) {
+                return $next($request);
+            }
+        }
+
         $user = $request->user();
 
         if (! $user) {

@@ -69,6 +69,12 @@ Route::get('/publico/cuadrillas/mapa', [AccesoPublicoController::class, 'cuadril
     ->name('publico.cuadrillas.mapa');
 Route::get('/publico/cuadrillas/reporte', [AccesoPublicoController::class, 'cuadrillasReporte'])
     ->name('publico.cuadrillas.reporte');
+Route::post('/publico/cuadrillas/reporte', [AccesoPublicoController::class, 'cuadrillasReporteStore'])
+    ->name('publico.cuadrillas.reporte.store');
+Route::get('/publico/cuadrillas/equipos-api', [AccesoPublicoController::class, 'cuadrillasEquiposApi'])
+    ->name('publico.cuadrillas.equipos-api');
+Route::get('/publico/cuadrillas/reportes-api', [AccesoPublicoController::class, 'cuadrillasReportesApi'])
+    ->name('publico.cuadrillas.reportes-api');
 Route::get('/publico/seguimiento/info', [AccesoPublicoController::class, 'seguimientoInfo'])
     ->name('publico.seguimiento.info');
 

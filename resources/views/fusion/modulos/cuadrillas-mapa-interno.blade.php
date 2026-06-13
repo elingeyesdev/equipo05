@@ -1,220 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Focos de Calor en Tiempo Real</title>
-    <!-- Bootstrap 4 & AdminLTE stylesheet -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Leaflet & Clustering CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+@extends('layouts.app')
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-        }
-        .header-section {
-            background-color: #ffffff;
-            border-bottom: 1px solid #dee2e6;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            margin-bottom: 1.5rem;
-        }
-        .header-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #212529;
-            margin: 0;
-        }
-        .breadcrumb-custom {
-            font-size: 0.9rem;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            display: flex;
-            align-items: center;
-        }
-        .breadcrumb-custom a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .breadcrumb-custom a:hover {
-            text-decoration: underline;
-        }
-        .breadcrumb-custom .separator {
-            margin: 0 0.5rem;
-            color: #6c757d;
-        }
-        .breadcrumb-custom .active-item {
-            color: #6c757d;
-        }
-        .card-map {
-            border: none;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            background-color: #ffffff;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-        .card-header-custom {
-            background-color: #ffffff;
-            border-bottom: 1px solid #dee2e6;
-            padding: 0.75rem 1.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .card-title-custom {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            color: #343a40;
-        }
-        .card-title-custom i {
-            margin-right: 0.5rem;
-            color: #495057;
-        }
-        .filter-banner {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-            padding: 0.75rem 1.25rem;
-        }
-        .filter-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #495057;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-        .filter-title i {
-            margin-right: 0.5rem;
-            color: #dc3545;
-        }
-        #mapa-tiempo-real {
-            height: 600px;
-            width: 100%;
-        }
-        .card-footer-custom {
-            background-color: #ffffff;
-            border-top: 1px solid #dee2e6;
-            padding: 0.75rem 1.25rem;
-        }
-        .legend {
-            background: #ffffff;
-            padding: 12px;
-            border-radius: 6px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            font-size: 0.8rem;
-            line-height: 1.5;
-            color: #333;
-            border: 1px solid #dee2e6;
-            min-width: 170px;
-        }
-        .legend h6 {
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-            border-bottom: 1px solid #dee2e6;
-            padding-bottom: 4px;
-        }
-        .legend .section-title {
-            font-weight: 600;
-            margin-top: 6px;
-            margin-bottom: 4px;
-            font-size: 0.75rem;
-            color: #6c757d;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-        .legend i {
-            width: 11px;
-            height: 11px;
-            display: inline-block;
-            border-radius: 50%;
-            margin-right: 8px;
-            flex-shrink: 0;
-            border: 1px solid #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .info-box {
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-            border-radius: 4px;
-            background-color: #ffffff;
-            display: flex;
-            margin-bottom: 1.5rem;
-            min-height: 80px;
-            border: 1px solid #dee2e6;
-        }
-        .info-box-icon {
-            border-top-left-radius: 3px;
-            border-bottom-left-radius: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 70px;
-            font-size: 1.75rem;
-            color: #ffffff;
-        }
-        .info-box-content {
-            padding: 10px 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .info-box-text {
-            font-size: 0.85rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        .info-box-number {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #212529;
-            margin: 0;
-        }
-        /* Custom markers styles */
-        .equipo-marker-div, .reporte-marker-div {
-            background: none;
-            border: none;
-        }
-    </style>
-</head>
-<body>
+@section('title', 'Mapa en Tiempo Real')
 
-<!-- Cabecera -->
-<div class="header-section">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="header-title">Focos de Calor</h1>
-            </div>
-            <div class="col-md-4 text-md-right mt-2 mt-md-0">
-                <div class="breadcrumb-custom justify-content-md-end">
-                    <a href="/">Inicio</a>
-                    <span class="separator">/</span>
-                    <span class="active-item">Focos de Calor</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Contenido Principal -->
-<div class="container">
+@section('content')
+<div class="container-fluid mt-4">
     
     @if(request()->has('success') || session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -229,38 +18,35 @@
         <div class="col-12">
             
             <!-- Tarjeta del Mapa -->
-            <div class="card card-map">
-                <div class="card-header-custom">
-                    <h3 class="card-title-custom">
-                        <i class="fas fa-map-marked-alt"></i> Mapa de Focos de Calor y Equipos
+            <div class="card card-outline card-danger shadow-lg">
+                <div class="card-header bg-danger text-white d-flex align-items-center justify-content-between">
+                    <h3 class="card-title font-weight-bold m-0">
+                        <i class="fas fa-map-marked-alt mr-2"></i> Mapa de Focos de Calor y Equipos
                     </h3>
-                    <div>
-                        <a href="{{ route('publico.cuadrillas.reporte') }}" class="btn btn-danger btn-sm font-weight-bold">
-                            <i class="fas fa-exclamation-triangle mr-1"></i> Reportar Incidente
-                        </a>
-                        <a href="{{ route('login') }}" class="btn btn-primary btn-sm font-weight-bold ml-1">
-                            <i class="fas fa-sign-in-alt mr-1"></i> Iniciar sesión
+                    <div class="card-tools">
+                        <a href="{{ route('cuadrillas.reportes') }}" class="btn btn-warning btn-sm font-weight-bold text-dark">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Nuevo Reporte Rápido
                         </a>
                     </div>
                 </div>
 
                 <!-- Filtros de Tiempo -->
-                <div class="filter-banner">
+                <div class="card-body bg-light p-2 border-bottom">
                     <div class="row align-items-center">
                         <div class="col-md-6 mb-2 mb-md-0">
-                            <h6 class="filter-title">
-                                <i class="fas fa-satellite"></i> Datos NASA FIRMS - Filtro Temporal:
+                            <h6 class="m-0 font-weight-bold text-secondary">
+                                <i class="fas fa-satellite text-danger mr-2"></i> Datos NASA FIRMS - Filtro Temporal:
                             </h6>
                         </div>
                         <div class="col-md-6 text-md-right">
                             <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-outline-primary font-weight-bold" id="btn-24h" onclick="cargarNASA(1)">
+                                <button type="button" class="btn btn-outline-danger font-weight-bold" id="btn-24h" onclick="cargarNASA(1)">
                                     <i class="fas fa-clock mr-1"></i> Últimas 24 Horas
                                 </button>
-                                <button type="button" class="btn btn-outline-primary font-weight-bold active" id="btn-2d" onclick="cargarNASA(2)">
+                                <button type="button" class="btn btn-outline-danger font-weight-bold active" id="btn-2d" onclick="cargarNASA(2)">
                                     <i class="fas fa-calendar-day mr-1"></i> Últimos 2 Días
                                 </button>
-                                <button type="button" class="btn btn-outline-primary font-weight-bold" id="btn-7d" onclick="cargarNASA(7)">
+                                <button type="button" class="btn btn-outline-danger font-weight-bold" id="btn-7d" onclick="cargarNASA(7)">
                                     <i class="fas fa-calendar-week mr-1"></i> Últimos 7 Días
                                 </button>
                             </div>
@@ -269,16 +55,18 @@
                 </div>
 
                 <!-- Contenedor del Mapa -->
-                <div id="mapa-tiempo-real"></div>
+                <div class="card-body p-0">
+                    <div id="mapa-tiempo-real" style="height: 550px; width: 100%;"></div>
+                </div>
 
                 <!-- Pie del Mapa -->
-                <div class="card-footer-custom">
+                <div class="card-footer bg-white py-2">
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <div class="d-flex align-items-center flex-wrap" style="gap: 1.5rem; font-size: 0.85rem;">
-                                <span><i class="fas fa-satellite mr-1" style="color: #dc3545;"></i> NASA FIRMS</span>
-                                <span><i class="fas fa-users mr-1" style="color: #007bff;"></i> Equipos</span>
-                                <span><i class="fas fa-bullhorn mr-1" style="color: #ff9800;"></i> Reportes</span>
+                                <span><i class="fas fa-satellite mr-1 text-danger"></i> NASA FIRMS (Satélite)</span>
+                                <span><i class="fas fa-users mr-1 text-primary"></i> Equipos de Cuadrillas</span>
+                                <span><i class="fas fa-bullhorn mr-1 text-warning"></i> Reportes Ciudadanos</span>
                             </div>
                         </div>
                         <div class="col-md-4 text-md-right mt-2 mt-md-0">
@@ -297,58 +85,129 @@
     <div class="row">
         <!-- Equipos Desplegados -->
         <div class="col-lg-3 col-sm-6">
-            <div class="info-box">
-                <span class="info-box-icon bg-primary"><i class="fas fa-users"></i></span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Equipos Desplegados</span>
-                    <span class="info-box-number" id="lbl-equipos-count">{{ $countEquiposDesplegados }}</span>
+            <div class="small-box bg-primary shadow">
+                <div class="inner">
+                    <h3 id="lbl-equipos-count">{{ $countEquiposDesplegados }}</h3>
+                    <p>Equipos Desplegados</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="small-box-footer py-2 text-white-50 text-center font-weight-bold" style="font-size: 0.85rem;">
+                    Equipos en el mapa
                 </div>
             </div>
         </div>
 
         <!-- Reportes en Mapa -->
         <div class="col-lg-3 col-sm-6">
-            <div class="info-box">
-                <span class="info-box-icon" style="background-color: #ff9800; color: white;"><i class="fas fa-bullhorn"></i></span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Reportes en Mapa</span>
-                    <span class="info-box-number" id="lbl-reportes-count">{{ $countReportes }}</span>
+            <div class="small-box bg-warning text-dark shadow">
+                <div class="inner">
+                    <h3 id="lbl-reportes-count">{{ $countReportes }}</h3>
+                    <p>Reportes en Mapa</p>
                 </div>
+                <div class="icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <a href="{{ route('cuadrillas.reportes') }}" class="small-box-footer text-dark" style="color: #212529 !important;">
+                    Ver Reportes <i class="fas fa-arrow-circle-right text-dark"></i>
+                </a>
             </div>
         </div>
 
         <!-- Focos NASA FIRMS -->
         <div class="col-lg-3 col-sm-6">
-            <div class="info-box">
-                <span class="info-box-icon bg-danger"><i class="fas fa-satellite"></i></span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Focos NASA FIRMS</span>
-                    <span class="info-box-number" id="lbl-nasa-count">0</span>
+            <div class="small-box bg-danger shadow">
+                <div class="inner">
+                    <h3 id="lbl-nasa-count">0</h3>
+                    <p>Focos NASA FIRMS</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-satellite"></i>
+                </div>
+                <div class="small-box-footer py-2">
+                    Datos del satélite VIIRS
                 </div>
             </div>
         </div>
 
         <!-- Último Reporte -->
         <div class="col-lg-3 col-sm-6">
-            <div class="info-box">
-                <span class="info-box-icon bg-info"><i class="fas fa-calendar-alt"></i></span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Último Reporte</span>
-                    <span class="info-box-number" style="font-size: 1.15rem; word-break: break-all;" id="lbl-ultimo-reporte">{{ $ultimoReporte }}</span>
+            <div class="small-box bg-info shadow">
+                <div class="inner">
+                    <h3 id="lbl-ultimo-reporte" style="font-size: 1.8rem; line-height: 1.2; padding: 0.15rem 0;">{{ $ultimoReporte }}</h3>
+                    <p>Último Reporte</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="small-box-footer py-2">
+                    Fecha de recepción
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+@endsection
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+@push('css')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<style>
+    .legend {
+        background: #ffffff;
+        padding: 12px;
+        border-radius: 6px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        font-size: 0.8rem;
+        line-height: 1.5;
+        color: #333;
+        border: 1px solid #dee2e6;
+        min-width: 170px;
+    }
+    .legend h6 {
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 4px;
+    }
+    .legend .section-title {
+        font-weight: 600;
+        margin-top: 6px;
+        margin-bottom: 4px;
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+    .legend i {
+        width: 11px;
+        height: 11px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 8px;
+        flex-shrink: 0;
+        border: 1px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .equipo-marker-div, .reporte-marker-div {
+        background: none;
+        border: none;
+    }
+</style>
+@endpush
+
+@push('js')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
 <script>
+$(document).ready(function() {
     // Inicializar mapa centrado en Bolivia
     const mapa = L.map('mapa-tiempo-real').setView([-17.8, -63.1], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -389,8 +248,8 @@
                 <div class="legend-item"><i style="background:#ffa500"></i>Media Confianza (50-79%)</div>
                 <div class="legend-item"><i style="background:#00ced1"></i>Baja Confianza (&lt;50%)</div>
                 <div class="section-title">Otros:</div>
-                <div class="legend-item"><i style="background:#007bff"></i>Equipo de Bomberos</div>
-                <div class="legend-item"><i style="background:#ff9800"></i>Reporte de Incidente</div>
+                <div class="legend-item"><i style="background:#007bff"></i>Equipo de Cuadrilla</div>
+                <div class="legend-item"><i style="background:#ff9800"></i>Reporte Ciudadano</div>
             `;
             return div;
         };
@@ -420,7 +279,7 @@
     }
 
     // Cargar Focos satelitales NASA FIRMS
-    async function cargarNASA(dias = 2) {
+    window.cargarNASA = async function(dias = 2) {
         // Actualizar estado activo de los botones del banner
         $('.btn-group button').removeClass('active');
         if (dias === 1) $('#btn-24h').addClass('active');
@@ -478,8 +337,6 @@
             }
 
             $('#lbl-nasa-count').text(totalFocos);
-            
-            // Reajustar mapa a los focos si existen
             ajustarLimitesMapa();
 
         } catch (error) {
@@ -512,8 +369,8 @@
                         }).addTo(capaEquipos);
 
                         const estadoBadge = eq.estado 
-                            ? `<span class="badge" style="background-color: ${eq.estado.color || '#28a745'}; color: white;">${eq.estado.nombre}</span>` 
-                            : '<span class="badge badge-success">Activo</span>';
+                            ? `<span class="badge shadow-sm" style="background-color: ${eq.estado.color || '#28a745'}; color: white;">${eq.estado.nombre}</span>` 
+                            : '<span class="badge badge-success shadow-sm">Activo</span>';
 
                         marker.bindPopup(`
                             <div style="font-size: 12px; line-height: 1.4;">
@@ -607,11 +464,9 @@
     // Ajustar límites de cámara del mapa para mostrar marcadores colectivos
     let tieneAjustadoInicial = false;
     function ajustarLimitesMapa() {
-        // Solo ajustar automáticamente la primera vez que se cargan las tres capas
         if (tieneAjustadoInicial) return;
 
         const marcadores = [];
-        
         capaNasaFirms.eachLayer(m => marcadores.push(m));
         capaEquipos.eachLayer(m => marcadores.push(m));
         capaReportes.eachLayer(m => marcadores.push(m));
@@ -627,6 +482,6 @@
     cargarEquipos();
     cargarReportes();
     cargarNASA(2); // Cargar últimos 2 días por defecto
+});
 </script>
-</body>
-</html>
+@endpush

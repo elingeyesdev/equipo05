@@ -15,10 +15,24 @@ CREATE TABLE IF NOT EXISTS cuadrillas.migrations (
 );
 
 CREATE TABLE IF NOT EXISTS cuadrillas.reporte (
-    id_reporte BIGSERIAL PRIMARY KEY,
-    titulo     VARCHAR(255),
-    created_at TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at TIMESTAMP(0) WITHOUT TIME ZONE
+    id_reporte           BIGSERIAL PRIMARY KEY,
+    titulo               VARCHAR(255),
+    nombre_reportante    VARCHAR(200),
+    telefono_contacto    VARCHAR(20),
+    fecha_hora           TIMESTAMP(0) WITHOUT TIME ZONE,
+    nombre_lugar         VARCHAR(200),
+    latitud              NUMERIC(10, 8),
+    longitud             NUMERIC(11, 8),
+    tipo_incidente_id    BIGINT,
+    gravedad_id          BIGINT,
+    comentario_adicional TEXT,
+    cant_bomberos        INTEGER DEFAULT 0,
+    cant_paramedicos     INTEGER DEFAULT 0,
+    cant_veterinarios    INTEGER DEFAULT 0,
+    cant_autoridades     INTEGER DEFAULT 0,
+    estado_id            BIGINT,
+    created_at           TIMESTAMP(0) WITHOUT TIME ZONE,
+    updated_at           TIMESTAMP(0) WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS cuadrillas.reporte_incendio (
@@ -37,10 +51,14 @@ CREATE TABLE IF NOT EXISTS cuadrillas.foco_calor (
 );
 
 CREATE TABLE IF NOT EXISTS cuadrillas.equipo (
-    id_equipo  BIGSERIAL PRIMARY KEY,
-    nombre     VARCHAR(200),
-    created_at TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at TIMESTAMP(0) WITHOUT TIME ZONE
+    id_equipo            BIGSERIAL PRIMARY KEY,
+    nombre               VARCHAR(200),
+    cantidad_integrantes INTEGER DEFAULT 0,
+    latitud              NUMERIC(10, 8),
+    longitud             NUMERIC(11, 8),
+    estado_id            BIGINT,
+    created_at           TIMESTAMP(0) WITHOUT TIME ZONE,
+    updated_at           TIMESTAMP(0) WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS cuadrillas.recurso (
@@ -51,17 +69,22 @@ CREATE TABLE IF NOT EXISTS cuadrillas.recurso (
 );
 
 CREATE TABLE IF NOT EXISTS cuadrillas.noticia (
-    id_noticia BIGSERIAL PRIMARY KEY,
-    titulo     VARCHAR(500),
-    created_at TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at TIMESTAMP(0) WITHOUT TIME ZONE
+    id_noticia  BIGSERIAL PRIMARY KEY,
+    titulo      VARCHAR(500),
+    descripcion TEXT,
+    url         VARCHAR(500),
+    image       VARCHAR(500),
+    date        TIMESTAMP(0) WITHOUT TIME ZONE,
+    created_at  TIMESTAMP(0) WITHOUT TIME ZONE,
+    updated_at  TIMESTAMP(0) WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS cuadrillas.curso (
-    id_curso   BIGSERIAL PRIMARY KEY,
-    nombre     VARCHAR(200),
-    created_at TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at TIMESTAMP(0) WITHOUT TIME ZONE
+    id_curso    BIGSERIAL PRIMARY KEY,
+    nombre      VARCHAR(200),
+    descripcion TEXT,
+    created_at  TIMESTAMP(0) WITHOUT TIME ZONE,
+    updated_at  TIMESTAMP(0) WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS cuadrillas.inscrito (
@@ -144,6 +167,9 @@ CREATE TABLE IF NOT EXISTS cuadrillas.condicion_climatica (
 CREATE TABLE IF NOT EXISTS cuadrillas.estado_sistema (
     id_estado_sistema BIGSERIAL PRIMARY KEY,
     nombre            VARCHAR(120),
+    codigo            VARCHAR(120),
+    color             VARCHAR(20),
+    tabla             VARCHAR(120),
     created_at        TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at        TIMESTAMP(0) WITHOUT TIME ZONE
 );

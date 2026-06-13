@@ -19,6 +19,20 @@ return new class extends Migration
         Schema::connection($c)->create('reporte', function (Blueprint $table) {
             $table->bigIncrements('id_reporte');
             $table->string('titulo', 255)->nullable();
+            $table->string('nombre_reportante', 200)->nullable();
+            $table->string('telefono_contacto', 20)->nullable();
+            $table->timestamp('fecha_hora')->nullable();
+            $table->string('nombre_lugar', 200)->nullable();
+            $table->decimal('latitud', 10, 8)->nullable();
+            $table->decimal('longitud', 11, 8)->nullable();
+            $table->unsignedBigInteger('tipo_incidente_id')->nullable();
+            $table->unsignedBigInteger('gravedad_id')->nullable();
+            $table->text('comentario_adicional')->nullable();
+            $table->integer('cant_bomberos')->nullable()->default(0);
+            $table->integer('cant_paramedicos')->nullable()->default(0);
+            $table->integer('cant_veterinarios')->nullable()->default(0);
+            $table->integer('cant_autoridades')->nullable()->default(0);
+            $table->unsignedBigInteger('estado_id')->nullable();
             $table->timestamps();
         });
 
@@ -38,6 +52,10 @@ return new class extends Migration
         Schema::connection($c)->create('equipo', function (Blueprint $table) {
             $table->bigIncrements('id_equipo');
             $table->string('nombre', 200)->nullable();
+            $table->integer('cantidad_integrantes')->nullable()->default(0);
+            $table->decimal('latitud', 10, 8)->nullable();
+            $table->decimal('longitud', 11, 8)->nullable();
+            $table->unsignedBigInteger('estado_id')->nullable();
             $table->timestamps();
         });
 
@@ -50,12 +68,17 @@ return new class extends Migration
         Schema::connection($c)->create('noticia', function (Blueprint $table) {
             $table->bigIncrements('id_noticia');
             $table->string('titulo', 500)->nullable();
+            $table->text('descripcion')->nullable();
+            $table->string('url', 500)->nullable();
+            $table->string('image', 500)->nullable();
+            $table->timestamp('date')->nullable();
             $table->timestamps();
         });
 
         Schema::connection($c)->create('curso', function (Blueprint $table) {
             $table->bigIncrements('id_curso');
             $table->string('nombre', 200)->nullable();
+            $table->text('descripcion')->nullable();
             $table->timestamps();
         });
 
@@ -128,6 +151,9 @@ return new class extends Migration
         Schema::connection($c)->create('estado_sistema', function (Blueprint $table) {
             $table->bigIncrements('id_estado_sistema');
             $table->string('nombre', 120)->nullable();
+            $table->string('codigo', 120)->nullable();
+            $table->string('color', 20)->nullable();
+            $table->string('tabla', 120)->nullable();
             $table->timestamps();
         });
 

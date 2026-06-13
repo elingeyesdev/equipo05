@@ -100,7 +100,7 @@ CREATE TABLE rescate.incident_types (
 
 CREATE TABLE rescate.reports (
     id                      BIGSERIAL PRIMARY KEY,
-    persona_id              BIGINT NOT NULL REFERENCES rescate.people (id) ON DELETE CASCADE,
+    persona_id              BIGINT REFERENCES rescate.people (id) ON DELETE CASCADE,
     aprobado                BOOLEAN NOT NULL DEFAULT FALSE,
     imagen_url              VARCHAR(255),
     observaciones           VARCHAR(255),
@@ -159,10 +159,10 @@ ALTER TABLE rescate.animal_files
 
 CREATE TABLE rescate.animal_histories (
     id               BIGSERIAL PRIMARY KEY,
-    animal_file_id   BIGINT NOT NULL REFERENCES rescate.animal_files (id) ON DELETE CASCADE,
+    animal_file_id   BIGINT REFERENCES rescate.animal_files (id) ON DELETE CASCADE,
     changed_at       TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estado_anterior  TEXT NOT NULL,
-    estado_nuevo     TEXT NOT NULL,
+    estado_anterior  TEXT,
+    estado_nuevo     TEXT,
     observaciones    TEXT NOT NULL,
     old_values       TEXT,
     new_values       TEXT

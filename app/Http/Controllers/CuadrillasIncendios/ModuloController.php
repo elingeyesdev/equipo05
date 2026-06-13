@@ -12,43 +12,49 @@ class ModuloController extends Controller
 {
     public function index(): View
     {
-        $connection = 'cuadrillas';
-        $tablasResumen = [
-            'reporte' => 'Reportes',
-            'reporte_incendio' => 'Reportes de Incendio',
-            'foco_calor' => 'Focos de Calor',
-            'equipo' => 'Equipos',
-            'recurso' => 'Recursos',
-            'curso' => 'Cursos',
-            'inscrito' => 'Inscritos',
-            'usuario' => 'Usuarios',
-        ];
-
-        $resumen = [];
-        foreach ($tablasResumen as $tabla => $label) {
-            $resumen[] = [
-                'label' => $label,
-                'total' => Schema::connection($connection)->hasTable($tabla)
-                    ? DB::connection($connection)->table($tabla)->count()
-                    : 0,
-            ];
-        }
-
-        $reportesRecientes = collect();
-        if (Schema::connection($connection)->hasTable('reporte')) {
-            $query = DB::connection($connection)->table('reporte');
-            if (Schema::connection($connection)->hasColumn('reporte', 'created_at')) {
-                $query->orderByDesc('created_at');
-            } elseif (Schema::connection($connection)->hasColumn('reporte', 'id_reporte')) {
-                $query->orderByDesc('id_reporte');
+        $voluntariosActivos = 0;
+        try {
+            if (Schema::connection('seguimiento')->hasTable('usuario')) {
+                $voluntariosActivos = DB::connection('seguimiento')->table('usuario')
+                    ->where('activo', true)
+                    ->where(function($q) {
+                        $q->whereNull('administrador')->orWhere('administrador', false);
+                    })
+                    ->count();
             }
-            $reportesRecientes = $query->limit(10)->get();
-        }
+        } catch (\Exception $e) {}
 
-        return view('fusion.modulos.cuadrillas-incendios', [
-            'resumen' => $resumen,
-            'reportesRecientes' => $reportesRecientes,
-        ]);
+        $comunariosApoyo = 0;
+        try {
+            if (Schema::connection('cuadrillas')->hasTable('comunario')) {
+                $comunariosApoyo = DB::connection('cuadrillas')->table('comunario')->count();
+            } elseif (Schema::connection('cuadrillas')->hasTable('comunarios')) {
+                $comunariosApoyo = DB::connection('cuadrillas')->table('comunarios')->count();
+            }
+        } catch (\Exception $e) {}
+
+        $reportesEsteMes = 0;
+        try {
+            if (Schema::connection('cuadrillas')->hasTable('reporte')) {
+                $reportesEsteMes = DB::connection('cuadrillas')->table('reporte')
+                    ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+                    ->count();
+            }
+        } catch (\Exception $e) {}
+
+        $incendiosReportados = 0;
+        try {
+            if (Schema::connection('cuadrillas')->hasTable('reporte_incendio')) {
+                $incendiosReportados = DB::connection('cuadrillas')->table('reporte_incendio')->count();
+            }
+        } catch (\Exception $e) {}
+
+        return view('fusion.modulos.cuadrillas-incendios', compact(
+            'voluntariosActivos',
+            'comunariosApoyo',
+            'reportesEsteMes',
+            'incendiosReportados'
+        ));
     }
 
     public function health(): JsonResponse
@@ -59,3 +65,4 @@ class ModuloController extends Controller
         ]);
     }
 }
+
