@@ -232,7 +232,13 @@
                     <div class="col-md-6 form-group">
                         <label for="tipo_incidente_animal" class="font-weight-bold">Tipo de incidente</label>
                         <select class="form-control" id="tipo_incidente_animal" name="tipo_incidente_animal">
-                            <option value="Incendio cercano - Alto" selected>Incendio cercano - Alto</option>
+                            <option value="1" selected>Incendio</option>
+                            <option value="2">Atropello</option>
+                            <option value="3">Cacería / arma de fuego</option>
+                            <option value="4">Encontrado atrapado</option>
+                            <option value="5">Animal desorientado</option>
+                            <option value="6">Evento natural (inundación/tormenta)</option>
+                            <option value="7">Otro</option>
                         </select>
                     </div>
                 </div>
@@ -425,10 +431,6 @@ $(document).ready(function() {
             'Desconocido': 3
         };
         
-        const incidentTypeMap = {
-            'Incendio cercano - Alto': 1
-        };
-
         const estado = $('#estado_animal').val();
         const tipo = $('#tipo_incidente_animal').val();
         const tamano = $('input[name="tamano_animal"]:checked').val();
@@ -446,9 +448,9 @@ $(document).ready(function() {
         animalFormData.append('direccion', $('#nombre_lugar').val() || 'Sin dirección específica');
         animalFormData.append('observaciones', obs || 'Reportado vía Formulario Interno de Cuadrillas');
         animalFormData.append('condicion_inicial_id', conditionMap[estado] || 2);
-        animalFormData.append('tipo_incidente_id', incidentTypeMap[tipo] || 1);
+        animalFormData.append('tipo_incidente_id', tipo);
         animalFormData.append('tamano', tamano);
-        animalFormData.append('puede_moverse', moverse);
+        animalFormData.append('puede_moverse', moverse ? 1 : 0);
         animalFormData.append('traslado_inmediato', 0); // Falso por defecto
         
         if (imagen) {
