@@ -40,6 +40,7 @@
                                 placeholder="Se generará automáticamente" readonly>
                         @endif
                         <input type="hidden" name="paquete_externo_id" id="paquete_externo_id" value="">
+                        <input type="hidden" name="codigo_solicitud_externa" id="codigo_solicitud_externa" value="{{ old('codigo_solicitud_externa') }}">
                         @error('codigo_paquete')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -47,8 +48,8 @@
                         @enderror
                     </div>
                     @if(!isset($paquete) || !$paquete->id_paquete)
-                        <small class="form-text text-muted">El código se generará automáticamente al crear el
-                            paquete</small>
+                        <small class="form-text text-muted">El código interno se generará automáticamente (formato PKG-YYYYMMDD-XXXX).</small>
+                        <small class="form-text text-info d-none" id="solicitud-externa-info"></small>
                     @endif
                 </div>
 
@@ -266,14 +267,22 @@
             }
         });
 
-        // Cargar código de seguimiento desde sessionStorage si existe
+        // Vincular solicitud de logística externa (no usar su código como codigo_paquete)
         const codigoSeguimiento = sessionStorage.getItem('codigo_seguimiento');
         const paqueteExternoId = sessionStorage.getItem('paquete_externo_id');
         
         if (codigoSeguimiento) {
-            document.getElementById('codigo_paquete').value = codigoSeguimiento;
-            document.getElementById('paquete_externo_id').value = paqueteExternoId;
-            // Limpiar sessionStorage
+            document.getElementById('codigo_solicitud_externa').value = codigoSeguimiento;
+            document.getElementById('paquete_externo_id').value = paqueteExternoId || '';
+            document.getElementById('codigo_paquete').value = '';
+            document.getElementById('codigo_paquete').placeholder = 'Se generará al guardar (PKG-...)';
+
+            const info = document.getElementById('solicitud-externa-info');
+            if (info) {
+                info.textContent = 'Solicitud logística vinculada: ' + codigoSeguimiento;
+                info.classList.remove('d-none');
+            }
+
             sessionStorage.removeItem('codigo_seguimiento');
             sessionStorage.removeItem('paquete_externo_id');
         }

@@ -99,9 +99,20 @@ class PaqueteController extends Controller
         \Log::info('=== INICIO STORE PAQUETE ===');
         \Log::info('Datos validados:', $data);
 
-        if (empty($data['codigo_paquete'])) {
-            $data['codigo_paquete'] = $this->generarCodigoPaquete();
+        $codigoSolicitudExterna = $data['codigo_solicitud_externa']
+            ?? $request->input('codigo_solicitud_externa');
+
+        if ($codigoSolicitudExterna) {
+            $data['codigo_solicitud_externa'] = $codigoSolicitudExterna;
+
+            $paqueteExistente = Paquete::where('codigo_solicitud_externa', $codigoSolicitudExterna)->first();
+            if ($paqueteExistente) {
+                return Redirect::route('inventario.paquete.edit', $paqueteExistente->id_paquete)
+                    ->with('info', 'Ya existe un paquete vinculado a la solicitud '.$codigoSolicitudExterna.'.');
+            }
         }
+
+        $data['codigo_paquete'] = $this->resolverCodigoPaqueteUnico($data['codigo_paquete'] ?? null);
         $data['fecha_creacion'] = now();
         $data['ci_usuario_registro'] = auth()->user()->ci ?? null;
 
@@ -271,16 +282,29 @@ class PaqueteController extends Controller
     }
 
     /**
-     * Generar código único para el paquete
+     * Generar código único para el paquete de inventario.
      */
     private function generarCodigoPaquete(): string
     {
         do {
-            // Formato: PKG-YYYYMMDD-XXXX (ej: PKG-20231126-0001)
-            $codigo = 'PKG-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $codigo = 'PKG-'.date('Ymd').'-'.str_pad((string) random_int(1, 9999), 4, '0', STR_PAD_LEFT);
         } while (Paquete::where('codigo_paquete', $codigo)->exists());
 
         return $codigo;
+    }
+
+    /**
+     * Garantiza un codigo_paquete único; nunca reutiliza códigos de logística externos.
+     */
+    private function resolverCodigoPaqueteUnico(?string $codigoPropuesto): string
+    {
+        $codigoPropuesto = trim((string) $codigoPropuesto);
+
+        if ($codigoPropuesto !== '' && ! Paquete::where('codigo_paquete', $codigoPropuesto)->exists()) {
+            return $codigoPropuesto;
+        }
+
+        return $this->generarCodigoPaquete();
     }
 
     /**
