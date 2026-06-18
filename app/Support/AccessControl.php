@@ -169,9 +169,11 @@ class AccessControl
             ],
             'donante' => [
                 'donante.campanas.ver',
+                'donante.puntos.ver',
                 'donante.donaciones.crear',
                 'donante.donaciones_propias.ver',
                 'donante.comprobantes.ver',
+                'donante.perfil.gestionar',
             ],
             'voluntario_panel' => [
                 'voluntario.panel.ver',
@@ -265,8 +267,9 @@ class AccessControl
                 'voluntario.capacitaciones.ver', 'voluntario.participacion.registrar',
             ],
             'Donante' => [
-                'donante.campanas.ver', 'donante.donaciones.crear',
-                'donante.donaciones_propias.ver', 'donante.comprobantes.ver',
+                'donante.campanas.ver', 'donante.puntos.ver',
+                'donante.donaciones.crear', 'donante.donaciones_propias.ver',
+                'donante.comprobantes.ver', 'donante.perfil.gestionar',
             ],
             'Ciudadano' => [
                 'ciudadano.alertas.ver', 'ciudadano.incendios.reportar',

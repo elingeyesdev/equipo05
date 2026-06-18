@@ -3,6 +3,7 @@
 namespace Modules\Inventario\Http\Controllers;
 
 use Modules\Inventario\Models\Donante;
+use App\Support\OwnershipScope;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Modules\Inventario\Http\Requests\DonanteRequest;
@@ -122,10 +123,38 @@ class DonanteController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        $this->assertNotDonanteOnly();
+
         Donante::find($id)->delete();
 
         return Redirect::route('inventario.donante.index')
             ->with('success', 'Donante eliminado exitosamente.');
+    }
+
+    public function miPerfil(): View
+    {
+        $donante = OwnershipScope::ensureInventarioDonanteProfile(auth()->user());
+
+        return view('inventario::donante.edit', compact('donante'))
+            ->with('esPerfilPropio', true);
+    }
+
+    public function updateMiPerfil(DonanteRequest $request): RedirectResponse
+    {
+        $donante = OwnershipScope::ensureInventarioDonanteProfile(auth()->user());
+        $data = $request->validated();
+
+        if (! empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $data['cambiar_password'] = $request->has('cambiar_password');
+        $donante->update($data);
+
+        return Redirect::route('inventario.donante.mi-perfil')
+            ->with('success', 'Perfil actualizado correctamente.');
     }
 }
 

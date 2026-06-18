@@ -221,8 +221,8 @@
                         @endif
 
                         @if($__showInventarioDonante)
-                        <li class="nav-item {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') ? 'menu-open' : '' }}" data-sidebar-key="mod-donante">
-                            <a href="#" class="nav-link {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') ? 'active' : '' }}">
+                        <li class="nav-item {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') || request()->routeIs('inventario.donante.mi-perfil*') || request()->routeIs('inventario.helpdesk') ? 'menu-open' : '' }}" data-sidebar-key="mod-donante">
+                            <a href="#" class="nav-link {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') || request()->routeIs('inventario.donante.mi-perfil*') || request()->routeIs('inventario.helpdesk') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-hand-holding-heart"></i>
                                 <p><span class="sidebar-menu-label">Mis donaciones</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
@@ -233,6 +233,11 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="{{ route('inventario.donaciones.create') }}" class="nav-link {{ request()->routeIs('inventario.donaciones.create') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Registrar donación</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="{{ route('inventario.campana.index') }}" class="nav-link {{ request()->routeIs('inventario.campana.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i><p>Campañas públicas</p>
                                     </a>
@@ -240,6 +245,16 @@
                                 <li class="nav-item">
                                     <a href="{{ route('inventario.puntos-recoleccion.index') }}" class="nav-link {{ request()->routeIs('inventario.puntos-recoleccion.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i><p>Puntos de recolección</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('inventario.donante.mi-perfil') }}" class="nav-link {{ request()->routeIs('inventario.donante.mi-perfil*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Mi perfil</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('inventario.helpdesk') }}" class="nav-link {{ request()->routeIs('inventario.helpdesk') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Ayuda</p>
                                     </a>
                                 </li>
                             </ul>

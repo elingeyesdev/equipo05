@@ -3,6 +3,7 @@
 namespace Modules\Inventario\Http\Controllers;
 
 use App\Support\AccessControl;
+use App\Support\OwnershipScope;
 use App\Support\Database\YearMonthSql;
 use App\Support\InventarioOperativa;
 use Illuminate\Http\Request;
@@ -31,6 +32,8 @@ class HomeController extends Controller
         $user = auth()->user();
 
         if (AccessControl::userHasRole($user, 'Donante')) {
+            OwnershipScope::ensureInventarioDonanteProfile($user);
+
             return redirect()->route('inventario.donaciones.index');
         }
 

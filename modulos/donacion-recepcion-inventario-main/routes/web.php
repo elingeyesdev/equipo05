@@ -30,8 +30,17 @@ Route::middleware(['auth', 'permission.check:inventario.campanas.gestionar|inven
     Route::delete('campana/{campana}', [Modules\Inventario\Http\Controllers\CampanaController::class, 'destroy'])->name('campana.destroy');
 });
 
+Route::middleware(['auth', 'permission.check:inventario.puntos.gestionar|inventario.dashboard.ver|donante.puntos.ver|donante.campanas.ver'])->group(function () {
+    Route::get('puntos-recoleccion', [Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class, 'index'])->name('puntos-recoleccion.index');
+    Route::get('puntos-recoleccion/{puntos_recoleccion}', [Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class, 'show'])->name('puntos-recoleccion.show');
+});
+
 Route::middleware(['auth', 'permission.check:inventario.puntos.gestionar|inventario.dashboard.ver'])->group(function () {
-    Route::resource('puntos-recoleccion', Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class);
+    Route::get('puntos-recoleccion/create', [Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class, 'create'])->name('puntos-recoleccion.create');
+    Route::post('puntos-recoleccion', [Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class, 'store'])->name('puntos-recoleccion.store');
+    Route::get('puntos-recoleccion/{puntos_recoleccion}/edit', [Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class, 'edit'])->name('puntos-recoleccion.edit');
+    Route::put('puntos-recoleccion/{puntos_recoleccion}', [Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class, 'update'])->name('puntos-recoleccion.update');
+    Route::delete('puntos-recoleccion/{puntos_recoleccion}', [Modules\Inventario\Http\Controllers\PuntosRecoleccionController::class, 'destroy'])->name('puntos-recoleccion.destroy');
 });
 
 Route::middleware(['auth', 'permission.check:inventario.categorias.gestionar|inventario.dashboard.ver'])->group(function () {
@@ -46,6 +55,11 @@ Route::middleware(['auth', 'permission.check:inventario.categorias.gestionar|inv
 
 Route::middleware(['auth', 'permission.check:inventario.productos.gestionar|inventario.paquetes.ver|inventario.paquetes.gestionar|inventario.dashboard.ver'])->group(function () {
     Route::resource('producto', Modules\Inventario\Http\Controllers\ProductoController::class);
+});
+
+Route::middleware(['auth', 'permission.check:donante.perfil.gestionar|donante.donaciones.crear'])->group(function () {
+    Route::get('mi-perfil-donante', [Modules\Inventario\Http\Controllers\DonanteController::class, 'miPerfil'])->name('donante.mi-perfil');
+    Route::put('mi-perfil-donante', [Modules\Inventario\Http\Controllers\DonanteController::class, 'updateMiPerfil'])->name('donante.mi-perfil.update');
 });
 
 Route::middleware(['auth', 'permission.check:inventario.donantes.gestionar|inventario.donaciones.registrar|inventario.dashboard.ver'])->group(function () {
@@ -77,7 +91,7 @@ Route::middleware(['auth', 'permission.check:inventario.paquetes.gestionar|inven
     Route::resource('paquete', Modules\Inventario\Http\Controllers\PaqueteController::class);
 });
 
-Route::middleware(['auth', 'permission.check:inventario.donaciones.registrar|inventario.dashboard.ver'])->group(function () {
+Route::middleware(['auth', 'permission.check:inventario.donaciones.registrar|inventario.dashboard.ver|donante.donaciones.crear|donante.donaciones_propias.ver|donante.comprobantes.ver'])->group(function () {
     Route::post('donaciones/guardar', [Modules\Inventario\Http\Controllers\DonacioneController::class, 'store'])->name('donaciones.guardar_manual');
     Route::resource('donaciones', Modules\Inventario\Http\Controllers\DonacioneController::class);
 });
@@ -107,4 +121,4 @@ Route::middleware(['auth', 'permission.check:inventario.reportes.ver|inventario.
 // ========== HELPDESK WIDGET ==========
 Route::get('helpdesk', function () {
     return view('inventario::helpdesk');
-})->name('helpdesk')->middleware('auth');
+})->name('helpdesk')->middleware(['auth', 'permission.check:donante.campanas.ver|donante.donaciones.crear|inventario.dashboard.ver']);

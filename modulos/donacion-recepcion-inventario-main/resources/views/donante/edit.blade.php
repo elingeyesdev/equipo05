@@ -15,9 +15,9 @@
                         <span class="card-title">{{ __('Update') }} Donante</span>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('inventario.donante.update', $donante->id_donante) }}" role="form"
+                        <form method="POST" action="{{ !empty($esPerfilPropio) ? route('inventario.donante.mi-perfil.update') : route('inventario.donante.update', $donante->id_donante) }}" role="form"
                             enctype="multipart/form-data">
-                            {{ method_field('PATCH') }}
+                            {{ !empty($esPerfilPropio) ? method_field('PUT') : method_field('PATCH') }}
                             @csrf
 
                             @include('inventario::donante.form')

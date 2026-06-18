@@ -144,9 +144,9 @@
     }
 
     function crearCardSolicitud(paquete) {
-        const solicitud = paquete.solicitud;
-        const solicitante = solicitud.solicitante;
-        const destino = solicitud.destino;
+        const solicitud = paquete.solicitud || {};
+        const solicitante = solicitud.solicitante || {};
+        const destino = solicitud.destino || {};
         const estado = paquete.estado;
         
         const fechaCreacion = new Date(paquete.fecha_creacion).toLocaleDateString('es-ES');

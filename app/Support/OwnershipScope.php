@@ -37,7 +37,7 @@ class OwnershipScope
         if (! $donante) {
             $donante = Donante::create([
                 'nombre' => $nombre !== '' ? $nombre : $email,
-                'tipo' => 'Persona',
+                'tipo' => 'persona',
                 'email' => $email,
                 'telefono' => $user->telefono,
                 'fecha_registro' => now(),

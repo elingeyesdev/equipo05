@@ -11,17 +11,9 @@ use Illuminate\Support\Facades\Schema;
 
 class GatewayLogisticaController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            FusionModuloAccess::assertGatewayLogistica($request->user());
-
-            return $next($request);
-        });
-    }
-
     public function paquetesPendientes(): JsonResponse
     {
+        FusionModuloAccess::assertGatewayLogistica();
         if (! Schema::connection('logistica')->hasTable('paquete')) {
             return response()->json(['success' => true, 'data' => []]);
         }
@@ -92,6 +84,8 @@ class GatewayLogisticaController extends Controller
 
     public function armarPaquete(Request $request, int $id): JsonResponse
     {
+        FusionModuloAccess::assertGatewayLogistica();
+
         if (! Schema::connection('logistica')->hasTable('paquete')) {
             return response()->json(['success' => false, 'message' => 'Módulo logística no disponible.'], 404);
         }
@@ -133,6 +127,8 @@ class GatewayLogisticaController extends Controller
 
     public function destinoVoluntario(string $codigo): JsonResponse
     {
+        FusionModuloAccess::assertGatewayLogistica();
+
         if (! Schema::connection('logistica')->hasTable('paquete')) {
             return response()->json(['success' => false, 'data' => null], 404);
         }

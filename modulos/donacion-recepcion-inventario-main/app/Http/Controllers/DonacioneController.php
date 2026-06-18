@@ -23,6 +23,10 @@ class DonacioneController extends Controller
 {
     public function index(Request $request): View
     {
+        if (auth()->user()?->hasRole('Donante')) {
+            OwnershipScope::ensureInventarioDonanteProfile(auth()->user());
+        }
+
         $baseQuery = OwnershipScope::scopedDonacionesQuery(auth()->user());
         $donaciones = (clone $baseQuery)->with(['donante'])->orderByDesc('fecha')->get();
 
@@ -87,6 +91,10 @@ class DonacioneController extends Controller
         OwnershipScope::assertCanMutateDonacion(auth()->user());
 
         $data = $request->validated();
+
+        if (auth()->user()?->hasRole('Donante')) {
+            $data['id_donante'] = OwnershipScope::ensureInventarioDonanteProfile(auth()->user())->id_donante;
+        }
 
         \Log::info('=== INICIO STORE DONACION ===');
         \Log::info('Datos validados:', $data);
