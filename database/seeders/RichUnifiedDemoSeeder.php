@@ -21,6 +21,7 @@ class RichUnifiedDemoSeeder extends Seeder
             RichTransparenciaDemoSeeder::class,
             RichInventarioDemoSeeder::class,
             InventarioUbicarStockSeeder::class,
+            InventarioUsuariosOperativosSeeder::class,
             RichIncendiosDemoSeeder::class,
             RichRescateDemoSeeder::class,
             RichLogisticaDemoSeeder::class,

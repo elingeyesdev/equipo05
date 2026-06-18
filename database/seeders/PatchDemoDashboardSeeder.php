@@ -21,6 +21,7 @@ class PatchDemoDashboardSeeder extends Seeder
         $this->fixTransparenciaMensajesYDetalles();
         $this->fixInventarioHuecos();
         $this->fixInventarioStockUbicado();
+        $this->fixInventarioUsuarios();
         $this->fixLogisticaDemo();
         $this->fixRescateDashboard();
 
@@ -219,6 +220,23 @@ class PatchDemoDashboardSeeder extends Seeder
         }
 
         $seeder = new LogisticaReemplazarDemoSeeder;
+        if ($this->command) {
+            $seeder->setCommand($this->command);
+        }
+        $seeder->run();
+    }
+
+    private function fixInventarioUsuarios(): void
+    {
+        if (! Schema::connection('inventario')->hasTable('usuarios')) {
+            return;
+        }
+
+        if (DB::connection('inventario')->table('usuarios')->count() >= 5) {
+            return;
+        }
+
+        $seeder = new InventarioUsuariosOperativosSeeder;
         if ($this->command) {
             $seeder->setCommand($this->command);
         }
