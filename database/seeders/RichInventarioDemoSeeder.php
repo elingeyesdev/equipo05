@@ -23,6 +23,11 @@ class RichInventarioDemoSeeder extends Seeder
         $this->seedCatalogos($db, $now);
         $this->seedDonantesYDonaciones($db, $now);
         $this->seedAlmacenYPaquetes($db, $now);
+        $ubicar = new InventarioUbicarStockSeeder;
+        if ($this->command) {
+            $ubicar->setCommand($this->command);
+        }
+        $ubicar->run();
 
         $this->command?->info('Inventario: catálogos, donaciones, almacén y paquetes demo ampliados.');
     }

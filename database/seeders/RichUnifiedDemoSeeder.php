@@ -20,6 +20,7 @@ class RichUnifiedDemoSeeder extends Seeder
         $this->call([
             RichTransparenciaDemoSeeder::class,
             RichInventarioDemoSeeder::class,
+            InventarioUbicarStockSeeder::class,
             RichIncendiosDemoSeeder::class,
             RichRescateDemoSeeder::class,
             RichLogisticaDemoSeeder::class,

@@ -254,13 +254,19 @@ class HomeController extends Controller
         $totalEstantes = \Modules\Inventario\Models\Estante::count();
         $totalEspacios = \Modules\Inventario\Models\Espacio::count();
 
-        // Los espacios pueden tener estado 'Lleno', 'Vacio' o NULL (que significa vacío)
-        $espaciosLlenos = \Modules\Inventario\Models\Espacio::where('estado', 'Lleno')->count();
-        $espaciosDisponibles = $totalEspacios - $espaciosLlenos; // Todo lo que no está lleno está disponible
+        // Los espacios usan 'lleno' / 'disponible' (minúsculas en el módulo)
+        $espaciosLlenos = \Modules\Inventario\Models\Espacio::whereRaw("LOWER(COALESCE(estado, 'disponible')) = 'lleno'")->count();
+        $espaciosDisponibles = $totalEspacios - $espaciosLlenos;
 
+        $stockExpr = \Illuminate\Support\Facades\DB::raw(
+            'SUM(COALESCE(ubicaciones_donaciones.cantidad_ubicada, donacion_detalles.cantidad)) as total'
+        );
 
-        // Productos en inventario (ubicaciones activas)
-        $productosInventario = \Modules\Inventario\Models\UbicacionesDonacione::count();
+        // Productos en inventario (unidades en stock)
+        $productosInventario = (int) \Illuminate\Support\Facades\DB::connection('inventario')
+            ->table('donacion_detalles')
+            ->leftJoin('ubicaciones_donaciones', 'donacion_detalles.id_detalle', '=', 'ubicaciones_donaciones.id_detalle')
+            ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(ubicaciones_donaciones.cantidad_ubicada, donacion_detalles.cantidad)'));
 
         // ============================================
         // VIZ 1: Utilización por Almacén (Bar Chart Horizontal)
@@ -271,7 +277,7 @@ class HomeController extends Controller
             ->select(
                 'almacenes.nombre',
                 \Illuminate\Support\Facades\DB::raw('COUNT(espacios.id_espacio) as total_espacios'),
-                \Illuminate\Support\Facades\DB::raw("COUNT(CASE WHEN espacios.estado = 'Lleno' THEN 1 END) as espacios_llenos")
+                \Illuminate\Support\Facades\DB::raw("COUNT(CASE WHEN LOWER(COALESCE(espacios.estado, 'disponible')) = 'lleno' THEN 1 END) as espacios_llenos")
             )
             ->groupBy('almacenes.id_almacen', 'almacenes.nombre')
             ->get();
@@ -292,11 +298,12 @@ class HomeController extends Controller
         // ============================================
         // VIZ 2: Productos por Categoría (Doughnut)
         // ============================================
-        $productosPorCategoria = \Modules\Inventario\Models\UbicacionesDonacione::join('donacion_detalles', 'ubicaciones_donaciones.id_detalle', '=', 'donacion_detalles.id_detalle')
+        $productosPorCategoria = \Illuminate\Support\Facades\DB::connection('inventario')->table('donacion_detalles')
             ->join('productos', 'donacion_detalles.id_producto', '=', 'productos.id_producto')
             ->join('categorias_productos', 'productos.id_categoria', '=', 'categorias_productos.id_categoria')
-            ->select('categorias_productos.nombre', \Illuminate\Support\Facades\DB::raw('COUNT(*) as total'))
-            ->groupBy('categorias_productos.nombre')
+            ->leftJoin('ubicaciones_donaciones', 'donacion_detalles.id_detalle', '=', 'ubicaciones_donaciones.id_detalle')
+            ->select('categorias_productos.nombre', $stockExpr)
+            ->groupBy('categorias_productos.id_categoria', 'categorias_productos.nombre')
             ->orderByDesc('total')
             ->get();
 
@@ -313,7 +320,7 @@ class HomeController extends Controller
         // ============================================
         $movimientosRecientes = [];
 
-        // Últimas entradas (donaciones)
+        // Últimas entradas (donaciones ubicadas o registradas)
         $ultimasEntradas = \Modules\Inventario\Models\UbicacionesDonacione::with(['detalle.donacion', 'espacio.estante.almacene'])
             ->orderBy('id_ubicacion', 'desc')
             ->take(5)
@@ -324,10 +331,28 @@ class HomeController extends Controller
                     'icono' => 'fas fa-arrow-down',
                     'color' => 'success',
                     'titulo' => 'Ingreso al Almacén',
-                    'descripcion' => 'Producto ingresado a ' . ($ubicacion->espacio->estante->almacene->nombre ?? 'Almacén'),
-                    'fecha' => $ubicacion->detalle && $ubicacion->detalle->donacion ? \Carbon\Carbon::parse($ubicacion->detalle->donacion->fecha) : \Carbon\Carbon::now()
+                    'descripcion' => 'Producto ingresado a '.($ubicacion->espacio->estante->almacene->nombre ?? 'Almacén'),
+                    'fecha' => $ubicacion->detalle && $ubicacion->detalle->donacion ? \Carbon\Carbon::parse($ubicacion->detalle->donacion->fecha) : \Carbon\Carbon::now(),
                 ];
             });
+
+        if ($ultimasEntradas->isEmpty()) {
+            $ultimasEntradas = \Modules\Inventario\Models\Donacione::with('donante')
+                ->where('tipo', 'especie')
+                ->orderByDesc('fecha')
+                ->take(5)
+                ->get()
+                ->map(function ($donacion) {
+                    return [
+                        'tipo' => 'entrada',
+                        'icono' => 'fas fa-arrow-down',
+                        'color' => 'success',
+                        'titulo' => 'Donación en especie registrada',
+                        'descripcion' => 'Donante: '.($donacion->donante->nombre ?? 'Anónimo'),
+                        'fecha' => \Carbon\Carbon::parse($donacion->fecha),
+                    ];
+                });
+        }
 
         // Últimas salidas
         $ultimasSalidas = \Modules\Inventario\Models\RegistrosSalida::orderBy('fecha_salida', 'desc')
@@ -352,20 +377,21 @@ class HomeController extends Controller
         // ============================================
         // VIZ 5: Top 5 Productos Almacenados (Bar Chart)
         // ============================================
-        $topProductosAlmacenados = \Modules\Inventario\Models\UbicacionesDonacione::join('donacion_detalles', 'ubicaciones_donaciones.id_detalle', '=', 'donacion_detalles.id_detalle')
+        $topProductosAlmacenados = \Illuminate\Support\Facades\DB::connection('inventario')->table('donacion_detalles')
             ->join('productos', 'donacion_detalles.id_producto', '=', 'productos.id_producto')
-            ->select('productos.nombre', \Illuminate\Support\Facades\DB::raw('COUNT(*) as cantidad'))
+            ->leftJoin('ubicaciones_donaciones', 'donacion_detalles.id_detalle', '=', 'ubicaciones_donaciones.id_detalle')
+            ->select('productos.nombre', $stockExpr)
             ->groupBy('productos.id_producto', 'productos.nombre')
-            ->orderByDesc('cantidad')
+            ->orderByDesc('total')
             ->take(5)
             ->get();
 
         $nombresTopProductos = $topProductosAlmacenados->pluck('nombre');
-        $cantidadesTopProductos = $topProductosAlmacenados->pluck('cantidad');
+        $cantidadesTopProductos = $topProductosAlmacenados->pluck('total');
 
         if ($nombresCategorias->isEmpty()) {
             $nombresCategorias = collect(['Sin inventario']);
-            $cantidadesCategorias = collect([1]);
+            $cantidadesCategorias = collect([0]);
         }
 
         if ($nombresTopProductos->isEmpty()) {

@@ -20,6 +20,7 @@ class PatchDemoDashboardSeeder extends Seeder
         $this->fixTransparenciaDonaciones();
         $this->fixTransparenciaMensajesYDetalles();
         $this->fixInventarioHuecos();
+        $this->fixInventarioStockUbicado();
         $this->fixLogisticaDemo();
         $this->fixRescateDashboard();
 
@@ -218,6 +219,32 @@ class PatchDemoDashboardSeeder extends Seeder
         }
 
         $seeder = new LogisticaReemplazarDemoSeeder;
+        if ($this->command) {
+            $seeder->setCommand($this->command);
+        }
+        $seeder->run();
+    }
+
+    private function fixInventarioStockUbicado(): void
+    {
+        if (! Schema::connection('inventario')->hasTable('ubicaciones_donaciones')) {
+            return;
+        }
+
+        $inv = DB::connection('inventario');
+        $sinUbicar = $inv->table('donacion_detalles')
+            ->whereNotIn('id_detalle', $inv->table('ubicaciones_donaciones')->pluck('id_detalle'))
+            ->exists();
+
+        $sinOcupacion = $inv->table('espacios')
+            ->whereRaw("LOWER(COALESCE(estado, 'disponible')) = 'lleno'")
+            ->doesntExist();
+
+        if (! $sinUbicar && ! $sinOcupacion) {
+            return;
+        }
+
+        $seeder = new InventarioUbicarStockSeeder;
         if ($this->command) {
             $seeder->setCommand($this->command);
         }
