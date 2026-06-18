@@ -6,7 +6,7 @@
     }
 
     window.initInventarioListTable = function (config) {
-        const table = $(config.selector).DataTable({
+        const dtOptions = {
             paging: true,
             pageLength: 10,
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
@@ -14,14 +14,24 @@
             ordering: true,
             info: true,
             autoWidth: false,
-            responsive: false,
+            scrollX: config.scrollX ?? false,
             order: config.defaultOrder || [[0, 'asc']],
             language: window.inventarioDataTablesEs || {
                 search: 'Buscar:',
                 zeroRecords: 'No se encontraron resultados',
                 emptyTable: 'No hay datos disponibles en la tabla',
             },
-        });
+        };
+
+        if (config.responsive) {
+            dtOptions.responsive = config.responsive;
+        }
+
+        if (config.columnDefs) {
+            dtOptions.columnDefs = config.columnDefs;
+        }
+
+        const table = $(config.selector).DataTable(dtOptions);
 
         (config.filters || []).forEach(function (filter) {
             $(filter.select).on('change', function () {
