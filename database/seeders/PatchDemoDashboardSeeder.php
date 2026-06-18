@@ -20,6 +20,7 @@ class PatchDemoDashboardSeeder extends Seeder
         $this->fixTransparenciaDonaciones();
         $this->fixTransparenciaMensajesYDetalles();
         $this->fixInventarioHuecos();
+        $this->fixLogisticaDemo();
         $this->fixRescateDashboard();
 
         $this->command?->info('Parche demo: roles, dashboard transparencia, inventario y rescate completados.');
@@ -200,6 +201,27 @@ class PatchDemoDashboardSeeder extends Seeder
         }
         $seeder->enrichDashboardDemoData();
         $seeder->runSpeciesImageRefresh();
+    }
+
+    private function fixLogisticaDemo(): void
+    {
+        if (! Schema::connection('logistica')->hasTable('solicitud')) {
+            return;
+        }
+
+        $tieneDemo = DB::connection('logistica')->table('solicitud')
+            ->where('codigo_seguimiento', 'like', 'LOG-DEMO-%')
+            ->exists();
+
+        if (! $tieneDemo) {
+            return;
+        }
+
+        $seeder = new LogisticaReemplazarDemoSeeder;
+        if ($this->command) {
+            $seeder->setCommand($this->command);
+        }
+        $seeder->run();
     }
 
     private function fixInventarioHuecos(): void

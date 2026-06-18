@@ -82,7 +82,7 @@ class LogisticaOperativaSeeder extends Seeder
                 'updated_at' => $fecha->copy()->addHours($item['horas_actualizacion']),
             ], 'id_solicitud');
 
-            if (in_array($item['estado'], ['aprobada', 'en_ruta', 'entregada'], true)
+            if (in_array($item['estado'], ['pendiente', 'aprobada', 'en_ruta', 'entregada'], true)
                 && Schema::connection('logistica')->hasTable('paquete')) {
                 $this->crearPaqueteYSeguimiento($db, $estados, $solId, $item, $fecha);
             }
@@ -161,6 +161,7 @@ class LogisticaOperativaSeeder extends Seeder
     private function crearPaqueteYSeguimiento($db, array $estados, int $solId, array $item, Carbon $fecha): void
     {
         $estadoPaquete = match ($item['estado']) {
+            'pendiente' => $estados['pendiente'] ?? reset($estados),
             'aprobada' => $estados['en almacén'] ?? $estados['pendiente'] ?? reset($estados),
             'en_ruta' => $estados['en tránsito'] ?? reset($estados),
             'entregada' => $estados['entregado'] ?? reset($estados),
@@ -168,6 +169,7 @@ class LogisticaOperativaSeeder extends Seeder
         };
 
         $ubicacion = match ($item['estado']) {
+            'pendiente' => 'Almacén central — Plan 3000, Santa Cruz (pendiente de armado)',
             'aprobada' => 'Almacén central Santa Cruz',
             'en_ruta' => 'Ruta '.$item['provincia'].' — km '.rand(12, 180),
             'entregada' => $item['comunidad'].', '.$item['provincia'],
@@ -192,6 +194,7 @@ class LogisticaOperativaSeeder extends Seeder
         $conductor = $this->conductores[array_rand($this->conductores)];
         $placa = $this->placas[array_rand($this->placas)];
         $pasos = match ($item['estado']) {
+            'pendiente' => [],
             'aprobada' => [['estado' => 'Armado en almacén', 'horas' => 6]],
             'en_ruta' => [
                 ['estado' => 'Cargado en almacén', 'horas' => 8],

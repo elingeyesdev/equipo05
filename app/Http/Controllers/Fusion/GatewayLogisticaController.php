@@ -52,6 +52,8 @@ class GatewayLogisticaController extends Controller
                 'destino.comunidad as destino_comunidad',
                 'destino.provincia as destino_provincia',
                 'destino.direccion as destino_direccion',
+                'destino.latitud as destino_latitud',
+                'destino.longitud as destino_longitud',
             ])
             ->orderByDesc('paquete.fecha_creacion');
 
@@ -202,8 +204,8 @@ class GatewayLogisticaController extends Controller
                     'comunidad' => $row->destino_comunidad ?? '—',
                     'provincia' => $row->destino_provincia ?? '—',
                     'direccion' => $row->destino_direccion ?? '—',
-                    'latitud' => '0',
-                    'longitud' => '0',
+                    'latitud' => (string) ($row->destino_latitud ?? '0'),
+                    'longitud' => (string) ($row->destino_longitud ?? '0'),
                 ],
             ],
         ];
