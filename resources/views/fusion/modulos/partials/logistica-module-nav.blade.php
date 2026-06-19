@@ -3,7 +3,8 @@
         ['route' => 'logistica.estadisticas', 'patterns' => ['logistica.estadisticas', 'logistica.dashboard'], 'icon' => 'fa-chart-bar', 'label' => 'Estadísticas'],
         ['route' => 'logistica.solicitud', 'patterns' => ['logistica.solicitud', 'logistica.solicitud.*'], 'icon' => 'fa-clipboard-list', 'label' => 'Solicitudes'],
         ['route' => 'logistica.paquete', 'patterns' => ['logistica.paquete'], 'icon' => 'fa-boxes', 'label' => 'Paquetes'],
-        ['route' => 'logistica.seguimiento', 'patterns' => ['logistica.seguimiento'], 'icon' => 'fa-route', 'label' => 'Seguimiento'],
+        ['route' => 'logistica.seguimiento', 'patterns' => ['logistica.seguimiento', 'logistica.seguimiento.*'], 'icon' => 'fa-route', 'label' => 'Seguimiento'],
+        ['route' => 'logistica.mapa', 'patterns' => ['logistica.mapa'], 'icon' => 'fa-map-marked-alt', 'label' => 'Mapa'],
         ['route' => 'logistica.vehiculo', 'patterns' => ['logistica.vehiculo'], 'icon' => 'fa-truck', 'label' => 'Vehículos'],
     ];
 @endphp

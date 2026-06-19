@@ -45,8 +45,11 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label>Direccion</label>
-                    <input type="text" name="direccion" class="form-control" placeholder="Ejemplo: Barrio Central, calle 4" value="{{ old('direccion') }}">
+                    <input type="text" name="direccion" class="form-control" placeholder="Se completará al seleccionar en el mapa" value="{{ old('direccion') }}">
                 </div>
+
+                @include('fusion.modulos.partials.logistica-mapa-picker')
+
                 <div class="col-md-4 mb-3">
                     <label>Tipo de Emergencia</label>
                     <input type="text" name="tipo_emergencia" class="form-control" required placeholder="Ejemplo: Incendio forestal" value="{{ old('tipo_emergencia') }}">

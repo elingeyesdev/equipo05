@@ -70,6 +70,11 @@
                         @endif
                         <td class="col-acciones">
                             <span class="logistica-row-actions">
+                                @if($row['paquete_logistica_id'] ?? false)
+                                <a href="{{ route('logistica.seguimiento.tracking', ['id' => $row['paquete_logistica_id']]) }}" class="btn btn-outline-info btn-sm" title="Ver mapa">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </a>
+                                @endif
                                 <a href="{{ route('logistica.crud.edit', ['seccion' => 'solicitud', 'id' => $row['id_solicitud']]) }}" class="btn btn-outline-warning btn-sm" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>

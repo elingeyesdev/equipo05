@@ -267,3 +267,15 @@ body.module-logistica.platform-ui .logistica-meta-line {
     color: #64748b;
     padding: 0 1rem 0.75rem;
 }
+
+body.module-logistica.platform-ui .logistica-mapa-container {
+    height: 520px;
+    width: 100%;
+    min-height: 360px;
+}
+
+@media (max-width: 767.98px) {
+    body.module-logistica.platform-ui .logistica-mapa-container {
+        height: 380px;
+    }
+}

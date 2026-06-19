@@ -514,6 +514,11 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="{{ route('logistica.mapa') }}" class="nav-link {{ request()->routeIs('logistica.mapa') || request()->routeIs('logistica.seguimiento.tracking') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Mapa operativo</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="{{ route('logistica.seguimiento') }}" class="nav-link {{ request()->routeIs('logistica.seguimiento') ? 'active' : '' }}">
                                         <i class="fas fa-map nav-icon"></i><p>Seguimiento de Paquetes</p>
                                     </a>

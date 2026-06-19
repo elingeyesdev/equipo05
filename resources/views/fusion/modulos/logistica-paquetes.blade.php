@@ -68,6 +68,11 @@
                             @endif
                             <td class="col-acciones text-right text-nowrap">
                                 <span class="logistica-row-actions">
+                                    @if(!empty($paquete['id_paquete']))
+                                    <a href="{{ route('logistica.seguimiento.tracking', ['id' => $paquete['id_paquete']]) }}" class="btn btn-outline-info btn-sm" title="Ver mapa">
+                                        <i class="fas fa-map-marked-alt"></i>
+                                    </a>
+                                    @endif
                                     <a href="{{ route('logistica.crud.edit', ['seccion' => 'paquete', 'id' => $paquete['id_paquete']]) }}" class="btn btn-outline-warning btn-sm" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>

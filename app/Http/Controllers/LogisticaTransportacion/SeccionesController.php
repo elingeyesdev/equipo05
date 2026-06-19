@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Support\FusionModuloAccess;
 use App\Support\AccessControl;
 use App\Support\LogisticaOperativa;
+use App\Support\LogisticaMapa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -315,6 +316,8 @@ class SeccionesController extends Controller
             'fecha_inicio' => ['required', 'date'],
             'fecha_necesidad' => ['nullable', 'date'],
             'insumos_necesarios' => ['nullable', 'string'],
+            'latitud' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitud' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
         $conn = DB::connection('logistica');
@@ -329,13 +332,21 @@ class SeccionesController extends Controller
             'updated_at' => now(),
         ], 'id_solicitante');
 
-        $destinoId = $conn->table('destino')->insertGetId([
+        $destinoPayload = [
             'comunidad' => $data['comunidad'],
             'provincia' => $data['provincia'],
             'direccion' => $data['direccion'] ?? null,
             'created_at' => now(),
             'updated_at' => now(),
-        ], 'id_destino');
+        ];
+        if (Schema::connection('logistica')->hasColumn('destino', 'latitud') && isset($data['latitud'])) {
+            $destinoPayload['latitud'] = $data['latitud'];
+        }
+        if (Schema::connection('logistica')->hasColumn('destino', 'longitud') && isset($data['longitud'])) {
+            $destinoPayload['longitud'] = $data['longitud'];
+        }
+
+        $destinoId = $conn->table('destino')->insertGetId($destinoPayload, 'id_destino');
 
         $codigo = 'SOL-' . now()->format('YmdHis');
 
@@ -383,6 +394,26 @@ class SeccionesController extends Controller
         $seguimientos = LogisticaOperativa::seguimientosOperativos();
 
         return view('fusion.modulos.logistica-seguimiento', compact('seguimientos'));
+    }
+
+    public function mapa(): View
+    {
+        $marcadores = LogisticaMapa::marcadoresOperativos();
+
+        return view('fusion.modulos.logistica-mapa', compact('marcadores'));
+    }
+
+    public function tracking(int $id): View
+    {
+        $datos = LogisticaMapa::datosTracking($id);
+        abort_if($datos === null, 404);
+
+        return view('fusion.modulos.logistica-tracking', [
+            'paquete' => $datos['paquete'],
+            'historial' => $datos['historial'],
+            'points' => $datos['points'],
+            'destino' => $datos['destino'],
+        ]);
     }
 
     public function show(string $seccion): View

@@ -14,6 +14,8 @@ Route::get('/solicitud/create', [SeccionesController::class, 'solicitudCreate'])
 Route::post('/solicitud', [SeccionesController::class, 'solicitudStore'])->name('solicitud.store');
 Route::get('/paquete', [SeccionesController::class, 'paquetes'])->name('paquete');
 Route::get('/seguimiento', [SeccionesController::class, 'seguimiento'])->name('seguimiento');
+Route::get('/seguimiento/tracking/{id}', [SeccionesController::class, 'tracking'])->name('seguimiento.tracking');
+Route::get('/mapa', [SeccionesController::class, 'mapa'])->name('mapa');
 Route::get('/vehiculo', [SeccionesController::class, 'show'])->defaults('seccion', 'vehiculo')->name('vehiculo');
 
 Route::get('/solicitante', [SeccionesController::class, 'show'])->defaults('seccion', 'solicitante')->name('solicitante');

@@ -36,8 +36,13 @@
                             <p class="mb-1 small"><strong>CI:</strong> {{ $item->conductor_ci ?? '-' }}</p>
                             <p class="mb-0 small"><strong>Placa:</strong> {{ $item->vehiculo_placa ?? '-' }}</p>
                         </div>
-                        <div class="card-footer bg-white d-flex justify-content-end py-2">
+                        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-2">
                             <span class="logistica-row-actions">
+                                @if($item->id_paquete)
+                                <a href="{{ route('logistica.seguimiento.tracking', ['id' => $item->id_paquete]) }}" class="btn btn-outline-info btn-sm" title="Ver mapa de recorrido">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </a>
+                                @endif
                                 <a href="{{ route('logistica.crud.edit', ['seccion' => 'seguimiento', 'id' => $item->id_historial]) }}" class="btn btn-outline-warning btn-sm" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
