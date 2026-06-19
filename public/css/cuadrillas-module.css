@@ -188,3 +188,51 @@ body.module-cuadrillas.platform-ui .table thead th {
     border-bottom: 2px solid #e2e8f0 !important;
     border-top: none;
 }
+
+/* Tarjeta de bienvenida */
+body.module-cuadrillas.platform-ui .cua-welcome-card {
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-top: 4px solid #28a745;
+    border-radius: 0.5rem;
+    background: #fff;
+}
+
+body.module-cuadrillas.platform-ui .cua-welcome-org {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #28a745;
+}
+
+body.module-cuadrillas.platform-ui .cua-welcome-text {
+    font-size: 1.02rem;
+    line-height: 1.65;
+}
+
+body.module-cuadrillas.platform-ui .cua-welcome-tree {
+    font-size: 7rem;
+    color: #d4edda !important;
+    opacity: 0.95;
+}
+
+body.module-cuadrillas.platform-ui .cua-quickview-card {
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+body.module-cuadrillas.platform-ui .cua-quickview-header {
+    background: #545b62 !important;
+    color: #fff !important;
+    border-bottom: none;
+}
+
+body.module-cuadrillas.platform-ui .cua-quickview-header .card-title,
+body.module-cuadrillas.platform-ui .cua-quickview-header h5 {
+    color: #fff !important;
+}
+
+@media (max-width: 767.98px) {
+    body.module-cuadrillas.platform-ui .cua-kpi-row .col-lg-3 {
+        margin-bottom: 0.75rem;
+    }
+}
