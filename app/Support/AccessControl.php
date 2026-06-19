@@ -362,7 +362,13 @@ class AccessControl
 
         $allowed = self::MODULE_ACCESS_ROLES[$module] ?? [];
 
-        return $user->hasAnyRole($allowed);
+        foreach ($allowed as $role) {
+            if (self::userHasRole($user, $role)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @return list<string> */

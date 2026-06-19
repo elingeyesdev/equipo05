@@ -2,6 +2,7 @@
 
 namespace Modules\Rescate\Services\Dashboard;
 
+use App\Support\AccessControl;
 use Modules\Rescate\Models\ContactMessage;
 use Modules\Rescate\Models\Report;
 use Modules\Rescate\Models\Animal;
@@ -36,15 +37,15 @@ class DashboardService
         $data = array_merge($data, $this->getAdminDashboardData());
 
         // Datos específicos por rol (vistas secundarias)
-        if ($user->hasAnyRole(['admin', 'encargado'])) {
+        if (AccessControl::userHasAnyRole($user, ['Administrador', 'Operador de Incendios'])) {
             // reservado para widgets exclusivos de administración si se añaden
         }
 
-        if ($user->hasRole('veterinario')) {
+        if (AccessControl::userHasRole($user, 'Veterinario')) {
             $data = array_merge($data, $this->getVeterinarianDashboardData($user));
         }
 
-        if ($user->hasRole('rescatista') && $user->person) {
+        if (AccessControl::userHasRole($user, 'Rescatista')) {
             $data = array_merge($data, $this->getRescuerDashboardData($user));
         }
 
@@ -137,7 +138,8 @@ class DashboardService
     private function getVeterinarianDashboardData($user): array
     {
         return DB::transaction(function () use ($user) {
-            if (!$user->person) {
+            $person = $this->resolvePersonForUser($user);
+            if (! $person) {
                 return [
                     'myAnimalFiles' => 0,
                     'recentEvaluations' => 0,
@@ -146,7 +148,7 @@ class DashboardService
             }
 
             // Buscar el veterinario asociado a la persona del usuario
-            $veterinarian = Veterinarian::where('persona_id', $user->person->id)->first();
+            $veterinarian = Veterinarian::where('persona_id', $person->id)->first();
             
             if (!$veterinarian) {
                 return [
@@ -193,7 +195,8 @@ class DashboardService
     private function getRescuerDashboardData($user): array
     {
         return DB::transaction(function () use ($user) {
-            if (!$user->person) {
+            $person = $this->resolvePersonForUser($user);
+            if (! $person) {
                 return [
                     'myTransfers' => 0,
                     'recentTransfers' => 0,
@@ -201,10 +204,10 @@ class DashboardService
             }
 
             // Total de traslados del rescatista
-            $myTransfers = Transfer::where('persona_id', $user->person->id)->count();
+            $myTransfers = Transfer::where('persona_id', $person->id)->count();
 
             // Traslados recientes (últimos 7 días)
-            $recentTransfers = Transfer::where('persona_id', $user->person->id)
+            $recentTransfers = Transfer::where('persona_id', $person->id)
                 ->where('created_at', '>=', Carbon::now()->subDays(7))
                 ->count();
 
@@ -791,6 +794,20 @@ class DashboardService
         usort($ranking, fn ($a, $b) => $b['total'] <=> $a['total']);
 
         return array_slice($ranking, 0, $limit);
+    }
+
+    private function resolvePersonForUser($user): ?Person
+    {
+        if (isset($user->person) && $user->person) {
+            return $user->person;
+        }
+
+        $userId = method_exists($user, 'getKey') ? $user->getKey() : ($user->id ?? null);
+        if (! $userId) {
+            return null;
+        }
+
+        return Person::where('usuario_id', $userId)->first();
     }
 }
 

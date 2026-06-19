@@ -107,6 +107,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 ? '/'.implode('/', array_slice($segments, 0, 3))
                 : ($request->is('rescate/modulo*') ? '/rescate/modulo/home' : '/incendios/modulo');
 
+            if ($request->getPathInfo() === $redirectPath) {
+                $redirectPath = $request->is('rescate/modulo*')
+                    ? '/rescate/modulo/landing'
+                    : '/incendios/modulo/bienvenida';
+            }
+
             return redirect($redirectPath)->with('info', 'Información actualizada correctamente.');
         };
 
