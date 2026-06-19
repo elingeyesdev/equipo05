@@ -11,19 +11,24 @@ class DemoImageDownloader
     {
         if (! $force && Storage::disk('public')->exists($relativePath)) {
             $size = Storage::disk('public')->size($relativePath);
-            if ($size > 8000) {
+            if ($size > 12000) {
                 return $relativePath;
             }
         }
 
-        // Bypass external HTTP requests to avoid slow/hanging WSL/Docker network timeouts
+        $url = AnimalImageCatalog::urlFor($speciesOrLabel);
+        $downloaded = self::downloadUrl($relativePath, $url);
+        if ($downloaded !== null) {
+            return $downloaded;
+        }
+
         return self::storeGeneratedPlaceholder($relativePath, AnimalImageCatalog::seedFor($speciesOrLabel));
     }
 
     public static function downloadUrl(string $relativePath, string $url): ?string
     {
         try {
-            $response = Http::timeout(1)
+            $response = Http::timeout(12)
                 ->withOptions(['allow_redirects' => true])
                 ->withHeaders(['User-Agent' => 'Equipo05-DemoSeeder/1.0'])
                 ->get($url);

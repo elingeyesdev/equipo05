@@ -32,6 +32,9 @@
     @if(str_contains($bodyModuleClass ?? '', 'module-cuadrillas'))
         <link rel="stylesheet" href="{{ asset('css/cuadrillas-module.css') }}?v={{ $cssVer('css/cuadrillas-module.css') }}">
     @endif
+    @if(str_contains($bodyModuleClass ?? '', 'module-rescate'))
+        <link rel="stylesheet" href="{{ asset('css/rescate-module.css') }}?v={{ $cssVer('css/rescate-module.css') }}">
+    @endif
     @yield('css')
     @stack('css')
     @stack('styles')

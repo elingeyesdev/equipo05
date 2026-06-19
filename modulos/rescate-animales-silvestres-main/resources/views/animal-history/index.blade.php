@@ -6,66 +6,24 @@
 @section('content_header_subtitle', 'Línea de tiempo')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span id="card_title">
-                                {{ __('Historial de Animales') }}
-                            </span>
-                            <form method="get" class="form-inline">
-                                <label for="order" class="mr-2">{{ __('Orden') }}</label>
-                                <select name="order" id="order" class="form-control" onchange="this.form.submit()">
-                                    @php $ord = request()->get('order'); @endphp
-                                    <option value="desc" {{ $ord!=='asc'?'selected':'' }}>{{ __('Más nuevo primero') }}</option>
-                                    <option value="asc" {{ $ord==='asc'?'selected':'' }}>{{ __('Más viejo primero') }}</option>
-                                </select>
-                            </form>
-                        </div>
-                    </div>
+<div class="container-fluid res-page-shell">
+    @include('fusion.modulos.partials.rescate-module-nav')
+    @include('fusion.modulos.partials.rescate-flash')
 
-                    <div class="card-body bg-white">
-                        <style>
-                        .history-card-img {
-                            width: 100%;
-                            height: 180px;
-                            object-fit: cover;
-                            background: #f4f6f9;
-                        }
-                        .history-card .card-header { 
-                            padding-left: 1.25rem; 
-                            padding-right: 1.25rem; 
-                            padding-top: 0.75rem;
-                            padding-bottom: 0.75rem;
-                        }
-                        .history-card .card-body { 
-                            padding: 0.5rem 1.25rem 0.25rem 1.25rem; 
-                        }
-                        .history-card .card-body .list-group-item {
-                            border-left: 0;
-                            border-right: 0;
-                            padding: 0.35rem 0;
-                            border-color: #dee2e6;
-                        }
-                        .history-card .card-body .list-group-item:first-child {
-                            border-top: 0;
-                        }
-                        .history-card .card-body .list-group-item:last-child {
-                            border-bottom: 0;
-                            margin-bottom: 0;
-                        }
-                        .history-card .card-footer { 
-                            padding-top: 0.5rem; 
-                            padding-bottom: 0.5rem; 
-                            background-color: #f8f9fa;
-                            margin-top: 0;
-                        }
-                        .history-card-grid > [class*='col-'] { margin-bottom: 30px; }
-                        </style>
-
-                        <div class="row mt-3 history-card-grid">
+    <div class="card res-list-card res-accent-info">
+        <div class="card-header">
+            <h3 class="res-card-title mb-0"><i class="fas fa-history text-info mr-2"></i>{{ __('Historial de Animales') }}</h3>
+            <form method="get" class="form-inline mb-0">
+                <label for="order" class="mr-2 small font-weight-bold">{{ __('Orden') }}</label>
+                <select name="order" id="order" class="form-control form-control-sm" onchange="this.form.submit()">
+                    @php $ord = request()->get('order'); @endphp
+                    <option value="desc" {{ $ord!=='asc'?'selected':'' }}>{{ __('Más nuevo primero') }}</option>
+                    <option value="asc" {{ $ord==='asc'?'selected':'' }}>{{ __('Más viejo primero') }}</option>
+                </select>
+            </form>
+        </div>
+        <div class="card-body">
+                        <div class="row res-card-grid">
                             @foreach ($histories as $h)
                                 @php
                                     $animalFile = $h->animalFile;
@@ -77,15 +35,14 @@
                                     $obsText = is_array($h->observaciones ?? null) ? ($h->observaciones['texto'] ?? null) : ($h->observaciones ?? null);
                                     $resumen = $desc ? \Illuminate\Support\Str::limit($desc, 60) : ($obsText ? \Illuminate\Support\Str::limit($obsText, 60) : '-');
                                 @endphp
-                                <div class="col-md-4">
-                                    <div class="card card-outline card-secondary h-100 history-card">
-                                        @if($imagenUrl)
-                                            <img class="history-card-img" src="{{ rescate_media_url($imagenUrl, rescate_media_seed($animalFile)) }}" alt="Imagen del animal">
-                                        @else
-                                            <div class="history-card-img d-flex align-items-center justify-content-center bg-light">
-                                                <i class="fas fa-history fa-3x text-muted"></i>
-                                            </div>
-                                        @endif
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card res-entity-card">
+                                        @include('fusion.modulos.partials.rescate-entity-photo', [
+                                            'path' => $imagenUrl,
+                                            'seed' => rescate_media_seed($animalFile),
+                                            'alt' => $nombre,
+                                            'badge' => $animalFile?->species?->nombre,
+                                        ])
                                         <div class="card-header d-flex align-items-center">
                                             <h3 class="card-title mb-0" title="{{ $nombre }}">
                                                 <i class="fas fa-history text-primary mr-2"></i>
@@ -144,18 +101,18 @@
                         </div>
 
                         @if($histories->isEmpty())
-                            <div class="alert alert-info text-center">
-                                <i class="fas fa-info-circle"></i> {{ __('No se encontraron registros en el historial de animales.') }}
+                            <div class="res-empty-state">
+                                <i class="fas fa-history fa-2x mb-2 d-block text-muted"></i>
+                                {{ __('No se encontraron registros en el historial de animales.') }}
                             </div>
                         @endif
-                    </div>
-                    <div class="card-footer">
-                        {!! $histories->withQueryString()->links() !!}
-                    </div>
-                </div>
-            </div>
         </div>
+        @if($histories->hasPages())
+        <div class="card-footer">
+            {!! $histories->withQueryString()->links('pagination::bootstrap-4') !!}
+        </div>
+        @endif
     </div>
-    @include('partials.page-pad')
+</div>
 @endsection
 

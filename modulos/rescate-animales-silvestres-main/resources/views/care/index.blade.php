@@ -6,31 +6,18 @@
 @section('content_header_subtitle', 'Vista agrupada')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="container-fluid res-page-shell">
+    @include('fusion.modulos.partials.rescate-module-nav')
+    @include('fusion.modulos.partials.rescate-flash')
 
-                            <span id="card_title" class="font-weight-bold mb-0">
-                                Registro de cuidados
-                            </span>
-
-                             <div class="float-right">
-                                <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
-                                  <i class="fas fa-plus"></i> Nuevo registro
-                                </a>
-                              </div>
-                        </div>
-                    </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
-                    <div class="card-body bg-white">
+    <div class="card res-list-card res-accent-success">
+        <div class="card-header">
+            <h3 class="res-card-title mb-0"><i class="fas fa-heart text-success mr-2"></i>Registro de cuidados</h3>
+            <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-success btn-sm">
+                <i class="fas fa-plus mr-1"></i> Nuevo registro
+            </a>
+        </div>
+        <div class="card-body">
                         @if($groupedCares->isEmpty())
                             <div class="alert alert-info text-center">
                                 <i class="fas fa-info-circle"></i> {{ __('No se encontraron cuidados de animales.') }}
@@ -58,15 +45,12 @@
                                         $showAnimalInfo = true;
                                     }
                                 @endphp
-                                <div class="card card-outline card-primary mb-4">
+                                <div class="card res-group-card mb-4">
                                     <div class="card-body">
                                         <div class="row align-items-start">
                                             {{-- Foto del animal a la izquierda --}}
                                             <div class="col-md-3 text-center mb-3 mb-md-0">
-                                                <img src="{{ $animalImage }}" 
-                                                     alt="{{ $animalName }}" 
-                                                     class="img-fluid rounded"
-                                                     style="max-height: 200px; max-width: 100%; object-fit: cover;">
+                                                <img src="{{ $animalImage }}" alt="{{ $animalName }}" class="res-group-photo">
                                             </div>
                                             {{-- Información del animal a la derecha --}}
                                             <div class="col-md-9">
@@ -130,10 +114,7 @@
                                 </div>
                             @endforeach
                         @endif
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-    @include('partials.page-pad')
+</div>
 @endsection

@@ -1,0 +1,276 @@
+/* Módulo rescate de fauna — UI unificada AdminLTE */
+
+body.module-rescate.platform-ui .content-wrapper {
+    background: #f4f6f9;
+}
+
+body.module-rescate.platform-ui section.content > .container-fluid,
+body.module-rescate.platform-ui .res-page-shell {
+    padding: 1.25rem 1.5rem 1.75rem;
+}
+
+body.module-rescate.platform-ui .content-header h1 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+body.module-rescate.platform-ui .content-header h1 small {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+body.module-rescate.platform-ui .card {
+    border-radius: 0.5rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    margin-bottom: 1.25rem;
+}
+
+body.module-rescate.platform-ui .card > .card-header {
+    background: #fff !important;
+    color: #334155 !important;
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.85rem 1.15rem;
+}
+
+body.module-rescate.platform-ui .card > .card-header .card-title {
+    color: #1e293b !important;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+body.module-rescate.platform-ui .res-list-card {
+    border-top: 3px solid #15803d;
+}
+
+body.module-rescate.platform-ui .res-list-card.res-accent-danger { border-top-color: #dc3545; }
+body.module-rescate.platform-ui .res-list-card.res-accent-warning { border-top-color: #d97706; }
+body.module-rescate.platform-ui .res-list-card.res-accent-info { border-top-color: #0891b2; }
+body.module-rescate.platform-ui .res-list-card.res-accent-success { border-top-color: #15803d; }
+
+.res-dashboard-shell { border-top: 3px solid #15803d; }
+.res-dashboard-shell > .card-header {
+    background: #fff !important;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.res-dashboard-nav { gap: 0.3rem; }
+
+.res-dashboard-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.375rem;
+    white-space: nowrap;
+}
+
+.res-dashboard-nav .nav-link:hover:not(.active) {
+    background-color: #f4f6f9;
+    color: #212529;
+}
+
+.res-dashboard-nav .nav-link.active {
+    background-color: #15803d;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(21, 128, 61, 0.25);
+    cursor: default;
+}
+
+@media (max-width: 991.98px) {
+    .res-dashboard-nav .nav-link span { display: none; }
+}
+
+body.module-rescate.platform-ui .res-list-card > .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 3.25rem;
+}
+
+body.module-rescate.platform-ui .res-list-card > .card-header .res-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+body.module-rescate.platform-ui .res-filter-bar {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.25rem;
+}
+
+body.module-rescate.platform-ui .res-filter-bar label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.25rem;
+}
+
+body.module-rescate.platform-ui .res-card-grid > [class*='col-'] {
+    margin-bottom: 1.5rem;
+}
+
+body.module-rescate.platform-ui .res-entity-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+body.module-rescate.platform-ui .res-entity-card:hover {
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+    transform: translateY(-2px);
+}
+
+body.module-rescate.platform-ui .res-entity-card-img-wrap {
+    position: relative;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f1f5f9 100%);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
+
+body.module-rescate.platform-ui .res-entity-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+body.module-rescate.platform-ui .res-entity-card-img-wrap .res-species-badge {
+    position: absolute;
+    left: 0.65rem;
+    bottom: 0.65rem;
+    background: rgba(15, 23, 42, 0.72);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+}
+
+body.module-rescate.platform-ui .res-entity-card > .card-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+body.module-rescate.platform-ui .res-entity-card > .card-body {
+    padding: 0.65rem 1rem;
+    flex: 1 1 auto;
+}
+
+body.module-rescate.platform-ui .res-entity-card .res-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.875rem;
+}
+
+body.module-rescate.platform-ui .res-entity-card .res-meta-row:last-child {
+    border-bottom: 0;
+}
+
+body.module-rescate.platform-ui .res-entity-card > .card-footer {
+    padding: 0.65rem 1rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+body.module-rescate.platform-ui .res-entity-card .res-btn-row {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+body.module-rescate.platform-ui .res-entity-card .res-btn-row > * {
+    flex: 1 1 0;
+}
+
+body.module-rescate.platform-ui .res-empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: #64748b;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 0.5rem;
+}
+
+body.module-rescate.platform-ui .res-group-card {
+    border-left: 4px solid #15803d;
+    margin-bottom: 1.25rem;
+}
+
+body.module-rescate.platform-ui .res-group-card .res-group-photo {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+body.module-rescate.platform-ui .res-transfer-tabs .nav-link {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+body.module-rescate.platform-ui .res-transfer-tabs .nav-link.active {
+    background: #15803d;
+}
+
+body.module-rescate.platform-ui .res-kpi-row .small-box {
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+    min-height: 88px;
+}
+
+body.module-rescate.platform-ui .res-kpi-row .kpi-rescate { background: #15803d !important; }
+body.module-rescate.platform-ui .res-kpi-row .kpi-hallazgos { background: #d97706 !important; }
+body.module-rescate.platform-ui .res-kpi-row .kpi-traslados { background: #0891b2 !important; }
+body.module-rescate.platform-ui .res-kpi-row .kpi-liberados { background: #059669 !important; }
+
+body.module-rescate.platform-ui .btn-action-custom {
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+body.module-rescate.platform-ui .btn-action-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+    border-color: transparent;
+}
+
+body.module-rescate.platform-ui .card-footer .pagination {
+    margin-bottom: 0;
+    justify-content: center;
+}
+
+body.module-rescate.platform-ui .card-footer .pagination .page-item.active .page-link {
+    background-color: #15803d;
+    border-color: #15803d;
+}
+
+body.module-rescate.platform-ui .badge-urgencia-alta { background: #dc3545; }
+body.module-rescate.platform-ui .badge-urgencia-media { background: #d97706; }
+body.module-rescate.platform-ui .badge-urgencia-baja { background: #64748b; }

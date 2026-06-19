@@ -102,7 +102,9 @@
 @endsection
 
 @section('content_body')
-<div class="container-fluid pb-4 page-pad">
+<div class="container-fluid res-page-shell pb-4">
+    @include('fusion.modulos.partials.rescate-module-nav')
+    @include('fusion.modulos.partials.rescate-flash')
 
     @if($canViewAdminDashboard ?? false)
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">

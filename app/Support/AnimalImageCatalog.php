@@ -29,6 +29,11 @@ final class AnimalImageCatalog
         'puercoespin' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Coendou_prehensilis.jpg/640px-Coendou_prehensilis.jpg',
         'aguila' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Haliaeetus_leucocephalus_-Alaska-8a.jpg/640px-Haliaeetus_leucocephalus_-Alaska-8a.jpg',
         'coati' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Nasua_narica.jpg/640px-Nasua_narica.jpg',
+        'capuchino' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Cebus_albifrons_edit1.jpg/640px-Cebus_albifrons_edit1.jpg',
+        'hormiguero' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Myrmecophaga_tridactyla_%28Giant_anteater%29.jpg/640px-Myrmecophaga_tridactyla_%28Giant_anteater%29.jpg',
+        'pantanos' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Marsh_deer_%28Blastocerus_dichotomus%29_male.JPG/640px-Marsh_deer_%28Blastocerus_dichotomus%29_male.JPG',
+        'callejero' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/YellowLabradorLooking_new.jpg/640px-YellowLabradorLooking_new.jpg',
+        'abandonado' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/640px-Cat03.jpg',
         'fauna' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Walking_tiger_female.jpg/640px-Walking_tiger_female.jpg',
     ];
 

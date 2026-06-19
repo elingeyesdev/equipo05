@@ -6,34 +6,27 @@
 @section('content_header_subtitle', 'Listado')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span id="card_title">{{ __('Hallazgos') }}</span>
-                            <div class="float-right">
-                                
-                                <a href="{{ route('rescate.reports.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
-                                    {{ __('Crear nuevo') }}
-                                </a>
-                                @canApproveRescateReports
-                                <a href="{{ route('rescate.reports.mapa-campo') }}" class="btn btn-info btn-sm float-right mr-3" data-placement="left">
-                                    <i class="fas fa-map-marked-alt"></i> {{ __('Mapa de Campo') }}
-                                </a>
-                                @endcanApproveRescateReports
-                            </div>
-                        </div>
-                    </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
+<div class="container-fluid res-page-shell">
+    @include('fusion.modulos.partials.rescate-module-nav')
+    @include('fusion.modulos.partials.rescate-flash')
 
-                    <div class="card-body bg-white">
-                        <form method="GET" class="mb-3 js-auto-filter-form">
+    <div class="card res-list-card res-accent-warning">
+        <div class="card-header">
+            <h3 class="res-card-title mb-0"><i class="fas fa-binoculars text-warning mr-2"></i>{{ __('Hallazgos de campo') }}</h3>
+            <div class="d-flex flex-wrap gap-2">
+                @canApproveRescateReports
+                <a href="{{ route('rescate.reports.mapa-campo') }}" class="btn btn-info btn-sm">
+                    <i class="fas fa-map-marked-alt mr-1"></i> {{ __('Mapa de Campo') }}
+                </a>
+                @endcanApproveRescateReports
+                <a href="{{ route('rescate.reports.create') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus mr-1"></i> {{ __('Crear nuevo') }}
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <form method="GET" class="res-filter-bar js-auto-filter-form">
                             <div class="form-row">
                                 <div class="{{ \App\Support\AccessControl::canApproveRescateReports() ? 'col-md-3' : 'col-md-4' }}">
                                     <label class="mb-1">
@@ -86,66 +79,26 @@
                             </div>
                         </form>
 
-                        <style>
-                        .report-card-img {
-                            width: 100%;
-                            height: 180px;
-                            object-fit: cover;
-                            background: #f4f6f9;
-                        }
-                        .report-card .card-header { 
-                            padding-left: 1.25rem; 
-                            padding-right: 1.25rem; 
-                            padding-top: 0.75rem;
-                            padding-bottom: 0.75rem;
-                        }
-                        .report-card .card-header .card-tools { margin-left: auto; margin-right: .25rem; }
-                        .report-card .card-body { 
-                            padding: 0.5rem 1.25rem 0.25rem 1.25rem; 
-                        }
-                        .report-card .card-body .list-group-item {
-                            border-left: 0;
-                            border-right: 0;
-                            padding: 0.35rem 0;
-                            border-color: #dee2e6;
-                        }
-                        .report-card .card-body .list-group-item:first-child {
-                            border-top: 0;
-                        }
-                        .report-card .card-body .list-group-item:last-child {
-                            border-bottom: 0;
-                            margin-bottom: 0;
-                        }
-                        .report-card .card-footer { 
-                            padding-top: 0.25rem; 
-                            padding-bottom: 0.5rem; 
-                            background-color: #f8f9fa;
-                            margin-top: 0;
-                        }
-                        /* Botones iguales y con separación uniforme */
-                        .report-card .card-footer form > * { flex: 1 1 0; }
-                        .report-card .card-footer form > * + * { margin-left: .5rem; }
-                        .report-grid > [class*='col-'] { margin-bottom: 30px; }
-                        </style>
-
-                        <div class="row mt-3 report-grid">
+                        <div class="row res-card-grid">
                             @foreach ($reports as $report)
                                 @php
                                     $urg = $report->urgencia;
-                                    // Escala 1..5
                                     if (is_numeric($urg)) {
-                                        if ($urg >= 4) { $urgClass = 'danger'; }       // alta
-                                        elseif ($urg == 3) { $urgClass = 'warning'; }  // media
-                                        else { $urgClass = 'info'; }                   // baja (1-2)
+                                        if ($urg >= 4) { $urgClass = 'danger'; }
+                                        elseif ($urg == 3) { $urgClass = 'warning'; }
+                                        else { $urgClass = 'info'; }
                                     } else {
                                         $urgClass = 'secondary';
                                     }
                                 @endphp
-                                <div class="col-md-4">
-                                    <div class="card card-outline card-secondary h-100 report-card">
-                                        @if($report->imagen_url)
-                                            <img class="report-card-img" src="{{ rescate_media_url($report->imagen_url, rescate_report_media_seed($report)) }}" alt="imagen hallazgo">
-                                        @endif
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card res-entity-card">
+                                        @include('fusion.modulos.partials.rescate-entity-photo', [
+                                            'path' => $report->imagen_url,
+                                            'seed' => rescate_report_media_seed($report),
+                                            'alt' => 'Hallazgo #'.$report->id,
+                                            'badge' => $report->incidentType?->nombre,
+                                        ])
                                         <div class="card-header d-flex justify-content-between align-items-center">
                                             <h3 class="card-title mb-0" title="{{ $report->condicionInicial?->nombre }}">
                                                 <i class="fas fa-clipboard-list text-primary mr-2"></i>
@@ -256,55 +209,20 @@
                         </div>
 
                         @if($reports->isEmpty())
-                            <div class="alert alert-info text-center">
-                                <i class="fas fa-info-circle"></i> {{ __('No se ha registrado ningún hallazgo todavía.') }}
+                            <div class="res-empty-state">
+                                <i class="fas fa-binoculars fa-2x mb-2 d-block text-muted"></i>
+                                {{ __('No se ha registrado ningún hallazgo todavía.') }}
                             </div>
                         @endif
-                    </div>
-                    <!-- /.card-body -->
-                    @if($reports->hasPages())
-                    <div class="card-footer">
-                        <nav aria-label="Hallazgos Page Navigation">
-                            <div class="d-flex justify-content-center">
-                                {!! $reports->withQueryString()->links('pagination::bootstrap-4') !!}
-                            </div>
-                        </nav>
-                    </div>
-                    <!-- /.card-footer -->
-                    @endif
-                </div>
-            </div>
         </div>
-    </section>
-    @include('partials.page-pad')
-    
-    <style>
-        /* Estilos para la paginación */
-        .card-footer .pagination {
-            margin-bottom: 0;
-            justify-content: center;
-        }
-        .card-footer .pagination .page-item .page-link {
-            color: #495057;
-            border-color: #dee2e6;
-        }
-        .card-footer .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: #fff;
-        }
-        .card-footer .pagination .page-item:hover:not(.active) .page-link {
-            background-color: #e9ecef;
-            border-color: #dee2e6;
-        }
-        .card-footer .pagination .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: #fff;
-            border-color: #dee2e6;
-            cursor: not-allowed;
-        }
-    </style>
-    
+        @if($reports->hasPages())
+        <div class="card-footer">
+            {!! $reports->withQueryString()->links('pagination::bootstrap-4') !!}
+        </div>
+        @endif
+    </div>
+</div>
+
     {{-- Modales de aprobación para cada reporte --}}
     @foreach ($reports as $report)
         @canApproveRescateReports

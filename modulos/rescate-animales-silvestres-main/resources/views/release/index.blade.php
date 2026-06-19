@@ -6,30 +6,21 @@
 @section('content_header_subtitle', 'Listado')
 
 @section('content_body')
-    <section class="content container-fluid page-pad">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span id="card_title">{{ __('Liberaciones') }}</span>
-                            @canManageVeterinaryReleases
-                            <div class="float-right">
-                                <a href="{{ route('rescate.releases.create') }}" class="btn btn-primary btn-sm float-right" data-placement="left">
-                                    {{ __('Crear nueva') }}
-                                </a>
-                            </div>
-                            @endcanManageVeterinaryReleases
-                        </div>
-                    </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
+<div class="container-fluid res-page-shell">
+    @include('fusion.modulos.partials.rescate-module-nav')
+    @include('fusion.modulos.partials.rescate-flash')
 
-                    <div class="card-body bg-white">
-                        <form method="GET" class="mb-3 js-auto-filter-form">
+    <div class="card res-list-card res-accent-success">
+        <div class="card-header">
+            <h3 class="res-card-title mb-0"><i class="fas fa-leaf text-success mr-2"></i>{{ __('Liberaciones') }}</h3>
+            @canManageVeterinaryReleases
+            <a href="{{ route('rescate.releases.create') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus mr-1"></i> {{ __('Crear nueva') }}
+            </a>
+            @endcanManageVeterinaryReleases
+        </div>
+        <div class="card-body">
+            <form method="GET" class="res-filter-bar js-auto-filter-form">
                             <div class="form-row">
                                 <div class="col-md-3">
                                     <label class="mb-1">{{ __('Nombre del animal') }}</label>
@@ -61,63 +52,22 @@
                             </div>
                         </form>
 
-                        <style>
-                        .release-card-img {
-                            width: 100%;
-                            height: 180px;
-                            object-fit: cover;
-                            background: #f4f6f9;
-                        }
-                        .release-card .card-header { 
-                            padding-left: 1.25rem; 
-                            padding-right: 1.25rem; 
-                            padding-top: 0.75rem;
-                            padding-bottom: 0.75rem;
-                        }
-                        .release-card .card-body { 
-                            padding: 0.5rem 1.25rem 0.25rem 1.25rem; 
-                        }
-                        .release-card .card-body .list-group-item {
-                            border-left: 0;
-                            border-right: 0;
-                            padding: 0.35rem 0;
-                            border-color: #dee2e6;
-                        }
-                        .release-card .card-body .list-group-item:first-child {
-                            border-top: 0;
-                        }
-                        .release-card .card-body .list-group-item:last-child {
-                            border-bottom: 0;
-                            margin-bottom: 0;
-                        }
-                        .release-card .card-footer { 
-                            padding-top: 0.25rem; 
-                            padding-bottom: 0.5rem; 
-                            background-color: #f8f9fa;
-                            margin-top: 0;
-                        }
-                        .release-card-grid > [class*='col-'] { margin-bottom: 30px; }
-                        .release-card .card-footer form { display: flex; width: 100%; }
-                        .release-card .card-footer form > * { flex: 1 1 0; }
-                        .release-card .card-footer form > * + * { margin-left: .5rem; }
-                        </style>
 
-                        <div class="row mt-3 release-card-grid">
+                        <div class="row res-card-grid">
                             @foreach ($releases as $release)
                                 @php
                                     $animalFile = $release->animalFile;
                                     $animal = $animalFile?->animal;
                                     $imagenUrl = $release->imagen_url ?? $animalFile?->imagen_url;
                                 @endphp
-                                <div class="col-md-4">
-                                    <div class="card card-outline card-secondary h-100 release-card">
-                                        @if($imagenUrl)
-                                            <img class="release-card-img" src="{{ rescate_media_url($imagenUrl, rescate_media_seed($animalFile)) }}" alt="Imagen del animal liberado">
-                                        @else
-                                            <div class="release-card-img d-flex align-items-center justify-content-center bg-light">
-                                                <i class="fas fa-dove fa-3x text-muted"></i>
-                                            </div>
-                                        @endif
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card res-entity-card">
+                                        @include('fusion.modulos.partials.rescate-entity-photo', [
+                                            'path' => $imagenUrl,
+                                            'seed' => rescate_media_seed($animalFile),
+                                            'alt' => $animal?->nombre ?? 'Animal liberado',
+                                            'badge' => $animalFile?->species?->nombre,
+                                        ])
                                         <div class="card-header d-flex align-items-center">
                                             <h3 class="card-title mb-0" title="{{ $animal?->nombre }}">
                                                 <i class="fas fa-dove text-primary mr-2"></i>
@@ -161,17 +111,19 @@
                         </div>
 
                         @if($releases->isEmpty())
-                            <div class="alert alert-info text-center">
-                                <i class="fas fa-info-circle"></i> {{ __('No se encontraron liberaciones con los filtros seleccionados.') }}
+                            <div class="res-empty-state">
+                                <i class="fas fa-leaf fa-2x mb-2 d-block text-muted"></i>
+                                {{ __('No se encontraron liberaciones con los filtros seleccionados.') }}
                             </div>
                         @endif
-                    </div>
-                </div>
-                {!! $releases->withQueryString()->links() !!}
-            </div>
         </div>
-    </section>
-    @include('partials.page-pad')
+        @if($releases->hasPages())
+        <div class="card-footer">
+            {!! $releases->withQueryString()->links('pagination::bootstrap-4') !!}
+        </div>
+        @endif
+    </div>
+</div>
     <script>
     document.addEventListener('DOMContentLoaded', function(){
         var form = document.querySelector('form.js-auto-filter-form');

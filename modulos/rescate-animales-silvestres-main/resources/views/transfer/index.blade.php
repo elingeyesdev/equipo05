@@ -6,37 +6,16 @@
 @section('content_header_subtitle', 'Operación')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="container-fluid res-page-shell">
+    @include('fusion.modulos.partials.rescate-module-nav')
+    @include('fusion.modulos.partials.rescate-flash')
 
-                            <span id="card_title" class="font-weight-bold mb-0">
-                                Gestión de traslados
-                            </span>
-
-                             <!--<div class="float-right">
-                                <a href="{{ route('rescate.transfers.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
-                                </a>
-                              </div>-->
-                        </div>
-                    </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-                    @if ($message = Session::get('error'))
-                        <div class="alert alert-danger m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
-                    <div class="card-body bg-white">
-                        <ul class="nav nav-pills mb-3" id="transferTabs" role="tablist">
+    <div class="card res-list-card res-accent-info">
+        <div class="card-header">
+            <h3 class="res-card-title mb-0"><i class="fas fa-truck text-info mr-2"></i>Gestión de traslados</h3>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-pills mb-3 res-transfer-tabs" id="transferTabs" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link {{ ($tab ?? 'first')==='first' ? 'active' : '' }}" id="first-tab" href="{{ route('rescate.transfers.index', ['tab' => 'first']) }}" role="tab">{{ __('Primer traslado') }}</a>
                             </li>
@@ -66,11 +45,12 @@
                                                         $prov = null;
                                                         if (preg_match('/Provincia\\s+([^,]+)/i', $dirRaw, $m)) { $prov = $m[1]; }
                                                     @endphp
-                                                    @if($report->imagen_url)
-                                                        <div class="mb-2">
-                                                            <img src="{{ rescate_media_url($report->imagen_url, 'hallazgo') }}" alt="img" style="width:100%; max-height:220px; object-fit:cover; border-radius:4px;">
-                                                        </div>
-                                                    @endif
+                                                    @include('fusion.modulos.partials.rescate-entity-photo', [
+                                                        'path' => $report->imagen_url,
+                                                        'seed' => rescate_report_media_seed($report),
+                                                        'alt' => 'Hallazgo #'.$report->id,
+                                                        'badge' => $report->incidentType?->nombre,
+                                                    ])
                                                     <div class="mb-2">
                                                         <strong>{{ __('Dirección') }}:</strong> {{ $dirNoCountry ?: '-' }}
                                                     </div>
@@ -248,11 +228,9 @@
                             </div>
                             @endif
                         </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
+</div>
     @include('partials.leaflet')
     <style>
     .internal-af-img {
@@ -477,5 +455,4 @@
         // Navegación server-side por pestañas: no necesitamos resets adicionales
     });
     </script>
-    @include('partials.page-pad')
 @endsection
