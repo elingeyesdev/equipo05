@@ -182,7 +182,7 @@
                                                     <i class="fa fa-fw fa-trash"></i> {{ __('Eliminar') }}
                                                 </button>
                                             </form>
-                                            @elsecanRole
+                                            @else
                                             <div class="btn-group-two">
                                                 <a class="btn btn-primary btn-sm" href="{{ route('rescate.animal-files.show', $animalFile->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}

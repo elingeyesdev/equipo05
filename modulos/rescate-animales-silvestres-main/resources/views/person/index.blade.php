@@ -171,7 +171,7 @@
                                                     <i class="fa fa-fw fa-trash"></i> Eliminar
                                                 </button>
                                             </form>
-                                            @elsecanManageRescatePeople
+                                            @else
                                             <a class="btn btn-sm btn-primary w-100" href="{{ route('rescate.people.show', $person->id) }}">
                                                 <i class="fa fa-fw fa-eye"></i> Ver
                                             </a>

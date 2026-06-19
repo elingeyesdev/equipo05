@@ -80,8 +80,8 @@ class AppServiceProvider extends ServiceProvider
 
     private function registerBladeRbacDirectives(): void
     {
-        Blade::if('canRole', fn (string $role) => AccessControl::userHasRole(auth()->user(), $role));
-        Blade::if('canAnyRole', fn (...$roles) => AccessControl::userHasAnyRole(auth()->user(), $roles));
+        Blade::if('canRole', fn (?string $role = null) => $role !== null && AccessControl::userHasRole(auth()->user(), $role));
+        Blade::if('canAnyRole', fn (...$roles) => $roles !== [] && AccessControl::userHasAnyRole(auth()->user(), $roles));
         Blade::if('canManageRescatePeople', fn () => AccessControl::canManageRescatePeople());
         Blade::if('canApproveRescateStaff', fn () => AccessControl::canApproveRescateStaff());
         Blade::if('canApproveRescateReports', fn () => AccessControl::canApproveRescateReports());

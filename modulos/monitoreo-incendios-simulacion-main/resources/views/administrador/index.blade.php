@@ -69,7 +69,7 @@
                                                     </button>
                                                 </form>
                                             </div>
-                                            @elsecanOperateIncendios
+                                            @else
                                             <a href="{{ route('incendios.administradores.show', $administrador->id) }}" class="btn btn-info btn-sm" title="Ver">
                                                 <i class="fas fa-eye"></i>
                                             </a>

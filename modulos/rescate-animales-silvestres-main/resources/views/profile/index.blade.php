@@ -751,7 +751,7 @@
                                             <i class="fas fa-info-circle"></i> No hay mensajes de contacto.
                                         </div>
                                     @endif
-                                @elsecanManageRescatePeople
+                                @else
                                     {{-- Vista para usuarios normales: formulario de contacto --}}
                                     <h4 class="mb-3">Contactar a administración</h4>
                                     <p class="text-muted mb-4">
