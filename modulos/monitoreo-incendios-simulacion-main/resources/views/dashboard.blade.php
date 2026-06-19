@@ -4,33 +4,38 @@
 @section('content_header_title', 'Panel Principal')
 
 @section('content_body')
-    {{-- Accesos rápidos a submódulos (evita pestañas vacías / redundantes con el menú lateral) --}}
-    <div class="card card-primary card-outline mb-3">
-        <div class="card-header p-0 border-bottom-0 inc-dashboard-quicknav">
-            <ul class="nav nav-pills nav-fill flex-wrap" role="navigation" aria-label="Accesos del módulo incendios">
+    {{-- Accesos rápidos a submódulos --}}
+    <div class="card card-outline shadow-sm mb-3 inc-dashboard-shell">
+        <div class="card-header inc-dashboard-quicknav">
+            <ul class="nav nav-pills nav-fill flex-wrap inc-dashboard-nav" role="navigation" aria-label="Accesos del módulo incendios">
                 <li class="nav-item">
-                    <span class="nav-link active disabled" aria-current="page">
-                        <i class="fas fa-map-marked-alt text-primary"></i> Monitoreo
+                    <span class="nav-link active" aria-current="page">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>Monitoreo</span>
                     </span>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('incendios.focos-incendios.index') }}">
-                        <i class="fas fa-fire text-danger"></i> Focos de Incendio
+                        <i class="fas fa-fire"></i>
+                        <span>Focos de Incendio</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('incendios.biomasas.index') }}">
-                        <i class="fas fa-leaf text-success"></i> Biomasas
+                        <i class="fas fa-leaf"></i>
+                        <span>Biomasas</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('incendios.simulaciones.index') }}">
-                        <i class="fas fa-project-diagram text-purple"></i> Simulaciones
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Simulaciones</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('incendios.reports.fires') }}">
-                        <i class="fas fa-chart-line text-info"></i> Reportes
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
                     </a>
                 </li>
             </ul>
@@ -349,19 +354,79 @@
 @push('css')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-    .inc-dashboard-quicknav .nav-link {
+    .inc-dashboard-shell {
+        border-top: 3px solid #dc3545;
+    }
+
+    .inc-dashboard-shell > .card-header {
+        background: #fff !important;
+        color: #495057;
+        padding: 0.65rem 0.85rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .inc-dashboard-nav {
+        gap: 0.35rem;
+    }
+
+    .inc-dashboard-nav .nav-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        color: #495057;
         font-weight: 600;
-        border-radius: 0;
-        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+        padding: 0.6rem 0.85rem;
+        border-radius: 0.375rem;
+        border: 1px solid transparent;
+        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
-    .inc-dashboard-quicknav .nav-link:not(.disabled):hover {
-        background: rgba(255, 152, 0, 0.12);
+
+    .inc-dashboard-nav .nav-link i {
+        font-size: 0.95rem;
+        opacity: 0.9;
     }
-    .inc-dashboard-quicknav .nav-link.disabled {
-        opacity: 1;
+
+    .inc-dashboard-nav .nav-link:hover:not(.active) {
+        background-color: #f4f6f9;
+        color: #212529;
+        border-color: #e9ecef;
+    }
+
+    .inc-dashboard-nav .nav-link.active {
+        background-color: #dc3545;
         color: #fff;
-        background: linear-gradient(135deg, #ff9800, #f57c00);
+        border-color: #dc3545;
+        box-shadow: 0 2px 6px rgba(220, 53, 69, 0.25);
+        cursor: default;
     }
+
+    .inc-dashboard-nav .nav-link.active i {
+        opacity: 1;
+    }
+
+    @media (max-width: 767.98px) {
+        .inc-dashboard-nav .nav-link {
+            font-size: 0.8rem;
+            padding: 0.55rem 0.5rem;
+        }
+
+        .inc-dashboard-nav .nav-link span {
+            display: none;
+        }
+
+        .inc-dashboard-nav .nav-link i {
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .inc-dashboard-nav .nav-link span {
+            font-size: 0.78rem;
+        }
+    }
+
     .bg-teal { background-color: #20c997 !important; color: #fff; }
     .dashboard-clima-mini .dashboard-clima-box {
         min-height: 88px;
