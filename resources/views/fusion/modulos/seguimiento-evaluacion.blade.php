@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Evaluación Post-Incendio')
+@section('content_header_title', 'Evaluación post-incendio')
+@section('content_header_subtitle', 'Diseño del cuestionario físico y psicológico')
 
-@section('css')
+@push('styles')
+<style>
 <style>
   :root {
     --color-amarillo: #FFA726;
@@ -473,30 +475,27 @@
     }
   }
 </style>
-@endsection
+@endpush
 
 @section('content')
-<div class="form-container">
-  <div class="form-content">
+@include('fusion.modulos.partials.seguimiento-module-nav')
+@include('fusion.modulos.partials.seguimiento-flash')
 
-    {{-- HEADER --}}
-    <div class="form-header">
-      <h1 class="form-titulo">Evaluación Post-Incendio</h1>
-      <div class="btns">
-        <a href="{{ route('seguimiento.dashboard') }}" class="btn btn-outline-primary mr-2 d-flex align-items-center">
-          <i class="fas fa-arrow-left mr-1"></i> Volver
-        </a>
-        <button type="button" class="btn-agregar-pregunta" id="btn-open-modal-pregunta">
-          + Agregar Pregunta
-        </button>
-      </div>
+<div class="card seg-list-card shadow-sm mb-3">
+  <div class="card-header">
+    <div class="seg-btn-toolbar w-100">
+      <button type="button" class="btn btn-primary btn-sm" id="btn-open-modal-pregunta">
+        <i class="fas fa-plus"></i> Agregar pregunta
+      </button>
     </div>
+  </div>
+</div>
 
-    {{-- ===================== PASO 1: FÍSICO ===================== --}}
+    {{-- PASO 1: FÍSICO --}}
     <div id="step-fisico">
-      <div class="card card-soft card-primary mb-4">
-        <div class="card-header bg-primary text-white">
-          <h3 class="card-title m-0">Evaluación Física</h3>
+      <div class="card seg-list-card shadow-sm mb-4">
+        <div class="card-header">
+          <h3 class="card-title m-0"><i class="fas fa-heartbeat mr-1 text-info"></i> Evaluación física</h3>
         </div>
         <div class="card-body">
 
@@ -565,11 +564,11 @@
       </div>
     </div>
 
-    {{-- ===================== PASO 2: PSICOLÓGICO ===================== --}}
+    {{-- PASO 2: PSICOLÓGICO --}}
     <div id="step-psico" class="step-hidden">
-      <div class="card card-soft card-info mb-4">
-        <div class="card-header bg-info text-white">
-          <h3 class="card-title m-0">Evaluación Psicológica</h3>
+      <div class="card seg-list-card seg-accent-success shadow-sm mb-4">
+        <div class="card-header">
+          <h3 class="card-title m-0"><i class="fas fa-brain mr-1 text-success"></i> Evaluación psicológica</h3>
         </div>
         <div class="card-body">
 
@@ -620,10 +619,7 @@
       </div>
     </div>
 
-  </div>
-</div>
-
-{{-- ================= MODALES ================= --}}
+{{-- MODALES --}}
 
 {{-- Modal Agregar / Editar Pregunta --}}
 <div class="modal fade" id="modalPregunta" tabindex="-1" role="dialog" aria-labelledby="modalPreguntaLabel" aria-hidden="true">
@@ -728,7 +724,7 @@
 </div>
 @endsection
 
-@section('js')
+@push('js')
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const stepFisico = document.getElementById('step-fisico');
@@ -988,4 +984,4 @@
 
   });
 </script>
-@endsection
+@endpush

@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
-@section('title', $registro ? 'Editar Necesidad' : 'Crear Necesidad')
+@section('content_header_title', $registro ? 'Editar necesidad' : 'Crear necesidad')
+@section('content_header_subtitle', 'Registro de insumos y apoyo para brigadas')
 
-@section('css')
+@push('styles')
 <style>
   :root {
     --primary-color: #3b82f6;
@@ -78,33 +79,20 @@
     animation: slideIn 0.35s ease-out forwards;
   }
 </style>
-@endsection
+@endpush
 
 @section('content')
-<div class="container-fluid py-4">
+@include('fusion.modulos.partials.seguimiento-module-nav')
+@include('fusion.modulos.partials.seguimiento-flash')
 
-  {{-- Header --}}
-  <div class="form-header animate-slide">
-    <div class="row align-items-center">
-      <div class="col-md-9">
-        <h1 class="font-weight-bold mb-2">
-          <i class="fas fa-hand-holding-medical mr-2 text-primary"></i>
-          {{ $registro ? 'Editar Necesidad' : 'Crear Necesidad' }}
-        </h1>
-        <p class="mb-0 text-white-50" style="font-size: 1.1rem;">
-          {{ $registro ? 'Modifica los datos de la necesidad registrada.' : 'Registra una nueva carencia o recurso urgente para los brigadistas.' }}
-        </p>
-      </div>
-      <div class="col-md-3 text-md-right mt-3 mt-md-0">
-        <a href="{{ route('seguimiento.necesidades') }}" class="btn btn-light px-4 py-2 font-weight-bold shadow-sm" style="border-radius: 10px; color: var(--text-main);">
-          <i class="fas fa-arrow-left mr-2"></i>Volver
-        </a>
-      </div>
-    </div>
+<div class="card seg-list-card seg-accent-warning shadow-sm">
+  <div class="card-header">
+    <h3 class="card-title mb-0"><i class="fas fa-clipboard-list mr-1"></i> Formulario</h3>
+    <a href="{{ route('seguimiento.necesidades') }}" class="btn btn-outline-secondary btn-sm ml-auto">
+      <i class="fas fa-arrow-left"></i> Volver
+    </a>
   </div>
-
-  {{-- Formulario --}}
-  <div class="form-card animate-slide">
+  <div class="card-body">
     <form action="{{ $registro ? route('seguimiento.crud.update', ['seccion' => $seccion, 'id' => $registro->id_necesidad]) : route('seguimiento.crud.store', ['seccion' => $seccion]) }}" method="POST">
       @csrf
       @if($registro)
@@ -128,16 +116,11 @@
         <textarea name="descripcion" id="descripcion" class="form-control form-control-custom" rows="5" placeholder="Describa la necesidad detectada" required>{{ old('descripcion', $registro->descripcion ?? '') }}</textarea>
       </div>
 
-      <div class="d-flex align-items-center mt-5" style="gap: 12px;">
-        <button type="submit" class="btn btn-primary px-5 py-3 font-weight-bold shadow-sm" style="border-radius: 10px;">
-          Guardar
-        </button>
-        <a href="{{ route('seguimiento.necesidades') }}" class="btn btn-outline-secondary px-4 py-3 font-weight-bold" style="border-radius: 10px;">
-          Cancelar
-        </a>
+      <div class="seg-btn-toolbar mt-3">
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Guardar</button>
+        <a href="{{ route('seguimiento.necesidades') }}" class="btn btn-outline-secondary btn-sm">Cancelar</a>
       </div>
     </form>
   </div>
-
 </div>
 @endsection

@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Evaluación Post-Incendio (Voluntario)')
+@section('content_header_title', 'Pruebas de evaluación')
+@section('content_header_subtitle', 'Simulador de cuestionario para voluntarios')
 
-@section('css')
+@push('styles')
 <style>
   :root {
     --color-amarillo: #FFA726;
@@ -381,31 +382,20 @@
     }
   }
 </style>
-@endsection
+@endpush
 
 @section('content')
-<div class="form-container">
-  <div class="form-content">
+@include('fusion.modulos.partials.seguimiento-module-nav')
+@include('fusion.modulos.partials.seguimiento-flash')
 
-    {{-- HEADER --}}
-    <div class="form-header">
-      <h1 class="form-titulo">Evaluación Post-Incendio (Voluntario)</h1>
-      <div class="btns">
-        <a href="{{ route('seguimiento.dashboard') }}" class="btn btn-outline-primary mr-2 d-flex align-items-center" style="border-radius: 8px; padding: 10px 20px; font-weight: 600;">
-          <i class="fas fa-arrow-left mr-1"></i> Volver
-        </a>
-      </div>
-    </div>
-
-    {{-- FORMULARIO --}}
     <form id="evaluationForm">
       @csrf
 
       {{-- PASO 1 FÍSICO --}}
       <div id="step-fisico">
-        <div class="card card-soft card-primary mb-4">
-          <div class="card-header bg-primary text-white">
-            <h3 class="card-title m-0">Evaluación Física</h3>
+        <div class="card seg-list-card shadow-sm mb-4">
+          <div class="card-header">
+            <h3 class="card-title m-0"><i class="fas fa-heartbeat mr-1 text-info"></i> Evaluación física</h3>
           </div>
           <div class="card-body">
 
@@ -472,9 +462,9 @@
 
       {{-- PASO 2 PSICOLÓGICO --}}
       <div id="step-psico" class="step-hidden">
-        <div class="card card-soft card-info mb-4">
-          <div class="card-header bg-info text-white">
-            <h3 class="card-title m-0">Evaluación Psicológica</h3>
+        <div class="card seg-list-card seg-accent-success shadow-sm mb-4">
+          <div class="card-header">
+            <h3 class="card-title m-0"><i class="fas fa-brain mr-1 text-success"></i> Evaluación psicológica</h3>
           </div>
           <div class="card-body">
 
@@ -521,10 +511,7 @@
       </div>
     </form>
 
-  </div>
-</div>
-
-{{-- COLOR SELECTOR TOOLTIP/POPOVER --}}
+{{-- COLOR SELECTOR --}}
 <div class="color-picker-popover" id="colorPickerPopover">
   <div class="color-circle-btn color-btn-muybien" data-value="muybien" title="Muy Bien"></div>
   <div class="color-circle-btn color-btn-bien" data-value="bien" title="Bien"></div>
@@ -596,7 +583,7 @@
 </div>
 @endsection
 
-@section('js')
+@push('js')
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const stepFisico = document.getElementById('step-fisico');
@@ -761,4 +748,4 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
-@endsection
+@endpush

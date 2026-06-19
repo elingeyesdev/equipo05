@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
-@section('title', $registro ? 'Editar Capacitación' : 'Nueva Capacitación')
+@section('content_header_title', $registro ? 'Editar capacitación' : 'Nueva capacitación')
+@section('content_header_subtitle', 'Programa formativo y cursos asociados')
 
-@section('css')
+@push('styles')
 <style>
   :root {
     --primary-color: #3b82f6;
@@ -268,33 +269,20 @@
     animation: slideIn 0.35s ease-out forwards;
   }
 </style>
-@endsection
+@endpush
 
 @section('content')
-<div class="container-fluid py-4">
+@include('fusion.modulos.partials.seguimiento-module-nav')
+@include('fusion.modulos.partials.seguimiento-flash')
 
-  {{-- Header --}}
-  <div class="form-header animate-slide">
-    <div class="row align-items-center">
-      <div class="col-md-9">
-        <h1 class="font-weight-bold mb-2">
-          <i class="fas fa-graduation-cap mr-2 text-primary"></i>
-          {{ $registro ? 'Editar Capacitación' : 'Crear Nueva Capacitación' }}
-        </h1>
-        <p class="mb-0 text-white-50" style="font-size: 1.1rem;">
-          {{ $registro ? 'Modifica los datos principales y gestiona sus cursos formativos.' : 'Introduce los datos básicos y define la ruta de capacitación.' }}
-        </p>
-      </div>
-      <div class="col-md-3 text-md-right mt-3 mt-md-0">
-        <a href="{{ route('seguimiento.capacitaciones') }}" class="btn btn-light px-4 py-2 font-weight-bold shadow-sm" style="border-radius: 10px;">
-          <i class="fas fa-arrow-left mr-2"></i>Volver al Listado
-        </a>
-      </div>
-    </div>
+<div class="card seg-list-card shadow-sm mb-3">
+  <div class="card-header">
+    <h3 class="card-title mb-0"><i class="fas fa-chalkboard-teacher mr-1"></i> Datos generales</h3>
+    <a href="{{ route('seguimiento.capacitaciones') }}" class="btn btn-outline-secondary btn-sm ml-auto">
+      <i class="fas fa-arrow-left"></i> Volver
+    </a>
   </div>
-
-  {{-- Formulario Principal --}}
-  <div class="form-card animate-slide">
+  <div class="card-body">
     <form id="capacitacionForm" action="{{ $registro ? route('seguimiento.crud.update', ['seccion' => $seccion, 'id' => $registro->id_capacitacion]) : route('seguimiento.crud.store', ['seccion' => $seccion]) }}" method="POST">
       @csrf
       @if($registro)
@@ -447,7 +435,7 @@
 </div>
 @endsection
 
-@section('js')
+@push('js')
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     // Carga inicial de cursos desde el registro (si estamos editando)
@@ -812,4 +800,4 @@
     }
   });
 </script>
-@endsection
+@endpush

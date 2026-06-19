@@ -3,7 +3,9 @@
         && in_array('latitud', $columns ?? [], true)
         && in_array('longitud', $columns ?? [], true);
     $esLogistica = ($moduloKey ?? '') === 'logistica';
-    $listCardClass = $esLogistica ? 'logistica-list-card shadow-sm' : 'shadow-sm';
+    $esSeguimiento = ($moduloKey ?? '') === 'seguimiento';
+    $listCardClass = $esLogistica ? 'logistica-list-card shadow-sm'
+        : ($esSeguimiento ? 'seg-list-card shadow-sm' : 'shadow-sm');
 @endphp
 
 @if($coordenadasMapaActivo)
@@ -18,7 +20,7 @@
 <div class="container-fluid px-0">
     <div class="card {{ $listCardClass }}">
         <div class="card-header d-flex justify-content-between align-items-center">
-            @unless($esLogistica)
+            @unless($esLogistica || $esSeguimiento)
                 <strong>{{ $registro ? 'Editar' : 'Crear' }} {{ $tituloSeccion }}</strong>
             @else
                 <span></span>
