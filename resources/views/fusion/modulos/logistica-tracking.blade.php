@@ -40,8 +40,11 @@
     </div>
     <div class="col-lg-8 mb-3">
         <div class="card logistica-list-card shadow-sm">
-            <div class="card-header"><strong>Mapa del recorrido</strong></div>
-            <div class="card-body p-0">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Mapa del recorrido</strong>
+                <span class="badge badge-light border" id="logistica-ruta-estado">Calculando ruta…</span>
+            </div>
+            <div class="card-body p-0 position-relative">
                 <div id="logistica-tracking-map" class="logistica-mapa-container"></div>
             </div>
         </div>
@@ -85,69 +88,37 @@
 
 @push('js')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+@include('fusion.modulos.partials.logistica-routing-script')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const points = @json($points);
-    const destino = @json($destino);
-    const hasDestino = destino.lat !== null && destino.lng !== null;
+document.addEventListener('DOMContentLoaded', async function () {
+    const waypoints = @json($waypoints);
+    const statusEl = document.getElementById('logistica-ruta-estado');
+    const mapEl = document.getElementById('logistica-tracking-map');
 
-    if (!points.length && !hasDestino) {
-        document.getElementById('logistica-tracking-map').innerHTML =
-            '<div class="p-4 text-muted text-center">No hay coordenadas para mostrar el recorrido.</div>';
+    if (!waypoints.length) {
+        mapEl.innerHTML = '<div class="p-4 text-muted text-center">No hay coordenadas para mostrar el recorrido.</div>';
+        if (statusEl) statusEl.textContent = 'Sin coordenadas';
         return;
     }
 
-    const center = points.length ? [points[0].lat, points[0].lng] : [destino.lat, destino.lng];
-    const map = L.map('logistica-tracking-map').setView(center, 12);
+    const map = L.map('logistica-tracking-map').setView([waypoints[0].lat, waypoints[0].lng], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    if (hasDestino) {
-        L.marker([destino.lat, destino.lng], {
-            icon: L.divIcon({
-                className: 'bg-transparent',
-                html: '<div style="background:#dc3545;width:28px;height:28px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3);"><i class="fas fa-flag-checkered" style="color:#fff;font-size:12px;"></i></div>',
-                iconSize: [28, 28],
-                iconAnchor: [14, 14],
-            })
-        }).addTo(map).bindTooltip('Destino final', { permanent: true, direction: 'top', offset: [0, -12] });
+    try {
+        await LogisticaRouting.dibujarRuta(map, waypoints, { color: '#4f46e5', animarCamion: waypoints.length >= 2 });
+        if (statusEl) {
+            statusEl.textContent = waypoints.length >= 2 ? 'Ruta por carretera' : '1 punto';
+            statusEl.classList.remove('badge-light');
+            statusEl.classList.add('badge-success');
+        }
+    } catch (e) {
+        console.error(e);
+        if (statusEl) statusEl.textContent = 'Ruta aproximada';
     }
 
-    if (points.length === 1) {
-        L.marker([points[0].lat, points[0].lng]).addTo(map)
-            .bindPopup(`<strong>${points[0].zona || 'Punto'}</strong>`);
-    } else if (points.length > 1) {
-        const latLngs = points.map(p => [p.lat, p.lng]);
-        L.polyline(latLngs, { color: '#4f46e5', weight: 5, opacity: 0.75 }).addTo(map);
-        points.forEach((p, i) => {
-            L.marker([p.lat, p.lng]).addTo(map)
-                .bindPopup(`<strong>Paso ${i + 1}</strong><br>${p.zona || ''}<br><small>${p.fecha || ''}</small>`);
-        });
-    }
-
-    const bounds = L.latLngBounds([]);
-    points.forEach(p => bounds.extend([p.lat, p.lng]));
-    if (hasDestino) bounds.extend([destino.lat, destino.lng]);
-    if (bounds.isValid()) map.fitBounds(bounds.pad(0.12));
-
-    if (points.length > 1) {
-        const truckIcon = L.divIcon({
-            className: 'bg-transparent',
-            html: '<div style="background:#4f46e5;width:32px;height:32px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.25);"><i class="fas fa-truck" style="color:#fff;font-size:14px;"></i></div>',
-            iconSize: [32, 32],
-            iconAnchor: [16, 16],
-        });
-        const coords = points.map(p => L.latLng(p.lat, p.lng));
-        let truck = L.marker(coords[0], { icon: truckIcon, zIndexOffset: 1000 }).addTo(map);
-        let idx = 0;
-        setInterval(function () {
-            idx = (idx + 1) % coords.length;
-            truck.setLatLng(coords[idx]);
-        }, 2500);
-    }
-
-    setTimeout(function () { map.invalidateSize(); }, 250);
+    setTimeout(function () { map.invalidateSize(); }, 300);
 });
 </script>
 @endpush

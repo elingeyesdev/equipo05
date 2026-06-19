@@ -156,13 +156,90 @@ class LogisticaMapa
         }
 
         $points = self::construirPuntosRecorrido($historial, $paquete, $destLat, $destLng);
+        $waypoints = self::waypointsCompletos($points, $destLat, $destLng);
 
         return [
             'paquete' => $paquete,
             'historial' => $historial,
             'points' => $points,
+            'waypoints' => $waypoints,
+            'origen' => ['lat' => self::ORIGEN_LAT, 'lng' => self::ORIGEN_LNG, 'label' => 'Almacén central'],
             'destino' => ['lat' => $destLat, 'lng' => $destLng],
         ];
+    }
+
+    /**
+     * Ruta completa: almacén → avances → destino final.
+     *
+     * @param  array<int, array<string, mixed>>  $intermedios
+     * @return array<int, array<string, mixed>>
+     */
+    public static function waypointsCompletos(array $intermedios, ?float $destLat, ?float $destLng): array
+    {
+        $waypoints = [[
+            'lat' => self::ORIGEN_LAT,
+            'lng' => self::ORIGEN_LNG,
+            'zona' => 'Almacén central',
+            'tipo' => 'origen',
+        ]];
+
+        foreach ($intermedios as $punto) {
+            $lat = (float) ($punto['lat'] ?? 0);
+            $lng = (float) ($punto['lng'] ?? 0);
+            if (! self::coordValida($lat, $lng)) {
+                continue;
+            }
+            if (self::coordsIguales($lat, $lng, self::ORIGEN_LAT, self::ORIGEN_LNG)) {
+                continue;
+            }
+            if (self::coordValida($destLat, $destLng) && self::coordsIguales($lat, $lng, $destLat, $destLng)) {
+                continue;
+            }
+            $waypoints[] = array_merge($punto, ['tipo' => 'paso']);
+        }
+
+        if (self::coordValida($destLat, $destLng)) {
+            $waypoints[] = [
+                'lat' => $destLat,
+                'lng' => $destLng,
+                'zona' => 'Destino final',
+                'tipo' => 'destino',
+            ];
+        }
+
+        return self::deduplicarWaypoints($waypoints);
+    }
+
+    /** @param array<int, array<string, mixed>> $waypoints */
+    private static function deduplicarWaypoints(array $waypoints): array
+    {
+        $result = [];
+        foreach ($waypoints as $wp) {
+            $lat = (float) ($wp['lat'] ?? 0);
+            $lng = (float) ($wp['lng'] ?? 0);
+            $duplicado = false;
+            foreach ($result as $existente) {
+                if (self::coordsIguales($lat, $lng, (float) $existente['lat'], (float) $existente['lng'])) {
+                    $duplicado = true;
+                    break;
+                }
+            }
+            if (! $duplicado) {
+                $result[] = $wp;
+            }
+        }
+
+        return $result;
+    }
+
+    private static function coordsIguales(float $lat1, float $lng1, float $lat2, float $lng2, float $epsilon = 0.0001): bool
+    {
+        return abs($lat1 - $lat2) < $epsilon && abs($lng1 - $lng2) < $epsilon;
+    }
+
+    public static function origenAlmacen(): array
+    {
+        return ['lat' => self::ORIGEN_LAT, 'lng' => self::ORIGEN_LNG, 'label' => 'Almacén central'];
     }
 
     /** @param Collection<int, object> $historial */

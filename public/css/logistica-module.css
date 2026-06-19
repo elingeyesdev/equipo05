@@ -279,3 +279,10 @@ body.module-logistica.platform-ui .logistica-mapa-container {
         height: 380px;
     }
 }
+
+body.module-logistica.platform-ui .leaflet-tooltip {
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+}

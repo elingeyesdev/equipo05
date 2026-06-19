@@ -399,8 +399,9 @@ class SeccionesController extends Controller
     public function mapa(): View
     {
         $marcadores = LogisticaMapa::marcadoresOperativos();
+        $origen = LogisticaMapa::origenAlmacen();
 
-        return view('fusion.modulos.logistica-mapa', compact('marcadores'));
+        return view('fusion.modulos.logistica-mapa', compact('marcadores', 'origen'));
     }
 
     public function tracking(int $id): View
@@ -412,6 +413,8 @@ class SeccionesController extends Controller
             'paquete' => $datos['paquete'],
             'historial' => $datos['historial'],
             'points' => $datos['points'],
+            'waypoints' => $datos['waypoints'],
+            'origen' => $datos['origen'],
             'destino' => $datos['destino'],
         ]);
     }

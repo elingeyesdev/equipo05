@@ -11,7 +11,7 @@
     <div class="card-header">
         <div class="logistica-btn-toolbar w-100">
             <span class="badge badge-light border mr-auto">
-                <i class="fas fa-map-marker-alt text-danger"></i> {{ count($marcadores) }} destinos georreferenciados
+                <i class="fas fa-map-marker-alt text-danger"></i> {{ count($marcadores) }} destinos · rutas desde almacén
             </span>
             <a href="{{ route('logistica.solicitud.create') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> Nueva solicitud
@@ -22,6 +22,8 @@
         <div id="logistica-mapa-operativo" class="logistica-mapa-container"></div>
     </div>
     <div class="card-footer bg-white small text-muted">
+        <span class="mr-3"><i class="fas fa-warehouse text-success"></i> Almacén</span>
+        <span class="mr-3"><i class="fas fa-minus" style="color:#4f46e5;font-weight:bold;"></i> Ruta</span>
         <span class="mr-3"><i class="fas fa-circle text-warning"></i> Pendiente</span>
         <span class="mr-3"><i class="fas fa-circle text-primary"></i> Aprobada</span>
         <span class="mr-3"><i class="fas fa-circle text-info"></i> En ruta</span>
@@ -44,9 +46,11 @@
 
 @push('js')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+@include('fusion.modulos.partials.logistica-routing-script')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const marcadores = @json($marcadores);
+    const origen = @json($origen);
     const colores = {
         pendiente: '#ffc107',
         aprobada: '#4f46e5',
@@ -54,23 +58,32 @@ document.addEventListener('DOMContentLoaded', function () {
         entregada: '#059669',
         rechazada: '#dc3545',
     };
+    const coloresRuta = {
+        pendiente: '#d97706',
+        aprobada: '#6366f1',
+        en_ruta: '#0891b2',
+        entregada: '#059669',
+        rechazada: '#94a3b8',
+    };
 
-    const map = L.map('logistica-mapa-operativo').setView([-17.8146, -63.1561], 6);
+    const map = L.map('logistica-mapa-operativo').setView([origen.lat, origen.lng], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    const almacen = L.marker([-17.8146, -63.1561]).addTo(map)
-        .bindPopup('<strong>Almacén central</strong><br>Punto de despacho Santa Cruz');
+    L.marker([origen.lat, origen.lng], { icon: LogisticaRouting.iconoHtml('origen') })
+        .addTo(map)
+        .bindPopup('<strong>Almacén central</strong><br>Punto de despacho Santa Cruz')
+        .bindTooltip('Almacén central', { permanent: true, direction: 'top', offset: [0, -14] });
 
     if (!marcadores.length) {
         setTimeout(function () { map.invalidateSize(); }, 200);
         return;
     }
 
-    const bounds = L.latLngBounds([[ -17.8146, -63.1561 ]]);
+    const bounds = L.latLngBounds([[origen.lat, origen.lng]]);
 
-    marcadores.forEach(function (m) {
+    for (const m of marcadores) {
         const color = colores[m.tipo] || '#64748b';
         const icon = L.divIcon({
             className: 'bg-transparent',
@@ -87,9 +100,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         marker.bindPopup(popup);
         bounds.extend([m.lat, m.lng]);
-    });
 
-    map.fitBounds(bounds.pad(0.15));
+        const waypoints = [
+            { lat: origen.lat, lng: origen.lng, zona: 'Almacén central', tipo: 'origen' },
+            { lat: m.lat, lng: m.lng, zona: m.comunidad, tipo: 'destino' },
+        ];
+
+        try {
+            const latLngs = await LogisticaRouting.obtenerRutaOsrm(waypoints);
+            LogisticaRouting.dibujarPolylineProfesional(map, latLngs, { color: coloresRuta[m.tipo] || '#4f46e5' });
+        } catch (e) {
+            LogisticaRouting.dibujarPolylineProfesional(map, [[origen.lat, origen.lng], [m.lat, m.lng]], { color: coloresRuta[m.tipo] || '#4f46e5' });
+        }
+
+        await new Promise(r => setTimeout(r, 120));
+    }
+
+    map.fitBounds(bounds.pad(0.12));
     setTimeout(function () { map.invalidateSize(); }, 200);
 });
 </script>
