@@ -22,6 +22,7 @@ class PatchDemoDashboardSeeder extends Seeder
         $this->fixInventarioHuecos();
         $this->fixInventarioStockUbicado();
         $this->fixInventarioUsuarios();
+        $this->fixInventarioDatosOperativos();
         $this->fixLogisticaDemo();
         $this->fixRescateDashboard();
 
@@ -205,6 +206,38 @@ class PatchDemoDashboardSeeder extends Seeder
         $seeder->runSpeciesImageRefresh();
     }
 
+    private function fixInventarioDatosOperativos(): void
+    {
+        if (! Schema::connection('inventario')->hasTable('paquetes')) {
+            return;
+        }
+
+        $inv = DB::connection('inventario');
+        $tieneDemo = $inv->table('paquetes')
+            ->where(function ($q) {
+                $q->where('codigo_paquete', 'like', '%DEMO%')
+                    ->orWhere('codigo_paquete', 'like', 'PKG-RICH%')
+                    ->orWhere('codigo_paquete', 'like', 'LOG-DEMO%');
+            })
+            ->exists();
+
+        $donantesDemo = Schema::connection('inventario')->hasTable('donantes')
+            && $inv->table('donantes')->where('email', 'like', '%@demo.local')->exists();
+
+        $recoleccionesDemo = Schema::connection('inventario')->hasTable('solicitudes_recoleccion')
+            && $inv->table('solicitudes_recoleccion')->where('direccion_recoleccion', 'like', '%Demo%')->exists();
+
+        if (! $tieneDemo && ! $donantesDemo && ! $recoleccionesDemo) {
+            return;
+        }
+
+        $seeder = new InventarioDatosOperativosSeeder;
+        if ($this->command) {
+            $seeder->setCommand($this->command);
+        }
+        $seeder->run();
+    }
+
     private function fixLogisticaDemo(): void
     {
         if (! Schema::connection('logistica')->hasTable('solicitud')) {
@@ -315,17 +348,13 @@ class PatchDemoDashboardSeeder extends Seeder
         }
 
         if (Schema::connection('inventario')->hasTable('registros_salida')
-            && $db->table('registros_salida')->count() === 0) {
-            $paquetes = $db->table('paquetes')->limit(8)->pluck('id_paquete');
-            $destinos = ['Comunidad San José', 'Barrio Norte SCZ', 'Cotoca centro', 'Plan 3000', 'Warnes'];
-            foreach ($paquetes as $i => $paqueteId) {
-                $db->table('registros_salida')->insert([
-                    'id_paquete' => $paqueteId,
-                    'fecha_salida' => $now->copy()->subDays($i),
-                    'destino' => $destinos[$i % count($destinos)],
-                    'observaciones' => 'Salida demo #'.($i + 1).' — entrega programada',
-                ]);
+            && $db->table('registros_salida')->count() === 0
+            && $db->table('paquetes')->whereNotNull('codigo_solicitud_externa')->exists()) {
+            $seeder = new InventarioDatosOperativosSeeder;
+            if ($this->command) {
+                $seeder->setCommand($this->command);
             }
+            $seeder->run();
         }
     }
 }

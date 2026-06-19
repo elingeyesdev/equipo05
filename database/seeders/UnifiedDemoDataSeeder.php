@@ -90,39 +90,25 @@ class UnifiedDemoDataSeeder extends Seeder
             'metodo_pago' => 'transferencia',
         ]);
 
-        $db->table('paquetes')->insert([
-            'codigo_paquete' => 'PKG-DEMO-001',
-            'estado' => 'pendiente',
-            'fecha_creacion' => $now,
-        ]);
-
         $db->table('solicitudes_recoleccion')->insert([
             'id_donante' => $donanteId,
-            'direccion_recoleccion' => 'Av. Demo 123, Santa Cruz',
+            'direccion_recoleccion' => 'Av. San Martín esq. 2do anillo, Equipetrol, Santa Cruz',
             'fecha_programada' => $now->copy()->addDays(2),
-            'observaciones' => 'Recolección demo',
+            'observaciones' => 'Recolección programada REC-SCZ-0001',
             'estado' => 'pendiente',
         ]);
     }
 
     private function seedInventarioExtras($db): void
     {
-        if ($db->table('paquetes')->where('codigo_paquete', 'PKG-DEMO-001')->doesntExist()) {
-            $db->table('paquetes')->insert([
-                'codigo_paquete' => 'PKG-DEMO-001',
-                'estado' => 'pendiente',
-                'fecha_creacion' => Carbon::now(),
-            ]);
-        }
-
         if ($db->table('solicitudes_recoleccion')->where('estado', 'pendiente')->count() === 0
             && $db->table('donantes')->exists()) {
             $donanteId = $db->table('donantes')->value('id_donante');
             $db->table('solicitudes_recoleccion')->insert([
                 'id_donante' => $donanteId,
-                'direccion_recoleccion' => 'Av. Demo 123, Santa Cruz',
+                'direccion_recoleccion' => 'Av. San Martín esq. 2do anillo, Equipetrol, Santa Cruz',
                 'fecha_programada' => Carbon::now()->addDays(2),
-                'observaciones' => 'Recolección demo',
+                'observaciones' => 'Recolección programada REC-SCZ-0001',
                 'estado' => 'pendiente',
             ]);
         }

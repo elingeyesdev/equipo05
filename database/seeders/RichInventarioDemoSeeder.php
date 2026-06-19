@@ -61,7 +61,7 @@ class RichInventarioDemoSeeder extends Seeder
             $db->table('productos')->insert([
                 'id_categoria' => $catIds[$i % count($catIds)],
                 'nombre' => $nombre,
-                'descripcion' => 'Producto demo '.$nombre,
+                'descripcion' => 'Insumo de emergencia — '.$nombre,
                 'unidad_medida' => $unidad,
             ]);
         }
@@ -108,7 +108,7 @@ class RichInventarioDemoSeeder extends Seeder
                 $donanteId = $db->table('donantes')->insertGetId([
                     'nombre' => $nombre,
                     'tipo' => str_contains($nombre, 'Empresa') || str_contains($nombre, 'ONG') ? 'empresa' : 'persona',
-                    'email' => 'donante'.($i + 1).'@demo.local',
+                    'email' => strtolower(str_replace(' ', '.', $nombre)).'@donaciones.scz.bo',
                     'telefono' => '7'.str_pad((string) (1000000 + $i), 7, '0'),
                     'fecha_registro' => $now->copy()->subDays(rand(5, 90)),
                 ], 'id_donante');
@@ -121,7 +121,7 @@ class RichInventarioDemoSeeder extends Seeder
                     'tipo' => $tipo,
                     'fecha' => $now->copy()->subDays(rand(1, 45)),
                     'id_campana' => $campId,
-                    'observaciones' => 'Donación demo '.$nombre.' #'.($j + 1),
+                    'observaciones' => 'Donación solidaria '.$nombre.' #'.($j + 1),
                 ], 'id_donacion');
 
                 if ($tipo === 'dinero' && Schema::connection('inventario')->hasTable('donaciones_dinero')) {
@@ -154,9 +154,9 @@ class RichInventarioDemoSeeder extends Seeder
                 }
                 $db->table('solicitudes_recoleccion')->insert([
                     'id_donante' => $donanteId,
-                    'direccion_recoleccion' => 'Av. Demo '.$k.', Santa Cruz',
+                    'direccion_recoleccion' => $this->direccionRecoleccion($k),
                     'fecha_programada' => $now->copy()->addDays($k),
-                    'observaciones' => 'Recolección programada '.$codigo,
+                    'observaciones' => 'Recolección programada REC-SCZ-'.str_pad((string) $k, 4, '0', STR_PAD_LEFT),
                     'estado' => ['pendiente', 'en_camino', 'completada'][rand(0, 2)],
                 ]);
             }
@@ -172,7 +172,7 @@ class RichInventarioDemoSeeder extends Seeder
                 }
                 $almId = $db->table('almacenes')->insertGetId([
                     'nombre' => $nombre,
-                    'direccion' => 'Dirección demo '.$nombre,
+                    'direccion' => $this->direccionAlmacen($nombre),
                 ], 'id_almacen');
 
                 if (Schema::connection('inventario')->hasTable('estantes')) {
@@ -193,17 +193,32 @@ class RichInventarioDemoSeeder extends Seeder
         }
 
         if (Schema::connection('inventario')->hasTable('paquetes')) {
-            for ($p = 1; $p <= 15; $p++) {
-                $codigo = 'PKG-RICH-'.str_pad((string) $p, 3, '0', STR_PAD_LEFT);
-                if ($db->table('paquetes')->where('codigo_paquete', $codigo)->exists()) {
-                    continue;
-                }
-                $db->table('paquetes')->insert([
-                    'codigo_paquete' => $codigo,
-                    'estado' => ['pendiente', 'empacado', 'en_transito', 'entregado'][rand(0, 3)],
-                    'fecha_creacion' => $now->copy()->subDays(rand(0, 20)),
-                ]);
-            }
+            // Paquetes operativos: InventarioDatosOperativosSeeder (vinculados a logística).
         }
+    }
+
+    private function direccionAlmacen(string $nombre): string
+    {
+        return match ($nombre) {
+            'Central SCZ' => 'Av. San Martín esq. 2do anillo, Equipetrol, Santa Cruz',
+            'Depósito Norte' => 'Av. Banzer km 7, zona norte, Santa Cruz',
+            'Bodega Cotoca' => 'Zona industrial Cotoca, Santa Cruz',
+            'Punto Plan 3000' => 'Av. Cumavi km 8, Plan 3000, Santa Cruz',
+            default => $nombre.', Santa Cruz',
+        };
+    }
+
+    private function direccionRecoleccion(int $indice): string
+    {
+        $dirs = [
+            'Av. Cristo Redentor km 8, Plan 3000, Santa Cruz',
+            'Mercado Abasto, zona sur, Santa Cruz',
+            'Plaza principal Warnes, Santa Cruz',
+            'Doble vía La Guardia km 12, Villa 1ro de Mayo',
+            'Barrio Hamacas, Av. Roca y Coronado, Santa Cruz',
+            'Zona Equipetrol, Av. San Martín, Santa Cruz',
+        ];
+
+        return $dirs[($indice - 1) % count($dirs)];
     }
 }
