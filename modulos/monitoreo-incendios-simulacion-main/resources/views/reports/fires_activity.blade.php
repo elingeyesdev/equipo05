@@ -1,18 +1,21 @@
 @extends('layouts.app')
 
-@section('subtitle', 'Reporte de Actividad de Focos de Incendio')
-@section('content_header_title', 'Reporte de Actividad de Focos de Incendio')
+@section('subtitle', 'Reportes')
+@section('content_header_title', 'Reporte de focos de incendio')
+@section('content_header_subtitle', 'Actividad y estadísticas')
 
 @section('content_body')
-<div class="card">
+@include('incendios::partials.module-nav')
+
+<div class="card inc-list-card shadow-sm mb-3">
     <div class="card-header">
         <h3 class="card-title"><i class="fas fa-fire text-danger"></i> Filtros de Búsqueda</h3>
-        <div class="card-tools">
-            <a href="{{ route('incendios.reports.fires.export-pdf', request()->all()) }}" class="btn btn-danger btn-sm">
-                <i class="fas fa-file-pdf"></i> Exportar PDF
+        <div class="card-tools inc-btn-toolbar">
+            <a href="{{ route('incendios.reports.fires.export-pdf', request()->all()) }}" class="btn btn-outline-danger btn-sm">
+                <i class="fas fa-file-pdf"></i> PDF
             </a>
-            <a href="{{ route('incendios.reports.fires.export-excel', request()->all()) }}" class="btn btn-success btn-sm">
-                <i class="fas fa-file-excel"></i> Exportar Excel
+            <a href="{{ route('incendios.reports.fires.export-excel', request()->all()) }}" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-file-excel"></i> Excel
             </a>
         </div>
     </div>

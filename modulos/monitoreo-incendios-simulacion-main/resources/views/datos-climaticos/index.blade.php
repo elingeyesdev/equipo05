@@ -7,6 +7,8 @@
 @endsection
 
 @section('content_body')
+    @include('incendios::partials.module-nav')
+
     <div class="row mb-3">
         <div class="col-12">
             <div class="alert alert-info mb-0 py-2 d-flex align-items-center justify-content-between">

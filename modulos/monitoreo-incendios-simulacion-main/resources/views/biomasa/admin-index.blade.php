@@ -1,104 +1,81 @@
 @extends('layouts.app')
 
-@section('subtitle', 'Moderación de Biomasas')
-@section('content_header_title', 'Gestión de Biomasas')
-@section('content_header_subtitle', '- Moderación y Aprobación')
+@section('subtitle', 'Biomasas')
+@section('content_header_title', 'Biomasas')
+@section('content_header_subtitle', 'Moderación y aprobación')
 
 @section('content_body')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                @if ($message = Session::get('success'))
-                    <x-adminlte-alert theme="success" dismissable>
-                        {{ $message }}
-                    </x-adminlte-alert>
-                @endif
+    @include('incendios::partials.module-nav')
+    @include('incendios::partials.flash-messages')
 
-                <!-- Tabs para filtrar por estado -->
-                <x-adminlte-card title="Biomasas Reportadas" theme="primary" icon="fas fa-leaf">
-                    <x-slot name="toolsSlot">
-                        <a href="{{ route('incendios.biomasas.create') }}" class="btn btn-success btn-sm">
-                            <i class="fas fa-plus"></i> Crear Nueva Biomasa
-                        </a>
-                    </x-slot>
-                    
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#pendientes">
-                                <i class="fas fa-clock"></i> Pendientes 
-                                <span class="badge badge-warning">{{ $biomasas->where('estado', 'pendiente')->count() }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#aprobadas">
-                                <i class="fas fa-check-circle"></i> Aprobadas 
-                                <span class="badge badge-success">{{ $biomasas->where('estado', 'aprobada')->count() }}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#rechazadas">
-                                <i class="fas fa-times-circle"></i> Rechazadas 
-                                <span class="badge badge-danger">{{ $biomasas->where('estado', 'rechazada')->count() }}</span>
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content mt-3">
-                        <!-- PENDIENTES -->
-                        <div id="pendientes" class="tab-pane fade show active">
-                            @include('biomasa.partials.lista-biomasas', ['biomasasFiltradas' => $biomasas->where('estado', 'pendiente'), 'estado' => 'pendiente'])
-                        </div>
-
-                        <!-- APROBADAS -->
-                        <div id="aprobadas" class="tab-pane fade">
-                            @include('biomasa.partials.lista-biomasas', ['biomasasFiltradas' => $biomasas->where('estado', 'aprobada'), 'estado' => 'aprobada'])
-                        </div>
-
-                        <!-- RECHAZADAS -->
-                        <div id="rechazadas" class="tab-pane fade">
-                            @include('biomasa.partials.lista-biomasas', ['biomasasFiltradas' => $biomasas->where('estado', 'rechazada'), 'estado' => 'rechazada'])
-                        </div>
-                    </div>
-
-                    {!! $biomasas->withQueryString()->links() !!}
-                </x-adminlte-card>
+    <div class="card inc-list-card shadow-sm">
+        <div class="card-header">
+            <div class="inc-btn-toolbar w-100">
+                <a href="{{ route('incendios.biomasas.create') }}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-plus"></i> Nueva biomasa
+                </a>
             </div>
         </div>
+
+        <ul class="nav nav-tabs border-bottom-0 px-3 pt-2" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#pendientes">
+                    Pendientes <span class="badge badge-warning ml-1">{{ $biomasas->where('estado', 'pendiente')->count() }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#aprobadas">
+                    Aprobadas <span class="badge badge-success ml-1">{{ $biomasas->where('estado', 'aprobada')->count() }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#rechazadas">
+                    Rechazadas <span class="badge badge-danger ml-1">{{ $biomasas->where('estado', 'rechazada')->count() }}</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="pendientes" class="tab-pane fade show active">
+                @include('biomasa.partials.lista-biomasas', ['biomasasFiltradas' => $biomasas->where('estado', 'pendiente'), 'estado' => 'pendiente'])
+            </div>
+            <div id="aprobadas" class="tab-pane fade">
+                @include('biomasa.partials.lista-biomasas', ['biomasasFiltradas' => $biomasas->where('estado', 'aprobada'), 'estado' => 'aprobada'])
+            </div>
+            <div id="rechazadas" class="tab-pane fade">
+                @include('biomasa.partials.lista-biomasas', ['biomasasFiltradas' => $biomasas->where('estado', 'rechazada'), 'estado' => 'rechazada'])
+            </div>
+        </div>
+
+        @if($biomasas->hasPages())
+            <div class="card-footer bg-white d-flex justify-content-center py-3">
+                {!! $biomasas->withQueryString()->links() !!}
+            </div>
+        @endif
     </div>
 
-    <!-- Modal para rechazar -->
     <div class="modal fade" id="modalRechazar" tabindex="-1" role="dialog" aria-labelledby="modalRechazarLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-danger">
+                <div class="modal-header">
                     <h5 class="modal-title" id="modalRechazarLabel">
-                        <i class="fas fa-ban"></i> Motivo de Rechazo
+                        <i class="fas fa-ban text-danger"></i> Motivo de rechazo
                     </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <form id="formRechazar" method="POST">
                     @csrf
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="motivo_rechazo">Motivo del Rechazo <span class="text-danger">*</span></label>
-                            <textarea 
-                                name="motivo_rechazo" 
-                                id="motivo_rechazo" 
-                                class="form-control" 
-                                rows="4" 
-                                placeholder="Explique por qué se rechaza esta biomasa..." 
-                                required></textarea>
+                        <div class="form-group mb-0">
+                            <label for="motivo_rechazo">Motivo <span class="text-danger">*</span></label>
+                            <textarea name="motivo_rechazo" id="motivo_rechazo" class="form-control" rows="4" placeholder="Explique por qué se rechaza esta biomasa..." required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-ban"></i> Rechazar Biomasa
-                        </button>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Rechazar biomasa</button>
                     </div>
                 </form>
             </div>
@@ -109,14 +86,11 @@
 @section('js')
 <script>
     function abrirModalRechazo(biomasaId) {
-        console.log('Abriendo modal para biomasa ID:', biomasaId);
         const form = document.getElementById('formRechazar');
         form.action = '{{ route('incendios.biomasas.rechazar', ['id' => '__ID__']) }}'.replace('__ID__', biomasaId);
-        console.log('Form action establecida a:', form.action);
         $('#modalRechazar').modal('show');
     }
-    
-    // Limpiar formulario al cerrar modal
+
     $('#modalRechazar').on('hidden.bs.modal', function () {
         document.getElementById('formRechazar').reset();
     });

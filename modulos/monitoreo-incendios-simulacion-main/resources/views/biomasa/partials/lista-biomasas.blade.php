@@ -1,6 +1,6 @@
 @if($biomasasFiltradas->count() > 0)
     <div class="table-responsive">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover inc-data-table mb-0">
             <thead>
                 <tr>
                     <th>ID</th>
