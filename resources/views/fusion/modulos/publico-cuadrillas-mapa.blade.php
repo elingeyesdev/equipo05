@@ -372,10 +372,8 @@
     mapa.addLayer(capaEquipos);
     mapa.addLayer(capaReportes);
 
-    // Límites de Bolivia para filtrar focos
-    const LIMITES_BOLIVIA = { minLat: -22.9, maxLat: -9.7, minLng: -69.6, maxLng: -57.5 };
-    const NASA_API_KEY = '1ae0346a287432156ada4abb791d57cd';
-    const NASA_API_BASE = 'https://firms.modaps.eosdis.nasa.gov/api/area/csv';
+    const INCENDIOS_API = @json(rtrim(url('api/incendios'), '/'));
+    const CHIQUITANIA_AREA = '-62.5,-18.5,-57.5,-14.5';
 
     // Agregar Leyenda
     function agregarLeyenda() {
@@ -419,9 +417,7 @@
         });
     }
 
-    // Cargar Focos satelitales NASA FIRMS
     async function cargarNASA(dias = 2) {
-        // Actualizar estado activo de los botones del banner
         $('.btn-group button').removeClass('active');
         if (dias === 1) $('#btn-24h').addClass('active');
         else if (dias === 2) $('#btn-2d').addClass('active');
@@ -430,58 +426,35 @@
         capaNasaFirms.clearLayers();
         $('#lbl-nasa-count').text('0');
 
-        const url = `${NASA_API_BASE}/${NASA_API_KEY}/VIIRS_NOAA21_NRT/world/${dias}`;
+        const url = `${INCENDIOS_API}/fires?cluster=true&radius=20&days=${dias}&area=${encodeURIComponent(CHIQUITANIA_AREA)}`;
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error('Error de conexión con NASA FIRMS');
-            
-            const csv = await response.text();
-            const lines = csv.trim().split('\n');
-            if (lines.length < 2) return;
-
-            const headers = lines[0].split(',');
+            if (!response.ok) throw new Error('Error al cargar datos FIRMS');
+            const json = await response.json();
+            const fires = json.data || [];
             let totalFocos = 0;
 
-            for (let i = 1; i < lines.length; i++) {
-                const cols = lines[i].split(',');
-                if (cols.length !== headers.length) continue;
-                
-                const row = {};
-                headers.forEach((h, idx) => row[h.trim()] = cols[idx].trim());
-                
-                const lat = parseFloat(row.latitude);
-                const lng = parseFloat(row.longitude);
-
-                // Filtrar dentro del cuadro geográfico de Bolivia
-                if (lat >= LIMITES_BOLIVIA.minLat && lat <= LIMITES_BOLIVIA.maxLat && 
-                    lng >= LIMITES_BOLIVIA.minLng && lng <= LIMITES_BOLIVIA.maxLng) {
-                    
-                    totalFocos++;
-                    
-                    const marker = L.marker([lat, lng], { icon: obtenerIconoFirms(row.confidence) });
-                    const timeFormatted = row.acq_time ? row.acq_time.substring(0, 2) + ':' + row.acq_time.substring(2, 4) : 'N/A';
-                    
-                    marker.bindPopup(`
-                        <div style="font-size: 12px; line-height: 1.4;">
-                            <strong style="color: #dc3545; font-size: 13px;"><i class="fas fa-satellite"></i> Foco Satelital</strong><br/>
-                            <hr style="margin: 4px 0 8px 0;">
-                            <b>Fecha:</b> ${row.acq_date || 'N/A'}<br/>
-                            <b>Hora:</b> ${timeFormatted} UTC<br/>
-                            <b>FRP:</b> ${row.frp || 'N/A'} MW<br/>
-                            <b>Confianza:</b> ${row.confidence || 'N/A'}<br/>
-                            <b>Satélite:</b> ${row.satellite || 'VIIRS'}<br/>
-                            <b>Coordenadas:</b> ${lat.toFixed(6)}, ${lng.toFixed(6)}
-                        </div>
-                    `);
-                    capaNasaFirms.addLayer(marker);
-                }
-            }
+            fires.forEach(fire => {
+                const lat = parseFloat(fire.lat);
+                const lng = parseFloat(fire.lng);
+                if (isNaN(lat) || isNaN(lng)) return;
+                totalFocos++;
+                const marker = L.marker([lat, lng], { icon: obtenerIconoFirms(fire.confidence) });
+                marker.bindPopup(`
+                    <div style="font-size: 12px; line-height: 1.4;">
+                        <strong style="color: #dc3545; font-size: 13px;"><i class="fas fa-satellite"></i> Foco Satelital</strong><br/>
+                        <hr style="margin: 4px 0 8px 0;">
+                        <b>Fecha:</b> ${fire.date || fire.acq_date || 'N/A'}<br/>
+                        <b>FRP:</b> ${fire.frp || 'N/A'} MW<br/>
+                        <b>Confianza:</b> ${fire.confidence || 'N/A'}<br/>
+                        <b>Coordenadas:</b> ${lat.toFixed(6)}, ${lng.toFixed(6)}
+                    </div>
+                `);
+                capaNasaFirms.addLayer(marker);
+            });
 
             $('#lbl-nasa-count').text(totalFocos);
-            
-            // Reajustar mapa a los focos si existen
             ajustarLimitesMapa();
-
         } catch (error) {
             console.error('Error al cargar NASA FIRMS:', error);
             $('#lbl-nasa-count').text('Error');

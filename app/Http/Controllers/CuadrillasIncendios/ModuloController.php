@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
+use Modules\Incendios\Models\FocoIncendio;
 
 class ModuloController extends Controller
 {
@@ -17,12 +18,13 @@ class ModuloController extends Controller
             if (Schema::connection('seguimiento')->hasTable('usuario')) {
                 $voluntariosActivos = DB::connection('seguimiento')->table('usuario')
                     ->where('activo', true)
-                    ->where(function($q) {
+                    ->where(function ($q) {
                         $q->whereNull('administrador')->orWhere('administrador', false);
                     })
                     ->count();
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $comunariosApoyo = 0;
         try {
@@ -31,7 +33,8 @@ class ModuloController extends Controller
             } elseif (Schema::connection('cuadrillas')->hasTable('comunarios')) {
                 $comunariosApoyo = DB::connection('cuadrillas')->table('comunarios')->count();
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $reportesEsteMes = 0;
         try {
@@ -40,14 +43,18 @@ class ModuloController extends Controller
                     ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
                     ->count();
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $incendiosReportados = 0;
         try {
-            if (Schema::connection('cuadrillas')->hasTable('reporte_incendio')) {
-                $incendiosReportados = DB::connection('cuadrillas')->table('reporte_incendio')->count();
+            if (Schema::connection('incendios')->hasTable('focos_incendios')) {
+                $incendiosReportados = FocoIncendio::operativos()
+                    ->where('fecha', '>=', now()->subDays(30))
+                    ->count();
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         return view('fusion.modulos.cuadrillas-incendios', compact(
             'voluntariosActivos',

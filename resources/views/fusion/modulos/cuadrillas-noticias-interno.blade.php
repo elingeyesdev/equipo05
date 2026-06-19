@@ -1,37 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Noticias de Incendios')
+@section('content_header_title', 'Noticias')
+@section('content_header_subtitle', 'Incendios y conservación — fuente opinion.com.bo')
 
 @section('content')
-<div class="container-fluid mt-4">
-    
-    <!-- Cabecera de Página -->
-    <div class="row mb-3 align-items-center">
-        <div class="col-sm-6">
-            <h2 class="m-0 font-weight-bold text-dark"><i class="fas fa-newspaper mr-2 text-danger"></i> Noticias</h2>
-        </div>
-        <div class="col-sm-6 text-sm-right mt-2 mt-sm-0">
-            <button id="actualizarNoticias" class="btn btn-primary font-weight-bold shadow-sm">
-                <i class="fas fa-sync-alt mr-1"></i> Actualizar Noticias
-            </button>
-            <a href="{{ route('cuadrillas.dashboard') }}" class="btn btn-secondary font-weight-bold shadow-sm ml-1">
-                <i class="fas fa-arrow-left mr-1"></i> Volver
-            </a>
-        </div>
-    </div>
+@include('fusion.modulos.partials.cuadrillas-module-nav')
+@include('fusion.modulos.partials.cuadrillas-flash')
 
-    <!-- Banner Informativo -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
-                <h5><i class="icon fas fa-info-circle"></i> Noticias sobre Incendios</h5>
-                Estas noticias se actualizan automáticamente desde el portal de <strong>opinion.com.bo</strong> para mantener informados a los equipos de apoyo y voluntarios.
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+<div class="card cua-list-card shadow-sm mb-3">
+    <div class="card-header">
+        <div class="cua-btn-toolbar w-100">
+            <button id="actualizarNoticias" class="btn btn-primary btn-sm">
+                <i class="fas fa-sync-alt"></i> Actualizar noticias
+            </button>
         </div>
     </div>
+    <div class="card-body pb-0">
+        <div class="alert alert-light border small mb-3">
+            <i class="fas fa-info-circle text-info mr-1"></i>
+            Noticias sincronizadas desde <strong>opinion.com.bo</strong> para equipos de apoyo y voluntarios.
+        </div>
+    </div>
+</div>
 
     <!-- Grid de Noticias -->
     <div class="row">
@@ -94,7 +84,6 @@
         </div>
     @endif
 
-</div>
 @endsection
 
 @push('css')

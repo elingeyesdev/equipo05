@@ -29,6 +29,9 @@
     @if(str_contains($bodyModuleClass ?? '', 'module-seguimiento'))
         <link rel="stylesheet" href="{{ asset('css/seguimiento-module.css') }}?v={{ $cssVer('css/seguimiento-module.css') }}">
     @endif
+    @if(str_contains($bodyModuleClass ?? '', 'module-cuadrillas'))
+        <link rel="stylesheet" href="{{ asset('css/cuadrillas-module.css') }}?v={{ $cssVer('css/cuadrillas-module.css') }}">
+    @endif
     @yield('css')
     @stack('css')
     @stack('styles')
@@ -130,9 +133,20 @@
         </nav>
 
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            @php
+                $sidebarBrand = match (true) {
+                    str_contains($bodyModuleClass ?? '', 'module-cuadrillas') => ['icon' => 'fa-fire', 'label' => 'Cuadrillas'],
+                    str_contains($bodyModuleClass ?? '', 'module-incendios') => ['icon' => 'fa-fire-alt', 'label' => 'Incendios'],
+                    str_contains($bodyModuleClass ?? '', 'module-logistica') => ['icon' => 'fa-truck', 'label' => 'Logística'],
+                    str_contains($bodyModuleClass ?? '', 'module-seguimiento') => ['icon' => 'fa-hands-helping', 'label' => 'Voluntarios'],
+                    str_contains($bodyModuleClass ?? '', 'module-inventario') => ['icon' => 'fa-boxes', 'label' => 'Inventario'],
+                    str_contains($bodyModuleClass ?? '', 'module-rescate') => ['icon' => 'fa-paw', 'label' => 'Rescate'],
+                    default => ['icon' => 'fa-hand-holding-heart', 'label' => 'Plataforma'],
+                };
+            @endphp
             <a href="{{ route('home') }}" class="brand-link text-center">
-                <i class="fas fa-hand-holding-heart fa-lg"></i>
-                <span class="brand-text font-weight-light ml-2">Donaciones</span>
+                <i class="fas {{ $sidebarBrand['icon'] }} fa-lg"></i>
+                <span class="brand-text font-weight-light ml-2">{{ $sidebarBrand['label'] }}</span>
             </a>
 
             <div class="sidebar">

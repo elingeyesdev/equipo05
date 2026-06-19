@@ -1,35 +1,25 @@
 @extends('layouts.app')
 
-@section('title', 'Reporte Rápido de Incidente')
+@section('content_header_title', 'Reporte rápido')
+@section('content_header_subtitle', 'Registro de incidentes en campo')
 
 @section('content')
-<div class="container-fluid mt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-11 col-xl-10">
-            
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
+@include('fusion.modulos.partials.cuadrillas-module-nav')
+@include('fusion.modulos.partials.cuadrillas-flash')
+
+<div class="row justify-content-center">
+    <div class="col-lg-11 col-xl-10">
 
             @if($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="fas fa-exclamation-circle mr-2"></i> Por favor corrija los errores en el formulario.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
             @endif
 
-            <div class="card card-report card-outline card-danger shadow-lg">
-                <div class="card-header bg-danger text-white d-flex align-items-center">
-                    <h3 class="card-title font-weight-bold m-0">
-                        <i class="fas fa-exclamation-triangle mr-2"></i> Información de Reporte Rápido
-                    </h3>
+            <div class="card cua-list-card cua-accent-danger shadow-sm">
+                <div class="card-header">
+                    <h3 class="card-title mb-0"><i class="fas fa-exclamation-triangle mr-1 text-danger"></i> Formulario de reporte</h3>
                 </div>
                 
                 <form action="{{ route('publico.cuadrillas.reporte.store') }}" method="POST" id="form-reporte-publico">

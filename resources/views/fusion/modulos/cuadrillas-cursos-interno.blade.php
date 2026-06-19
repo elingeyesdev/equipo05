@@ -1,34 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Cursos de Capacitación')
+@section('content_header_title', 'Cursos')
+@section('content_header_subtitle', 'Capacitación y kardex de brigadistas')
 
 @section('content')
-<div class="container-fluid mt-4">
-    
-    <!-- Cabecera de Página -->
-    <div class="row mb-3 align-items-center">
-        <div class="col-sm-6">
-            <h2 class="m-0 font-weight-bold text-dark"><i class="fas fa-graduation-cap mr-2 text-warning"></i> Cursos</h2>
-        </div>
-        <div class="col-sm-6 text-sm-right mt-2 mt-sm-0">
-            <a href="{{ route('cuadrillas.crud.create', ['seccion' => 'cursos']) }}" class="btn btn-primary font-weight-bold shadow-sm mr-2">
-                <i class="fas fa-plus mr-1"></i> Nuevo Curso
+@include('fusion.modulos.partials.cuadrillas-module-nav')
+@include('fusion.modulos.partials.cuadrillas-flash')
+
+<div class="card cua-list-card shadow-sm mb-3">
+    <div class="card-header">
+        <div class="cua-btn-toolbar w-100">
+            <a href="{{ route('cuadrillas.crud.create', ['seccion' => 'cursos']) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Nuevo curso
             </a>
-            <button type="button" class="btn btn-secondary font-weight-bold shadow-sm" id="toggleViewBtn">
-                <i class="fas fa-table mr-1"></i> Vista Tabla
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleViewBtn">
+                <i class="fas fa-table"></i> Vista tabla
             </button>
         </div>
     </div>
-
-    {{-- Mensajes de éxito/error --}}
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <i class="icon fas fa-check mr-2"></i> {{ session('success') }}
-        </div>
-    @endif
+</div>
 
     {{-- Vista de Cards --}}
     <div id="cardsView">
@@ -133,7 +123,6 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('css')
