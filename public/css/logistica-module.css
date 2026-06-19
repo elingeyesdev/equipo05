@@ -1,0 +1,269 @@
+/* Módulo logística — UI unificada AdminLTE */
+
+body.module-logistica.platform-ui .content-wrapper {
+    background: #f4f6f9;
+}
+
+body.module-logistica.platform-ui section.content > .container-fluid {
+    padding: 1.25rem 1.5rem 1.75rem;
+}
+
+body.module-logistica.platform-ui .content-header h1 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+body.module-logistica.platform-ui .content-header h1 small {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+/* Cards */
+body.module-logistica.platform-ui .card {
+    border-radius: 0.5rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    margin-bottom: 1.25rem;
+}
+
+body.module-logistica.platform-ui .card > .card-header {
+    background: #fff !important;
+    color: #334155 !important;
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.85rem 1.15rem;
+}
+
+body.module-logistica.platform-ui .card > .card-header .card-title {
+    color: #1e293b !important;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+body.module-logistica.platform-ui .logistica-list-card {
+    border-top: 3px solid #4f46e5;
+}
+
+body.module-logistica.platform-ui .logistica-list-card > .card-header {
+    min-height: 3.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.65rem 1rem;
+}
+
+/* Tablas — thead claro (sin barra oscura) */
+body.module-logistica.platform-ui .table thead {
+    background: #f8fafc !important;
+}
+
+body.module-logistica.platform-ui .table thead th {
+    color: #64748b !important;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 0.65rem;
+    border-bottom: 2px solid #e2e8f0 !important;
+    border-top: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+body.module-logistica.platform-ui .table thead th::after {
+    display: none !important;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa thead th.col-acciones {
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+}
+
+body.module-logistica.platform-ui .table tbody td {
+    padding: 0.65rem;
+    font-size: 0.875rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa tbody td {
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa .col-acciones {
+    background: #fff;
+    box-shadow: -4px 0 8px rgba(15, 23, 42, 0.04);
+}
+
+body.module-logistica.platform-ui .logistica-tabla-operativa tbody tr:nth-child(even) .col-acciones {
+    background: #fafbfc;
+}
+
+/* KPI */
+body.module-logistica.platform-ui .logistica-kpi-row .small-box {
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+    margin-bottom: 0;
+    min-height: 88px;
+}
+
+body.module-logistica.platform-ui .logistica-kpi-row .small-box .inner {
+    padding: 0.85rem 1rem;
+}
+
+body.module-logistica.platform-ui .logistica-kpi-row .small-box h3 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0 0 0.15rem;
+}
+
+body.module-logistica.platform-ui .logistica-kpi-row .small-box p {
+    font-size: 0.85rem;
+    margin: 0;
+    opacity: 0.95;
+}
+
+body.module-logistica.platform-ui .logistica-kpi-row .kpi-solicitudes { background: #4f46e5 !important; }
+body.module-logistica.platform-ui .logistica-kpi-row .kpi-paquetes { background: #0891b2 !important; }
+body.module-logistica.platform-ui .logistica-kpi-row .kpi-seguimientos { background: #059669 !important; }
+body.module-logistica.platform-ui .logistica-kpi-row .kpi-vehiculos { background: #d97706 !important; }
+body.module-logistica.platform-ui .logistica-kpi-row .kpi-conductores { background: #7c3aed !important; }
+body.module-logistica.platform-ui .logistica-kpi-row .kpi-reportes { background: #64748b !important; }
+
+/* Toolbar y acciones */
+body.module-logistica.platform-ui .logistica-btn-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.45rem;
+}
+
+body.module-logistica.platform-ui .logistica-btn-toolbar .btn {
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+body.module-logistica.platform-ui .logistica-row-actions {
+    display: inline-flex;
+    gap: 0.25rem;
+}
+
+body.module-logistica.platform-ui .logistica-row-actions .btn {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+}
+
+/* Filtros */
+body.module-logistica.platform-ui .logistica-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0.75rem 1rem 0;
+}
+
+body.module-logistica.platform-ui .logistica-filtros .btn.active {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+}
+
+/* Nav rápida */
+.logistica-dashboard-shell {
+    border-top: 3px solid #4f46e5;
+}
+
+.logistica-dashboard-shell > .card-header {
+    background: #fff !important;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.logistica-dashboard-nav {
+    gap: 0.35rem;
+}
+
+.logistica-dashboard-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.logistica-dashboard-nav .nav-link:hover:not(.active) {
+    background-color: #f4f6f9;
+    color: #212529;
+}
+
+.logistica-dashboard-nav .nav-link.active {
+    background-color: #4f46e5;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+    cursor: default;
+}
+
+@media (max-width: 767.98px) {
+    .logistica-dashboard-nav .nav-link span {
+        display: none;
+    }
+}
+
+/* Seguimiento — tarjetas */
+body.module-logistica.platform-ui .logistica-seg-card {
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecef;
+    border-top: 3px solid #4f46e5;
+    transition: box-shadow 0.2s ease;
+}
+
+body.module-logistica.platform-ui .logistica-seg-card:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+body.module-logistica.platform-ui .logistica-seg-card.estado-entregado { border-top-color: #059669; }
+body.module-logistica.platform-ui .logistica-seg-card.estado-camino { border-top-color: #0891b2; }
+body.module-logistica.platform-ui .logistica-seg-card.estado-otro { border-top-color: #d97706; }
+
+body.module-logistica.platform-ui .logistica-seg-card > .card-header {
+    background: #f8fafc !important;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+}
+
+/* Sidebar activo */
+body.module-logistica.platform-ui .nav-sidebar .nav-treeview .nav-link.active {
+    background: rgba(79, 70, 229, 0.2) !important;
+    color: #fff !important;
+    box-shadow: inset 3px 0 0 #4f46e5;
+}
+
+body.module-logistica.platform-ui .logistica-scroll-hint {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    padding: 0 1rem;
+    margin-bottom: 0.35rem;
+}
+
+body.module-logistica.platform-ui .logistica-meta-line {
+    font-size: 0.8125rem;
+    color: #64748b;
+    padding: 0 1rem 0.75rem;
+}

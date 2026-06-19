@@ -176,7 +176,8 @@ body.module-logistica.platform-ui .logistica-tabla-operativa .col-acciones {
 }
 
 body.module-logistica.platform-ui .logistica-tabla-operativa thead th.col-acciones {
-    background: var(--gray-800, #343a40);
+    background: #f1f5f9;
+    color: #64748b;
     z-index: 3;
 }
 

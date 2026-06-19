@@ -1,66 +1,64 @@
 @extends('layouts.app')
 
+@section('content_header_title', $tituloSeccion)
+@section('content_header_subtitle', $total . ' registros · ' . $nombreTabla)
+
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="card-title mb-0">{{ $tituloSeccion }}</h3>
-                        <a href="{{ route('logistica.crud.create', ['seccion' => $seccion]) }}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> Agregar
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="mb-2"><strong>Tabla:</strong> {{ $nombreTabla }} | <strong>Registros:</strong> {{ $total }}</p>
-                    @if(count($columnas) === 0)
-                        <p class="text-muted mb-0">La tabla aun no esta disponible en la base de datos logistica.</p>
-                    @else
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    @foreach($columnas as $col)
-                                        <th>{{ $col }}</th>
-                                    @endforeach
-                                    <th style="width: 140px;">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($filas as $fila)
-                                <tr>
-                                    @foreach($columnas as $col)
-                                        <td>{{ $fila->$col }}</td>
-                                    @endforeach
-                                    <td>
-                                        <div class="d-flex" style="gap:.35rem;">
-                                            <a href="{{ route('logistica.crud.edit', ['seccion' => $seccion, 'id' => data_get($fila, $primaryKey)]) }}" class="btn btn-warning btn-xs">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <form action="{{ route('logistica.crud.destroy', ['seccion' => $seccion, 'id' => data_get($fila, $primaryKey)]) }}" method="POST" onsubmit="return confirm('¿Eliminar este registro?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger btn-xs" type="submit">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="{{ count($columnas) + 1 }}" class="text-muted">No hay datos para mostrar.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    @endif
-                </div>
-            </div>
+@include('fusion.modulos.partials.logistica-module-nav')
+@include('fusion.modulos.partials.logistica-flash')
+
+<div class="card logistica-list-card shadow-sm">
+    <div class="card-header">
+        <div class="logistica-btn-toolbar w-100">
+            <a href="{{ route('logistica.crud.create', ['seccion' => $seccion]) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Agregar
+            </a>
         </div>
+    </div>
+    <div class="card-body p-0">
+        @if(count($columnas) === 0)
+            <p class="text-muted mb-0 p-3">La tabla aún no está disponible en la base de datos logística.</p>
+        @else
+        <div class="table-responsive">
+            <table class="table table-sm table-hover logistica-tabla-operativa mb-0">
+                <thead>
+                    <tr>
+                        @foreach($columnas as $col)
+                            <th>{{ str_replace('_', ' ', ucfirst($col)) }}</th>
+                        @endforeach
+                        <th style="width: 6rem;">Acc.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($filas as $fila)
+                    <tr>
+                        @foreach($columnas as $col)
+                            <td>{{ $fila->$col }}</td>
+                        @endforeach
+                        <td>
+                            <span class="logistica-row-actions">
+                                <a href="{{ route('logistica.crud.edit', ['seccion' => $seccion, 'id' => data_get($fila, $primaryKey)]) }}" class="btn btn-outline-warning btn-sm" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('logistica.crud.destroy', ['seccion' => $seccion, 'id' => data_get($fila, $primaryKey)]) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar este registro?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-outline-danger btn-sm" type="submit" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="{{ count($columnas) + 1 }}" class="text-muted text-center py-4">No hay datos para mostrar.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        @endif
     </div>
 </div>
 @endsection

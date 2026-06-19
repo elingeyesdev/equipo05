@@ -2,6 +2,8 @@
     $coordenadasMapaActivo = in_array($seccion, ['destino', 'ubicacion', 'focos-calor', 'reportes-incendio'], true)
         && in_array('latitud', $columns ?? [], true)
         && in_array('longitud', $columns ?? [], true);
+    $esLogistica = ($moduloKey ?? '') === 'logistica';
+    $listCardClass = $esLogistica ? 'logistica-list-card shadow-sm' : 'shadow-sm';
 @endphp
 
 @if($coordenadasMapaActivo)
@@ -13,11 +15,15 @@
 @endpush
 @endif
 
-<div class="container-fluid">
-    <div class="card">
+<div class="container-fluid px-0">
+    <div class="card {{ $listCardClass }}">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <strong>{{ $registro ? 'Editar' : 'Crear' }} {{ $tituloSeccion }}</strong>
-            <a href="{{ route("{$routePrefix}.$seccion") }}" class="btn btn-secondary btn-sm">
+            @unless($esLogistica)
+                <strong>{{ $registro ? 'Editar' : 'Crear' }} {{ $tituloSeccion }}</strong>
+            @else
+                <span></span>
+            @endunless
+            <a href="{{ route("{$routePrefix}.$seccion") }}" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
         </div>

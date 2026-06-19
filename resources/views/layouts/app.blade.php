@@ -23,6 +23,9 @@
     @if(str_contains($bodyModuleClass ?? '', 'module-incendios'))
         <link rel="stylesheet" href="{{ asset('css/incendios-module.css') }}?v={{ $cssVer('css/incendios-module.css') }}">
     @endif
+    @if(str_contains($bodyModuleClass ?? '', 'module-logistica'))
+        <link rel="stylesheet" href="{{ asset('css/logistica-module.css') }}?v={{ $cssVer('css/logistica-module.css') }}">
+    @endif
     @yield('css')
     @stack('css')
     @stack('styles')
