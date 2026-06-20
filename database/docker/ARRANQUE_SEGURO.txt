@@ -31,6 +31,11 @@ ARRANQUE SEGURO — PostgreSQL unificado + login en core.usuarios
    php artisan db:setup-inventario --fresh
    (o: php artisan db:setup-unificado --fresh-inventario --seed)
 
+6b. Fotos de fauna (rescate + hallazgos vinculados a incendios)
+   php artisan storage:link
+   php artisan rescate:ensure-media --sync-db
+   (Tras git pull sin seed: al menos php artisan rescate:ensure-media)
+
 7. Servidor
    php artisan serve
 
@@ -38,6 +43,6 @@ ARRANQUE SEGURO — PostgreSQL unificado + login en core.usuarios
    http://127.0.0.1:8000/login
    admin123@gmail.com / admin123
 
-Cuando los pasos 1–7 terminan sin error, es seguro usar el programa.
+Cuando los pasos 1–8 terminan sin error, es seguro usar el programa.
 
 ================================================================================

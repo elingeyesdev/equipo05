@@ -70,6 +70,7 @@ class RichRescateDemoSeeder extends Seeder
 
             $this->seedBulkFauna();
             $this->downloadRescateImages();
+            \App\Support\RescateMedia::ensureCatalogImages(false);
             $cleaned = RescateAnimalNameCleaner::cleanAll();
             if ($cleaned > 0) {
                 $this->command?->info("Rescate: {$cleaned} nombres de animales sin sufijo demo.");

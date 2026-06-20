@@ -204,6 +204,7 @@ class PatchDemoDashboardSeeder extends Seeder
         }
         $seeder->enrichDashboardDemoData();
         $seeder->runSpeciesImageRefresh();
+        \App\Support\RescateMedia::ensureCatalogImages(false);
     }
 
     private function fixInventarioDatosOperativos(): void

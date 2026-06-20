@@ -126,6 +126,23 @@ class RescateMedia
         return $stored;
     }
 
+    /**
+     * Garantiza imágenes en public/images/rescate/ para todo el catálogo (offline, sin depender de BD).
+     */
+    public static function ensureCatalogImages(bool $force = false): int
+    {
+        $updated = 0;
+        foreach (AnimalImageCatalog::imageSeeds() as $seed) {
+            if (self::ensureSpeciesImage($seed, $force)) {
+                $updated++;
+            }
+        }
+
+        self::ensureDefaultImage();
+
+        return $updated;
+    }
+
     public static function ensureDefaultImage(): string
     {
         $path = 'animal-files/default-fauna.jpg';

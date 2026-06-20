@@ -200,29 +200,31 @@ class ReportController extends Controller
                 }
             }
 
-            // Registrar evento de reporte en el historial (sin hoja)
-            $hist = new AnimalHistory();
-            $hist->animal_file_id = null;
-            $hist->valores_antiguos = null;
-            $hist->valores_nuevos = [
-                'report' => [
-                    'id' => $report->id,
-                    'persona_id' => $report->persona_id,
-                    'direccion' => $report->direccion,
-                    'latitud' => $report->latitud,
-                    'longitud' => $report->longitud,
-                    'condicion_inicial_id' => $report->condicion_inicial_id,
-                    'tipo_incidente_id' => $report->tipo_incidente_id,
-                    'tamano' => $report->tamano,
-                    'puede_moverse' => $report->puede_moverse,
-                    'urgencia' => $report->urgencia,
-                    'imagen_url' => $report->imagen_url,
-                    'created_at' => $report->created_at ? $report->created_at->toDateTimeString() : null, // Guardar fecha original del reporte
+            AnimalHistory::recordEvent(
+                null,
+                'Nuevo hallazgo',
+                $report->aprobado ? 'Hallazgo registrado' : 'Pendiente de aprobación',
+                $report->observaciones ?? 'Registro de hallazgo',
+                null,
+                [
+                    'report' => [
+                        'id' => $report->id,
+                        'persona_id' => $report->persona_id,
+                        'direccion' => $report->direccion,
+                        'latitud' => $report->latitud,
+                        'longitud' => $report->longitud,
+                        'condicion_inicial_id' => $report->condicion_inicial_id,
+                        'tipo_incidente_id' => $report->tipo_incidente_id,
+                        'tamano' => $report->tamano,
+                        'puede_moverse' => $report->puede_moverse,
+                        'urgencia' => $report->urgencia,
+                        'imagen_url' => $report->imagen_url,
+                        'incendio_id' => $report->incendio_id,
+                        'created_at' => $report->created_at ? $report->created_at->toDateTimeString() : null,
+                    ],
                 ],
-            ];
-            $hist->observaciones = ['texto' => $report->observaciones ?? 'Registro de hallazgo'];
-            $hist->changed_at = $report->created_at;
-            $hist->save();
+                $report->created_at,
+            );
 
             // Si se marcó traslado inmediato, registrar primer traslado (sin hoja)
             // Solo si hay persona_id (usuario autenticado)
@@ -349,19 +351,16 @@ class ReportController extends Controller
 
         // Registrar en historial si existe
         $hist = AnimalHistory::whereNull('animal_file_id')
-            ->whereNotNull('valores_nuevos')
-            ->where('valores_nuevos->report->id', $report->id)
+            ->whereNotNull(AnimalHistory::newValuesColumn())
+            ->whereRaw(AnimalHistory::jsonPath("->'report'->>'id'").' = ?', [(string) $report->id])
             ->first();
 
         if ($hist) {
-            // Actualizar observaciones con la acción de aprobación/rechazo
-            $obs = $hist->observaciones ?? [];
-            $obsTexto = is_array($obs) ? ($obs['texto'] ?? '') : (string)$obs;
+            $obsTexto = is_string($hist->observaciones) ? $hist->observaciones : '';
             $accionTexto = $validated['action'] === 'approve' ? 'Aprobado' : 'Rechazado';
             $usuario = Auth::user();
             $aprobador = $usuario?->person?->nombre ?? $usuario?->name ?? 'usuario-sistema';
-            $obs['texto'] = $obsTexto . ' | ' . $accionTexto . ' por: ' . $aprobador;
-            $hist->observaciones = $obs;
+            $hist->observaciones = trim($obsTexto.' | '.$accionTexto.' por: '.$aprobador, ' |');
             $hist->save();
         }
 

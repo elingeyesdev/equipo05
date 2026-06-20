@@ -22,6 +22,7 @@ class SetupUnifiedDatabase extends Command
 
         if ($this->option('seed')) {
             $this->call('db:seed', ['--class' => 'Database\\Seeders\\UnifiedDemoDataSeeder', '--force' => true]);
+            $this->call('rescate:ensure-media', ['--sync-db' => true]);
         }
 
         $this->info('Base unificada lista. Docker debe estar en ejecucion (puerto 5433).');

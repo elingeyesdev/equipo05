@@ -74,6 +74,12 @@ final class AnimalImageCatalog
         return 'images/rescate/'.self::seedFor($label).'.jpg';
     }
 
+    /** @return list<string> Claves del catálogo (una imagen por archivo en public/images/rescate). */
+    public static function imageSeeds(): array
+    {
+        return array_values(array_unique(array_keys(self::FILES)));
+    }
+
     private static function normalize(string $label): string
     {
         $text = mb_strtolower($label, 'UTF-8');

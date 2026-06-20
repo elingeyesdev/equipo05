@@ -71,11 +71,14 @@ test('rescatista can store animal record and redirect to animal files index', fu
         'estado_inicial_id' => $report->condicion_inicial_id,
     ]);
 
-    $response->assertRedirect(route('rescate.animal-files.index'));
+    $response->assertRedirect();
     $response->assertSessionHas('success');
 
     $created = Modules\Rescate\Models\Animal::where('reporte_id', $report->id)->latest('id')->first();
     expect($created)->not->toBeNull();
+    $animalFile = Modules\Rescate\Models\AnimalFile::where('animal_id', $created->id)->first();
+    expect($animalFile)->not->toBeNull();
+    expect($response->headers->get('Location'))->toContain('/animal-files/'.$animalFile->id);
     Modules\Rescate\Models\AnimalFile::where('animal_id', $created->id)->delete();
     $created->delete();
 });

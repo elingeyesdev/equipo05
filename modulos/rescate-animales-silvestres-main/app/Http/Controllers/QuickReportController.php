@@ -100,28 +100,30 @@ class QuickReportController extends Controller
                 }
             }
 
-            $hist = new AnimalHistory;
-            $hist->animal_file_id = null;
-            $hist->valores_antiguos = null;
-            $hist->valores_nuevos = [
-                'report' => [
-                    'id' => $report->id,
-                    'persona_id' => $report->persona_id,
-                    'direccion' => $report->direccion,
-                    'latitud' => $report->latitud,
-                    'longitud' => $report->longitud,
-                    'condicion_inicial_id' => $report->condicion_inicial_id,
-                    'tipo_incidente_id' => $report->tipo_incidente_id,
-                    'tamano' => $report->tamano,
-                    'puede_moverse' => $report->puede_moverse,
-                    'urgencia' => $report->urgencia,
-                    'imagen_url' => $report->imagen_url,
-                    'created_at' => $report->created_at ? $report->created_at->toDateTimeString() : null,
+            AnimalHistory::recordEvent(
+                null,
+                'Nuevo hallazgo',
+                'Pendiente de aprobación',
+                $report->observaciones ?? 'Registro rápido de emergencia',
+                null,
+                [
+                    'report' => [
+                        'id' => $report->id,
+                        'persona_id' => $report->persona_id,
+                        'direccion' => $report->direccion,
+                        'latitud' => $report->latitud,
+                        'longitud' => $report->longitud,
+                        'condicion_inicial_id' => $report->condicion_inicial_id,
+                        'tipo_incidente_id' => $report->tipo_incidente_id,
+                        'tamano' => $report->tamano,
+                        'puede_moverse' => $report->puede_moverse,
+                        'urgencia' => $report->urgencia,
+                        'imagen_url' => $report->imagen_url,
+                        'created_at' => $report->created_at ? $report->created_at->toDateTimeString() : null,
+                    ],
                 ],
-            ];
-            $hist->observaciones = ['texto' => $report->observaciones ?? 'Registro rápido de emergencia'];
-            $hist->changed_at = $report->created_at;
-            $hist->save();
+                $report->created_at,
+            );
 
             if (! $isAuthenticated) {
                 $request->session()->put('pending_report_id', $report->id);

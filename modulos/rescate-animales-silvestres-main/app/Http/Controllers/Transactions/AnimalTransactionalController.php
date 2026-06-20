@@ -111,9 +111,10 @@ class AnimalTransactionalController extends Controller
 
 			$result = $this->service->createWithFile($animalData, $animalFileData, $image);
 			$animal = $result['animal'];
+			$animalFile = $result['animalFile'];
 			$label = $animal->nombre ?: ('Animal #'.$animal->id);
 
-			return Redirect::route('rescate.animal-files.index')
+			return Redirect::route('rescate.animal-files.show', $animalFile->id)
 				->with('success', __('Hoja de vida creada para :nombre.', ['nombre' => $label]));
 		} catch (\DomainException $e) {
 			return Redirect::back()

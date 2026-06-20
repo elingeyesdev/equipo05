@@ -14,9 +14,11 @@
         <div class="card-header">
             <h3 class="res-card-title mb-0"><i class="fas fa-leaf text-success mr-2"></i>{{ __('Liberaciones') }}</h3>
             @canManageVeterinaryReleases
-            <a href="{{ route('rescate.releases.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus mr-1"></i> {{ __('Crear nueva') }}
-            </a>
+            <div class="res-card-header-actions">
+                <a href="{{ route('rescate.releases.create') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus mr-1"></i> {{ __('Crear nueva') }}
+                </a>
+            </div>
             @endcanManageVeterinaryReleases
         </div>
         <div class="card-body">
