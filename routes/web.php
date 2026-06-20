@@ -48,6 +48,7 @@ use App\Http\Controllers\Ext\{
     TrazabilidadController // Alias para el nuevo módulo
 };
 use App\Http\Controllers\Fusion\Fase1IntegracionController;
+use App\Http\Controllers\Fusion\MapaOperativoController;
 use App\Http\Controllers\Fusion\ModulosIntegradosController;
 use App\Http\Controllers\Fusion\AccesoPublicoController;
 /*
@@ -109,6 +110,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cuadrillas', function () {
         return redirect()->route('cuadrillas.dashboard');
     })->middleware('module.access:cuadrillas')->name('fusion.modulos.cuadrillas');
+
+    Route::get('/territorial', function () {
+        return redirect()->route('territorial.dashboard');
+    })->middleware('role:Administrador')->name('fusion.modulos.territorial');
 
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
@@ -289,4 +294,13 @@ Route::prefix('cuadrillas/modulo')
     ->middleware(['auth', 'cuadrillas.db', 'module.access:cuadrillas'])
     ->group(function () {
         require base_path('modulos/cuadrillas-incendios-kardex-cursos-Alas-Chiquitanas/routes/web.php');
+    });
+
+Route::prefix('territorial/modulo')
+    ->as('territorial.')
+    ->middleware(['auth', 'role:Administrador'])
+    ->group(function () {
+        Route::get('/', [MapaOperativoController::class, 'index'])->name('dashboard');
+        Route::get('/mapa', [MapaOperativoController::class, 'index'])->name('mapa');
+        Route::get('/api/capas', [MapaOperativoController::class, 'capas'])->name('api.capas');
     });

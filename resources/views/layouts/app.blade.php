@@ -35,6 +35,9 @@
     @if(str_contains($bodyModuleClass ?? '', 'module-rescate'))
         <link rel="stylesheet" href="{{ asset('css/rescate-module.css') }}?v={{ $cssVer('css/rescate-module.css') }}">
     @endif
+    @if(str_contains($bodyModuleClass ?? '', 'module-territorial'))
+        <link rel="stylesheet" href="{{ asset('css/mapa-operativo.css') }}?v={{ $cssVer('css/mapa-operativo.css') }}">
+    @endif
     @yield('css')
     @stack('css')
     @stack('styles')
@@ -138,6 +141,7 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             @php
                 $sidebarBrand = match (true) {
+                    str_contains($bodyModuleClass ?? '', 'module-territorial') => ['icon' => 'fa-globe-americas', 'label' => 'Territorial'],
                     str_contains($bodyModuleClass ?? '', 'module-cuadrillas') => ['icon' => 'fa-fire', 'label' => 'Cuadrillas'],
                     str_contains($bodyModuleClass ?? '', 'module-incendios') => ['icon' => 'fa-fire-alt', 'label' => 'Incendios'],
                     str_contains($bodyModuleClass ?? '', 'module-logistica') => ['icon' => 'fa-truck', 'label' => 'Logística'],
@@ -743,6 +747,16 @@
                                     </a>
                                 </li>
                             </ul>
+                        </li>
+                        @endif
+
+                        @if($__showAdmin)
+                        <li class="nav-header">COMANDO CENTRAL</li>
+                        <li class="nav-item" data-sidebar-key="mod-territorial">
+                            <a href="{{ route('territorial.dashboard') }}" class="nav-link {{ request()->routeIs('territorial.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-globe-americas text-info"></i>
+                                <p><span class="sidebar-menu-label">Mapa territorial integrado</span></p>
+                            </a>
                         </li>
                         @endif
 
