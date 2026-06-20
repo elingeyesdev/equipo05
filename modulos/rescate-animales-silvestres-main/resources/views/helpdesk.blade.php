@@ -14,7 +14,7 @@
 @section('content_header_subtitle', 'Helpdesk')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             <div class="col-12">
                 <div id="helpdesk-widget-wrapper" style="width: 100%;">

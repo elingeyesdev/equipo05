@@ -6,7 +6,7 @@
 @section('content_header_subtitle', 'Editar')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card card-outline card-warning shadow-sm">
@@ -24,6 +24,4 @@
                 </div>
             </div>
         </div>
-    </div>
-    @include('partials.page-pad')
 @endsection

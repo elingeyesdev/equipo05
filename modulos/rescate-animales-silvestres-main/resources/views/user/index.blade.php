@@ -6,13 +6,12 @@
 @section('content_header_subtitle', 'Listado')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             <div class="col-sm-12">
                 <div class="card card-outline card-secondary shadow-sm">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: .5rem;">
-                            <span id="card_title" class="font-weight-bold mb-0">Usuarios sincronizados / locales</span>
                             <div>
                                 <a href="{{ route('rescate.users.create') }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus"></i> Nuevo usuario
@@ -20,12 +19,6 @@
                             </div>
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4 mb-0">
-                            <p class="mb-0">{{ $message }}</p>
-                        </div>
-                    @endif
-
                     <div class="card-body bg-white">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover mb-0">
@@ -69,6 +62,4 @@
                 {!! $users->withQueryString()->links() !!}
             </div>
         </div>
-    </div>
-    @include('partials.page-pad')
 @endsection

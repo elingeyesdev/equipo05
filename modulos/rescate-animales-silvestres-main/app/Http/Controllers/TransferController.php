@@ -218,7 +218,11 @@ class TransferController extends Controller
             } catch (\Exception $e) {
                 \Log::warning('Error registrando tracking de traslado: ' . $e->getMessage());
             }
+        } catch (\DomainException $e) {
+            return Redirect::back()->withInput()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
+            \Log::error('Error registrando traslado: '.$e->getMessage(), ['exception' => $e]);
+
             return Redirect::back()->withInput()->with('error', 'No se pudo registrar el traslado en este momento.');
         }
 

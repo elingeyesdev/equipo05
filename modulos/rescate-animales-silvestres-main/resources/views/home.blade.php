@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio — Rescate')
-@section('subtitle', 'Panel principal del módulo de rescate de fauna.')
-@section('content_header_title', 'Inicio')
-@section('content_header_subtitle', 'Panel de rescate')
+@section('title', 'Panel — Rescate')
+@section('content_header_title', 'Panel')
 
 @section('css')
 <style>
@@ -102,9 +100,6 @@
 @endsection
 
 @section('content_body')
-<div class="container-fluid res-page-shell pb-4">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     @if($canViewAdminDashboard ?? false)
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
@@ -758,8 +753,6 @@
         </div>
     @endif
 
-</div>
-@include('partials.page-pad')
 @endsection
 
 @section('js')

@@ -6,7 +6,7 @@
 @section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow-sm">
@@ -233,5 +233,4 @@ document.addEventListener('DOMContentLoaded', function() {
 @endif
 @endcanApproveRescateReports
 
-@include('partials.page-pad')
 @endsection

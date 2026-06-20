@@ -6,13 +6,9 @@
 @section('content_header_subtitle', 'Línea de tiempo')
 
 @section('content_body')
-<div class="container-fluid res-page-shell">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     <div class="card res-list-card res-accent-info">
-        <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-history text-info mr-2"></i>{{ __('Historial de Animales') }}</h3>
+        <div class="card-header res-card-header--actions-only">
             <form method="get" class="form-inline mb-0">
                 <label for="order" class="mr-2 small font-weight-bold">{{ __('Orden') }}</label>
                 <select name="order" id="order" class="form-control form-control-sm" onchange="this.form.submit()">
@@ -113,6 +109,5 @@
         </div>
         @endif
     </div>
-</div>
 @endsection
 

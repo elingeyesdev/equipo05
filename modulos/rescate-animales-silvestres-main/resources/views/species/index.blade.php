@@ -12,9 +12,6 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: .5rem;">
-                            <span id="card_title" class="font-weight-bold mb-0">
-                                Especies registradas
-                            </span>
                             <div>
                                 <a href="{{ route('rescate.species.create') }}" class="btn btn-primary btn-sm" data-placement="left">
                                     <i class="fas fa-plus"></i> Nueva especie
@@ -22,12 +19,6 @@
                             </div>
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
                     <div class="card-body bg-white">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -70,5 +61,4 @@
             </div>
         </div>
     </section>
-@include('partials.page-pad')
 @endsection

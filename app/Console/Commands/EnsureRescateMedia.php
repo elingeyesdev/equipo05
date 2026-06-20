@@ -16,6 +16,8 @@ class EnsureRescateMedia extends Command
 
     public function handle(): int
     {
+        $this->callSilent('rescate:ensure-schema');
+
         $this->components->info('Enlace storage/app/public → public/storage');
         $this->callSilent('storage:link');
 

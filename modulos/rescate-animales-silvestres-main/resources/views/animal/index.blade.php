@@ -6,30 +6,17 @@
 @section('content_header_subtitle', 'Listado')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: .5rem;">
-
-                            <span id="card_title" class="font-weight-bold mb-0">
-                                Animales registrados
-                            </span>
-
-                             <div>
+                <div class="card res-list-card res-accent-success">
+                    <div class="card-header res-card-header--actions-only">
+                        <div class="res-card-header-actions">
                                 <a href="{{ route('rescate.animals.create') }}" class="btn btn-primary btn-sm" data-placement="left">
                                   <i class="fas fa-plus"></i> Nuevo animal
                                 </a>
-                              </div>
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
                     <div class="card-body bg-white">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -85,7 +72,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    @include('partials.page-pad')
 @endsection
 

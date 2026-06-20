@@ -6,14 +6,8 @@
 @section('content_header_subtitle', 'Operación')
 
 @section('content_body')
-<div class="container-fluid res-page-shell">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     <div class="card res-list-card res-accent-info">
-        <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-truck text-info mr-2"></i>Gestión de traslados</h3>
-        </div>
         <div class="card-body">
             <ul class="nav nav-pills mb-3 res-transfer-tabs" id="transferTabs" role="tablist">
                             <li class="nav-item">
@@ -229,8 +223,6 @@
                             @endif
                         </div>
         </div>
-    </div>
-</div>
     @include('partials.leaflet')
     <style>
     .internal-af-img {

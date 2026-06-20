@@ -6,13 +6,9 @@
 @section('content_header_subtitle', 'Vista agrupada')
 
 @section('content_body')
-<div class="container-fluid res-page-shell">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     <div class="card res-list-card res-accent-success">
-        <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-heart text-success mr-2"></i>{{ __('Registro de cuidados') }}</h3>
+        <div class="card-header res-card-header--actions-only">
             <div class="res-card-header-actions">
                 <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-success btn-sm">
                     <i class="fas fa-plus mr-1"></i> {{ __('Nuevo registro') }}
@@ -118,5 +114,4 @@
                         @endif
         </div>
     </div>
-</div>
 @endsection

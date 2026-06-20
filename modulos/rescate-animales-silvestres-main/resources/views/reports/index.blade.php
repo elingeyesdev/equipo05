@@ -6,9 +6,6 @@
 @section('content_header_subtitle', 'Rescate')
 
 @section('content_body')
-<div class="container-fluid res-page-shell">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     <!-- Pestañas -->
     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -627,7 +624,6 @@
             @endif
         </div>
     </div>
-</div>
 @endsection
 
 @section('js')

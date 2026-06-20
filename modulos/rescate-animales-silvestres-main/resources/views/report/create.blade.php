@@ -17,7 +17,7 @@
 @endif
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             @if(isset($useFullFormat) && $useFullFormat)
                 {{-- Formato completo para usuarios autenticados desde /reports --}}
@@ -88,6 +88,4 @@
                 </div>
             @endif
         </div>
-    </div>
-@include('partials.page-pad')
 @endsection

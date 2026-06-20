@@ -6,14 +6,10 @@
 @section('content_header_subtitle', 'Listado')
 
 @section('content_body')
-<div class="container-fluid res-page-shell">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     <div class="card res-list-card res-accent-warning">
-        <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-binoculars text-warning mr-2"></i>{{ __('Hallazgos de campo') }}</h3>
-            <div class="d-flex flex-wrap gap-2">
+        <div class="card-header res-card-header--actions-only">
+            <div class="res-card-header-actions d-flex flex-wrap gap-2">
                 @canApproveRescateReports
                 <a href="{{ route('rescate.reports.mapa-campo') }}" class="btn btn-info btn-sm">
                     <i class="fas fa-map-marked-alt mr-1"></i> {{ __('Mapa de Campo') }}
@@ -221,7 +217,6 @@
         </div>
         @endif
     </div>
-</div>
 
     {{-- Modales de aprobación para cada reporte --}}
     @foreach ($reports as $report)

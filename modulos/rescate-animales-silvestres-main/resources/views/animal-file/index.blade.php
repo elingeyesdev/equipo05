@@ -6,13 +6,9 @@
 @section('content_header_subtitle', 'Animales en custodia')
 
 @section('content_body')
-<div class="container-fluid res-page-shell">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     <div class="card res-list-card res-accent-success">
-        <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-paw text-success mr-2"></i>{{ __('Animales en custodia') }}</h3>
+        <div class="card-header res-card-header--actions-only">
             <div class="res-card-header-actions">
                 <a href="{{ route('rescate.animal-records.create') }}" class="btn btn-success btn-sm">
                     <i class="fas fa-plus mr-1"></i> {{ __('Nueva hoja de vida') }}
@@ -77,7 +73,7 @@
                                     'alt' => $animalFile->animal?->nombre ?? 'Animal',
                                     'badge' => $animalFile->species?->nombre,
                                 ])
-                                <div class="card-header">
+                                <div class="card-header res-card-header--actions-only">
                                     <h3 class="card-title mb-0" title="{{ $animalFile->animal?->nombre }}">
                                         <i class="fas fa-paw text-success mr-1"></i>
                                         {{ \Illuminate\Support\Str::limit($animalFile->animal?->nombre ?? __('Sin nombre'), 28) }}
@@ -144,5 +140,4 @@
         </div>
         @endif
     </div>
-</div>
 @endsection

@@ -6,17 +6,12 @@
 @section('content_header_subtitle', 'Directorio')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                            <span id="card_title" class="font-weight-bold mb-0">
-                                Directorio de personas
-                            </span>
-
                              <div class="float-right">
                                 @canManageRescatePeople
                                 <a href="{{ route('rescate.people.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
@@ -26,12 +21,6 @@
                               </div>
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
                     <div class="card-body bg-white">
                         <form method="GET" class="mb-2">
                             <div class="form-row">
@@ -202,8 +191,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    @include('partials.page-pad')
     
     <style>
         /* Estilos para la paginación */

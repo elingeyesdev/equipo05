@@ -14,10 +14,13 @@ class AnimalTransferHistoryService
      */
     public function logFirstTransfer(Transfer $transfer, ?int $reporteId = null): void
     {
-        AnimalHistory::create([
-            'animal_file_id' => null,
-            'old_values' => null,
-            'new_values' => json_encode([
+        AnimalHistory::recordEvent(
+            null,
+            'Hallazgo aprobado',
+            'En traslado',
+            'Primer traslado desde reporte de hallazgo',
+            null,
+            [
                 'transfer' => [
                     'id' => $transfer->id,
                     'persona_id' => $transfer->persona_id,
@@ -29,12 +32,9 @@ class AnimalTransferHistoryService
                     'longitud' => $transfer->longitud ?? null,
                     'created_at' => $transfer->created_at ? $transfer->created_at->toDateTimeString() : null,
                 ],
-            ], JSON_UNESCAPED_UNICODE),
-            'estado_anterior' => 'Hallazgo aprobado',
-            'estado_nuevo' => 'En traslado',
-            'observaciones' => 'Primer traslado desde reporte de hallazgo',
-            'changed_at' => $transfer->created_at,
-        ]);
+            ],
+            $transfer->created_at,
+        );
     }
 
     /**
@@ -89,15 +89,15 @@ class AnimalTransferHistoryService
             ] : null,
         ];
 
-        AnimalHistory::create([
-            'animal_file_id' => $animalFile->id,
-            'old_values' => $oldValues ? json_encode($oldValues, JSON_UNESCAPED_UNICODE) : null,
-            'new_values' => json_encode($newValues, JSON_UNESCAPED_UNICODE),
-            'estado_anterior' => $oldCenter?->nombre ?? 'Centro anterior',
-            'estado_nuevo' => $newCenter?->nombre ?? 'Centro destino',
-            'observaciones' => 'Registro de traslado entre centros',
-            'changed_at' => $transfer->created_at,
-        ]);
+        AnimalHistory::recordEvent(
+            $animalFile->id,
+            $oldCenter?->nombre ?? 'Centro anterior',
+            $newCenter?->nombre ?? 'Centro destino',
+            'Registro de traslado entre centros',
+            $oldValues,
+            $newValues,
+            $transfer->created_at,
+        );
     }
 }
 

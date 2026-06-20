@@ -1,6 +1,6 @@
 @php
     $items = [
-        ['route' => 'rescate.home', 'patterns' => ['rescate.home', 'rescate.dashboard.*'], 'icon' => 'fa-chart-line', 'label' => 'Inicio'],
+        ['route' => 'rescate.home', 'patterns' => ['rescate.home', 'rescate.dashboard.*'], 'icon' => 'fa-chart-line', 'label' => 'Panel'],
         ['route' => 'rescate.reports.index', 'patterns' => ['rescate.reports.index', 'rescate.reports.show', 'rescate.reports.edit', 'rescate.reports.create', 'rescate.reports.mapa-campo'], 'icon' => 'fa-binoculars', 'label' => 'Hallazgos'],
         ['route' => 'rescate.animal-files.index', 'patterns' => ['rescate.animal-files.*', 'rescate.animal-records.*'], 'icon' => 'fa-paw', 'label' => 'Hojas de vida'],
         ['route' => 'rescate.transfers.index', 'patterns' => ['rescate.transfers.*'], 'icon' => 'fa-truck', 'label' => 'Traslados'],

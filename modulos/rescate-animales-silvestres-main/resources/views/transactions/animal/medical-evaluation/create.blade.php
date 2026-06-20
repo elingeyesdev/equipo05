@@ -6,7 +6,7 @@
 @section('content_header_subtitle', 'Registro transaccional')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row justify-content-center">
             <div class="col-12 col-xl-11">
                 <div class="card card-outline card-success shadow-sm">

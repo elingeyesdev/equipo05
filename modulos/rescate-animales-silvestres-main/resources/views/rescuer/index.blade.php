@@ -6,15 +6,12 @@
 @section('content_header_subtitle', 'Listado')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span id="card_title">
-                                {{ __('Rescuers') }}
-                            </span>
                             @canManageRescatePeople
                             <div class="float-right">
                                 <a href="{{ route('rescate.rescuers.create') }}" class="btn btn-success btn-sm float-right" data-placement="left">
@@ -24,12 +21,6 @@
                             @endcanManageRescatePeople
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
                     <style>
                     .rescuer-card .card-footer > div { display: flex; width: 100%; }
                     .rescuer-card .card-footer > div > * { flex: 1 1 0; }
@@ -135,8 +126,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    @include('partials.page-pad')
     
     {{-- Modales de aprobación para cada rescatista --}}
     @foreach ($rescuers as $rescuer)

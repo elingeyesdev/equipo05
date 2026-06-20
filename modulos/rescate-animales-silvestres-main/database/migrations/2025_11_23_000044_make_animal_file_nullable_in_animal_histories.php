@@ -13,17 +13,15 @@ return new class extends Migration
 
     public function up(): void
     {
-        if (!$this->isSqlite() && Schema::hasTable('animal_histories')) {
-            // Postgres: permitir NULL
-            DB::statement('ALTER TABLE animal_histories ALTER COLUMN animal_file_id DROP NOT NULL');
+        if (! $this->isSqlite() && Schema::connection('rescate')->hasTable('animal_histories')) {
+            DB::connection('rescate')->statement('ALTER TABLE animal_histories ALTER COLUMN animal_file_id DROP NOT NULL');
         }
     }
 
     public function down(): void
     {
-        if (!$this->isSqlite() && Schema::hasTable('animal_histories')) {
-            // Volver a NOT NULL (puede fallar si existen filas con NULL)
-            DB::statement('ALTER TABLE animal_histories ALTER COLUMN animal_file_id SET NOT NULL');
+        if (! $this->isSqlite() && Schema::connection('rescate')->hasTable('animal_histories')) {
+            DB::connection('rescate')->statement('ALTER TABLE animal_histories ALTER COLUMN animal_file_id SET NOT NULL');
         }
     }
 };

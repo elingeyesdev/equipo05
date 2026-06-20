@@ -6,7 +6,7 @@
 @section('content_header_subtitle', 'Detalle')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card card-outline card-secondary shadow-sm">

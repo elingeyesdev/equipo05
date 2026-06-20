@@ -801,21 +801,32 @@
                 </div>
             </div>
             @endif
+            @php
+                $rescateModuleChrome = str_contains($bodyModuleClass ?? '', 'module-rescate')
+                    && ! request()->routeIs('rescate.reports.claim');
+            @endphp
             <section class="content">
-                <div class="container-fluid">
+                <div class="container-fluid{{ $rescateModuleChrome ? ' res-page-shell res-page-shell--layout' : '' }}">
+                    @if($rescateModuleChrome)
+                        @include('fusion.modulos.partials.rescate-module-nav')
+                        @include('fusion.modulos.partials.rescate-flash')
+                    @endif
+
                     @hasSection('content_header_title')
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <h1 class="m-0 text-dark">@yield('content_header_title')
-                                    @hasSection('content_header_subtitle')
-                                        <small class="text-muted"> @yield('content_header_subtitle')</small>
+                        @unless($rescateModuleChrome)
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h1 class="m-0 text-dark">@yield('content_header_title')
+                                        @hasSection('content_header_subtitle')
+                                            <small class="text-muted"> @yield('content_header_subtitle')</small>
+                                        @endif
+                                    </h1>
+                                    @hasSection('subtitle')
+                                        <p class="text-muted mb-0 small">@yield('subtitle')</p>
                                     @endif
-                                </h1>
-                                @hasSection('subtitle')
-                                    <p class="text-muted mb-0 small">@yield('subtitle')</p>
-                                @endif
+                                </div>
                             </div>
-                        </div>
+                        @endunless
                     @endif
 
                     @hasSection('content_header')

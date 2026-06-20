@@ -6,7 +6,7 @@
 @section('content_header_subtitle', 'Cuenta y voluntariado')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <nav aria-label="Migas de pan" class="mb-3">
             <ol class="breadcrumb mb-0 bg-transparent px-0 pt-0">
                 <li class="breadcrumb-item"><a href="{{ route('rescate.home') }}">Inicio</a></li>

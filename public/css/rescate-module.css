@@ -9,6 +9,28 @@ body.module-rescate.platform-ui .res-page-shell {
     padding: 1.25rem 1.5rem 1.75rem;
 }
 
+body.module-rescate.platform-ui section.content > .container-fluid.res-page-shell--layout {
+    padding: 1rem 1.25rem 1.5rem;
+}
+
+body.module-rescate.platform-ui .res-page-shell--layout > .res-page-shell,
+body.module-rescate.platform-ui .res-page-shell--layout .container-fluid.page-pad {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+}
+
+body.module-rescate.platform-ui .res-list-card > .card-header.res-card-header--actions-only {
+    justify-content: flex-end;
+    min-height: auto;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+}
+
+body.module-rescate.platform-ui .res-list-card > .card-header:empty {
+    display: none;
+}
+
 body.module-rescate.platform-ui .content-header h1 {
     font-size: 1.45rem;
     font-weight: 700;

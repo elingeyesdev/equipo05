@@ -31,7 +31,8 @@ ARRANQUE SEGURO — PostgreSQL unificado + login en core.usuarios
    php artisan db:setup-inventario --fresh
    (o: php artisan db:setup-unificado --fresh-inventario --seed)
 
-6b. Fotos de fauna (rescate + hallazgos vinculados a incendios)
+6b. Esquema y fotos de fauna (rescate)
+   php artisan rescate:ensure-schema
    php artisan storage:link
    php artisan rescate:ensure-media --sync-db
    (Tras git pull sin seed: al menos php artisan rescate:ensure-media)

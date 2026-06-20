@@ -25,6 +25,7 @@ fi
 
 # Storage Link (ignorar si ya existe)
 php artisan storage:link 2>/dev/null || true
+php artisan rescate:ensure-schema 2>/dev/null || true
 php artisan rescate:ensure-media --sync-db 2>/dev/null || true
 
 echo "🚀 Iniciando PHP-FPM..."

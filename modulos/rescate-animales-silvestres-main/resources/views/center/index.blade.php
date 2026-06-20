@@ -6,15 +6,12 @@
 @section('content_header_subtitle', 'Listado')
 
 @section('content_body')
-    <div class="container-fluid page-pad">
+    
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: .5rem;">
-                            <span id="card_title" class="font-weight-bold mb-0">
-                                Centros registrados
-                            </span>
                             <div>
                                 <a href="{{ route('rescate.centers.create') }}" class="btn btn-primary btn-sm" data-placement="left">
                                     <i class="fas fa-plus"></i> Nuevo centro
@@ -22,12 +19,6 @@
                             </div>
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
                     <div class="card-body bg-white">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
@@ -73,6 +64,4 @@
                 {!! $centers->withQueryString()->links() !!}
             </div>
         </div>
-    </div>
-    @include('partials.page-pad')
 @endsection

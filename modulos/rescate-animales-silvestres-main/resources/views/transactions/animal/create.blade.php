@@ -6,9 +6,6 @@
 @section('content_header_subtitle', 'Registro transaccional')
 
 @section('content_body')
-<div class="container-fluid res-page-shell">
-    @include('fusion.modulos.partials.rescate-module-nav')
-    @include('fusion.modulos.partials.rescate-flash')
 
     <div class="card res-list-card res-accent-success">
         <div class="card-header">
