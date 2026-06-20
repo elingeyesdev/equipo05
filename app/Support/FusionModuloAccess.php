@@ -21,17 +21,27 @@ class FusionModuloAccess
 
     public const RESCATE_PERMISSIONS = 'rescate.dashboard.ver|rescate.reportes.ver|rescate.rescates.gestionar|rescate.traslados.gestionar|rescate.animales.ver|veterinaria.dashboard.ver|veterinaria.animales.ver|veterinaria.evaluaciones.gestionar|veterinaria.diagnosticos.gestionar|veterinaria.tratamientos.gestionar|veterinaria.liberaciones.gestionar|veterinaria.reportes.ver|cuidados.dashboard.ver|cuidados.animales.ver|cuidados.alimentacion.registrar|cuidados.cuidados_diarios.registrar|cuidados.observaciones.registrar|ciudadano.animales.reportar|ciudadano.reportes_propios.ver';
 
-    /** @var list<string> */
-    private const VOLUNTARIO_READ_SECTIONS = [
-        'capacitaciones',
-        'ayudas-solicitadas',
-        'helpdesk',
+    /** @var list<string> Subsecciones del módulo seguimiento expuestas en rutas y navegación. */
+    public const SEGUIMIENTO_SECTIONS = [
+        'voluntarios',
+        'voluntarios-inactivos',
+        'evaluacion',
         'evaluacion-pruebas',
+        'capacitaciones',
+        'necesidades',
+        'ayudas-solicitadas',
+        'administradores',
+        'universidades',
+        'chat-consulta',
+        'helpdesk',
     ];
 
-    /** @var list<string> */
+    /** @var list<string> Secciones donde el voluntario puede crear/editar (participación operativa). */
     private const VOLUNTARIO_WRITE_SECTIONS = [
         'ayudas-solicitadas',
+        'chat-consulta',
+        'evaluacion-pruebas',
+        'helpdesk',
     ];
 
     public static function assertModuleAccess(string $module): void
@@ -104,12 +114,36 @@ class FusionModuloAccess
                 return;
             }
 
-            abort_unless(in_array($seccion, self::VOLUNTARIO_READ_SECTIONS, true), 403);
+            abort_unless(in_array($seccion, self::SEGUIMIENTO_SECTIONS, true), 403);
 
             return;
         }
 
         abort_unless(AccessControl::userCan($user, 'voluntarios.dashboard.ver'), 403);
+    }
+
+    /** Indica si el usuario autenticado puede crear/editar registros en una subsección de seguimiento. */
+    public static function canWriteSeguimientoSection(string $seccion): bool
+    {
+        $user = auth()->user();
+
+        if (AccessControl::gestionSeguimientoCompleta($user)) {
+            return true;
+        }
+
+        if (AccessControl::userHasRole($user, 'Voluntario')) {
+            return in_array($seccion, self::VOLUNTARIO_WRITE_SECTIONS, true);
+        }
+
+        $writePermissions = [
+            'voluntarios.gestionar',
+            'voluntarios.evaluaciones.gestionar',
+            'voluntarios.capacitaciones.gestionar',
+            'voluntarios.necesidades.gestionar',
+            'voluntarios.asignaciones.gestionar',
+        ];
+
+        return AccessControl::userCanAny($user, $writePermissions);
     }
 
     public static function assertLogisticaWrite(?Usuario $user = null): void

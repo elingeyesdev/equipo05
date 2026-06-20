@@ -8,6 +8,7 @@
 @include('fusion.modulos.partials.seguimiento-flash')
 
 <div class="card seg-list-card shadow-sm">
+    @if(\App\Support\FusionModuloAccess::canWriteSeguimientoSection($seccion))
     <div class="card-header">
         <div class="seg-btn-toolbar w-100">
             <a href="{{ route('seguimiento.crud.create', ['seccion' => $seccion]) }}" class="btn btn-primary btn-sm">
@@ -15,6 +16,7 @@
             </a>
         </div>
     </div>
+    @endif
     <div class="card-body p-0">
         @if(count($columnas) === 0)
             <p class="text-muted mb-0 p-3">La tabla aún no está disponible en la base de datos.</p>

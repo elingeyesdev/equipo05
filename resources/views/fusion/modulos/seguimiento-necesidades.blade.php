@@ -11,9 +11,11 @@
     <div class="card-header">
         <div class="seg-btn-toolbar w-100">
             <span class="badge badge-light border mr-auto">{{ $necesidades->count() }} registros</span>
+            @if(\App\Support\FusionModuloAccess::canWriteSeguimientoSection($seccion))
             <a href="{{ route('seguimiento.crud.create', ['seccion' => $seccion]) }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> Crear necesidad
             </a>
+            @endif
         </div>
     </div>
     <div class="card-body p-0">

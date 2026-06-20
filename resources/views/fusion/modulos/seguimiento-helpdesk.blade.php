@@ -25,9 +25,11 @@
     <div class="card-header">
         <div class="seg-btn-toolbar w-100">
             <h3 class="card-title mb-0 mr-auto"><i class="fas fa-life-ring mr-1 text-warning"></i> Consultas</h3>
+            @if(\App\Support\FusionModuloAccess::canWriteSeguimientoSection($seccion))
             <a href="{{ route('seguimiento.crud.create', ['seccion' => $seccion]) }}" class="btn btn-warning btn-sm">
                 <i class="fas fa-plus"></i> Nueva consulta
             </a>
+            @endif
         </div>
     </div>
     <div class="card-body p-0">

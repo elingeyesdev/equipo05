@@ -25,9 +25,11 @@
 <div class="card seg-list-card shadow-sm mb-3">
     <div class="card-header">
         <div class="seg-btn-toolbar w-100">
+            @if(\App\Support\FusionModuloAccess::canWriteSeguimientoSection($seccion))
             <a href="{{ route('seguimiento.crud.create', ['seccion' => $seccion]) }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> Agregar universidad
             </a>
+            @endif
         </div>
     </div>
 </div>

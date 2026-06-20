@@ -23,9 +23,11 @@
                 </a>
             @else
                 <span class="badge badge-light border mr-auto">{{ $voluntarios->count() }} registros</span>
+                @if(\App\Support\FusionModuloAccess::canWriteSeguimientoSection($seccion))
                 <a href="{{ route('seguimiento.crud.create', ['seccion' => $seccion]) }}" class="btn btn-primary btn-sm">
                     <i class="fas fa-plus"></i> Agregar
                 </a>
+                @endif
             @endif
         </div>
     </div>
