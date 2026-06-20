@@ -28,6 +28,17 @@ class SyncRescateAnimalImages extends Command
         $force = (bool) $this->option('force');
         $updated = 0;
 
+        $speciesNames = AnimalFile::query()
+            ->join('species', 'animal_files.especie_id', '=', 'species.id')
+            ->distinct()
+            ->pluck('species.nombre');
+
+        foreach ($speciesNames as $speciesName) {
+            if (RescateMedia::ensureSpeciesImage((string) $speciesName, $force)) {
+                $updated++;
+            }
+        }
+
         AnimalFile::with('species')->orderBy('id')->chunk(50, function ($files) use ($force, &$updated) {
             foreach ($files as $file) {
                 RescateMedia::refreshAnimalFileImage($file, $force);

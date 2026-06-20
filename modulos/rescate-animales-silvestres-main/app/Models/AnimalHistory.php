@@ -20,6 +20,8 @@ class AnimalHistory extends Model
         'observaciones',
         'old_values',
         'new_values',
+        'valores_antiguos',
+        'valores_nuevos',
     ];
 
     protected $casts = [
@@ -53,9 +55,54 @@ class AnimalHistory extends Model
         $this->attributes['new_values'] = (is_array($value) || is_object($value)) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
     }
 
+    /**
+     * Registro compatible con el esquema unificado (estado_anterior/estado_nuevo NOT NULL).
+     */
+    public static function recordEvent(
+        ?int $animalFileId,
+        string $estadoAnterior,
+        string $estadoNuevo,
+        ?string $observaciones = null,
+        ?array $oldValues = null,
+        ?array $newValues = null,
+        ?\DateTimeInterface $changedAt = null,
+    ): self {
+        return self::create([
+            'animal_file_id' => $animalFileId,
+            'changed_at' => $changedAt ?? now(),
+            'estado_anterior' => $estadoAnterior,
+            'estado_nuevo' => $estadoNuevo,
+            'observaciones' => $observaciones ?? '',
+            'old_values' => $oldValues !== null
+                ? json_encode($oldValues, JSON_UNESCAPED_UNICODE)
+                : null,
+            'new_values' => $newValues !== null
+                ? json_encode($newValues, JSON_UNESCAPED_UNICODE)
+                : null,
+        ]);
+    }
+
     public function animalFile()
     {
         return $this->belongsTo(\Modules\Rescate\Models\AnimalFile::class, 'animal_file_id', 'id');
+    }
+
+    public static function newValuesColumn(): string
+    {
+        static $column = null;
+        if ($column === null) {
+            $column = \Illuminate\Support\Facades\Schema::connection('rescate')->hasColumn(
+                (new self)->getTable(),
+                'new_values'
+            ) ? 'new_values' : 'valores_nuevos';
+        }
+
+        return $column;
+    }
+
+    public static function jsonPath(string $segments): string
+    {
+        return '('.self::newValuesColumn().'::json'.$segments.')';
     }
 
     private function decodeHistoryPayload(mixed $raw): ?array

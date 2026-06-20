@@ -34,6 +34,12 @@ use Modules\Rescate\Http\Controllers\TransferController;
 use Modules\Rescate\Http\Controllers\TreatmentTypeController;
 use Modules\Rescate\Http\Controllers\UserController;
 use Modules\Rescate\Http\Controllers\VeterinarianController;
+use App\Http\Controllers\RescateMediaController;
+
+Route::get('/media/{path}', [RescateMediaController::class, 'show'])
+    ->where('path', '.*')
+    ->name('media')
+    ->withoutMiddleware(['auth', 'module.access:rescate']);
 
 Route::get('/', function () {
     if (Auth::check()) {

@@ -49,27 +49,27 @@ class AnimalFeedingTransactionalService
 				'feeding_portion_id' => $data['feeding_portion_id'],
 			]);
 
-			AnimalHistory::create([
-				'animal_file_id' => $animalFile->id,
-				'valores_antiguos' => null,
-				'valores_nuevos' => [
-					'care' => [
-						'id' => $care->id,
-						'descripcion' => $care->descripcion,
-						'fecha' => (string) $care->fecha,
-						'tipo_cuidado_id' => $care->tipo_cuidado_id,
-					],
-					'care_feeding' => [
-						'id' => $careFeeding->id,
-						'feeding_type_id' => $careFeeding->feeding_type_id,
-						'feeding_frequency_id' => $careFeeding->feeding_frequency_id,
-						'feeding_portion_id' => $careFeeding->feeding_portion_id,
-					],
-				],
-				'observaciones' => [
-					'texto' => $data['observaciones'] ?? 'Registro de alimentación',
-				],
-			]);
+			AnimalHistory::recordEvent(
+                $animalFile->id,
+                $animalFile->animalStatus?->nombre ?? 'En custodia',
+                $animalFile->animalStatus?->nombre ?? 'En custodia',
+                $data['observaciones'] ?? 'Registro de alimentación',
+                null,
+                [
+                    'care' => [
+                        'id' => $care->id,
+                        'descripcion' => $care->descripcion,
+                        'fecha' => (string) $care->fecha,
+                        'tipo_cuidado_id' => $care->tipo_cuidado_id,
+                    ],
+                    'care_feeding' => [
+                        'id' => $careFeeding->id,
+                        'feeding_type_id' => $careFeeding->feeding_type_id,
+                        'feeding_frequency_id' => $careFeeding->feeding_frequency_id,
+                        'feeding_portion_id' => $careFeeding->feeding_portion_id,
+                    ],
+                ],
+            );
 
 			// Registrar tracking de alimentación
 			try {

@@ -12,10 +12,12 @@
 
     <div class="card res-list-card res-accent-success">
         <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-paw text-success mr-2"></i>Animales en custodia</h3>
-            <a href="{{ route('rescate.animal-records.create') }}" class="btn btn-success btn-sm">
-                <i class="fas fa-plus mr-1"></i> Nueva hoja de vida
-            </a>
+            <h3 class="res-card-title mb-0"><i class="fas fa-paw text-success mr-2"></i>{{ __('Animales en custodia') }}</h3>
+            <div class="res-card-header-actions">
+                <a href="{{ route('rescate.animal-records.create') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus mr-1"></i> {{ __('Nueva hoja de vida') }}
+                </a>
+            </div>
         </div>
 
         <div class="card-body">
@@ -54,7 +56,7 @@
                     </div>
                 </div>
                 <div class="mt-2 d-flex align-items-center">
-                    <button type="submit" class="btn btn-primary btn-sm mr-3">{{ __('Buscar') }}</button>
+                    <button type="submit" class="btn btn-success btn-sm mr-3">{{ __('Buscar') }}</button>
                     <a href="{{ route('rescate.animal-files.index') }}" class="btn btn-link btn-sm p-0">{{ __('Mostrar todos') }}</a>
                 </div>
             </form>

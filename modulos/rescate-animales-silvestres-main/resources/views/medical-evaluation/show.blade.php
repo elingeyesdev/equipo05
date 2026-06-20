@@ -53,8 +53,8 @@
                             <strong>Imagen de evaluación:</strong>
                             @if(!empty($medicalEvaluation?->imagen_url))
                                 <div class="mt-2">
-                                    <a href="{{ asset('storage/' . $medicalEvaluation->imagen_url) }}" target="_blank" rel="noopener">
-                                        <img src="{{ asset('storage/' . $medicalEvaluation->imagen_url) }}" alt="Imagen evaluación" style="max-height:240px;">
+                                    <a href="{{ rescate_media_url($medicalEvaluation->imagen_url, 'evaluacion-'.$medicalEvaluation->id) }}" target="_blank" rel="noopener">
+                                        <img src="{{ rescate_media_url($medicalEvaluation->imagen_url, 'evaluacion-'.$medicalEvaluation->id) }}" alt="Imagen evaluación" style="max-height:240px;">
                                     </a>
                                 </div>
                             @else
@@ -66,8 +66,8 @@
                             @php($foundImg = $medicalEvaluation->animalFile?->animal?->report?->imagen_url ?? null)
                             @if($foundImg)
                                 <div class="mt-2">
-                                    <a href="{{ asset('storage/' . $foundImg) }}" target="_blank" rel="noopener">
-                                        <img src="{{ asset('storage/' . $foundImg) }}" alt="Imagen de llegada" style="max-height:240px;">
+                                    <a href="{{ rescate_media_url($foundImg, 'llegada') }}" target="_blank" rel="noopener">
+                                        <img src="{{ rescate_media_url($foundImg, 'llegada') }}" alt="Imagen de llegada" style="max-height:240px;">
                                     </a>
                                 </div>
                             @else

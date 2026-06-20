@@ -39,20 +39,23 @@ class AnimalCareTransactionalService
 			}
 
 			$care = Care::create($careData);
+            $animalFile->load('animalStatus');
 
-			AnimalHistory::create([
-				'animal_file_id' => $animalFile->id,
-				'valores_antiguos' => null,
-				'valores_nuevos' => [
-					'care' => [
-						'id' => $care->id,
-						'descripcion' => $care->descripcion,
-						'fecha' => (string) $care->fecha,
-						'tipo_cuidado_id' => $care->tipo_cuidado_id,
-					],
-				],
-                'observaciones' => null,
-			]);
+			AnimalHistory::recordEvent(
+                $animalFile->id,
+                $animalFile->animalStatus?->nombre ?? 'En custodia',
+                $animalFile->animalStatus?->nombre ?? 'En custodia',
+                'Registro de cuidado',
+                null,
+                [
+                    'care' => [
+                        'id' => $care->id,
+                        'descripcion' => $care->descripcion,
+                        'fecha' => (string) $care->fecha,
+                        'tipo_cuidado_id' => $care->tipo_cuidado_id,
+                    ],
+                ],
+            );
 
 			// Registrar tracking de cuidado
 			try {

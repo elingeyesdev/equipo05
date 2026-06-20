@@ -12,10 +12,12 @@
 
     <div class="card res-list-card res-accent-success">
         <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-heart text-success mr-2"></i>Registro de cuidados</h3>
-            <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-success btn-sm">
-                <i class="fas fa-plus mr-1"></i> Nuevo registro
-            </a>
+            <h3 class="res-card-title mb-0"><i class="fas fa-heart text-success mr-2"></i>{{ __('Registro de cuidados') }}</h3>
+            <div class="res-card-header-actions">
+                <a href="{{ route('rescate.animal-care-records.create') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus mr-1"></i> {{ __('Nuevo registro') }}
+                </a>
+            </div>
         </div>
         <div class="card-body">
                         @if($groupedCares->isEmpty())

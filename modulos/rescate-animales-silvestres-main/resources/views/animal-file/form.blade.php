@@ -30,7 +30,7 @@
                 <label class="custom-file-label" for="imagen" data-browse="Subir">Subir la imagen del animal</label>
             </div>
         {!! $errors->first('imagen', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
-        @php($initialImg = !empty($animalFile?->imagen_url) ? asset('storage/' . $animalFile->imagen_url) : null)
+        @php($initialImg = !empty($animalFile?->imagen_url) ? rescate_media_url($animalFile->imagen_url, rescate_media_seed($animalFile)) : null)
         <div class="mt-2">
             <img id="preview-animalfile-imagen" src="{{ $initialImg }}" alt="Imagen" style="max-height: 120px; {{ empty($initialImg) ? 'display:none;' : '' }}"/>
         </div>

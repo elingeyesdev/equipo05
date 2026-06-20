@@ -90,12 +90,31 @@ body.module-rescate.platform-ui .res-list-card.res-accent-success { border-top-c
 }
 
 body.module-rescate.platform-ui .res-list-card > .card-header {
-    display: flex;
+    display: flex !important;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
     gap: 0.5rem;
     min-height: 3.25rem;
+}
+
+body.module-rescate.platform-ui .res-list-card > .card-header .res-card-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-right: auto;
+}
+
+body.module-rescate.platform-ui .res-list-card > .card-header .res-card-header-actions,
+body.module-rescate.platform-ui .res-list-card > .card-header > .d-flex:last-child,
+body.module-rescate.platform-ui .res-list-card > .card-header > .btn:last-child,
+body.module-rescate.platform-ui .res-list-card > .card-header > a.btn:last-child {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+body.module-rescate.platform-ui .res-filter-bar .btn-success {
+    background-color: #15803d;
+    border-color: #15803d;
 }
 
 body.module-rescate.platform-ui .res-list-card > .card-header .res-card-title {
@@ -274,3 +293,84 @@ body.module-rescate.platform-ui .card-footer .pagination .page-item.active .page
 body.module-rescate.platform-ui .badge-urgencia-alta { background: #dc3545; }
 body.module-rescate.platform-ui .badge-urgencia-media { background: #d97706; }
 body.module-rescate.platform-ui .badge-urgencia-baja { background: #64748b; }
+
+body.module-rescate.platform-ui .res-wizard-steps {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+body.module-rescate.platform-ui .res-wizard-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+body.module-rescate.platform-ui .res-wizard-step.is-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+body.module-rescate.platform-ui .res-wizard-step.is-done {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+body.module-rescate.platform-ui .res-selectable-card {
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.module-rescate.platform-ui .res-selectable-card:hover {
+    border-color: #86efac;
+}
+
+body.module-rescate.platform-ui .res-selectable-card.is-selected {
+    border-color: #15803d;
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.18);
+}
+
+body.module-rescate.platform-ui .res-selectable-card .res-select-hint {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+body.module-rescate.platform-ui .res-selected-report-banner {
+    display: none;
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.5rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+}
+
+body.module-rescate.platform-ui .res-selected-report-banner.is-visible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+body.module-rescate.platform-ui .res-form-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem 1.1rem;
+    height: 100%;
+}
+
+body.module-rescate.platform-ui .res-form-section-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.85rem;
+}

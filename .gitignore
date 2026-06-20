@@ -16,6 +16,11 @@
 /public/build
 /public/hot
 /public/storage
+/public/images/rescate/*.jpg
+/scripts/diag_*.php
+/scripts/test_*.php
+/scripts/sync_species_only.php
+/database/exports/
 /storage/*.key
 /storage/pail
 /vendor

@@ -11,12 +11,12 @@ class DemoImageDownloader
     {
         if (! $force && Storage::disk('public')->exists($relativePath)) {
             $size = Storage::disk('public')->size($relativePath);
-            if ($size > 12000) {
+            if ($size > 20000) {
                 return $relativePath;
             }
         }
 
-        $url = AnimalImageCatalog::urlFor($speciesOrLabel);
+        $url = AnimalImageCatalog::downloadUrlFor($speciesOrLabel);
         $downloaded = self::downloadUrl($relativePath, $url);
         if ($downloaded !== null) {
             return $downloaded;
@@ -28,25 +28,48 @@ class DemoImageDownloader
     public static function downloadUrl(string $relativePath, string $url): ?string
     {
         try {
-            $response = Http::timeout(12)
-                ->withOptions(['allow_redirects' => true])
-                ->withHeaders(['User-Agent' => 'Equipo05-DemoSeeder/1.0'])
+            $response = Http::timeout(20)
+                ->withOptions(['allow_redirects' => true, 'verify' => true])
+                ->withHeaders([
+                    'User-Agent' => 'Equipo05-DemoSeeder/1.0 (Laravel; +https://github.com/elingeyesdev/equipo05)',
+                    'Accept' => 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+                ])
                 ->get($url);
 
-            if ($response->successful() && strlen($response->body()) > 2000) {
-                $dir = dirname($relativePath);
-                if ($dir !== '.' && ! Storage::disk('public')->exists($dir)) {
-                    Storage::disk('public')->makeDirectory($dir);
-                }
-                Storage::disk('public')->put($relativePath, $response->body());
-
-                return $relativePath;
+            if ($response->successful() && strlen($response->body()) > 8000) {
+                return self::writePublicFile($relativePath, $response->body());
             }
         } catch (\Throwable) {
-            // siguiente fallback
+            // intentar fallback
+        }
+
+        $body = @file_get_contents($url, false, stream_context_create([
+            'http' => [
+                'timeout' => 20,
+                'header' => "User-Agent: Equipo05-DemoSeeder/1.0\r\nAccept: image/*\r\n",
+            ],
+            'ssl' => [
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+            ],
+        ]));
+
+        if (is_string($body) && strlen($body) > 8000) {
+            return self::writePublicFile($relativePath, $body);
         }
 
         return null;
+    }
+
+    private static function writePublicFile(string $relativePath, string $contents): ?string
+    {
+        $dir = dirname($relativePath);
+        if ($dir !== '.' && ! Storage::disk('public')->exists($dir)) {
+            Storage::disk('public')->makeDirectory($dir);
+        }
+        Storage::disk('public')->put($relativePath, $contents);
+
+        return Storage::disk('public')->exists($relativePath) ? $relativePath : null;
     }
 
     public static function storePlaceholder(string $relativePath, string $seed): ?string

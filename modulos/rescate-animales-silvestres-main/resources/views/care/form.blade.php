@@ -36,7 +36,7 @@
             {!! $errors->first('imagen', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
             @php
                 $initialCareSrc = !empty($care?->imagen_url)
-                    ? asset('storage/' . $care->imagen_url)
+                    ? rescate_media_url($care->imagen_url, 'cuidado-'.($care->id ?? 'nuevo'))
                     : null;
             @endphp
             <div class="mt-2">

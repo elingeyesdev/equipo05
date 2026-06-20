@@ -38,7 +38,7 @@
                             <strong>Imagen:</strong>
                             @if(!empty($care?->imagen_url))
                                 <div class="mt-2">
-                                    <img src="{{ asset('storage/' . $care->imagen_url) }}" alt="Imagen cuidado" style="max-height:240px;">
+                                    <img src="{{ rescate_media_url($care->imagen_url, 'cuidado-'.$care->id) }}" alt="Imagen cuidado" style="max-height:240px;">
                                 </div>
                             @else
                                 —

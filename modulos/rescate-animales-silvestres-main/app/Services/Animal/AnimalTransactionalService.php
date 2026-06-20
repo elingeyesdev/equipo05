@@ -5,6 +5,7 @@ namespace Modules\Rescate\Services\Animal;
 use Modules\Rescate\Models\Animal;
 use Modules\Rescate\Models\AnimalFile;
 use Modules\Rescate\Models\AnimalHistory;
+use Modules\Rescate\Models\AnimalStatus;
 use Modules\Rescate\Models\Report;
 use Modules\Rescate\Models\Transfer;
 use Illuminate\Http\UploadedFile;
@@ -48,13 +49,13 @@ class AnimalTransactionalService
 			$animal = Animal::create($animalData);
 
 			if ($image) {
-				$storedPath = $image->store('animal_files', 'public');
+				$storedPath = $image->store('animal-files', 'public');
 				$animalFileData['imagen_url'] = $storedPath;
             } elseif (! empty($animalData['reporte_id'])) {
 				$rep = Report::find($animalData['reporte_id']);
 				if ($rep && $rep->imagen_url && Storage::disk('public')->exists($rep->imagen_url)) {
 					$basename = basename($rep->imagen_url);
-					$target = 'animal_files/'.uniqid('from_report_').'_'.$basename;
+					$target = 'animal-files/'.uniqid('from_report_').'_'.$basename;
 					if (Storage::disk('public')->copy($rep->imagen_url, $target)) {
 						$animalFileData['imagen_url'] = $target;
 						$copiedFromReport = $target;
@@ -82,31 +83,29 @@ class AnimalTransactionalService
             }
 
             $animalFile = AnimalFile::create($animalFileData);
+            $animalFile->load('animalStatus');
 
-			// Registrar creación de Hoja de Vida en historial
-			AnimalHistory::create([
-				'animal_file_id' => $animalFile->id,
-				'valores_antiguos' => null,
-				'valores_nuevos' => [
-					'animal' => [
-						'id' => $animal->id,
-						'nombre' => $animal->nombre,
-						'sexo' => $animal->sexo,
-					],
-					'animal_file' => [
-						'id' => $animalFile->id,
-						// estado actual (seleccionado)
-						'estado_id' => $animalFile->estado_id ?? null,
-						'tipo_id' => $animalFile->tipo_id ?? null,
-						'especie_id' => $animalFile->especie_id ?? null,
-						// estado inicial (desde condición del reporte si viene)
-						'estado_inicial_id' => $animalData['estado_inicial_id'] ?? null,
-					],
-				],
-				'observaciones' => [
-					'texto' => 'Creación de Hoja de Vida',
-				],
-			]);
+			AnimalHistory::recordEvent(
+                $animalFile->id,
+                'Sin ficha',
+                $animalFile->animalStatus?->nombre ?? 'En custodia',
+                'Creación de Hoja de Vida',
+                null,
+                [
+                    'animal' => [
+                        'id' => $animal->id,
+                        'nombre' => $animal->nombre,
+                        'sexo' => $animal->sexo,
+                    ],
+                    'animal_file' => [
+                        'id' => $animalFile->id,
+                        'estado_id' => $animalFile->estado_id ?? null,
+                        'tipo_id' => $animalFile->tipo_id ?? null,
+                        'especie_id' => $animalFile->especie_id ?? null,
+                        'estado_inicial_id' => $animalData['estado_inicial_id'] ?? null,
+                    ],
+                ],
+            );
 
             // Reclamar por reporte (auto) si hay report_id
             if (!empty($animalData['reporte_id'])) {
@@ -114,20 +113,18 @@ class AnimalTransactionalService
 
                 // Enlazar por report_id en traslados ya registrados en historial (primer traslado)
                 AnimalHistory::whereNull('animal_file_id')
-                    ->whereNotNull('valores_nuevos')
-                    ->whereRaw("(valores_nuevos->'transfer'->>'report_id')::text = ?", [$reportId])
+                    ->whereNotNull(AnimalHistory::newValuesColumn())
+                    ->whereRaw(AnimalHistory::jsonPath("->'transfer'->>'report_id'").' = ?', [$reportId])
                     ->update(['animal_file_id' => $animalFile->id]);
 
-                // Enlazar también historiales de tipo 'report' asociados a ese reporte
                 AnimalHistory::whereNull('animal_file_id')
-                    ->whereNotNull('valores_nuevos')
-                    ->whereRaw("(valores_nuevos->'report'->>'id')::text = ?", [$reportId])
+                    ->whereNotNull(AnimalHistory::newValuesColumn())
+                    ->whereRaw(AnimalHistory::jsonPath("->'report'->>'id'").' = ?', [$reportId])
                     ->update(['animal_file_id' => $animalFile->id]);
 
-                // Si existe un primer traslado, asegurar que esté ligado a esta hoja en el historial
                 $hasFirstTransferHistory = AnimalHistory::where('animal_file_id', $animalFile->id)
-                    ->whereNotNull('valores_nuevos')
-                    ->whereRaw("(valores_nuevos->'transfer'->>'primer_traslado')::text = 'true'")
+                    ->whereNotNull(AnimalHistory::newValuesColumn())
+                    ->whereRaw(AnimalHistory::jsonPath("->'transfer'->>'primer_traslado'")." = 'true'")
                     ->exists();
 
                 if (!$hasFirstTransferHistory) {
@@ -137,14 +134,17 @@ class AnimalTransactionalService
                         ->first();
 
                     if ($firstTransfer) {
-                        AnimalHistory::create([
-                            'animal_file_id' => $animalFile->id,
-                            'valores_antiguos' => null,
-                            'valores_nuevos' => [
+                        AnimalHistory::recordEvent(
+                            $animalFile->id,
+                            'Hallazgo registrado',
+                            'En traslado',
+                            'Primer traslado desde reporte de hallazgo',
+                            null,
+                            [
                                 'transfer' => [
                                     'id' => $firstTransfer->id,
                                     'persona_id' => $firstTransfer->persona_id,
-                                    'reporte_id' => (int)$reportId,
+                                    'reporte_id' => (int) $reportId,
                                     'centro_id' => $firstTransfer->centro_id,
                                     'observaciones' => $firstTransfer->observaciones,
                                     'primer_traslado' => true,
@@ -153,11 +153,8 @@ class AnimalTransactionalService
                                     'created_at' => $firstTransfer->created_at ? $firstTransfer->created_at->toDateTimeString() : null,
                                 ],
                             ],
-                            'observaciones' => [
-                                'texto' => 'Primer traslado desde reporte de hallazgo',
-                            ],
-                            'changed_at' => $firstTransfer->created_at,
-                        ]);
+                            $firstTransfer->created_at,
+                        );
                     }
                 }
             }
@@ -208,10 +205,10 @@ class AnimalTransactionalService
 				$afData = $animalFileData;
 				if ($image) {
 					if ($i === 0) {
-						$firstStored = $image->store('animal_files', 'public');
+						$firstStored = $image->store('animal-files', 'public');
 						$afData['imagen_url'] = $firstStored;
 					} else {
-						$copyTo = 'animal_files/' . uniqid('copy_') . '_' . basename($firstStored);
+						$copyTo = 'animal-files/'.uniqid('copy_').'_'.basename($firstStored);
 						Storage::disk('public')->copy($firstStored, $copyTo);
 						$afData['imagen_url'] = $copyTo;
 						$firstCreatedPaths[] = $copyTo;
@@ -219,7 +216,7 @@ class AnimalTransactionalService
 				} elseif (!empty($animalData['reporte_id'])) {
 					$rep = Report::find($animalData['reporte_id']);
 					if ($rep && $rep->imagen_url && Storage::disk('public')->exists($rep->imagen_url)) {
-						$copyTo = 'animal_files/' . uniqid('from_report_') . '_' . basename($rep->imagen_url);
+						$copyTo = 'animal-files/'.uniqid('from_report_').'_'.basename($rep->imagen_url);
 						Storage::disk('public')->copy($rep->imagen_url, $copyTo);
 						$afData['imagen_url'] = $copyTo;
 						$firstCreatedPaths[] = $copyTo;
@@ -238,39 +235,40 @@ class AnimalTransactionalService
                     }
                 }
 				$animalFile = AnimalFile::create($afData);
+                $animalFile->load('animalStatus');
 
-				// Historial (arrived_count = 1)
-				AnimalHistory::create([
-					'animal_file_id' => $animalFile->id,
-					'valores_antiguos' => null,
-					'valores_nuevos' => [
-						'animal' => [
-							'id' => $animal->id,
-							'nombre' => $animal->nombre,
-							'sexo' => $animal->sexo,
-						],
-						'animal_file' => [
-							'id' => $animalFile->id,
-							'estado_id' => $animalFile->estado_id ?? null,
-							'tipo_id' => $animalFile->tipo_id ?? null,
-							'especie_id' => $animalFile->especie_id ?? null,
-							'arrived_count' => 1,
-						],
-					],
-					'observaciones' => [
-						'texto' => 'Creación de Hoja de Vida',
-					],
-				]);
+				AnimalHistory::recordEvent(
+                    $animalFile->id,
+                    'Sin ficha',
+                    $animalFile->animalStatus?->nombre ?? 'En custodia',
+                    'Creación de Hoja de Vida',
+                    null,
+                    [
+                        'animal' => [
+                            'id' => $animal->id,
+                            'nombre' => $animal->nombre,
+                            'sexo' => $animal->sexo,
+                        ],
+                        'animal_file' => [
+                            'id' => $animalFile->id,
+                            'estado_id' => $animalFile->estado_id ?? null,
+                            'tipo_id' => $animalFile->tipo_id ?? null,
+                            'especie_id' => $animalFile->especie_id ?? null,
+                            'arrived_count' => 1,
+                        ],
+                    ],
+                );
 
 				// Enlazar historiales por reporte si aplica
 				if (!empty($animalData['reporte_id'])) {
+                    $reportId = (string) $animalData['reporte_id'];
 					AnimalHistory::whereNull('animal_file_id')
-						->whereNotNull('valores_nuevos')
-						->whereRaw("(valores_nuevos->'transfer'->>'report_id')::text = ?", [(string)$animalData['reporte_id']])
+						->whereNotNull(AnimalHistory::newValuesColumn())
+						->whereRaw(AnimalHistory::jsonPath("->'transfer'->>'report_id'").' = ?', [$reportId])
 						->update(['animal_file_id' => $animalFile->id]);
 					AnimalHistory::whereNull('animal_file_id')
-						->whereNotNull('valores_nuevos')
-						->whereRaw("(valores_nuevos->'report'->>'id')::text = ?", [(string)$animalData['reporte_id']])
+						->whereNotNull(AnimalHistory::newValuesColumn())
+						->whereRaw(AnimalHistory::jsonPath("->'report'->>'id'").' = ?', [$reportId])
 						->update(['animal_file_id' => $animalFile->id]);
 				}
 

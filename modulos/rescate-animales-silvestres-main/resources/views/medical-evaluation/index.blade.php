@@ -12,10 +12,12 @@
 
     <div class="card res-list-card res-accent-success">
         <div class="card-header">
-            <h3 class="res-card-title mb-0"><i class="fas fa-stethoscope text-success mr-2"></i>Evaluaciones registradas</h3>
-            <a href="{{ route('rescate.medical-evaluation-transactions.create') }}" class="btn btn-success btn-sm">
-                <i class="fas fa-plus mr-1"></i> Nueva evaluación
-            </a>
+            <h3 class="res-card-title mb-0"><i class="fas fa-stethoscope text-success mr-2"></i>{{ __('Evaluaciones registradas') }}</h3>
+            <div class="res-card-header-actions">
+                <a href="{{ route('rescate.medical-evaluation-transactions.create') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus mr-1"></i> {{ __('Nueva evaluación') }}
+                </a>
+            </div>
         </div>
         <div class="card-body">
                         @if($groupedEvaluations->isEmpty())

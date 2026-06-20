@@ -33,19 +33,21 @@
             {!! $errors->first('estado_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
     @endif
-    @if(empty($hideReportSelect))
-        <div class="form-group mb-2">
-            <label for="reporte_id" class="form-label">{{ __('Número de reporte') }} <span class="text-danger">*</span></label>
-            <select name="reporte_id" id="reporte_id" class="form-control @error('reporte_id') is-invalid @enderror">
-                <option value="">{{ __('Seleccione') }}</option>
-                @foreach(($reports ?? []) as $r)
-                    <option value="{{ $r->id }}" {{ (string)old('reporte_id', $animal?->reporte_id) === (string)$r->id ? 'selected' : '' }}>#{{ $r->id }}</option>
-                @endforeach
-            </select>
-            {!! $errors->first('reporte_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
-    @else
-        <input type="hidden" name="reporte_id" id="reporte_id" value="{{ old('reporte_id', $animal?->reporte_id) }}">
+    @if(empty($skipReportField))
+        @if(empty($hideReportSelect))
+            <div class="form-group mb-2">
+                <label for="reporte_id" class="form-label">{{ __('Número de reporte') }} <span class="text-danger">*</span></label>
+                <select name="reporte_id" id="reporte_id" class="form-control @error('reporte_id') is-invalid @enderror">
+                    <option value="">{{ __('Seleccione') }}</option>
+                    @foreach(($reports ?? []) as $r)
+                        <option value="{{ $r->id }}" {{ (string)old('reporte_id', $animal?->reporte_id) === (string)$r->id ? 'selected' : '' }}>#{{ $r->id }}</option>
+                    @endforeach
+                </select>
+                {!! $errors->first('reporte_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+            </div>
+        @else
+            <input type="hidden" name="reporte_id" id="reporte_id" value="{{ old('reporte_id', $animal?->reporte_id) }}">
+        @endif
     @endif
     @if(($showSubmit ?? true))
         <div class="mt-2 d-flex flex-wrap gap-2">

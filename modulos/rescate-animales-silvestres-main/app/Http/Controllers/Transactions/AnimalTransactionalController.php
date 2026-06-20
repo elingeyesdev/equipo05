@@ -45,38 +45,19 @@ class AnimalTransactionalController extends Controller
             $animalFile->especie_id = $unknownSpeciesId;
         }
 
-		// Datos requeridos por el form de Animal (select oculto y tarjetas)
-		// Mostrar solo hallazgos aprobados que NO estén asignados a un animal existente
-		$reports = Report::query()
+		$availableReports = Report::query()
 			->where('reports.aprobado', 1)
-			->whereNotExists(function($query) {
+			->whereNotExists(function ($query) {
 				$query->select(DB::raw(1))
 					->from('animals')
 					->whereColumn('animals.reporte_id', 'reports.id');
 			})
+			->with(['person', 'condicionInicial', 'incidentType'])
 			->orderByDesc('reports.id')
-			->get(['reports.id']);
+			->get();
 
-        $reportCards = Report::query()
-            ->where('reports.aprobado', 1)
-            ->whereNotExists(function($query) {
-				$query->select(DB::raw(1))
-					->from('animals')
-					->whereColumn('animals.reporte_id', 'reports.id');
-			})
-            ->leftJoin('people', 'people.id', '=', 'reports.persona_id')
-            ->leftJoin('animal_conditions', 'animal_conditions.id', '=', 'reports.condicion_inicial_id')
-            ->select([
-                'reports.id',
-                'reports.imagen_url',
-                'reports.observaciones',
-                DB::raw("COALESCE(people.nombre, '') as reportante_nombre"),
-                'reports.condicion_inicial_id',
-                DB::raw("COALESCE(animal_conditions.nombre, '') as condicion_nombre"),
-            ])
-            ->groupBy('reports.id','reports.imagen_url','reports.observaciones','people.nombre','reports.condicion_inicial_id','animal_conditions.nombre')
-            ->orderByDesc('reports.id')
-            ->get();
+		$reportCards = $availableReports;
+		$reports = $availableReports;
 
 		// Datos requeridos por el form de AnimalFile (salvo animales)
 		$species = Species::orderBy('nombre')->get(['id','nombre']);
@@ -109,37 +90,41 @@ class AnimalTransactionalController extends Controller
 	public function store(AnimalWithFileRequest $request): RedirectResponse
 	{
 		try {
-			$animalData = $request->only(['nombre','sexo','descripcion','reporte_id','transfer_history_ids','llegaron_cantidad']);
+			$animalData = $request->only(['nombre','sexo','descripcion','reporte_id','transfer_history_ids','llegaron_cantidad','estado_inicial_id']);
 			$animalFileData = $request->only(['tipo_id','especie_id','estado_id']);
 			$image = $request->file('imagen');
 
-			// Si no viene estado, mapear desde la condición inicial del reporte
-			if (empty($animalFileData['estado_id']) && !empty($animalData['reporte_id'])) {
-				$rep = Report::with('animalCondition')->find($animalData['reporte_id']);
-				if ($rep && $rep->animalCondition && $rep->animalCondition->nombre) {
-					$status = AnimalStatus::whereRaw('LOWER(nombre) = ?', [mb_strtolower($rep->animalCondition->nombre)])->value('id');
-					if ($status) {
-						$animalFileData['estado_id'] = $status;
-					} else {
-						// fallback
-						$animalFileData['estado_id'] = AnimalStatus::whereRaw('LOWER(nombre) = ?', ['en atención'])->value('id');
-					}
-				}
-				// Copiar observaciones en descripción si no se envió
-				if (empty($animalData['descripcion']) && $rep && !empty($rep->observaciones)) {
-					$animalData['descripcion'] = $rep->observaciones;
-				}
+			$rep = null;
+			if (! empty($animalData['reporte_id'])) {
+				$rep = Report::with('condicionInicial')->find($animalData['reporte_id']);
 			}
 
-			$this->service->createWithFile($animalData, $animalFileData, $image);
-			$msg = 'Hoja de Animal creada.';
+			if (empty($animalFileData['estado_id']) && $rep && $rep->condicionInicial?->nombre) {
+				$status = AnimalStatus::whereRaw('LOWER(nombre) = ?', [mb_strtolower($rep->condicionInicial->nombre)])->value('id');
+				$animalFileData['estado_id'] = $status
+					?: AnimalStatus::whereRaw('LOWER(nombre) = ?', ['en atención'])->value('id');
+			}
+
+			if (empty($animalData['descripcion']) && $rep && ! empty($rep->observaciones)) {
+				$animalData['descripcion'] = $rep->observaciones;
+			}
+
+			$result = $this->service->createWithFile($animalData, $animalFileData, $image);
+			$animal = $result['animal'];
+			$label = $animal->nombre ?: ('Animal #'.$animal->id);
 
 			return Redirect::route('rescate.animal-files.index')
-				->with('success', $msg);
-		} catch (\Throwable $e) {
+				->with('success', __('Hoja de vida creada para :nombre.', ['nombre' => $label]));
+		} catch (\DomainException $e) {
 			return Redirect::back()
 				->withInput()
-				->withErrors(['general' => 'No se pudo registrar la hoja del animal en este momento.']);
+				->withErrors(['general' => $e->getMessage()]);
+		} catch (\Throwable $e) {
+			report($e);
+
+			return Redirect::back()
+				->withInput()
+				->withErrors(['general' => __('No se pudo registrar la hoja del animal en este momento.')]);
 		}
 	}
 }

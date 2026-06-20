@@ -37,23 +37,23 @@ class AnimalReleaseTransactionalService
 
             $release = Release::create($data);
 
-			AnimalHistory::create([
-				'animal_file_id' => $animalFile->id,
-				'valores_antiguos' => null,
-				'valores_nuevos' => [
-					'liberacion' => [
-						'id' => $release->id,
-						'direccion' => $release->direccion,
-						'latitud' => $release->latitud,
-						'longitud' => $release->longitud,
-						'imagen_url' => $release->imagen_url,
-					],
-				],
-				'observaciones' => [
-					'texto' => 'Registro de liberación',
-				],
-                'changed_at' => $release->created_at,
-			]);
+			AnimalHistory::recordEvent(
+                $animalFile->id,
+                $animalFile->animalStatus?->nombre ?? 'En custodia',
+                'Liberado',
+                'Registro de liberación',
+                null,
+                [
+                    'liberacion' => [
+                        'id' => $release->id,
+                        'direccion' => $release->direccion,
+                        'latitud' => $release->latitud,
+                        'longitud' => $release->longitud,
+                        'imagen_url' => $release->imagen_url,
+                    ],
+                ],
+                $release->created_at,
+            );
 
 			// Registrar tracking de liberación
 			try {

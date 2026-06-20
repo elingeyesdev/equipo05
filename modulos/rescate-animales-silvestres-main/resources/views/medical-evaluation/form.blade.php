@@ -51,8 +51,8 @@
             <label class="form-label">{{ __('Imagen de llegada') }}</label>
             @if($foundImg)
                 <div class="mt-2">
-                    <a href="{{ asset('storage/' . $foundImg) }}" target="_blank" rel="noopener">
-                        <img src="{{ asset('storage/' . $foundImg) }}" alt="Imagen de llegada" style="max-height:120px;">
+                    <a href="{{ rescate_media_url($foundImg, 'llegada') }}" target="_blank" rel="noopener">
+                        <img src="{{ rescate_media_url($foundImg, 'llegada') }}" alt="Imagen de llegada" style="max-height:120px;">
                     </a>
                 </div>
             @else
@@ -67,7 +67,7 @@
             </div>
             {!! $errors->first('imagen', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
             @php
-                $initialEvalSrc = !empty($medicalEvaluation?->imagen_url) ? asset('storage/' . $medicalEvaluation->imagen_url) : null;
+                $initialEvalSrc = !empty($medicalEvaluation?->imagen_url) ? rescate_media_url($medicalEvaluation->imagen_url, 'evaluacion-'.($medicalEvaluation->id ?? 'nuevo')) : null;
             @endphp
             <div class="mt-2">
                 <img id="preview-eval-imagen" src="{{ $initialEvalSrc }}" alt="Imagen evaluación" style="max-height:120px; {{ empty($initialEvalSrc) ? 'display:none;' : '' }}">
