@@ -1,17 +1,10 @@
-================================================================================
-ACTUALIZADO — Logistica, Seguimiento, Cuadrillas
-================================================================================
+RESUELTO — Los esquemas logistica, seguimiento y cuadrillas estan en:
+  - 06_mod_logistica.sql
+  - 07_mod_seguimiento.sql
+  - 08_mod_cuadrillas.sql
 
-Los esquemas minimos para integracion Laravel estan en PostgreSQL como:
+Columnas incrementales (geo, perfil voluntario, etc.) se aplican con:
+  php artisan migrate --force
+  (incluido en db:onboard y db:post-pull)
 
-  06_mod_logistica.sql
-  07_mod_seguimiento.sql
-  08_mod_cuadrillas.sql
-
-Ejecutalos en equipo05_unificado despues de 01_extensions_and_schemas.sql
-(junto con inventario/incendios/rescate). El script run_schema_all.ps1 / .sh
-los aplica en el orden correcto.
-
-Si tenes dumps completos del modulo original (public / pg_dump), podes
-importarlos al schema homonimo con SET search_path y edicion de metacomandos;
-las tablas creadas por 06–08 son idempotentes (IF NOT EXISTS) para desarrollo.
+Ver database/unified_postgresql/schema_order.json y database/docker/ARRANQUE_SEGURO.txt

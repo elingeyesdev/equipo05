@@ -4,16 +4,16 @@
   Aplica todos los scripts SQL del esquema unificado sobre la base equipo05_unificado.
 
 .DESCRIPTION
-  Requiere psql en PATH (PostgreSQL client). Define PGPASSWORD en el entorno o pasalo con -Password.
-  La base debe existir (ejecutar antes 00_create_database.sql contra la base "postgres").
+  Orden canonico: database/unified_postgresql/schema_order.json (mismo que Docker init).
+  Requiere psql en PATH. La base debe existir (00_create_database.sql contra postgres).
 
 .EXAMPLE
-  $env:PGPASSWORD = "tu_clave"
-  .\run_schema_all.ps1 -PgUser postgres -PgDatabase equipo05_unificado
+  $env:PGPASSWORD = "equipo05_unificado_dev"
+  .\run_schema_all.ps1 -PgPort 5433
 #>
 param(
     [string] $PgHost = "127.0.0.1",
-    [int] $PgPort = 5432,
+    [int] $PgPort = 5433,
     [string] $PgUser = "postgres",
     [string] $PgDatabase = "equipo05_unificado",
     [string] $Password = ""
@@ -21,24 +21,21 @@ param(
 
 $ErrorActionPreference = "Stop"
 $here = $PSScriptRoot
+$manifest = Join-Path $here "schema_order.json"
 
 if ($Password) {
     $env:PGPASSWORD = $Password
 }
 if (-not $env:PGPASSWORD) {
-    Write-Host "AVISO: PGPASSWORD no esta definido. psql puede pedir contrasena interactiva." -ForegroundColor Yellow
+    Write-Host "AVISO: PGPASSWORD no esta definido. psql puede pedir contrasena." -ForegroundColor Yellow
 }
 
-$ordered = @(
-    "01_extensions_and_schemas.sql",
-    "00_core_auth.sql",
-    "04_mod_inventario_transparencia.sql",
-    "02_mod_incendios.sql",
-    "03_mod_rescate.sql",
-    "06_mod_logistica.sql",
-    "07_mod_seguimiento.sql",
-    "08_mod_cuadrillas.sql"
-)
+if (-not (Test-Path $manifest)) {
+    Write-Error "No se encontro schema_order.json en $here"
+    exit 1
+}
+
+$ordered = Get-Content $manifest -Raw | ConvertFrom-Json
 
 foreach ($f in $ordered) {
     $path = Join-Path $here $f
@@ -55,3 +52,4 @@ foreach ($f in $ordered) {
 }
 
 Write-Host "Listo: esquemas aplicados en $PgDatabase" -ForegroundColor Green
+Write-Host "Siguiente paso: php artisan db:onboard --seed" -ForegroundColor Green

@@ -2,8 +2,28 @@
 ARRANQUE SEGURO — PostgreSQL unificado + login en core.usuarios
 ================================================================================
 
+OPCION RAPIDA (recomendada tras git clone)
+------------------------------------------
+Windows PowerShell (desde la raiz del repo):
+  .\scripts\onboard-db.ps1 -Seed
+
+Linux/macOS:
+  chmod +x scripts/onboard-db.sh
+  SEED=1 ./scripts/onboard-db.sh
+
+Equivalente manual:
+  docker compose up -d db_unificado
+  cp .env.example .env   (si no existe)
+  php artisan db:onboard --wait-db=60 --seed
+
+PASOS DETALLADOS
+----------------
+
 1. Levantar base de datos
    docker compose up -d db_unificado
+
+   La primera vez el volumen ejecuta automaticamente los SQL en orden canonico
+   (database/unified_postgresql/schema_order.json via database/docker/00-init-unificado-db.sql).
 
 2. Variables en .env (raiz del proyecto)
    DATABASE_UNIFIED_POSTGRES=true
@@ -14,36 +34,53 @@ ARRANQUE SEGURO — PostgreSQL unificado + login en core.usuarios
    UNIFIED_PG_USERNAME=postgres
    UNIFIED_PG_PASSWORD=equipo05_unificado_dev
 
-3. Preparar Laravel
-   php artisan config:clear
+3. Preparar Laravel (primer clone o volumen Docker nuevo)
+   php artisan db:onboard --wait-db=60 --seed
 
-4. Esquema transparencia (campanias, donaciones, mensajes):
-   php artisan db:setup-transparencia
+   Este comando ejecuta en orden:
+   - db:setup-transparencia
+   - migrate (columnas geo logistica, seguimiento enriquecido, etc.)
+   - rescate:ensure-schema (transfers persona_id, animal_histories nullable)
+   - db:ensure-core-cache
+   - db:setup-inventario
+   - db:seed (roles + demo multi-modulo)
+   - rescate:ensure-media --sync-db
 
-5. Si la base ya tenia tablas users duplicadas (instalacion anterior):
-   php artisan db:consolidate-users-core --fresh-core
-   php artisan db:seed --force
+4. Verificar modulos
+   php scripts/verify-unified-modules.php
 
-   Si es volumen Docker nuevo (primera vez):
-   php artisan db:seed --force
-
-6. Inventario (una vez)
-   php artisan db:setup-inventario --fresh
-   (o: php artisan db:setup-unificado --fresh-inventario --seed)
-
-6b. Esquema y fotos de fauna (rescate)
-   php artisan rescate:ensure-schema
-   php artisan storage:link
-   php artisan rescate:ensure-media --sync-db
-   (Tras git pull sin seed: al menos php artisan rescate:ensure-media)
-
-7. Servidor
+5. Servidor
    php artisan serve
 
-8. Probar login
+6. Probar login
    http://127.0.0.1:8000/login
    admin123@gmail.com / admin123
 
-Cuando los pasos 1–8 terminan sin error, es seguro usar el programa.
+TRAS GIT PULL (compañeros con base ya configurada)
+--------------------------------------------------
+NO borrar volumen Docker. Solo:
+
+   git pull
+   composer install
+   php artisan db:post-pull
+
+   Si hay nuevas imagenes de fauna:
+   php artisan rescate:ensure-media --sync-db
+
+MIGRACION DESDE BASE DOCKER ANTIGUA
+-----------------------------------
+Si tenias tablas users duplicadas por modulo:
+
+   php artisan db:consolidate-users-core --fresh-core
+   php artisan db:seed --force
+
+RECREAR BASE DESDE CERO (solo desarrollo)
+-----------------------------------------
+   docker compose stop db_unificado
+   docker volume rm equipo05-main-integration_pg-unificado-data
+   docker compose up -d db_unificado
+   php artisan db:onboard --fresh-inventario --seed
+
+Cuando los pasos terminan sin error, es seguro usar el programa.
 
 ================================================================================

@@ -163,7 +163,7 @@ CREATE TABLE rescate.animal_histories (
     changed_at       TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     estado_anterior  TEXT,
     estado_nuevo     TEXT,
-    observaciones    TEXT NOT NULL,
+    observaciones    TEXT,
     old_values       TEXT,
     new_values       TEXT
 );
@@ -273,12 +273,11 @@ CREATE TABLE rescate.care_feedings (
 
 CREATE TABLE rescate.transfers (
     id                  BIGSERIAL PRIMARY KEY,
-    rescatista_id       BIGINT NOT NULL REFERENCES rescate.rescuers (id) ON DELETE CASCADE,
+    persona_id          BIGINT NOT NULL REFERENCES rescate.people (id) ON DELETE CASCADE,
     centro_id           BIGINT NOT NULL REFERENCES rescate.centers (id) ON DELETE CASCADE,
     observaciones       VARCHAR(255),
     created_at          TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at          TIMESTAMP(0) WITHOUT TIME ZONE,
-    persona_id          BIGINT REFERENCES rescate.people (id) ON DELETE CASCADE,
     primer_traslado     BOOLEAN NOT NULL DEFAULT TRUE,
     animal_id           BIGINT REFERENCES rescate.animals (id) ON DELETE SET NULL,
     latitud             NUMERIC(12, 8),

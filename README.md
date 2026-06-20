@@ -97,20 +97,50 @@ Un solo servidor PostgreSQL (`equipo05_unificado`) con un esquema por módulo. *
 
 Guías:
 - `database/docker/CONEXION_DBEAVER_Y_LARAVEL.txt` — DBeaver, `.env`, credenciales de prueba
-- `database/docker/ARRANQUE_SEGURO.txt` — checklist antes de `php artisan serve`
+- `database/docker/ARRANQUE_SEGURO.txt` — checklist completo (primer clone y tras `git pull`)
 
-Arranque rápido:
+### Primer clone (recomendado)
+
+```powershell
+# Windows
+.\scripts\onboard-db.ps1 -Seed
+```
+
+```bash
+# Linux/macOS
+chmod +x scripts/onboard-db.sh && SEED=1 ./scripts/onboard-db.sh
+```
+
+Equivalente manual:
 
 ```bash
 docker compose up -d db_unificado
-php artisan config:clear
-php artisan db:setup-transparencia
-php artisan db:seed --force
-php artisan db:setup-inventario --fresh   # una vez
+cp .env.example .env   # si no existe; DATABASE_UNIFIED_POSTGRES=true
+composer install
+php artisan db:onboard --wait-db=60 --seed
+php scripts/verify-unified-modules.php
 php artisan serve
 ```
 
 Login de prueba: `admin123@gmail.com` / `admin123`
+
+### Tras `git pull` (base ya configurada)
+
+```bash
+composer install
+php artisan db:post-pull
+php artisan rescate:ensure-media --sync-db   # si hay cambios de imagenes fauna
+```
+
+### Comandos útiles
+
+| Comando | Cuándo usarlo |
+|---------|----------------|
+| `php artisan db:onboard --seed` | Primer arranque o volumen Docker nuevo |
+| `php artisan db:post-pull` | Después de actualizar el repo |
+| `php artisan db:setup-inventario --fresh` | Reiniciar solo inventario (destructivo) |
+| `php artisan rescate:ensure-schema` | Parches PG rescate (transfers, historial) |
+| `php scripts/verify-unified-modules.php` | Verificar conexiones y datos mínimos |
 
 Si migras una base Docker antigua con tablas `users` repetidas:
 
@@ -120,20 +150,31 @@ php artisan db:seed --force
 ```
 
 ## Arranque local (SQLite, sin Docker PG)
-1. Instalar dependencias:
-   - `composer install`
-   - `npm install`
-2. Copiar variables:
-   - `cp .env.example .env` y usa `DATABASE_UNIFIED_POSTGRES=false`, `DB_CONNECTION=sqlite`
-3. Generar clave:
-   - `php artisan key:generate`
+
+Requiere `DATABASE_UNIFIED_POSTGRES=false` y `DB_CONNECTION=sqlite` en `.env`.
+
+1. Instalar dependencias: `composer install` · `npm install`
+2. Copiar variables: `cp .env.example .env` · `php artisan key:generate`
+3. Crear archivos SQLite vacíos (no están en el repo):
+
+```bash
+touch database/inventario.sqlite database/incendios.sqlite database/rescate.sqlite
+touch database/logistica.sqlite database/seguimiento.sqlite database/cuadrillas.sqlite
+```
+
 4. Ejecutar migraciones:
-   - `php artisan migrate`
-   - `php artisan migrate --database=inventario --path=modulos/donacion-recepcion-inventario-main/database/migrations`
-  - `php artisan migrate --database=logistica --path=modulos/logistica-transportacion-donaciones-main/database/migrations`
-5. Levantar entorno:
-   - `php artisan serve`
-   - `npm run dev`
+
+```bash
+php artisan migrate --force
+php artisan migrate --database=inventario --path=modulos/donacion-recepcion-inventario-main/database/migrations --force
+php artisan migrate --database=incendios --path=modulos/monitoreo-incendios-simulacion-main/database/migrations --force
+php artisan migrate --database=rescate --path=modulos/rescate-animales-silvestres-main/database/migrations --force
+```
+
+Logística, seguimiento y cuadrillas usan migraciones en `database/migrations/` (ya incluidas en el primer `migrate`).
+
+5. Seed opcional: `php artisan db:seed --force`
+6. Levantar entorno: `php artisan serve` · `npm run dev`
 
 ## Acceso rapido previo al login
 - En la pantalla de login del proyecto base se muestran botones publicos para flujo logistico:

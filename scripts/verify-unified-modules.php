@@ -74,6 +74,48 @@ check('rescate: species tiene datos', function () {
     }
 });
 
+check('logistica: destino tiene latitud/longitud', function () {
+    $s = Illuminate\Support\Facades\Schema::connection('logistica');
+    if (! $s->hasTable('destino')) {
+        throw new RuntimeException('tabla destino ausente');
+    }
+    if (! $s->hasColumn('destino', 'latitud') || ! $s->hasColumn('destino', 'longitud')) {
+        throw new RuntimeException('faltan columnas geo en destino; ejecuta php artisan migrate --force');
+    }
+});
+
+check('rescate: transfers usa persona_id (sin rescatista_id)', function () {
+    $s = Illuminate\Support\Facades\Schema::connection('rescate');
+    if (! $s->hasTable('transfers')) {
+        return;
+    }
+    if ($s->hasColumn('transfers', 'rescatista_id')) {
+        throw new RuntimeException('columna legada rescatista_id; ejecuta php artisan rescate:ensure-schema');
+    }
+    if (! $s->hasColumn('transfers', 'persona_id')) {
+        throw new RuntimeException('falta persona_id en transfers');
+    }
+});
+
+check('seguimiento: solicitudes_ayuda tiene geo', function () {
+    $s = Illuminate\Support\Facades\Schema::connection('seguimiento');
+    if (! $s->hasTable('solicitudes_ayuda')) {
+        return;
+    }
+    if (! $s->hasColumn('solicitudes_ayuda', 'latitud')) {
+        throw new RuntimeException('faltan columnas en solicitudes_ayuda; ejecuta php artisan migrate --force');
+    }
+});
+
+check('core: usuario admin demo', function () {
+    $n = Illuminate\Support\Facades\DB::connection('core')->table('usuarios')
+        ->whereRaw('LOWER(email) = ?', ['admin123@gmail.com'])
+        ->count();
+    if ($n < 1) {
+        throw new RuntimeException('sin admin demo; ejecuta php artisan db:seed --force');
+    }
+});
+
 check('logistica: estado tiene datos', function () {
     $n = Illuminate\Support\Facades\DB::connection('logistica')->table('estado')->count();
     if ($n < 1) {

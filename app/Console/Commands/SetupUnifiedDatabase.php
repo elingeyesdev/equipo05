@@ -10,23 +10,18 @@ class SetupUnifiedDatabase extends Command
                             {--fresh-inventario : Reinicia esquema inventario y migra}
                             {--seed : Inserta datos demo en todos los modulos PG}';
 
-    protected $description = 'Configura inventario (migraciones) y opcionalmente datos demo en PostgreSQL unificado';
+    protected $description = 'Alias de db:onboard para inventario + demo (PostgreSQL unificado)';
 
     public function handle(): int
     {
-        $fresh = $this->option('fresh-inventario') ? ['--fresh' => true] : [];
-
-        if ($this->call('db:setup-inventario', $fresh) !== self::SUCCESS) {
-            return self::FAILURE;
+        $args = [];
+        if ($this->option('fresh-inventario')) {
+            $args['--fresh-inventario'] = true;
         }
-
         if ($this->option('seed')) {
-            $this->call('db:seed', ['--class' => 'Database\\Seeders\\UnifiedDemoDataSeeder', '--force' => true]);
-            $this->call('rescate:ensure-media', ['--sync-db' => true]);
+            $args['--seed'] = true;
         }
 
-        $this->info('Base unificada lista. Docker debe estar en ejecucion (puerto 5433).');
-
-        return self::SUCCESS;
+        return $this->call('db:onboard', $args);
     }
 }

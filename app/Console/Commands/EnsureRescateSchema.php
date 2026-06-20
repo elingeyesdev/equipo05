@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Support\UnifiedPostgres;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -14,33 +16,74 @@ class EnsureRescateSchema extends Command
 
     public function handle(): int
     {
-        if (! Schema::connection('rescate')->hasTable('animal_histories')) {
-            $this->components->warn('Tabla animal_histories no encontrada; omitiendo parches.');
-
-            return self::SUCCESS;
-        }
-
         if (DB::connection('rescate')->getDriverName() !== 'pgsql') {
             return self::SUCCESS;
         }
 
-        if ($this->animalFileIdIsNullable()) {
-            $this->components->info('Esquema rescate OK (animal_histories.animal_file_id nullable).');
+        if (! Schema::connection('rescate')->hasTable('transfers')
+            && ! Schema::connection('rescate')->hasTable('animal_histories')) {
+            $this->components->warn('Esquema rescate aun no inicializado; omitiendo parches.');
 
             return self::SUCCESS;
         }
 
-        $path = database_path('unified_postgresql/03c_animal_histories_nullable.sql');
-        if (! is_file($path)) {
-            $this->components->error('Falta database/unified_postgresql/03c_animal_histories_nullable.sql');
+        $this->applySqlPatch('03b_mod_rescate_transfers_persona.sql', 'transfers persona_id');
+        $this->applyAnimalHistoriesNullable();
 
-            return self::FAILURE;
+        $this->components->info('Esquema rescate verificado.');
+
+        return self::SUCCESS;
+    }
+
+    private function applySqlPatch(string $filename, string $label): void
+    {
+        $path = database_path('unified_postgresql/'.$filename);
+        if (! is_file($path)) {
+            $this->components->error("Falta {$filename}");
+
+            return;
+        }
+
+        if ($filename === '03b_mod_rescate_transfers_persona.sql' && ! $this->transfersNeedPersonaPatch()) {
+            $this->components->info("Parche {$label}: ya aplicado.");
+
+            return;
         }
 
         DB::connection('rescate')->unprepared((string) file_get_contents($path));
-        $this->components->info('Parche aplicado: animal_histories.animal_file_id ahora acepta NULL.');
+        $this->components->info("Parche aplicado: {$label}.");
+    }
 
-        return self::SUCCESS;
+    private function applyAnimalHistoriesNullable(): void
+    {
+        if (! Schema::connection('rescate')->hasTable('animal_histories')) {
+            return;
+        }
+
+        if ($this->animalFileIdIsNullable()) {
+            $this->components->info('Parche animal_histories: ya nullable.');
+
+            return;
+        }
+
+        $path = database_path('unified_postgresql/03c_animal_histories_nullable.sql');
+        if (! is_file($path)) {
+            $this->components->error('Falta 03c_animal_histories_nullable.sql');
+
+            return;
+        }
+
+        DB::connection('rescate')->unprepared((string) file_get_contents($path));
+        $this->components->info('Parche aplicado: animal_histories.animal_file_id nullable.');
+    }
+
+    private function transfersNeedPersonaPatch(): bool
+    {
+        if (! Schema::connection('rescate')->hasTable('transfers')) {
+            return false;
+        }
+
+        return Schema::connection('rescate')->hasColumn('transfers', 'rescatista_id');
     }
 
     private function animalFileIdIsNullable(): bool

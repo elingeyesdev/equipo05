@@ -14,6 +14,8 @@
 \i /docker-entrypoint-sql/02_mod_incendios.sql
 \echo '>> 03_mod_rescate.sql'
 \i /docker-entrypoint-sql/03_mod_rescate.sql
+\echo '>> 03b_mod_rescate_transfers_persona.sql'
+\i /docker-entrypoint-sql/03b_mod_rescate_transfers_persona.sql
 \echo '>> 06_mod_logistica.sql'
 \i /docker-entrypoint-sql/06_mod_logistica.sql
 \echo '>> 07_mod_seguimiento.sql'
