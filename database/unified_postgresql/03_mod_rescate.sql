@@ -161,9 +161,9 @@ CREATE TABLE rescate.animal_histories (
     id               BIGSERIAL PRIMARY KEY,
     animal_file_id   BIGINT REFERENCES rescate.animal_files (id) ON DELETE CASCADE,
     changed_at       TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estado_anterior  TEXT,
-    estado_nuevo     TEXT,
-    observaciones    TEXT,
+    estado_anterior  TEXT NOT NULL,
+    estado_nuevo     TEXT NOT NULL,
+    observaciones    TEXT NOT NULL,
     old_values       TEXT,
     new_values       TEXT
 );

@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('ext_paquetes')) {
+            return;
+        }
+
         Schema::create('ext_paquetes', function (Blueprint $table) {
             $table->id();
             $table->string('codigo_paquete')->unique(); // PKG-2025...

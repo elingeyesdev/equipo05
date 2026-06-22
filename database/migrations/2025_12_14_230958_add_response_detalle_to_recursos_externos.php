@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('recursos_externos') || Schema::hasColumn('recursos_externos', 'response_detalle')) {
+            return;
+        }
+
         Schema::table('recursos_externos', function (Blueprint $table) {
             // Aquí se guardará TODA la respuesta del endpoint con ID (sea lo que sea)
             $table->longText('response_detalle')->nullable()->after('datos_extra');

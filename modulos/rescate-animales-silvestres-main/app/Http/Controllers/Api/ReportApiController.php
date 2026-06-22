@@ -62,29 +62,32 @@ class ReportApiController extends Controller
         // guardar hallazgo
         $report = Report::create($data);
 
-        // historial
-        $hist = new AnimalHistory();
-        $hist->animal_file_id = null;
-        $hist->valores_antiguos = null;
-        $hist->valores_nuevos = [
-            'report' => [
-                'id' => $report->id,
-                'persona_id' => $report->persona_id,
-                'direccion' => $report->direccion,
-                'latitud' => $report->latitud,
-                'longitud' => $report->longitud,
-                'condicion_inicial_id' => $report->condicion_inicial_id,
-                'tipo_incidente_id' => $report->tipo_incidente_id,
-                'tamano' => $report->tamano,
-                'puede_moverse' => $report->puede_moverse,
-                'urgencia' => $report->urgencia,
-                'imagen_url' => $report->imagen_url,
-                'created_at' => $report->created_at ? $report->created_at->toDateTimeString() : null, // Guardar fecha original del reporte
+        AnimalHistory::recordEvent(
+            animalFileId: null,
+            estadoAnterior: 'Sin registro previo',
+            estadoNuevo: 'Hallazgo reportado',
+            observaciones: $report->observaciones ?? 'Registro de Hallazgo',
+            oldValues: null,
+            newValues: [
+                'report' => [
+                    'id' => $report->id,
+                    'persona_id' => $report->persona_id,
+                    'direccion' => $report->direccion,
+                    'latitud' => $report->latitud,
+                    'longitud' => $report->longitud,
+                    'condicion_inicial_id' => $report->condicion_inicial_id,
+                    'tipo_incidente_id' => $report->tipo_incidente_id,
+                    'tamano' => $report->tamano,
+                    'puede_moverse' => $report->puede_moverse,
+                    'urgencia' => $report->urgencia,
+                    'imagen_url' => $report->imagen_url,
+                    'created_at' => $report->created_at
+                        ? $report->created_at->toDateTimeString()
+                        : null,
+                ],
             ],
-        ];
-        $hist->observaciones = ['texto' => $report->observaciones ?? 'Registro de Hallazgo'];
-        $hist->changed_at = $report->created_at;
-        $hist->save();
+            changedAt: $report->created_at,
+        );
 
         // traslado inmediato (primer traslado)
         if ($request->boolean('traslado_inmediato')) {

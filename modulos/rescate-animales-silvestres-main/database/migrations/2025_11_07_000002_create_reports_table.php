@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('persona_id')->constrained('people')->cascadeOnDelete();
+            $table->foreignId('persona_id')->nullable()->constrained('people')->cascadeOnDelete();
             $table->boolean('aprobado')->default(false);
             $table->string('imagen_url')->nullable();
             $table->string('observaciones')->nullable();

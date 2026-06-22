@@ -12,6 +12,10 @@ return new class extends Migration
     // database/migrations/xxxx_xx_xx_create_recursos_externos_table.php
     public function up(): void
     {
+        if (Schema::hasTable('recursos_externos')) {
+            return;
+        }
+
         Schema::create('recursos_externos', function (Blueprint $table) {
             $table->id();
             

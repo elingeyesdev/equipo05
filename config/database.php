@@ -10,12 +10,31 @@ use Illuminate\Support\Str;
 */
 $dbUnifiedPostgres = filter_var(env('DATABASE_UNIFIED_POSTGRES', false), FILTER_VALIDATE_BOOL);
 
-$unifiedModulePgsql = static function (string $schema): array {
+$resolveUnifiedPgEndpoint = static function (): array {
+    $host = env('UNIFIED_PG_HOST', '127.0.0.1');
+    $port = (string) env('UNIFIED_PG_PORT', '5432');
+
+    // Laravel en el host (php artisan serve) → Postgres publicado en 127.0.0.1:UNIFIED_PG_DOCKER_PORT.
+    // Laravel dentro de Docker → hostname del servicio (db_unificado) en la red de Compose.
+    if (! file_exists('/.dockerenv')) {
+        $dockerPort = (string) env('UNIFIED_PG_DOCKER_PORT', '5433');
+        if (in_array($host, ['db_unificado', 'db'], true)) {
+            $host = '127.0.0.1';
+            $port = $dockerPort;
+        }
+    }
+
+    return [$host, $port];
+};
+
+$unifiedModulePgsql = static function (string $schema) use ($resolveUnifiedPgEndpoint): array {
+    [$host, $port] = $resolveUnifiedPgEndpoint();
+
     return [
         'driver' => 'pgsql',
         'url' => env('UNIFIED_PG_URL'),
-        'host' => env('UNIFIED_PG_HOST', '127.0.0.1'),
-        'port' => env('UNIFIED_PG_PORT', '5432'),
+        'host' => $host,
+        'port' => $port,
         'database' => env('UNIFIED_PG_DATABASE', 'equipo05_unificado'),
         'username' => env('UNIFIED_PG_USERNAME', 'postgres'),
         'password' => env('UNIFIED_PG_PASSWORD', ''),
