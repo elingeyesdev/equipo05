@@ -1,0 +1,60 @@
+services:
+  - type: web
+    name: equipo05-didier-api
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    autoDeployTrigger: commit
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Equipo05
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://equipo05-didier-api.onrender.com
+      - key: ASSET_URL
+        value: https://equipo05-didier-api.onrender.com
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: warning
+      - key: DATABASE_UNIFIED_POSTGRES
+        value: "true"
+      - key: DB_CONNECTION
+        value: core
+      - key: UNIFIED_PG_HOST
+        value: aws-1-us-west-2.pooler.supabase.com
+      - key: UNIFIED_PG_PORT
+        value: "5432"
+      - key: UNIFIED_PG_DATABASE
+        value: postgres
+      - key: UNIFIED_PG_USERNAME
+        value: postgres.qdwlpwlrvtcabffzadmn
+      - key: UNIFIED_PG_SSLMODE
+        value: require
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: SESSION_LIFETIME
+        value: "120"
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: APP_DEMO_SIMULATED_FIRES
+        value: "false"
+      - key: MAIL_MAILER
+        value: log
+      - key: PORT
+        value: "10000"
+      - key: APP_KEY
+        sync: false
+      - key: UNIFIED_PG_PASSWORD
+        sync: false

@@ -16,6 +16,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        if (env('APP_ENV') === 'production') {
+            $middleware->trustProxies(at: '*');
+        }
+
+        // App móvil Flutter: POST JSON sin sesión/cookie CSRF.
+        $middleware->validateCsrfTokens(except: [
+            'publico/cuadrillas/reporte',
+        ]);
+
         $middleware->appendToGroup('web', \App\Http\Middleware\DemoModeSessionSanitizer::class);
         $middleware->appendToGroup('web', \App\Http\Middleware\EnsureUtf8Response::class);
 
