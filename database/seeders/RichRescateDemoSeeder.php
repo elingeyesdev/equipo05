@@ -239,7 +239,6 @@ class RichRescateDemoSeeder extends Seeder
             DB::connection('rescate')->table('transfers')->updateOrInsert(
                 ['reporte_id' => $report->id, 'primer_traslado' => true],
                 [
-                    'rescatista_id' => $rescuer->id,
                     'persona_id' => $rescuerPerson?->id,
                     'centro_id' => $file->centro_id ?? $center->id,
                     'observaciones' => sprintf(
