@@ -113,6 +113,8 @@ class LogisticaPublicoController extends Controller
                     'paquete.codigo',
                     'paquete.fecha_entrega',
                     'destino.comunidad',
+                    'solicitud.codigo_seguimiento',
+                    'solicitud.tipo_emergencia',
                 ]);
 
             $hasImagen = $schema->hasColumn('paquete', 'imagen');
@@ -128,10 +130,22 @@ class LogisticaPublicoController extends Controller
 
             $items = $query->limit(24)->get()->map(function ($paquete) use ($hasImagen) {
                 $entregado = ! empty($paquete->fecha_entrega);
+                $codigoLogistica = $paquete->codigo ?? ('PKG-'.$paquete->id_paquete);
+                $codigoSeguimiento = $paquete->codigo_seguimiento
+                    ?: $this->derivarCodigoSeguimiento($codigoLogistica);
+                $codigoTrazabilidad = $this->codigoTrazabilidadInventario(
+                    $codigoSeguimiento,
+                    $codigoLogistica
+                );
+                $comunidad = $paquete->comunidad;
+                $tipoEmergencia = $paquete->tipo_emergencia;
+
                 $payload = [
                     'id' => $paquete->id_paquete,
-                    'codigo' => $paquete->codigo ?? ('PKG-'.$paquete->id_paquete),
-                    'comunidad' => $paquete->comunidad,
+                    'codigo' => $codigoLogistica,
+                    'nombre' => $this->nombrePaqueteGaleria($comunidad, $tipoEmergencia),
+                    'codigo_trazabilidad' => $codigoTrazabilidad,
+                    'comunidad' => $comunidad,
                     'fecha_entrega' => $paquete->fecha_entrega,
                     'entregado' => $entregado,
                     'tiene_imagen' => false,
@@ -150,6 +164,42 @@ class LogisticaPublicoController extends Controller
             'data' => $items->values(),
             'total' => $items->count(),
         ]);
+    }
+
+    private function nombrePaqueteGaleria(?string $comunidad, ?string $tipoEmergencia): string
+    {
+        $destino = trim((string) ($comunidad ?: 'comunidad'));
+        $tipo = trim((string) ($tipoEmergencia ?? ''));
+
+        if ($tipo !== '') {
+            return ucfirst(str_replace('_', ' ', $tipo)).' · '.$destino;
+        }
+
+        return 'Paquete para '.$destino;
+    }
+
+    private function derivarCodigoSeguimiento(string $codigoLogistica): string
+    {
+        $normalizado = strtoupper(trim($codigoLogistica));
+
+        if (str_starts_with($normalizado, 'PKG-SOL-')) {
+            return 'SOL-'.substr($normalizado, 8);
+        }
+
+        return $codigoLogistica;
+    }
+
+    private function codigoTrazabilidadInventario(
+        string $codigoSeguimiento,
+        string $codigoLogistica
+    ): string {
+        $seguimiento = strtoupper(trim($codigoSeguimiento));
+
+        if (str_starts_with($seguimiento, 'SOL-')) {
+            return 'PKG-INV-'.substr($seguimiento, 4);
+        }
+
+        return $codigoSeguimiento ?: $this->derivarCodigoSeguimiento($codigoLogistica);
     }
 
     /**

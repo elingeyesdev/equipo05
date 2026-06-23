@@ -16,16 +16,7 @@ class PaqueteController extends Controller
      */
     public function porCodigo(string $codigo): JsonResponse
     {
-        // Buscar paquete por código (incluyendo eliminados para trazabilidad)
-        $paquete = Paquete::withTrashed()
-            ->where('codigo_paquete', $codigo)
-            ->with([
-                'paqueteDetalles.donacionDetalle.producto:id_producto,nombre,descripcion',
-                'paqueteDetalles.donacionDetalle.donacion.donante:id_donante,nombre',
-                'paqueteDetalles.donacionDetalle.donacion.campana:id_campana,nombre',
-                'registrosSalidas'
-            ])
-            ->first();
+        $paquete = $this->buscarPaquetePorCodigo($codigo);
 
         if (!$paquete) {
             return response()->json([
@@ -104,6 +95,72 @@ class PaqueteController extends Controller
             'detalles' => $detalles,
             'registros_salida' => $registrosSalida,
         ]);
+    }
+
+    private function buscarPaquetePorCodigo(string $codigo): ?Paquete
+    {
+        $relaciones = [
+            'paqueteDetalles.donacionDetalle.producto:id_producto,nombre,descripcion',
+            'paqueteDetalles.donacionDetalle.donacion.donante:id_donante,nombre',
+            'paqueteDetalles.donacionDetalle.donacion.campana:id_campana,nombre',
+            'registrosSalidas',
+        ];
+
+        $normalizado = strtoupper(trim(urldecode($codigo)));
+
+        $consulta = fn () => Paquete::withTrashed()->with($relaciones);
+
+        $paquete = $consulta()->where('codigo_paquete', $normalizado)->first();
+        if ($paquete) {
+            return $paquete;
+        }
+
+        $paquete = $consulta()->where('codigo_solicitud_externa', $normalizado)->first();
+        if ($paquete) {
+            return $paquete;
+        }
+
+        foreach ($this->alternativasCodigo($normalizado) as $alternativa) {
+            $paquete = $consulta()->where('codigo_solicitud_externa', $alternativa)->first();
+            if ($paquete) {
+                return $paquete;
+            }
+
+            $paquete = $consulta()->where('codigo_paquete', $alternativa)->first();
+            if ($paquete) {
+                return $paquete;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function alternativasCodigo(string $codigo): array
+    {
+        $alternativas = [];
+
+        if (str_starts_with($codigo, 'PKG-SOL-')) {
+            $sufijo = substr($codigo, 8);
+            $alternativas[] = 'SOL-'.$sufijo;
+            $alternativas[] = 'PKG-INV-'.$sufijo;
+        }
+
+        if (str_starts_with($codigo, 'SOL-')) {
+            $sufijo = substr($codigo, 4);
+            $alternativas[] = 'PKG-SOL-'.$sufijo;
+            $alternativas[] = 'PKG-INV-'.$sufijo;
+        }
+
+        if (str_starts_with($codigo, 'PKG-INV-')) {
+            $sufijo = substr($codigo, 8);
+            $alternativas[] = 'SOL-'.$sufijo;
+            $alternativas[] = 'PKG-SOL-'.$sufijo;
+        }
+
+        return array_values(array_unique($alternativas));
     }
 }
 
