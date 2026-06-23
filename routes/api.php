@@ -8,6 +8,8 @@ Route::prefix('public/logistica')->group(function () {
     Route::get('solicitudes/{codigo}', [LogisticaPublicoController::class, 'showSolicitud'])
         ->where('codigo', 'SOL-[0-9]+');
     Route::get('galeria', [LogisticaPublicoController::class, 'galeria']);
+    Route::get('paquete/{codigo}/ruta', [LogisticaPublicoController::class, 'rutaPaquete'])
+        ->where('codigo', '.+');
 });
 
 Route::prefix('inventario')

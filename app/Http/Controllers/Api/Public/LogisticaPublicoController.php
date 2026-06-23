@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Public;
 
 use App\Http\Controllers\Controller;
+use App\Support\LogisticaMapa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -164,6 +165,124 @@ class LogisticaPublicoController extends Controller
             'data' => $items->values(),
             'total' => $items->count(),
         ]);
+    }
+
+    public function rutaPaquete(string $codigo): JsonResponse
+    {
+        $idPaquete = $this->resolverIdPaqueteLogistica($codigo);
+        if ($idPaquete === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontró un paquete logístico con ese código.',
+            ], 404);
+        }
+
+        $datos = LogisticaMapa::datosTracking($idPaquete);
+        if ($datos === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No hay datos de ruta para este paquete.',
+            ], 404);
+        }
+
+        $paquete = $datos['paquete'];
+        $destLat = $datos['destino']['lat'];
+        $destLng = $datos['destino']['lng'];
+        $comunidad = $paquete->comunidad ?? null;
+
+        return response()->json([
+            'success' => true,
+            'ruta' => [
+                'id_paquete' => (int) $paquete->id_paquete,
+                'codigo' => $paquete->codigo_seguimiento ?? $paquete->codigo ?? $codigo,
+                'estado' => $paquete->nombre_estado ?? null,
+                'comunidad_destino' => $comunidad,
+                'provincia_destino' => $paquete->provincia ?? null,
+                'origen' => [
+                    'lat' => (float) $datos['origen']['lat'],
+                    'lng' => (float) $datos['origen']['lng'],
+                    'label' => $datos['origen']['label'] ?? 'Almacén central',
+                ],
+                'destino' => [
+                    'lat' => is_numeric($destLat) ? (float) $destLat : null,
+                    'lng' => is_numeric($destLng) ? (float) $destLng : null,
+                    'comunidad' => $comunidad,
+                    'provincia' => $paquete->provincia ?? null,
+                    'label' => $comunidad ? 'Destino: '.$comunidad : 'Destino final',
+                ],
+                'waypoints' => collect($datos['waypoints'])->map(fn (array $wp) => [
+                    'lat' => (float) $wp['lat'],
+                    'lng' => (float) $wp['lng'],
+                    'zona' => $wp['zona'] ?? null,
+                    'tipo' => $wp['tipo'] ?? 'paso',
+                    'fecha' => $wp['fecha'] ?? null,
+                ])->values()->all(),
+            ],
+        ]);
+    }
+
+    private function resolverIdPaqueteLogistica(string $codigo): ?int
+    {
+        if (! Schema::connection('logistica')->hasTable('paquete')) {
+            return null;
+        }
+
+        $conn = DB::connection('logistica');
+        $codigos = array_merge(
+            [strtoupper(trim(urldecode($codigo)))],
+            $this->alternativasCodigoLogistica(strtoupper(trim(urldecode($codigo))))
+        );
+
+        foreach ($codigos as $busqueda) {
+            $id = $conn->table('paquete')->where('codigo', $busqueda)->value('id_paquete');
+            if ($id) {
+                return (int) $id;
+            }
+        }
+
+        if (! Schema::connection('logistica')->hasTable('solicitud')) {
+            return null;
+        }
+
+        foreach ($codigos as $busqueda) {
+            $id = $conn->table('paquete')
+                ->join('solicitud', 'paquete.id_solicitud', '=', 'solicitud.id_solicitud')
+                ->where('solicitud.codigo_seguimiento', $busqueda)
+                ->value('paquete.id_paquete');
+            if ($id) {
+                return (int) $id;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function alternativasCodigoLogistica(string $codigo): array
+    {
+        $alternativas = [];
+
+        if (str_starts_with($codigo, 'PKG-SOL-')) {
+            $sufijo = substr($codigo, 8);
+            $alternativas[] = 'SOL-'.$sufijo;
+            $alternativas[] = 'PKG-INV-'.$sufijo;
+        }
+
+        if (str_starts_with($codigo, 'SOL-')) {
+            $sufijo = substr($codigo, 4);
+            $alternativas[] = 'PKG-SOL-'.$sufijo;
+            $alternativas[] = 'PKG-INV-'.$sufijo;
+        }
+
+        if (str_starts_with($codigo, 'PKG-INV-')) {
+            $sufijo = substr($codigo, 8);
+            $alternativas[] = 'SOL-'.$sufijo;
+            $alternativas[] = 'PKG-SOL-'.$sufijo;
+        }
+
+        return array_values(array_unique($alternativas));
     }
 
     private function nombrePaqueteGaleria(?string $comunidad, ?string $tipoEmergencia): string
