@@ -47,16 +47,18 @@
     </div>
 </div>
 @endforeach
-
-<div class="alert alert-info mb-0 small">
-    <strong>Nota:</strong> Solicitudes, paquetes, seguimiento y galería de entregas se gestionan desde las pantallas operativas.
-    La galería pública sigue en
-    <a href="{{ route('publico.logistica.galeria') }}" target="_blank" rel="noopener">acceso ciudadano</a>.
-</div>
 @endsection
 
 @push('css')
 <style>
-    .logistica-config-link:hover { background: #f8f9fa; }
+    .logistica-config-link {
+        transition: box-shadow .15s ease, border-color .15s ease;
+        border-color: #e2e8f0 !important;
+    }
+    .logistica-config-link:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
 </style>
 @endpush

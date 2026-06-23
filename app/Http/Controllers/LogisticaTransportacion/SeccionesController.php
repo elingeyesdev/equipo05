@@ -5,6 +5,7 @@ namespace App\Http\Controllers\LogisticaTransportacion;
 use App\Http\Controllers\Controller;
 use App\Support\FusionModuloAccess;
 use App\Support\AccessControl;
+use App\Support\LogisticaCrudUi;
 use App\Support\LogisticaOperativa;
 use App\Support\LogisticaMapa;
 use Illuminate\Http\RedirectResponse;
@@ -127,6 +128,23 @@ class SeccionesController extends Controller
                 ->values()
                 ->toArray(),
             'estado_id' => $conn->table('estado')->select('id_estado as id', 'nombre_estado as nombre')->orderBy('nombre_estado')->get()->toArray(),
+            'tipo_emergencia' => (function () use ($conn, $schema) {
+                if (! $schema->hasTable('tipo_emergencia')) {
+                    return collect(LogisticaCrudUi::emergenciaFallbackOptions())
+                        ->map(fn ($nombre) => (object) ['id' => $nombre, 'nombre' => $nombre])
+                        ->all();
+                }
+
+                $nombreCol = $schema->hasColumn('tipo_emergencia', 'tipo_emergencia')
+                    ? 'tipo_emergencia'
+                    : 'nombre';
+
+                return $conn->table('tipo_emergencia')
+                    ->selectRaw("{$nombreCol} as id, {$nombreCol} as nombre")
+                    ->orderBy($nombreCol)
+                    ->get()
+                    ->toArray();
+            })(),
             'id_ubicacion' => (function () use ($conn, $schema) {
                 if (! $schema->hasTable('ubicacion')) {
                     return [];
@@ -249,7 +267,7 @@ class SeccionesController extends Controller
             $columns = array_values(array_filter($columns, fn ($column) => $column !== 'marca'));
         }
 
-        return $columns;
+        return LogisticaCrudUi::orderColumns($seccion, $columns);
     }
 
     private function normalizeCrudPayload(string $tabla, array $data): array
@@ -297,7 +315,9 @@ class SeccionesController extends Controller
 
     public function solicitudCreate(): View
     {
-        return view('fusion.modulos.logistica-solicitud-create');
+        $tiposEmergencia = $this->getOptionsForColumn('tipo_emergencia');
+
+        return view('fusion.modulos.logistica-solicitud-create', compact('tiposEmergencia'));
     }
 
     public function solicitudStore(Request $request): RedirectResponse
@@ -536,7 +556,9 @@ class SeccionesController extends Controller
 
         DB::connection('logistica')->table($tabla)->insert($data);
 
-        return redirect()->route("logistica.$seccion")->with('success', 'Registro creado correctamente.');
+        return redirect()
+            ->route(LogisticaCrudUi::listRouteName($seccion), LogisticaCrudUi::listRouteParams($seccion))
+            ->with('success', 'Registro creado correctamente.');
     }
 
     public function crudEdit(string $seccion, int $id): View
@@ -590,7 +612,9 @@ class SeccionesController extends Controller
             ->where($config['pk'], $id)
             ->update($data);
 
-        return redirect()->route("logistica.$seccion")->with('success', 'Registro actualizado correctamente.');
+        return redirect()
+            ->route(LogisticaCrudUi::listRouteName($seccion), LogisticaCrudUi::listRouteParams($seccion))
+            ->with('success', 'Registro actualizado correctamente.');
     }
 
     public function crudDestroy(string $seccion, int $id): RedirectResponse
@@ -605,6 +629,8 @@ class SeccionesController extends Controller
             ->where($config['pk'], $id)
             ->delete();
 
-        return redirect()->route("logistica.$seccion")->with('success', 'Registro eliminado correctamente.');
+        return redirect()
+            ->route(LogisticaCrudUi::listRouteName($seccion), LogisticaCrudUi::listRouteParams($seccion))
+            ->with('success', 'Registro eliminado correctamente.');
     }
 }

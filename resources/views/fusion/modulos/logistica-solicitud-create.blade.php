@@ -51,8 +51,13 @@
                 @include('fusion.modulos.partials.logistica-mapa-picker')
 
                 <div class="col-md-4 mb-3">
-                    <label>Tipo de Emergencia</label>
-                    <input type="text" name="tipo_emergencia" class="form-control" required placeholder="Ejemplo: Incendio forestal" value="{{ old('tipo_emergencia') }}">
+                    <label>Tipo de emergencia</label>
+                    <select name="tipo_emergencia" class="form-control" required>
+                        <option value="">Seleccione…</option>
+                        @foreach($tiposEmergencia as $tipo)
+                            <option value="{{ $tipo->nombre }}" {{ old('tipo_emergencia') === $tipo->nombre ? 'selected' : '' }}>{{ $tipo->nombre }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-md-2 mb-3">
                     <label>Cantidad Personas</label>
