@@ -85,13 +85,8 @@ class LogisticaOperativa
                 'solicitante.apellido as solicitante_apellido',
                 'solicitante.ci as solicitante_ci',
                 'estado.nombre_estado as estado_nombre',
-            ]);
-
-        if (Schema::connection('logistica')->hasColumn('paquete', 'imagen')) {
-            $query->addSelect('paquete.imagen');
-        }
-
-        $query->orderByDesc('paquete.updated_at');
+            ])
+            ->orderByDesc('paquete.updated_at');
 
         if (! $incluirDemo) {
             $query->where(function ($q) {
@@ -203,7 +198,6 @@ class LogisticaOperativa
             'envio_label' => $envio['label'],
             'envio_badge' => $envio['badge'],
             'envio_detalle' => $envio['detalle'] ?? null,
-            'requiere_soporte' => in_array($filtro, ['pendiente', 'aprobada', 'en_ruta'], true),
             'vista_integrada' => $integrado,
         ];
     }
@@ -246,7 +240,6 @@ class LogisticaOperativa
             'inventario_paquete_estado' => isset($inventario['estado'])
                 ? ucfirst(str_replace('_', ' ', (string) $inventario['estado']))
                 : null,
-            'tiene_imagen' => ! empty($row->imagen ?? null),
             'vista_integrada' => $integrado,
         ];
     }

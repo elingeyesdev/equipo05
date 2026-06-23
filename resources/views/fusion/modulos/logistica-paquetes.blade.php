@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content_header_title', 'Paquetes logísticos')
-@section('content_header_subtitle', 'Seguimiento, mapa e imágenes de entrega en una sola vista')
+@section('content_header_subtitle', 'Vinculados a solicitudes y, cuando aplica, al inventario')
 
 @section('content')
 @include('fusion.modulos.partials.logistica-module-nav')
@@ -23,11 +23,8 @@
             <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="armado">En almacén</button>
             <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="camino">En tránsito</button>
             <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="entregado">Entregados</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="galeria">Con foto de entrega</button>
         </div>
-        <p class="logistica-scroll-hint mb-0">
-            <i class="fas fa-camera mr-1"></i> Para publicar en galería: edite un paquete entregado y suba la foto en «Foto de entrega».
-        </p>
+        <p class="logistica-scroll-hint"><i class="fas fa-arrows-alt-h mr-1"></i> Desliza horizontalmente para ver todas las columnas.</p>
     </div>
     <div class="card-body p-0 pt-0">
         <div class="table-responsive logistica-tabla-scroll">
@@ -49,14 +46,9 @@
                 </thead>
                 <tbody>
                     @forelse($paquetes as $paquete)
-                        <tr class="paquete-row" data-estado="{{ $paquete['estado_filtro'] }}" data-galeria="{{ ($paquete['tiene_imagen'] ?? false) ? '1' : '0' }}">
+                        <tr class="paquete-row" data-estado="{{ $paquete['estado_filtro'] }}">
                             <td class="col-ref"><span class="text-muted font-weight-bold">{{ $paquete['ref'] }}</span></td>
-                            <td class="col-estado">
-                                <span class="badge badge-{{ $paquete['estado_badge'] }}">{{ $paquete['estado_nombre'] }}</span>
-                                @if($paquete['tiene_imagen'] ?? false)
-                                    <i class="fas fa-camera text-success ml-1" title="Tiene foto de entrega"></i>
-                                @endif
-                            </td>
+                            <td class="col-estado"><span class="badge badge-{{ $paquete['estado_badge'] }}">{{ $paquete['estado_nombre'] }}</span></td>
                             <td class="col-caso">
                                 {{ $paquete['solicitud_ref'] ?? '—' }}<br>
                                 <strong>{{ $paquete['solicitante_nombre'] }}</strong>
@@ -77,13 +69,10 @@
                             <td class="col-acciones text-right text-nowrap">
                                 <span class="logistica-row-actions">
                                     @if(!empty($paquete['id_paquete']))
-                                    <a href="{{ route('logistica.paquete.ficha', ['id' => $paquete['id_paquete']]) }}" class="btn btn-outline-info btn-sm" title="Ficha: mapa e historial">
+                                    <a href="{{ route('logistica.seguimiento.tracking', ['id' => $paquete['id_paquete']]) }}" class="btn btn-outline-info btn-sm" title="Ver mapa">
                                         <i class="fas fa-map-marked-alt"></i>
                                     </a>
                                     @endif
-                                    <a href="{{ route('logistica.crud.edit', ['seccion' => 'paquete', 'id' => $paquete['id_paquete']]) }}#foto-entrega" class="btn btn-outline-success btn-sm" title="Subir foto de entrega">
-                                        <i class="fas fa-camera"></i>
-                                    </a>
                                     <a href="{{ route('logistica.crud.edit', ['seccion' => 'paquete', 'id' => $paquete['id_paquete']]) }}" class="btn btn-outline-warning btn-sm" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
@@ -111,36 +100,16 @@
 document.addEventListener('DOMContentLoaded', function () {
     const buttons = document.querySelectorAll('.btn-paquete-filter');
     const rows = document.querySelectorAll('.paquete-row');
-
-    function aplicarFiltro(value) {
-        rows.forEach((row) => {
-            if (value === 'todos') {
-                row.style.display = '';
-            } else if (value === 'galeria') {
-                row.style.display = row.dataset.galeria === '1' ? '' : 'none';
-            } else {
-                row.style.display = row.dataset.estado === value ? '' : 'none';
-            }
-        });
-    }
-
     buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
             buttons.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
-            aplicarFiltro(btn.dataset.filter);
+            const value = btn.dataset.filter;
+            rows.forEach((row) => {
+                row.style.display = (value === 'todos' || row.dataset.estado === value) ? '' : 'none';
+            });
         });
     });
-
-    const filtroInicial = @json($filtroInicial ?? null);
-    if (filtroInicial) {
-        const btn = document.querySelector(`.btn-paquete-filter[data-filter="${filtroInicial}"]`);
-        if (btn) {
-            buttons.forEach((b) => b.classList.remove('active'));
-            btn.classList.add('active');
-            aplicarFiltro(filtroInicial);
-        }
-    }
 });
 </script>
 @endpush

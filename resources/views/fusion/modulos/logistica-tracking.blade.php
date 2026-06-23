@@ -6,8 +6,8 @@
     $codigo = $paquete->codigo_seguimiento ?? $paquete->codigo ?? $refPaquete;
 @endphp
 
-@section('content_header_title', 'Ficha del paquete ' . $refPaquete)
-@section('content_header_subtitle', 'Mapa, historial y datos de entrega · ' . $codigo)
+@section('content_header_title', 'Tracking del paquete ' . $refPaquete)
+@section('content_header_subtitle', $codigo)
 
 @section('content')
 @include('fusion.modulos.partials.logistica-module-nav')
@@ -31,15 +31,9 @@
                     <p class="mb-0 text-muted">{{ $paquete->direccion }}</p>
                 @endif
             </div>
-            <div class="card-footer bg-white d-flex flex-wrap">
-                <a href="{{ route('logistica.paquete') }}" class="btn btn-outline-secondary btn-sm mr-2 mb-1">
-                    <i class="fas fa-arrow-left"></i> Volver a paquetes
-                </a>
-                <a href="{{ route('logistica.crud.edit', ['seccion' => 'paquete', 'id' => $paquete->id_paquete]) }}" class="btn btn-outline-warning btn-sm mr-2 mb-1">
-                    <i class="fas fa-edit"></i> Editar paquete
-                </a>
-                <a href="{{ route('logistica.crud.create', ['seccion' => 'seguimiento']) }}" class="btn btn-primary btn-sm mb-1">
-                    <i class="fas fa-plus"></i> Registrar avance
+            <div class="card-footer bg-white">
+                <a href="{{ route('logistica.seguimiento') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Volver al seguimiento
                 </a>
             </div>
         </div>

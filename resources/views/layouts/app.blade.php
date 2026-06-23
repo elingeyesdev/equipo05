@@ -516,20 +516,6 @@
                         @endif
 
                         @if($__showLogistica)
-                        @php
-                            $__logisticaConfigActive = request()->routeIs('logistica.configuracion')
-                                || request()->routeIs('logistica.solicitante')
-                                || request()->routeIs('logistica.destino')
-                                || request()->routeIs('logistica.ubicacion')
-                                || request()->routeIs('logistica.marca')
-                                || request()->routeIs('logistica.tipo-vehiculo')
-                                || request()->routeIs('logistica.usuario')
-                                || request()->routeIs('logistica.rol')
-                                || request()->routeIs('logistica.estado')
-                                || request()->routeIs('logistica.tipo-emergencia')
-                                || request()->routeIs('logistica.tipo-licencia')
-                                || request()->routeIs('logistica.reporte');
-                        @endphp
                         <li class="nav-item {{ request()->routeIs('logistica.*') || request()->routeIs('fusion.modulos.logistica') ? 'menu-open' : '' }}" data-sidebar-key="mod-logistica">
                             <a href="#" class="nav-link {{ request()->routeIs('logistica.*') || request()->routeIs('fusion.modulos.logistica') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-truck"></i>
@@ -542,28 +528,115 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('logistica.solicitud') }}" class="nav-link {{ request()->routeIs('logistica.solicitud') || request()->routeIs('logistica.solicitud.*') ? 'active' : '' }}">
+                                    <a href="{{ route('logistica.solicitud') }}" class="nav-link {{ request()->routeIs('logistica.solicitud') ? 'active' : '' }}">
                                         <i class="fas fa-file nav-icon"></i><p>Solicitudes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('logistica.paquete') }}" class="nav-link {{ request()->routeIs('logistica.paquete') || request()->routeIs('logistica.paquete.*') || request()->routeIs('logistica.seguimiento.tracking') ? 'active' : '' }}">
+                                    <a href="{{ route('logistica.paquete') }}" class="nav-link {{ request()->routeIs('logistica.paquete') ? 'active' : '' }}">
                                         <i class="fas fa-box nav-icon"></i><p>Paquetes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('logistica.flota') }}" class="nav-link {{ request()->routeIs('logistica.flota') || request()->routeIs('logistica.vehiculo') || request()->routeIs('logistica.conductor') ? 'active' : '' }}">
-                                        <i class="fas fa-truck-loading nav-icon"></i><p>Flota</p>
+                                    <a href="{{ route('logistica.mapa') }}" class="nav-link {{ request()->routeIs('logistica.mapa') || request()->routeIs('logistica.seguimiento.tracking') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Mapa operativo</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('logistica.mapa') }}" class="nav-link {{ request()->routeIs('logistica.mapa') ? 'active' : '' }}">
-                                        <i class="fas fa-map-marked-alt nav-icon"></i><p>Mapa operativo</p>
+                                    <a href="{{ route('logistica.seguimiento') }}" class="nav-link {{ request()->routeIs('logistica.seguimiento') ? 'active' : '' }}">
+                                        <i class="fas fa-map nav-icon"></i><p>Seguimiento de Paquetes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('logistica.configuracion') }}" class="nav-link {{ $__logisticaConfigActive ? 'active' : '' }}">
-                                        <i class="fas fa-cog nav-icon"></i><p>Configuración</p>
+                                    <a href="{{ route('logistica.vehiculo') }}" class="nav-link {{ request()->routeIs('logistica.vehiculo') ? 'active' : '' }}">
+                                        <i class="fas fa-car nav-icon"></i><p>Vehiculos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item {{ request()->routeIs('logistica.solicitante') || request()->routeIs('logistica.destino') || request()->routeIs('logistica.ubicacion') || request()->routeIs('logistica.conductor') || request()->routeIs('logistica.marca') || request()->routeIs('logistica.tipo-vehiculo') ? 'menu-open' : '' }}" data-sidebar-key="logistica-catalogos">
+                                    <a href="#" class="nav-link {{ request()->routeIs('logistica.solicitante') || request()->routeIs('logistica.destino') || request()->routeIs('logistica.ubicacion') || request()->routeIs('logistica.conductor') || request()->routeIs('logistica.marca') || request()->routeIs('logistica.tipo-vehiculo') ? 'active' : '' }}">
+                                        <i class="fas fa-book-open nav-icon"></i>
+                                        <p><span class="sidebar-menu-label">Catálogos</span> <i class="fas fa-angle-left right"></i></p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.solicitante') }}" class="nav-link {{ request()->routeIs('logistica.solicitante') ? 'active' : '' }}">
+                                                <i class="fas fa-user-friends nav-icon"></i><p>Solicitantes</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.destino') }}" class="nav-link {{ request()->routeIs('logistica.destino') ? 'active' : '' }}">
+                                                <i class="fas fa-map-marker-alt nav-icon"></i><p>Destinos</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.ubicacion') }}" class="nav-link {{ request()->routeIs('logistica.ubicacion') ? 'active' : '' }}">
+                                                <i class="fas fa-map-pin nav-icon"></i><p>Ubicaciones</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.conductor') }}" class="nav-link {{ request()->routeIs('logistica.conductor') ? 'active' : '' }}">
+                                                <i class="fas fa-users nav-icon"></i><p>Conductores</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.marca') }}" class="nav-link {{ request()->routeIs('logistica.marca') ? 'active' : '' }}">
+                                                <i class="fas fa-flag-checkered nav-icon"></i><p>Marcas</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.tipo-vehiculo') }}" class="nav-link {{ request()->routeIs('logistica.tipo-vehiculo') ? 'active' : '' }}">
+                                                <i class="fas fa-th-large nav-icon"></i><p>Tipo de Vehiculo</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-header">ADMIN</li>
+                                <li class="nav-item {{ request()->routeIs('logistica.usuario') || request()->routeIs('logistica.rol') || request()->routeIs('logistica.estado') || request()->routeIs('logistica.tipo-emergencia') || request()->routeIs('logistica.tipo-licencia') || request()->routeIs('logistica.reporte') ? 'menu-open' : '' }}" data-sidebar-key="logistica-admin">
+                                    <a href="#" class="nav-link {{ request()->routeIs('logistica.usuario') || request()->routeIs('logistica.rol') || request()->routeIs('logistica.estado') || request()->routeIs('logistica.tipo-emergencia') || request()->routeIs('logistica.tipo-licencia') || request()->routeIs('logistica.reporte') ? 'active' : '' }}">
+                                        <i class="fas fa-user-shield nav-icon"></i>
+                                        <p><span class="sidebar-menu-label">Administración</span> <i class="fas fa-angle-left right"></i></p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.usuario') }}" class="nav-link {{ request()->routeIs('logistica.usuario') ? 'active' : '' }}">
+                                                <i class="fas fa-user nav-icon"></i><p>Voluntarios</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.rol') }}" class="nav-link {{ request()->routeIs('logistica.rol') ? 'active' : '' }}">
+                                                <i class="fas fa-user-shield nav-icon"></i><p>Roles</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.estado') }}" class="nav-link {{ request()->routeIs('logistica.estado') ? 'active' : '' }}">
+                                                <i class="fas fa-flag nav-icon"></i><p>Estados</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.tipo-emergencia') }}" class="nav-link {{ request()->routeIs('logistica.tipo-emergencia') ? 'active' : '' }}">
+                                                <i class="fas fa-plus nav-icon"></i><p>Tipo de Emergencia</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.tipo-licencia') }}" class="nav-link {{ request()->routeIs('logistica.tipo-licencia') ? 'active' : '' }}">
+                                                <i class="fas fa-id-card nav-icon"></i><p>Licencias</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('logistica.reporte') }}" class="nav-link {{ request()->routeIs('logistica.reporte') ? 'active' : '' }}">
+                                                <i class="fas fa-book nav-icon"></i><p>Reportes</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.galeria') }}" class="nav-link {{ request()->routeIs('logistica.galeria') ? 'active' : '' }}">
+                                        <i class="fas fa-images nav-icon"></i><p>Galeria de Agradecimiento</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('logistica.helpdesk') }}" class="nav-link {{ request()->routeIs('logistica.helpdesk') ? 'active' : '' }}">
+                                        <i class="fas fa-phone nav-icon"></i><p>Centro de Soporte</p>
                                     </a>
                                 </li>
                             </ul>

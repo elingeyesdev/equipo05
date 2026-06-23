@@ -25,7 +25,6 @@
     <div class="card-body pb-0">
         <div class="logistica-filtros" role="group">
             <button type="button" class="btn btn-outline-secondary btn-sm btn-solicitud-filter active" data-filter="todos">Todas</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm btn-solicitud-filter" data-filter="soporte">Soporte</button>
             <button type="button" class="btn btn-outline-secondary btn-sm btn-solicitud-filter" data-filter="pendiente">Pendientes</button>
             <button type="button" class="btn btn-outline-secondary btn-sm btn-solicitud-filter" data-filter="aprobada">Aprobadas</button>
             <button type="button" class="btn btn-outline-secondary btn-sm btn-solicitud-filter" data-filter="en_ruta">En ruta</button>
@@ -51,7 +50,7 @@
                 </thead>
                 <tbody>
                     @forelse($solicitudes as $solicitud)
-                        <tr class="solicitud-row" data-estado="{{ $solicitud['estado_filtro'] }}" data-soporte="{{ ($solicitud['requiere_soporte'] ?? false) ? '1' : '0' }}">
+                        <tr class="solicitud-row" data-estado="{{ $solicitud['estado_filtro'] }}">
                             <td class="col-ref"><span class="text-muted font-weight-bold">{{ $solicitud['ref'] }}</span></td>
                             <td class="col-estado">
                                 <span class="badge badge-{{ $solicitud['estado_badge'] }}">{{ $solicitud['estado_label'] }}</span>
@@ -72,11 +71,6 @@
                             </td>
                             <td class="col-acciones text-right text-nowrap">
                                 <span class="logistica-row-actions">
-                                    @if($solicitud['paquete_logistica_id'] ?? false)
-                                    <a href="{{ route('logistica.paquete.ficha', ['id' => $solicitud['paquete_logistica_id']]) }}" class="btn btn-outline-info btn-sm" title="Ver paquete">
-                                        <i class="fas fa-box-open"></i>
-                                    </a>
-                                    @endif
                                     <a href="{{ route('logistica.crud.edit', ['seccion' => 'solicitud', 'id' => $solicitud['id_solicitud']]) }}" class="btn btn-outline-warning btn-sm" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
@@ -108,36 +102,16 @@
 document.addEventListener('DOMContentLoaded', function () {
     const buttons = document.querySelectorAll('.btn-solicitud-filter');
     const rows = document.querySelectorAll('.solicitud-row');
-
-    function aplicarFiltro(value) {
-        rows.forEach((row) => {
-            if (value === 'todos') {
-                row.style.display = '';
-            } else if (value === 'soporte') {
-                row.style.display = row.dataset.soporte === '1' ? '' : 'none';
-            } else {
-                row.style.display = row.dataset.estado === value ? '' : 'none';
-            }
-        });
-    }
-
     buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
             buttons.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
-            aplicarFiltro(btn.dataset.filter);
+            const value = btn.dataset.filter;
+            rows.forEach((row) => {
+                row.style.display = (value === 'todos' || row.dataset.estado === value) ? '' : 'none';
+            });
         });
     });
-
-    const filtroInicial = @json($filtroInicial ?? null);
-    if (filtroInicial) {
-        const btn = document.querySelector(`.btn-solicitud-filter[data-filter="${filtroInicial}"]`);
-        if (btn) {
-            buttons.forEach((b) => b.classList.remove('active'));
-            btn.classList.add('active');
-            aplicarFiltro(filtroInicial);
-        }
-    }
 });
 </script>
 @endpush

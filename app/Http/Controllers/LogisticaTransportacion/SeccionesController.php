@@ -5,7 +5,6 @@ namespace App\Http\Controllers\LogisticaTransportacion;
 use App\Http\Controllers\Controller;
 use App\Support\FusionModuloAccess;
 use App\Support\AccessControl;
-use App\Support\LogisticaCrudUi;
 use App\Support\LogisticaOperativa;
 use App\Support\LogisticaMapa;
 use Illuminate\Http\RedirectResponse;
@@ -128,23 +127,6 @@ class SeccionesController extends Controller
                 ->values()
                 ->toArray(),
             'estado_id' => $conn->table('estado')->select('id_estado as id', 'nombre_estado as nombre')->orderBy('nombre_estado')->get()->toArray(),
-            'tipo_emergencia' => (function () use ($conn, $schema) {
-                if (! $schema->hasTable('tipo_emergencia')) {
-                    return collect(LogisticaCrudUi::emergenciaFallbackOptions())
-                        ->map(fn ($nombre) => (object) ['id' => $nombre, 'nombre' => $nombre])
-                        ->all();
-                }
-
-                $nombreCol = $schema->hasColumn('tipo_emergencia', 'tipo_emergencia')
-                    ? 'tipo_emergencia'
-                    : 'nombre';
-
-                return $conn->table('tipo_emergencia')
-                    ->selectRaw("{$nombreCol} as id, {$nombreCol} as nombre")
-                    ->orderBy($nombreCol)
-                    ->get()
-                    ->toArray();
-            })(),
             'id_ubicacion' => (function () use ($conn, $schema) {
                 if (! $schema->hasTable('ubicacion')) {
                     return [];
@@ -246,33 +228,13 @@ class SeccionesController extends Controller
         };
     }
 
-    private function columnsForCrud(string $tabla, string $pk, string $seccion = ''): array
+    private function columnsForCrud(string $tabla, string $pk): array
     {
-        $schema = Schema::connection('logistica');
-        $available = array_values(array_filter(
-            $schema->getColumnListing($tabla),
-            fn ($col) => ! in_array($col, [$pk, 'created_at', 'updated_at'], true)
-        ));
+        $columns = Schema::connection('logistica')->getColumnListing($tabla);
 
-        $preferred = LogisticaCrudUi::preferredColumns($seccion);
-        if ($preferred === []) {
-            return $available;
-        }
-
-        $ordered = [];
-        foreach ($preferred as $column) {
-            if (in_array($column, $available, true)) {
-                $ordered[] = $column;
-            }
-        }
-
-        foreach ($available as $column) {
-            if (! in_array($column, $ordered, true)) {
-                $ordered[] = $column;
-            }
-        }
-
-        return $ordered;
+        return array_values(array_filter($columns, function ($col) use ($pk) {
+            return !in_array($col, [$pk, 'created_at', 'updated_at'], true);
+        }));
     }
 
     private function normalizeCrudColumns(string $seccion, array $columns): array
@@ -287,102 +249,7 @@ class SeccionesController extends Controller
             $columns = array_values(array_filter($columns, fn ($column) => $column !== 'marca'));
         }
 
-        if ($seccion === 'paquete') {
-            $columns = array_values(array_filter($columns, fn ($column) => $column !== 'imagen'));
-        }
-
-        if ($seccion === 'vehiculo') {
-            $schema = Schema::connection('logistica');
-            if ($schema->hasColumn('vehiculo', 'id_tipovehiculo')) {
-                $columns = array_values(array_filter($columns, fn ($column) => $column !== 'id_tipo_vehiculo'));
-            } elseif ($schema->hasColumn('vehiculo', 'id_tipo_vehiculo')) {
-                $columns = array_values(array_filter($columns, fn ($column) => $column !== 'id_tipovehiculo'));
-            }
-        }
-
-        return LogisticaCrudUi::orderColumns($seccion, $columns);
-    }
-
-    private function resolvePaqueteImagenUpload(Request $request): ?string
-    {
-        if (! $request->hasFile('foto_entrega')) {
-            return null;
-        }
-
-        $file = $request->file('foto_entrega');
-        if (! $file || ! $file->isValid()) {
-            return null;
-        }
-
-        $mime = (string) $file->getMimeType();
-        if (! str_starts_with($mime, 'image/')) {
-            return null;
-        }
-
-        $contents = file_get_contents($file->getRealPath());
-
-        return $contents !== false ? $contents : null;
-    }
-
-    private function vehiculosFlotaEnriquecidos()
-    {
-        $schema = Schema::connection('logistica');
-        $conn = DB::connection('logistica');
-
-        if (! $schema->hasTable('vehiculo')) {
-            return collect();
-        }
-
-        $query = $conn->table('vehiculo as v');
-
-        if ($schema->hasTable('marca') && $schema->hasColumn('vehiculo', 'id_marca')) {
-            $nombreMarca = $schema->hasColumn('marca', 'nombre_marca') ? 'm.nombre_marca' : 'm.nombre';
-            $query->leftJoin('marca as m', 'v.id_marca', '=', 'm.id_marca')
-                ->addSelect(DB::raw("{$nombreMarca} as marca_nombre"));
-        }
-
-        if ($schema->hasTable('tipo_vehiculo')) {
-            $tipoFk = $schema->hasColumn('vehiculo', 'id_tipovehiculo')
-                ? 'id_tipovehiculo'
-                : ($schema->hasColumn('vehiculo', 'id_tipo_vehiculo') ? 'id_tipo_vehiculo' : null);
-
-            if ($tipoFk) {
-                $tipoPk = $schema->hasColumn('tipo_vehiculo', 'id_tipovehiculo') ? 'id_tipovehiculo' : 'id_tipo_vehiculo';
-                $tipoNombre = $schema->hasColumn('tipo_vehiculo', 'nombre_tipovehiculo')
-                    ? 'tv.nombre_tipovehiculo'
-                    : ($schema->hasColumn('tipo_vehiculo', 'nombre_tipo_vehiculo') ? 'tv.nombre_tipo_vehiculo' : 'tv.nombre');
-                $query->leftJoin('tipo_vehiculo as tv', "v.{$tipoFk}", '=', "tv.{$tipoPk}")
-                    ->addSelect(DB::raw("{$tipoNombre} as tipo_nombre"));
-            }
-        }
-
-        return $query->select('v.*')->orderByDesc('v.updated_at')->limit(100)->get();
-    }
-
-    private function conductoresFlotaEnriquecidos()
-    {
-        $schema = Schema::connection('logistica');
-        $conn = DB::connection('logistica');
-
-        if (! $schema->hasTable('conductor')) {
-            return collect();
-        }
-
-        $query = $conn->table('conductor as c');
-
-        if ($schema->hasTable('tipo_licencia') && $schema->hasColumn('conductor', 'id_licencia')) {
-            $licPk = $schema->hasColumn('tipo_licencia', 'id_tipo_licencia') ? 'id_tipo_licencia' : 'id_licencia';
-            $licNombre = $schema->hasColumn('tipo_licencia', 'tipo_licencia')
-                ? 'tl.tipo_licencia'
-                : ($schema->hasColumn('tipo_licencia', 'nombre') ? 'tl.nombre' : null);
-
-            if ($licNombre) {
-                $query->leftJoin('tipo_licencia as tl', 'c.id_licencia', '=', "tl.{$licPk}")
-                    ->addSelect(DB::raw("{$licNombre} as licencia_nombre"));
-            }
-        }
-
-        return $query->select('c.*')->orderBy('c.nombre')->limit(100)->get();
+        return $columns;
     }
 
     private function normalizeCrudPayload(string $tabla, array $data): array
@@ -430,9 +297,7 @@ class SeccionesController extends Controller
 
     public function solicitudCreate(): View
     {
-        $tiposEmergencia = $this->getOptionsForColumn('tipo_emergencia');
-
-        return view('fusion.modulos.logistica-solicitud-create', compact('tiposEmergencia'));
+        return view('fusion.modulos.logistica-solicitud-create');
     }
 
     public function solicitudStore(Request $request): RedirectResponse
@@ -512,57 +377,23 @@ class SeccionesController extends Controller
             ->where('codigo_seguimiento', 'like', 'LOG-DEMO-%')
             ->count();
         $vistaIntegrada = AccessControl::vistaIntegradaModulos(auth()->user());
-        $filtroInicial = request()->query('filtro');
 
-        return view('fusion.modulos.logistica-solicitudes', compact('solicitudes', 'totalDemoOcultos', 'vistaIntegrada', 'filtroInicial'));
+        return view('fusion.modulos.logistica-solicitudes', compact('solicitudes', 'totalDemoOcultos', 'vistaIntegrada'));
     }
 
     public function paquetes(): View
     {
         $paquetes = LogisticaOperativa::paquetesOperativos();
         $vistaIntegrada = AccessControl::vistaIntegradaModulos(auth()->user());
-        $filtroInicial = request()->query('filtro');
 
-        return view('fusion.modulos.logistica-paquetes', compact('paquetes', 'vistaIntegrada', 'filtroInicial'));
+        return view('fusion.modulos.logistica-paquetes', compact('paquetes', 'vistaIntegrada'));
     }
 
-    public function flota(): View
+    public function seguimiento(): View
     {
-        $schema = Schema::connection('logistica');
+        $seguimientos = LogisticaOperativa::seguimientosOperativos();
 
-        $vehiculos = $this->vehiculosFlotaEnriquecidos();
-        $conductores = $this->conductoresFlotaEnriquecidos();
-
-        $vehiculoTieneMarca = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'id_marca');
-        $vehiculoTieneTipo = $schema->hasTable('vehiculo')
-            && ($schema->hasColumn('vehiculo', 'id_tipovehiculo') || $schema->hasColumn('vehiculo', 'id_tipo_vehiculo'));
-        $vehiculoTieneModelo = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'modelo');
-        $vehiculoTieneAnio = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'anio');
-        $vehiculoTieneCapacidad = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'capacidad');
-
-        $conductorTieneCi = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'ci');
-        $conductorTieneTelefono = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'telefono');
-        $conductorTieneEmail = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'email');
-        $conductorTieneLicencia = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'id_licencia');
-
-        return view('fusion.modulos.logistica-flota', compact(
-            'vehiculos',
-            'conductores',
-            'vehiculoTieneMarca',
-            'vehiculoTieneTipo',
-            'vehiculoTieneModelo',
-            'vehiculoTieneAnio',
-            'vehiculoTieneCapacidad',
-            'conductorTieneCi',
-            'conductorTieneTelefono',
-            'conductorTieneEmail',
-            'conductorTieneLicencia',
-        ));
-    }
-
-    public function configuracion(): View
-    {
-        return view('fusion.modulos.logistica-configuracion');
+        return view('fusion.modulos.logistica-seguimiento', compact('seguimientos'));
     }
 
     public function mapa(): View
@@ -636,7 +467,7 @@ class SeccionesController extends Controller
         abort_unless(isset($secciones[$seccion]), 404);
 
         $config = $secciones[$seccion];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
         $columns = $this->normalizeCrudColumns($seccion, $columns);
         $options = [];
         foreach ($columns as $column) {
@@ -651,7 +482,6 @@ class SeccionesController extends Controller
             'columns' => $columns,
             'options' => $options,
             'registro' => null,
-            'tieneFotoEntrega' => false,
         ]);
     }
 
@@ -663,16 +493,8 @@ class SeccionesController extends Controller
 
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
-        $columns = array_values(array_filter($columns, fn ($column) => $column !== 'imagen'));
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
         $data = $this->normalizeCrudPayload($tabla, $request->only($columns));
-
-        if ($config['tabla'] === 'paquete') {
-            $imagen = $this->resolvePaqueteImagenUpload($request);
-            if ($imagen !== null && Schema::connection('logistica')->hasColumn('paquete', 'imagen')) {
-                $data['imagen'] = $imagen;
-            }
-        }
 
         if ($config['tabla'] === 'paquete' && empty($data['codigo'])) {
             $data['codigo'] = 'PKG-' . now()->format('YmdHis');
@@ -690,9 +512,7 @@ class SeccionesController extends Controller
 
         DB::connection('logistica')->table($tabla)->insert($data);
 
-        return redirect()
-            ->route(LogisticaCrudUi::listRouteName($seccion), LogisticaCrudUi::listRouteParams($seccion))
-            ->with('success', 'Registro creado correctamente.');
+        return redirect()->route("logistica.$seccion")->with('success', 'Registro creado correctamente.');
     }
 
     public function crudEdit(string $seccion, int $id): View
@@ -702,7 +522,7 @@ class SeccionesController extends Controller
         abort_unless(isset($secciones[$seccion]), 404);
 
         $config = $secciones[$seccion];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
         $columns = $this->normalizeCrudColumns($seccion, $columns);
         $options = [];
         foreach ($columns as $column) {
@@ -715,10 +535,6 @@ class SeccionesController extends Controller
             ->first();
         abort_unless($registro, 404);
 
-        $tieneFotoEntrega = $seccion === 'paquete'
-            && Schema::connection('logistica')->hasColumn('paquete', 'imagen')
-            && ! empty($registro->imagen);
-
         return view('fusion.modulos.logistica-crud-form', [
             'seccion' => $seccion,
             'tituloSeccion' => $config['titulo'],
@@ -727,7 +543,6 @@ class SeccionesController extends Controller
             'columns' => $columns,
             'options' => $options,
             'registro' => $registro,
-            'tieneFotoEntrega' => $tieneFotoEntrega,
         ]);
     }
 
@@ -739,16 +554,8 @@ class SeccionesController extends Controller
 
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
-        $columns = array_values(array_filter($columns, fn ($column) => $column !== 'imagen'));
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
         $data = $this->normalizeCrudPayload($tabla, $request->only($columns));
-
-        if ($config['tabla'] === 'paquete') {
-            $imagen = $this->resolvePaqueteImagenUpload($request);
-            if ($imagen !== null && Schema::connection('logistica')->hasColumn('paquete', 'imagen')) {
-                $data['imagen'] = $imagen;
-            }
-        }
 
         if (Schema::connection('logistica')->hasColumn($tabla, 'updated_at')) {
             $data['updated_at'] = now();
@@ -759,9 +566,7 @@ class SeccionesController extends Controller
             ->where($config['pk'], $id)
             ->update($data);
 
-        return redirect()
-            ->route(LogisticaCrudUi::listRouteName($seccion), LogisticaCrudUi::listRouteParams($seccion))
-            ->with('success', 'Registro actualizado correctamente.');
+        return redirect()->route("logistica.$seccion")->with('success', 'Registro actualizado correctamente.');
     }
 
     public function crudDestroy(string $seccion, int $id): RedirectResponse
@@ -776,8 +581,6 @@ class SeccionesController extends Controller
             ->where($config['pk'], $id)
             ->delete();
 
-        return redirect()
-            ->route(LogisticaCrudUi::listRouteName($seccion), LogisticaCrudUi::listRouteParams($seccion))
-            ->with('success', 'Registro eliminado correctamente.');
+        return redirect()->route("logistica.$seccion")->with('success', 'Registro eliminado correctamente.');
     }
 }

@@ -29,18 +29,15 @@ class ModuloCrudEjemplos
                     'longitud' => 'Ejemplo: -63.755',
                 ],
                 'vehiculo' => [
-                    'placa' => 'Ejemplo: 4433-RTY',
-                    'modelo' => 'Ejemplo: Hilux 4x4',
+                    'placa' => 'Ejemplo: 1234-ABC',
+                    'capacidad' => 'Ejemplo: 1500',
                     'anio' => 'Ejemplo: 2020',
-                    'capacidad' => 'Ejemplo: 3 Ton',
-                    'observaciones' => 'Ejemplo: Revisión técnica al día',
                 ],
                 'conductor' => [
                     'nombre' => 'Ejemplo: Juan',
                     'apellido' => 'Ejemplo: Perez',
                     'ci' => 'Ejemplo: 87654321',
                     'telefono' => 'Ejemplo: 71122334',
-                    'email' => 'Ejemplo: juan.perez@correo.com',
                 ],
                 'marca' => [
                     'nombre_marca' => 'Ejemplo: Toyota',

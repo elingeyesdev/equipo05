@@ -29,7 +29,6 @@ class LogisticaCatalogosSeeder extends Seeder
         $this->sembrarUsuariosOperativos($db, $now);
         $this->sembrarReportes($db, $now);
         $this->enriquecerConductores($db, $now);
-        $this->call(LogisticaFlotaBackfillSeeder::class);
 
         $this->command?->info('Logística: catálogos operativos (ubicaciones, marcas, tipos, reportes) sembrados.');
     }
