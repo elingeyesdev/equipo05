@@ -203,6 +203,8 @@ class LogisticaMapa
                     'fuente' => 'historial',
                 ];
             }
+
+            // Historial con zona textual pero sin GPS: no devolver coords inválidas.
         }
 
         $ubicacionActual = (string) ($paquete->ubicacion_actual ?? '');
@@ -411,6 +413,7 @@ class LogisticaMapa
     private static function coordValida(?float $lat, ?float $lng): bool
     {
         return $lat !== null && $lng !== null
+            && is_finite($lat) && is_finite($lng)
             && $lat >= -90 && $lat <= 90
             && $lng >= -180 && $lng <= 180
             && ($lat != 0.0 || $lng != 0.0);
