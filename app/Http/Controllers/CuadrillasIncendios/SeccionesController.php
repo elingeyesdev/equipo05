@@ -55,7 +55,32 @@ class SeccionesController extends Controller
         if ($seccion === 'reportes') {
             $tiposIncidente = DB::connection($connection)->table('tipo_incidente')->orderBy('nombre')->get();
             $nivelesGravedad = DB::connection($connection)->table('nivel_gravedad')->orderBy('id_nivel_gravedad')->get();
-            return view('fusion.modulos.cuadrillas-reporte-interno', compact('tiposIncidente', 'nivelesGravedad'));
+            $reportesRecientes = DB::connection($connection)
+                ->table('reporte')
+                ->leftJoin('tipo_incidente', 'reporte.tipo_incidente_id', '=', 'tipo_incidente.id_tipo_incidente')
+                ->leftJoin('nivel_gravedad', 'reporte.gravedad_id', '=', 'nivel_gravedad.id_nivel_gravedad')
+                ->leftJoin('estado_sistema', 'reporte.estado_id', '=', 'estado_sistema.id_estado_sistema')
+                ->select([
+                    'reporte.id_reporte',
+                    'reporte.nombre_reportante',
+                    'reporte.nombre_lugar',
+                    'reporte.fecha_hora',
+                    'reporte.latitud',
+                    'reporte.longitud',
+                    'tipo_incidente.nombre as tipo_incidente',
+                    'nivel_gravedad.nombre as gravedad',
+                    'estado_sistema.nombre as estado',
+                ])
+                ->orderByDesc('reporte.fecha_hora')
+                ->orderByDesc('reporte.id_reporte')
+                ->limit(25)
+                ->get();
+
+            return view('fusion.modulos.cuadrillas-reporte-interno', compact(
+                'tiposIncidente',
+                'nivelesGravedad',
+                'reportesRecientes',
+            ));
         }
 
         if ($seccion === 'focos-calor') {

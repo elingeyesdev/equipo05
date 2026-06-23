@@ -127,11 +127,13 @@ class LogisticaPublicoController extends Controller
             }
 
             $items = $query->limit(24)->get()->map(function ($paquete) use ($hasImagen) {
+                $entregado = ! empty($paquete->fecha_entrega);
                 $payload = [
                     'id' => $paquete->id_paquete,
                     'codigo' => $paquete->codigo ?? ('PKG-'.$paquete->id_paquete),
                     'comunidad' => $paquete->comunidad,
                     'fecha_entrega' => $paquete->fecha_entrega,
+                    'entregado' => $entregado,
                     'tiene_imagen' => false,
                 ];
 

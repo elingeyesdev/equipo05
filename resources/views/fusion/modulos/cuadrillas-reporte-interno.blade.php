@@ -174,6 +174,52 @@
                 </form>
             </div>
 
+            <div class="card cua-list-card cua-accent-danger shadow-sm mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-list mr-1 text-danger"></i> Reportes recientes en base de datos
+                    </h3>
+                    <a href="{{ route('cuadrillas.focos-calor') }}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-map-marked-alt mr-1"></i> Ver en mapa
+                    </a>
+                </div>
+                <div class="card-body p-0 table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Reportante</th>
+                                <th>Lugar</th>
+                                <th>Tipo</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse(($reportesRecientes ?? collect()) as $reporte)
+                                <tr>
+                                    <td>#{{ $reporte->id_reporte }}</td>
+                                    <td>{{ $reporte->fecha_hora ? \Carbon\Carbon::parse($reporte->fecha_hora)->format('d/m/Y H:i') : '—' }}</td>
+                                    <td>{{ $reporte->nombre_reportante ?? 'Anónimo' }}</td>
+                                    <td>{{ $reporte->nombre_lugar ?? '—' }}</td>
+                                    <td>{{ $reporte->tipo_incidente ?? '—' }}</td>
+                                    <td>{{ $reporte->estado ?? 'Pendiente' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        No hay reportes registrados aún.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-muted small">
+                    Incluye reportes enviados desde la app móvil y el formulario web público.
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
