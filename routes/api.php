@@ -1,6 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\Public\LogisticaPublicoController;
 use Illuminate\Support\Facades\Route;
+
+Route::prefix('public/logistica')->group(function () {
+    Route::post('solicitudes', [LogisticaPublicoController::class, 'storeSolicitud']);
+    Route::get('solicitudes/{codigo}', [LogisticaPublicoController::class, 'showSolicitud'])
+        ->where('codigo', 'SOL-[0-9]+');
+    Route::get('galeria', [LogisticaPublicoController::class, 'galeria']);
+});
 
 Route::prefix('inventario')
     ->group(function () {

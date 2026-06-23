@@ -2,18 +2,20 @@
 
 namespace Modules\Incendios\Models;
 
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class Biomasa
  *
- * @property $id
- * @property $created_at
- * @property $updated_at
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  *
- * @package App
- * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin Builder
  */
 class Biomasa extends Model
 {
@@ -56,7 +58,7 @@ class Biomasa extends Model
      * Accessor para asegurar que coordenadas siempre se devuelvan como array
      * Lee el valor crudo de la base de datos y lo convierte
      */
-    public function getCoordenadasAttribute()
+    public function getCoordenadasAttribute(): array
     {
         // Obtener el valor crudo directamente de attributes
         $value = $this->attributes['coordenadas'] ?? null;
@@ -79,10 +81,10 @@ class Biomasa extends Model
                 if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
                     return $decoded;
                 }
-                \Log::warning("Error decodificando coordenadas de biomasa {$this->id}: " . json_last_error_msg());
+                Log::warning("Error decodificando coordenadas de biomasa {$this->id}: " . json_last_error_msg());
                 return [];
-            } catch (\Exception $e) {
-                \Log::error("Exception decodificando coordenadas de biomasa {$this->id}: " . $e->getMessage());
+            } catch (Exception $e) {
+                Log::error("Exception decodificando coordenadas de biomasa {$this->id}: " . $e->getMessage());
                 return [];
             }
         }
@@ -98,7 +100,7 @@ class Biomasa extends Model
     /**
      * Mutator para convertir coordenadas a JSON antes de guardar
      */
-    public function setCoordenadasAttribute($value)
+    public function setCoordenadasAttribute(array|string|null $value): void
     {
         // Si ya es un string JSON, guardarlo directamente
         if (is_string($value)) {
@@ -123,17 +125,17 @@ class Biomasa extends Model
     /**
      * Scopes para filtrar por estado
      */
-    public function scopePendientes($query)
+    public function scopePendientes(Builder $query): Builder
     {
         return $query->where('estado', 'pendiente');
     }
     
-    public function scopeAprobadas($query)
+    public function scopeAprobadas(Builder $query): Builder
     {
         return $query->where('estado', 'aprobada');
     }
     
-    public function scopeRechazadas($query)
+    public function scopeRechazadas(Builder $query): Builder
     {
         return $query->where('estado', 'rechazada');
     }
