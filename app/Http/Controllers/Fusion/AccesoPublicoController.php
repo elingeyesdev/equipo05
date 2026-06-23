@@ -152,12 +152,15 @@ class AccesoPublicoController extends Controller
             'nombre_reportante' => 'required|string|max:200',
             'telefono_contacto' => 'nullable|string|max:20',
             'nombre_lugar' => 'nullable|string|max:200',
-            'latitud' => 'required|numeric|between:-90,90',
-            'longitud' => 'required|numeric|between:-180,180',
+            'latitud' => 'required|numeric|between:-90,90|not_in:0',
+            'longitud' => 'required|numeric|between:-180,180|not_in:0',
             'tipo_incidente_id' => 'nullable|integer',
             'gravedad_id' => 'nullable|integer',
             'comentario_adicional' => 'nullable|string',
         ]);
+
+        $latitud = (float) $request->input('latitud');
+        $longitud = (float) $request->input('longitud');
 
         $estadoPendiente = DB::connection('cuadrillas')
             ->table('estado_sistema')
@@ -170,8 +173,8 @@ class AccesoPublicoController extends Controller
             'telefono_contacto' => $request->telefono_contacto,
             'fecha_hora' => now(),
             'nombre_lugar' => $request->nombre_lugar,
-            'latitud' => $request->latitud,
-            'longitud' => $request->longitud,
+            'latitud' => $latitud,
+            'longitud' => $longitud,
             'tipo_incidente_id' => $request->tipo_incidente_id,
             'gravedad_id' => $request->gravedad_id,
             'comentario_adicional' => $request->comentario_adicional,
@@ -184,11 +187,13 @@ class AccesoPublicoController extends Controller
             'updated_at' => now(),
         ], 'id_reporte');
 
-        if ($request->wantsJson() || $request->ajax()) {
+        if ($request->expectsJson() || $request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Reporte enviado exitosamente.',
                 'id' => $idReporte,
+                'latitud' => $latitud,
+                'longitud' => $longitud,
             ], 201);
         }
 
@@ -265,6 +270,10 @@ class AccesoPublicoController extends Controller
                 ])
                 ->whereNotNull('reporte.latitud')
                 ->whereNotNull('reporte.longitud')
+                ->where('reporte.latitud', '!=', 0)
+                ->where('reporte.longitud', '!=', 0)
+                ->orderByDesc('reporte.fecha_hora')
+                ->orderByDesc('reporte.id_reporte')
                 ->get()
                 ->map(function ($reporte) {
                     return [
