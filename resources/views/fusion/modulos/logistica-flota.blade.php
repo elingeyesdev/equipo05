@@ -31,103 +31,118 @@
 </div>
 
 @if($tab === 'conductores')
-<div class="card logistica-list-card shadow-sm">
-    <div class="card-header logistica-crud-header d-flex justify-content-between align-items-center flex-wrap">
-        <div>
-            <strong>Conductores</strong>
-            <p class="mb-0 small text-muted">Personal asignado a rutas y entregas.</p>
-        </div>
-        <a href="{{ route('logistica.crud.create', ['seccion' => 'conductor']) }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> Nuevo conductor
-        </a>
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <div>
+        <h5 class="mb-0">Conductores</h5>
+        <small class="text-muted">Contacto directo para coordinar entregas.</small>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-sm logistica-tabla-operativa logistica-flota-table mb-0">
-                <thead>
-                    <tr>
-                        <th class="col-ref">#</th>
-                        <th>Nombre completo</th>
-                        <th>Apellido</th>
-                        <th class="col-acciones text-right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($conductores as $index => $conductor)
-                    <tr>
-                        <td class="col-ref text-muted">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</td>
-                        <td><strong>{{ $conductor->nombre ?? '—' }}</strong></td>
-                        <td>{{ $conductor->apellido ?? '—' }}</td>
-                        <td class="col-acciones text-right">
-                            <a href="{{ route('logistica.crud.edit', ['seccion' => 'conductor', 'id' => $conductor->id_conductor]) }}" class="btn btn-outline-primary btn-sm" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="4" class="text-muted text-center py-5">No hay conductores registrados. Agregue uno para asignar entregas.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <a href="{{ route('logistica.crud.create', ['seccion' => 'conductor']) }}" class="btn btn-primary btn-sm mt-2 mt-md-0">
+        <i class="fas fa-plus"></i> Nuevo conductor
+    </a>
 </div>
+
+@if($conductores->isEmpty())
+    <div class="alert alert-light border text-center py-5">
+        <i class="fas fa-user-plus fa-2x text-muted mb-2 d-block"></i>
+        No hay conductores registrados. Agregue nombre, CI y teléfono para asignar rutas.
+    </div>
 @else
-<div class="card logistica-list-card shadow-sm">
-    <div class="card-header logistica-crud-header d-flex justify-content-between align-items-center flex-wrap">
-        <div>
-            <strong>Vehículos</strong>
-            <p class="mb-0 small text-muted">Unidades de transporte para despacho de paquetes.</p>
-        </div>
-        <a href="{{ route('logistica.crud.create', ['seccion' => 'vehiculo']) }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i> Nuevo vehículo
-        </a>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-sm logistica-tabla-operativa logistica-flota-table mb-0">
-                <thead>
-                    <tr>
-                        <th class="col-ref">#</th>
-                        <th>Placa</th>
-                        @if($vehiculoTieneModelo)
-                        <th>Modelo</th>
+<div class="row">
+    @foreach($conductores as $conductor)
+        @php
+            $nombre = trim(($conductor->nombre ?? '') . ' ' . ($conductor->apellido ?? ''));
+            $inicial = strtoupper(substr($conductor->nombre ?? 'C', 0, 1));
+            $telefono = preg_replace('/\s+/', '', (string) ($conductor->telefono ?? ''));
+        @endphp
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card logistica-conductor-card h-100 shadow-sm">
+                <div class="card-body d-flex">
+                    <div class="logistica-avatar mr-3">{{ $inicial }}</div>
+                    <div class="flex-grow-1 min-w-0">
+                        <h6 class="mb-1 text-truncate">{{ $nombre ?: 'Sin nombre' }}</h6>
+                        @if(!empty($conductor->ci))
+                            <span class="badge badge-light border mb-2">CI {{ $conductor->ci }}</span>
                         @endif
-                        @if($vehiculoTieneCapacidad)
-                        <th>Capacidad</th>
-                        @endif
-                        <th class="col-acciones text-right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($vehiculos as $index => $vehiculo)
-                    <tr>
-                        <td class="col-ref text-muted">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</td>
-                        <td><span class="badge badge-light border font-weight-bold">{{ $vehiculo->placa ?? 'SIN PLACA' }}</span></td>
-                        @if($vehiculoTieneModelo)
-                        <td>{{ $vehiculo->modelo ?? '—' }}</td>
-                        @endif
-                        @if($vehiculoTieneCapacidad)
-                        <td>{{ $vehiculo->capacidad ?? '—' }}</td>
-                        @endif
-                        <td class="col-acciones text-right">
-                            <a href="{{ route('logistica.crud.edit', ['seccion' => 'vehiculo', 'id' => $vehiculo->id_vehiculo]) }}" class="btn btn-outline-primary btn-sm" title="Editar">
-                                <i class="fas fa-edit"></i>
+                        @if($telefono !== '')
+                            <a href="tel:{{ $telefono }}" class="btn btn-success btn-sm btn-block mb-2">
+                                <i class="fas fa-phone-alt mr-1"></i> {{ $conductor->telefono }}
                             </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="5" class="text-muted text-center py-5">No hay vehículos registrados. Agregue la flota disponible.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+                        @else
+                            <p class="small text-muted mb-2"><i class="fas fa-phone-slash"></i> Sin teléfono</p>
+                        @endif
+                        @if(!empty($conductor->email))
+                            <p class="small text-muted mb-0 text-truncate"><i class="fas fa-envelope mr-1"></i>{{ $conductor->email }}</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-right py-2">
+                    <a href="{{ route('logistica.crud.edit', ['seccion' => 'conductor', 'id' => $conductor->id_conductor]) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+    @endforeach
 </div>
 @endif
 
-<p class="small text-muted mt-3 mb-0">
-    Marcas, tipos y licencias se configuran en
-    <a href="{{ route('logistica.configuracion') }}">Configuración → Flota</a>.
+@else
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <div>
+        <h5 class="mb-0">Vehículos</h5>
+        <small class="text-muted">Unidades registradas con marca, tipo y capacidad.</small>
+    </div>
+    <a href="{{ route('logistica.crud.create', ['seccion' => 'vehiculo']) }}" class="btn btn-primary btn-sm mt-2 mt-md-0">
+        <i class="fas fa-plus"></i> Nuevo vehículo
+    </a>
+</div>
+
+@if($vehiculos->isEmpty())
+    <div class="alert alert-light border text-center py-5">
+        <i class="fas fa-truck fa-2x text-muted mb-2 d-block"></i>
+        No hay vehículos registrados. Indique placa, marca, modelo y capacidad de carga.
+    </div>
+@else
+<div class="row">
+    @foreach($vehiculos as $vehiculo)
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card logistica-vehiculo-card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="logistica-placa-badge">{{ $vehiculo->placa ?? 'SIN PLACA' }}</span>
+                        @if(!empty($vehiculo->anio))
+                            <span class="badge badge-secondary">{{ $vehiculo->anio }}</span>
+                        @endif
+                    </div>
+                    <h6 class="mb-1">{{ $vehiculo->modelo ?? 'Modelo no indicado' }}</h6>
+                    <p class="small text-muted mb-2">
+                        @if(!empty($vehiculo->marca_nombre))
+                            <i class="fas fa-industry mr-1"></i>{{ $vehiculo->marca_nombre }}
+                        @endif
+                        @if(!empty($vehiculo->tipo_nombre))
+                            · {{ $vehiculo->tipo_nombre }}
+                        @endif
+                    </p>
+                    @if(!empty($vehiculo->capacidad))
+                        <p class="mb-0 small"><i class="fas fa-weight-hanging mr-1 text-primary"></i> Capacidad: <strong>{{ $vehiculo->capacidad }}</strong></p>
+                    @endif
+                    @if(!empty($vehiculo->observaciones))
+                        <p class="mb-0 small text-muted mt-2">{{ $vehiculo->observaciones }}</p>
+                    @endif
+                </div>
+                <div class="card-footer bg-white text-right py-2">
+                    <a href="{{ route('logistica.crud.edit', ['seccion' => 'vehiculo', 'id' => $vehiculo->id_vehiculo]) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+@endif
+@endif
+
+<p class="small text-muted mt-2 mb-0">
+    Catálogos de <a href="{{ route('logistica.marca') }}">marcas</a> y <a href="{{ route('logistica.tipo-vehiculo') }}">tipos</a> en Configuración.
 </p>
 @endsection

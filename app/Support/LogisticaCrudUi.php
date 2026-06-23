@@ -29,6 +29,10 @@ class LogisticaCrudUi
         'capacidad' => 'Capacidad de carga',
         'id_marca' => 'Marca',
         'id_tipovehiculo' => 'Tipo de vehículo',
+        'id_tipo_vehiculo' => 'Tipo de vehículo',
+        'anio' => 'Año de fabricación',
+        'observaciones' => 'Observaciones',
+        'id_licencia' => 'Tipo de licencia',
         'nombre' => 'Nombre',
         'apellido' => 'Apellido',
         'ci' => 'Cédula de identidad',
@@ -66,8 +70,8 @@ class LogisticaCrudUi
             'codigo', 'estado_id', 'id_solicitud',
             'ubicacion_actual', 'fecha_creacion', 'fecha_entrega',
         ],
-        'vehiculo' => ['placa', 'modelo', 'capacidad', 'id_marca', 'id_tipovehiculo'],
-        'conductor' => ['nombre', 'apellido', 'ci', 'telefono', 'id_licencia'],
+        'vehiculo' => ['placa', 'id_marca', 'id_tipovehiculo', 'id_tipo_vehiculo', 'modelo', 'anio', 'capacidad', 'observaciones'],
+        'conductor' => ['nombre', 'apellido', 'ci', 'telefono', 'email', 'id_licencia'],
         'seguimiento' => ['id_paquete', 'estado', 'fecha_actualizacion', 'vehiculo_placa', 'conductor_nombre', 'conductor_ci'],
     ];
 
@@ -105,8 +109,12 @@ class LogisticaCrudUi
 
     public static function colClass(string $seccion, string $column): string
     {
-        if (in_array($column, ['insumos_necesarios', 'descripcion', 'contenido', 'observacion'], true)) {
+        if (in_array($column, ['insumos_necesarios', 'descripcion', 'contenido', 'observacion', 'observaciones'], true)) {
             return 'col-12';
+        }
+
+        if ($column === 'placa') {
+            return 'col-md-3 col-sm-6';
         }
 
         if ($seccion === 'solicitud' && $column === 'codigo_seguimiento') {
@@ -139,6 +147,16 @@ class LogisticaCrudUi
             'paquete' => match ($column) {
                 'codigo', 'estado_id', 'id_solicitud' => 'Identificación',
                 'ubicacion_actual', 'fecha_creacion', 'fecha_entrega' => 'Seguimiento operativo',
+                default => null,
+            },
+            'vehiculo' => match ($column) {
+                'placa', 'id_marca', 'id_tipovehiculo', 'id_tipo_vehiculo' => 'Datos del vehículo',
+                'modelo', 'anio', 'capacidad', 'observaciones' => 'Detalle operativo',
+                default => null,
+            },
+            'conductor' => match ($column) {
+                'nombre', 'apellido', 'ci' => 'Identificación',
+                'telefono', 'email', 'id_licencia' => 'Contacto y licencia',
                 default => null,
             },
             default => null,

@@ -33,7 +33,10 @@
         </div>
 
         <div class="card-body">
-            <form method="POST" action="{{ $registro ? route('logistica.crud.update', ['seccion' => $seccion, 'id' => data_get($registro, $primaryKey)]) : route('logistica.crud.store', ['seccion' => $seccion]) }}" class="logistica-crud-form">
+            <form method="POST"
+                  action="{{ $registro ? route('logistica.crud.update', ['seccion' => $seccion, 'id' => data_get($registro, $primaryKey)]) : route('logistica.crud.store', ['seccion' => $seccion]) }}"
+                  class="logistica-crud-form"
+                  @if($seccion === 'paquete') enctype="multipart/form-data" @endif>
                 @csrf
                 @if($registro)
                     @method('PUT')
@@ -119,8 +122,8 @@
                         @elseif(str_contains($column, 'descripcion') || str_contains($column, 'contenido') || str_contains($column, 'insumo') || str_contains($column, 'observacion'))
                             <textarea name="{{ $column }}" id="field-{{ $seccion }}-{{ $column }}" rows="3" class="form-control" placeholder="{{ $placeholder }}">{{ $value }}</textarea>
 
-                        @elseif(str_contains($column, 'cantidad') || str_contains($column, 'capacidad') || str_contains($column, 'puntaje') || str_contains($column, 'nota'))
-                            <input type="number" name="{{ $column }}" id="field-{{ $seccion }}-{{ $column }}" class="form-control" value="{{ $value }}" placeholder="{{ $placeholder }}" min="0">
+                        @elseif(str_contains($column, 'cantidad') || str_contains($column, 'capacidad') || str_contains($column, 'puntaje') || str_contains($column, 'nota') || $column === 'anio')
+                            <input type="number" name="{{ $column }}" id="field-{{ $seccion }}-{{ $column }}" class="form-control" value="{{ $value }}" placeholder="{{ $placeholder }}" @if($column === 'anio') min="1980" max="2035" @else min="0" @endif>
 
                         @elseif($column === 'email')
                             <input type="email" name="{{ $column }}" id="field-{{ $seccion }}-{{ $column }}" class="form-control" value="{{ $value }}" placeholder="{{ $placeholder }}">
@@ -133,6 +136,22 @@
                         @endif
                     </div>
                 @endforeach
+
+                @if($seccion === 'paquete')
+                    <div class="col-12 mb-3" id="foto-entrega">
+                        <h6 class="logistica-form-section-title">Foto de entrega (galería pública)</h6>
+                        <p class="small text-muted mb-2">Suba una foto del paquete entregado en la comunidad. Aparecerá en la galería de la app y del acceso ciudadano.</p>
+                        @if($tieneFotoEntrega ?? false)
+                            <div class="logistica-foto-preview mb-3">
+                                <img src="data:image/jpeg;base64,{{ base64_encode($registro->imagen) }}" alt="Foto actual" class="img-fluid rounded border">
+                                <small class="d-block text-success mt-1"><i class="fas fa-check-circle"></i> Este paquete ya tiene foto en galería.</small>
+                            </div>
+                        @endif
+                        <label class="logistica-form-label" for="foto-entrega-input">Seleccionar imagen</label>
+                        <input type="file" name="foto_entrega" id="foto-entrega-input" class="form-control-file" accept="image/jpeg,image/png,image/webp">
+                        <small class="text-muted">Formatos: JPG, PNG o WebP. Máximo recomendado 5 MB.</small>
+                    </div>
+                @endif
                 </div>
 
                 <div class="logistica-crud-footer d-flex flex-wrap justify-content-between align-items-center pt-3 mt-2 border-top">

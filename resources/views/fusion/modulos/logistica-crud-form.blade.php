@@ -13,5 +13,6 @@
     'columns' => $columns,
     'options' => $options,
     'registro' => $registro,
+    'tieneFotoEntrega' => $tieneFotoEntrega ?? false,
 ])
 @endsection

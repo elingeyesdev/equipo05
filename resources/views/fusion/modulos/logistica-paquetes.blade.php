@@ -23,9 +23,11 @@
             <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="armado">En almacén</button>
             <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="camino">En tránsito</button>
             <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="entregado">Entregados</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="galeria">Con foto (galería)</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm btn-paquete-filter" data-filter="galeria">Con foto de entrega</button>
         </div>
-        <p class="logistica-scroll-hint"><i class="fas fa-arrows-alt-h mr-1"></i> Desliza horizontalmente para ver todas las columnas.</p>
+        <p class="logistica-scroll-hint mb-0">
+            <i class="fas fa-camera mr-1"></i> Para publicar en galería: edite un paquete entregado y suba la foto en «Foto de entrega».
+        </p>
     </div>
     <div class="card-body p-0 pt-0">
         <div class="table-responsive logistica-tabla-scroll">
@@ -79,6 +81,9 @@
                                         <i class="fas fa-map-marked-alt"></i>
                                     </a>
                                     @endif
+                                    <a href="{{ route('logistica.crud.edit', ['seccion' => 'paquete', 'id' => $paquete['id_paquete']]) }}#foto-entrega" class="btn btn-outline-success btn-sm" title="Subir foto de entrega">
+                                        <i class="fas fa-camera"></i>
+                                    </a>
                                     <a href="{{ route('logistica.crud.edit', ['seccion' => 'paquete', 'id' => $paquete['id_paquete']]) }}" class="btn btn-outline-warning btn-sm" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
