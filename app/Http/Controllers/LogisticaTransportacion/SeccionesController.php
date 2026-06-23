@@ -377,23 +377,47 @@ class SeccionesController extends Controller
             ->where('codigo_seguimiento', 'like', 'LOG-DEMO-%')
             ->count();
         $vistaIntegrada = AccessControl::vistaIntegradaModulos(auth()->user());
+        $filtroInicial = request()->query('filtro');
 
-        return view('fusion.modulos.logistica-solicitudes', compact('solicitudes', 'totalDemoOcultos', 'vistaIntegrada'));
+        return view('fusion.modulos.logistica-solicitudes', compact('solicitudes', 'totalDemoOcultos', 'vistaIntegrada', 'filtroInicial'));
     }
 
     public function paquetes(): View
     {
         $paquetes = LogisticaOperativa::paquetesOperativos();
         $vistaIntegrada = AccessControl::vistaIntegradaModulos(auth()->user());
+        $filtroInicial = request()->query('filtro');
 
-        return view('fusion.modulos.logistica-paquetes', compact('paquetes', 'vistaIntegrada'));
+        return view('fusion.modulos.logistica-paquetes', compact('paquetes', 'vistaIntegrada', 'filtroInicial'));
     }
 
-    public function seguimiento(): View
+    public function flota(): View
     {
-        $seguimientos = LogisticaOperativa::seguimientosOperativos();
+        $conn = DB::connection('logistica');
+        $schema = Schema::connection('logistica');
 
-        return view('fusion.modulos.logistica-seguimiento', compact('seguimientos'));
+        $vehiculos = $schema->hasTable('vehiculo')
+            ? $conn->table('vehiculo')->orderByDesc('updated_at')->limit(100)->get()
+            : collect();
+
+        $conductores = $schema->hasTable('conductor')
+            ? $conn->table('conductor')->orderBy('nombre')->limit(100)->get()
+            : collect();
+
+        $vehiculoTieneModelo = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'modelo');
+        $vehiculoTieneCapacidad = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'capacidad');
+
+        return view('fusion.modulos.logistica-flota', compact(
+            'vehiculos',
+            'conductores',
+            'vehiculoTieneModelo',
+            'vehiculoTieneCapacidad'
+        ));
+    }
+
+    public function configuracion(): View
+    {
+        return view('fusion.modulos.logistica-configuracion');
     }
 
     public function mapa(): View

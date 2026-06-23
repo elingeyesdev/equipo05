@@ -71,7 +71,7 @@
                         <td class="col-acciones">
                             <span class="logistica-row-actions">
                                 @if($row['paquete_logistica_id'] ?? false)
-                                <a href="{{ route('logistica.seguimiento.tracking', ['id' => $row['paquete_logistica_id']]) }}" class="btn btn-outline-info btn-sm" title="Ver mapa">
+                                <a href="{{ route('logistica.paquete.ficha', ['id' => $row['paquete_logistica_id']]) }}" class="btn btn-outline-info btn-sm" title="Ver paquete">
                                     <i class="fas fa-map-marked-alt"></i>
                                 </a>
                                 @endif

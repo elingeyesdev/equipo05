@@ -2,10 +2,10 @@
     $items = [
         ['route' => 'logistica.estadisticas', 'patterns' => ['logistica.estadisticas', 'logistica.dashboard'], 'icon' => 'fa-chart-bar', 'label' => 'Estadísticas'],
         ['route' => 'logistica.solicitud', 'patterns' => ['logistica.solicitud', 'logistica.solicitud.*'], 'icon' => 'fa-clipboard-list', 'label' => 'Solicitudes'],
-        ['route' => 'logistica.paquete', 'patterns' => ['logistica.paquete'], 'icon' => 'fa-boxes', 'label' => 'Paquetes'],
-        ['route' => 'logistica.seguimiento', 'patterns' => ['logistica.seguimiento', 'logistica.seguimiento.*'], 'icon' => 'fa-route', 'label' => 'Seguimiento'],
+        ['route' => 'logistica.paquete', 'patterns' => ['logistica.paquete', 'logistica.paquete.*', 'logistica.seguimiento.tracking'], 'icon' => 'fa-boxes', 'label' => 'Paquetes'],
+        ['route' => 'logistica.flota', 'patterns' => ['logistica.flota', 'logistica.vehiculo', 'logistica.conductor'], 'icon' => 'fa-truck', 'label' => 'Flota'],
         ['route' => 'logistica.mapa', 'patterns' => ['logistica.mapa'], 'icon' => 'fa-map-marked-alt', 'label' => 'Mapa'],
-        ['route' => 'logistica.vehiculo', 'patterns' => ['logistica.vehiculo'], 'icon' => 'fa-truck', 'label' => 'Vehículos'],
+        ['route' => 'logistica.configuracion', 'patterns' => ['logistica.configuracion', 'logistica.solicitante', 'logistica.destino', 'logistica.ubicacion', 'logistica.marca', 'logistica.tipo-vehiculo', 'logistica.usuario', 'logistica.rol', 'logistica.estado', 'logistica.tipo-emergencia', 'logistica.tipo-licencia', 'logistica.reporte'], 'icon' => 'fa-cog', 'label' => 'Configuración'],
     ];
 @endphp
 

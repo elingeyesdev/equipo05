@@ -7,6 +7,17 @@
 @include('fusion.modulos.partials.logistica-module-nav')
 @include('fusion.modulos.partials.logistica-flash')
 
+@php
+    $seccionesConfig = ['solicitante', 'destino', 'ubicacion', 'marca', 'tipo-vehiculo', 'usuario', 'rol', 'estado', 'tipo-emergencia', 'tipo-licencia', 'reporte'];
+@endphp
+@if(in_array($seccion, $seccionesConfig, true))
+<div class="mb-2">
+    <a href="{{ route('logistica.configuracion') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Volver a configuración
+    </a>
+</div>
+@endif
+
 <div class="card logistica-list-card shadow-sm">
     <div class="card-header">
         <div class="logistica-btn-toolbar w-100">
