@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Usuario;
+use Spatie\Permission\Models\Role;
 
 /**
  * Catálogo central de roles, permisos y reglas de acceso entre módulos.
@@ -10,6 +11,9 @@ use App\Models\Usuario;
 class AccessControl
 {
     public const GUARD = 'web';
+
+    /** Roles asignados al registrarse desde el login público (usuario común). */
+    public const PUBLIC_COMMUNITY_ROLES = ['Ciudadano', 'Donante'];
 
     /** @var list<string> */
     public const FINAL_ROLES = [
@@ -350,9 +354,64 @@ class AccessControl
         $user->syncRoles([$canonical]);
     }
 
+    public static function syncPublicCommunityRoles(Usuario $user): void
+    {
+        foreach (self::PUBLIC_COMMUNITY_ROLES as $roleName) {
+            Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => self::GUARD,
+            ]);
+        }
+
+        $user->syncRoles(self::PUBLIC_COMMUNITY_ROLES);
+    }
+
+    public static function isPublicCommunityUser(?Usuario $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        $userRoles = $user->getRoleNames()
+            ->map(fn ($role) => self::normalizeLegacyRole($role))
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($userRoles->isEmpty()) {
+            return false;
+        }
+
+        $staffRoles = array_values(array_filter(
+            self::FINAL_ROLES,
+            fn ($role) => ! in_array($role, self::PUBLIC_COMMUNITY_ROLES, true)
+        ));
+
+        foreach ($staffRoles as $staffRole) {
+            if ($userRoles->contains($staffRole)) {
+                return false;
+            }
+        }
+
+        return $userRoles->every(
+            fn ($role) => in_array($role, self::PUBLIC_COMMUNITY_ROLES, true)
+        );
+    }
+
     public static function userCanAccessModule(?Usuario $user, string $module): bool
     {
         if (! $user) {
+            return false;
+        }
+
+        if (self::isPublicCommunityUser($user)) {
+            $allowed = self::MODULE_ACCESS_ROLES[$module] ?? [];
+            foreach (self::PUBLIC_COMMUNITY_ROLES as $role) {
+                if (self::userHasRole($user, $role) && in_array($role, $allowed, true)) {
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -590,6 +649,10 @@ class AccessControl
 
     public static function redirectPathFor(Usuario $user): string
     {
+        if (self::isPublicCommunityUser($user)) {
+            return route('incendios.dashboard');
+        }
+
         $role = $user->getRoleNames()->first();
 
         return match ($role) {
@@ -611,6 +674,13 @@ class AccessControl
     {
         if (! $user) {
             return false;
+        }
+
+        if (self::isPublicCommunityUser($user)) {
+            return match ($module) {
+                'incendios_ciudadano', 'inventario_donante', 'rescate' => true,
+                default => false,
+            };
         }
 
         $role = $user->getRoleNames()->first();

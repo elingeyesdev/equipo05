@@ -66,6 +66,25 @@ body.login-page.platform-login .btn-primary:focus {
     border-color: #0f766e;
 }
 
+body.login-page.platform-login .btn-outline-primary {
+    border-radius: 0.65rem;
+    font-weight: 700;
+    border-width: 2px;
+    color: #0d9488;
+    border-color: #0d9488;
+}
+
+body.login-page.platform-login .btn-outline-primary:hover,
+body.login-page.platform-login .btn-outline-primary:focus {
+    background: #0d9488;
+    border-color: #0d9488;
+    color: #ffffff;
+}
+
+body.login-page.platform-login .login-register-cta {
+    border-color: #e2e8f0 !important;
+}
+
 body.login-page.platform-login .form-control {
     border-radius: 0.65rem;
     border: 2px solid #e2e8f0;

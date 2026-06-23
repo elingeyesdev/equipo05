@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 // =========================================================================
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
 // Controladores Principales
 use App\Http\Controllers\{
@@ -58,6 +59,8 @@ use App\Http\Controllers\Fusion\AccesoPublicoController;
 */
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
 // Accesos públicos previos al login para módulos con flujo invitado.
 Route::get('/publico/logistica/solicitar-ayuda', [AccesoPublicoController::class, 'logisticaSolicitud'])

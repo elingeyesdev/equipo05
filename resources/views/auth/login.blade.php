@@ -72,6 +72,16 @@
                                 </div>
                             </div>
                         </form>
+
+                        <div class="login-register-cta mt-3 pt-3 border-top">
+                            <p class="small text-muted text-center mb-2">¿Eres ciudadano y aún no tienes cuenta?</p>
+                            <a href="{{ route('register') }}" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-user-plus mr-1"></i> Crear cuenta
+                            </a>
+                            <p class="small text-muted text-center mb-0 mt-2">
+                                Reportar incendios, donar y ver solo tus datos.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
