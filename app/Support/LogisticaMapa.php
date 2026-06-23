@@ -131,6 +131,14 @@ class LogisticaMapa
         $destLat = is_numeric($paquete->destino_latitud ?? null) ? (float) $paquete->destino_latitud : null;
         $destLng = is_numeric($paquete->destino_longitud ?? null) ? (float) $paquete->destino_longitud : null;
 
+        if (! self::coordValida($destLat, $destLng)) {
+            $resuelto = ComunidadCoords::resolver($paquete->comunidad ?? null);
+            if ($resuelto !== null) {
+                $destLat = $resuelto['lat'];
+                $destLng = $resuelto['lng'];
+            }
+        }
+
         $historial = collect();
         $schema = Schema::connection('logistica');
         if ($schema->hasTable('historial_seguimiento_donaciones')) {
@@ -157,15 +165,109 @@ class LogisticaMapa
 
         $points = self::construirPuntosRecorrido($historial, $paquete, $destLat, $destLng);
         $waypoints = self::waypointsCompletos($points, $destLat, $destLng);
+        $posicionActual = self::resolverPosicionActual($paquete, $historial, $waypoints, $destLat, $destLng);
 
         return [
             'paquete' => $paquete,
             'historial' => $historial,
             'points' => $points,
             'waypoints' => $waypoints,
+            'posicion_actual' => $posicionActual,
             'origen' => ['lat' => self::ORIGEN_LAT, 'lng' => self::ORIGEN_LNG, 'label' => 'Almacén central'],
-            'destino' => ['lat' => $destLat, 'lng' => $destLng],
+            'destino' => [
+                'lat' => $destLat,
+                'lng' => $destLng,
+                'comunidad' => $paquete->comunidad ?? null,
+            ],
         ];
+    }
+
+    /** @return array<string, mixed>|null */
+    public static function resolverPosicionActual(
+        object $paquete,
+        Collection $historial,
+        array $waypoints,
+        ?float $destLat,
+        ?float $destLng
+    ): ?array {
+        foreach ($historial->sortByDesc('fecha_actualizacion') as $h) {
+            $lat = isset($h->ub_lat) && is_numeric($h->ub_lat) ? (float) $h->ub_lat : null;
+            $lng = isset($h->ub_lng) && is_numeric($h->ub_lng) ? (float) $h->ub_lng : null;
+            if (self::coordValida($lat, $lng)) {
+                return [
+                    'lat' => $lat,
+                    'lng' => $lng,
+                    'zona' => $h->ub_zona ?? $h->estado ?? 'Ubicación reportada',
+                    'fecha' => $h->fecha_actualizacion ?? null,
+                    'estado' => $h->estado ?? null,
+                    'fuente' => 'historial',
+                ];
+            }
+        }
+
+        $ubicacionActual = (string) ($paquete->ubicacion_actual ?? '');
+        if (preg_match('/\(([-0-9.]+),\s*([-0-9.]+)\)/', $ubicacionActual, $m)) {
+            $lat = (float) $m[1];
+            $lng = (float) $m[2];
+            if (self::coordValida($lat, $lng)) {
+                return [
+                    'lat' => $lat,
+                    'lng' => $lng,
+                    'zona' => $ubicacionActual,
+                    'fecha' => $paquete->updated_at ?? null,
+                    'estado' => $paquete->nombre_estado ?? null,
+                    'fuente' => 'ubicacion_actual',
+                ];
+            }
+        }
+
+        if (! empty($paquete->fecha_entrega) && self::coordValida($destLat, $destLng)) {
+            return [
+                'lat' => $destLat,
+                'lng' => $destLng,
+                'zona' => 'Entregado en destino',
+                'fecha' => $paquete->fecha_entrega,
+                'estado' => 'entregado',
+                'fuente' => 'destino',
+            ];
+        }
+
+        $estado = strtolower((string) ($paquete->nombre_estado ?? ''));
+        $enTransito = str_contains($estado, 'transit') || str_contains($estado, 'tráns')
+            || str_contains($estado, 'ruta') || str_contains($estado, 'camino');
+
+        if ($enTransito && self::coordValida($destLat, $destLng)) {
+            $avances = max(1, $historial->count());
+            $progreso = min(0.9, 0.12 * $avances + 0.18);
+            $lat = self::ORIGEN_LAT + ($destLat - self::ORIGEN_LAT) * $progreso;
+            $lng = self::ORIGEN_LNG + ($destLng - self::ORIGEN_LNG) * $progreso;
+
+            return [
+                'lat' => $lat,
+                'lng' => $lng,
+                'zona' => $paquete->ubicacion_actual ?: 'En tránsito hacia destino',
+                'fecha' => $paquete->updated_at ?? now()->toDateTimeString(),
+                'estado' => $paquete->nombre_estado ?? 'en_transito',
+                'fuente' => 'estimada',
+            ];
+        }
+
+        if (count($waypoints) >= 2) {
+            $ultimo = $waypoints[count($waypoints) - 1];
+            $tipo = $ultimo['tipo'] ?? 'paso';
+            if ($tipo !== 'origen' && self::coordValida((float) $ultimo['lat'], (float) $ultimo['lng'])) {
+                return [
+                    'lat' => (float) $ultimo['lat'],
+                    'lng' => (float) $ultimo['lng'],
+                    'zona' => $ultimo['zona'] ?? 'Último punto conocido',
+                    'fecha' => $ultimo['fecha'] ?? null,
+                    'estado' => $paquete->nombre_estado ?? null,
+                    'fuente' => 'ruta',
+                ];
+            }
+        }
+
+        return null;
     }
 
     /**

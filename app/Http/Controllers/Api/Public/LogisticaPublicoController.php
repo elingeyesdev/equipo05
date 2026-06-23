@@ -189,6 +189,8 @@ class LogisticaPublicoController extends Controller
         $destLat = $datos['destino']['lat'];
         $destLng = $datos['destino']['lng'];
         $comunidad = $paquete->comunidad ?? null;
+        $posicion = $datos['posicion_actual'] ?? null;
+        $historial = $datos['historial'] ?? collect();
 
         return response()->json([
             'success' => true,
@@ -196,6 +198,8 @@ class LogisticaPublicoController extends Controller
                 'id_paquete' => (int) $paquete->id_paquete,
                 'codigo' => $paquete->codigo_seguimiento ?? $paquete->codigo ?? $codigo,
                 'estado' => $paquete->nombre_estado ?? null,
+                'entregado' => ! empty($paquete->fecha_entrega),
+                'actualizado_en' => $paquete->updated_at ?? now()->toIso8601String(),
                 'comunidad_destino' => $comunidad,
                 'provincia_destino' => $paquete->provincia ?? null,
                 'origen' => [
@@ -210,6 +214,28 @@ class LogisticaPublicoController extends Controller
                     'provincia' => $paquete->provincia ?? null,
                     'label' => $comunidad ? 'Destino: '.$comunidad : 'Destino final',
                 ],
+                'posicion_actual' => $posicion ? [
+                    'lat' => (float) $posicion['lat'],
+                    'lng' => (float) $posicion['lng'],
+                    'zona' => $posicion['zona'] ?? null,
+                    'fecha' => $posicion['fecha'] ?? null,
+                    'estado' => $posicion['estado'] ?? null,
+                    'fuente' => $posicion['fuente'] ?? null,
+                ] : null,
+                'historial' => $historial->map(function ($h) {
+                    $lat = isset($h->ub_lat) && is_numeric($h->ub_lat) ? (float) $h->ub_lat : null;
+                    $lng = isset($h->ub_lng) && is_numeric($h->ub_lng) ? (float) $h->ub_lng : null;
+
+                    return [
+                        'estado' => $h->estado ?? null,
+                        'fecha' => $h->fecha_actualizacion ?? null,
+                        'lat' => $lat,
+                        'lng' => $lng,
+                        'zona' => $h->ub_zona ?? null,
+                        'conductor' => $h->conductor_nombre ?? null,
+                        'vehiculo' => $h->vehiculo_placa ?? null,
+                    ];
+                })->values()->all(),
                 'waypoints' => collect($datos['waypoints'])->map(fn (array $wp) => [
                     'lat' => (float) $wp['lat'],
                     'lng' => (float) $wp['lng'],
