@@ -246,13 +246,33 @@ class SeccionesController extends Controller
         };
     }
 
-    private function columnsForCrud(string $tabla, string $pk): array
+    private function columnsForCrud(string $tabla, string $pk, string $seccion = ''): array
     {
-        $columns = Schema::connection('logistica')->getColumnListing($tabla);
+        $schema = Schema::connection('logistica');
+        $available = array_values(array_filter(
+            $schema->getColumnListing($tabla),
+            fn ($col) => ! in_array($col, [$pk, 'created_at', 'updated_at'], true)
+        ));
 
-        return array_values(array_filter($columns, function ($col) use ($pk) {
-            return !in_array($col, [$pk, 'created_at', 'updated_at'], true);
-        }));
+        $preferred = LogisticaCrudUi::preferredColumns($seccion);
+        if ($preferred === []) {
+            return $available;
+        }
+
+        $ordered = [];
+        foreach ($preferred as $column) {
+            if (in_array($column, $available, true)) {
+                $ordered[] = $column;
+            }
+        }
+
+        foreach ($available as $column) {
+            if (! in_array($column, $ordered, true)) {
+                $ordered[] = $column;
+            }
+        }
+
+        return $ordered;
     }
 
     private function normalizeCrudColumns(string $seccion, array $columns): array
@@ -337,6 +357,32 @@ class SeccionesController extends Controller
         }
 
         return $query->select('v.*')->orderByDesc('v.updated_at')->limit(100)->get();
+    }
+
+    private function conductoresFlotaEnriquecidos()
+    {
+        $schema = Schema::connection('logistica');
+        $conn = DB::connection('logistica');
+
+        if (! $schema->hasTable('conductor')) {
+            return collect();
+        }
+
+        $query = $conn->table('conductor as c');
+
+        if ($schema->hasTable('tipo_licencia') && $schema->hasColumn('conductor', 'id_licencia')) {
+            $licPk = $schema->hasColumn('tipo_licencia', 'id_tipo_licencia') ? 'id_tipo_licencia' : 'id_licencia';
+            $licNombre = $schema->hasColumn('tipo_licencia', 'tipo_licencia')
+                ? 'tl.tipo_licencia'
+                : ($schema->hasColumn('tipo_licencia', 'nombre') ? 'tl.nombre' : null);
+
+            if ($licNombre) {
+                $query->leftJoin('tipo_licencia as tl', 'c.id_licencia', '=', "tl.{$licPk}")
+                    ->addSelect(DB::raw("{$licNombre} as licencia_nombre"));
+            }
+        }
+
+        return $query->select('c.*')->orderBy('c.nombre')->limit(100)->get();
     }
 
     private function normalizeCrudPayload(string $tabla, array $data): array
@@ -482,16 +528,36 @@ class SeccionesController extends Controller
 
     public function flota(): View
     {
-        $conn = DB::connection('logistica');
         $schema = Schema::connection('logistica');
 
         $vehiculos = $this->vehiculosFlotaEnriquecidos();
+        $conductores = $this->conductoresFlotaEnriquecidos();
 
-        $conductores = $schema->hasTable('conductor')
-            ? $conn->table('conductor')->orderBy('nombre')->limit(100)->get()
-            : collect();
+        $vehiculoTieneMarca = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'id_marca');
+        $vehiculoTieneTipo = $schema->hasTable('vehiculo')
+            && ($schema->hasColumn('vehiculo', 'id_tipovehiculo') || $schema->hasColumn('vehiculo', 'id_tipo_vehiculo'));
+        $vehiculoTieneModelo = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'modelo');
+        $vehiculoTieneAnio = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'anio');
+        $vehiculoTieneCapacidad = $schema->hasTable('vehiculo') && $schema->hasColumn('vehiculo', 'capacidad');
 
-        return view('fusion.modulos.logistica-flota', compact('vehiculos', 'conductores'));
+        $conductorTieneCi = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'ci');
+        $conductorTieneTelefono = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'telefono');
+        $conductorTieneEmail = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'email');
+        $conductorTieneLicencia = $schema->hasTable('conductor') && $schema->hasColumn('conductor', 'id_licencia');
+
+        return view('fusion.modulos.logistica-flota', compact(
+            'vehiculos',
+            'conductores',
+            'vehiculoTieneMarca',
+            'vehiculoTieneTipo',
+            'vehiculoTieneModelo',
+            'vehiculoTieneAnio',
+            'vehiculoTieneCapacidad',
+            'conductorTieneCi',
+            'conductorTieneTelefono',
+            'conductorTieneEmail',
+            'conductorTieneLicencia',
+        ));
     }
 
     public function configuracion(): View
@@ -570,7 +636,7 @@ class SeccionesController extends Controller
         abort_unless(isset($secciones[$seccion]), 404);
 
         $config = $secciones[$seccion];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
         $columns = $this->normalizeCrudColumns($seccion, $columns);
         $options = [];
         foreach ($columns as $column) {
@@ -597,7 +663,7 @@ class SeccionesController extends Controller
 
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
         $columns = array_values(array_filter($columns, fn ($column) => $column !== 'imagen'));
         $data = $this->normalizeCrudPayload($tabla, $request->only($columns));
 
@@ -636,7 +702,7 @@ class SeccionesController extends Controller
         abort_unless(isset($secciones[$seccion]), 404);
 
         $config = $secciones[$seccion];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
         $columns = $this->normalizeCrudColumns($seccion, $columns);
         $options = [];
         foreach ($columns as $column) {
@@ -673,7 +739,7 @@ class SeccionesController extends Controller
 
         $config = $secciones[$seccion];
         $tabla = $config['tabla'];
-        $columns = $this->columnsForCrud($config['tabla'], $config['pk']);
+        $columns = $this->columnsForCrud($config['tabla'], $config['pk'], $seccion);
         $columns = array_values(array_filter($columns, fn ($column) => $column !== 'imagen'));
         $data = $this->normalizeCrudPayload($tabla, $request->only($columns));
 

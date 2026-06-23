@@ -86,10 +86,16 @@ class LogisticaCrudUi
         return self::LABELS[$column] ?? ucwords(str_replace('_', ' ', $column));
     }
 
+    /** @return list<string> */
+    public static function preferredColumns(string $seccion): array
+    {
+        return self::COLUMN_ORDER[$seccion] ?? [];
+    }
+
     /** @param  list<string>  $columns */
     public static function orderColumns(string $seccion, array $columns): array
     {
-        $preferred = self::COLUMN_ORDER[$seccion] ?? [];
+        $preferred = self::preferredColumns($seccion);
         $ordered = [];
 
         foreach ($preferred as $column) {

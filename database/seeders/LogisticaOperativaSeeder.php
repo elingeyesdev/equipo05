@@ -11,14 +11,14 @@ class LogisticaOperativaSeeder extends Seeder
 {
     /** @var array<int, array<string, mixed>> */
     private array $conductores = [
-        ['nombre' => 'Ricardo', 'apellido' => 'Cabrera', 'ci' => '5843210'],
-        ['nombre' => 'Mario', 'apellido' => 'Villca', 'ci' => '7123456'],
-        ['nombre' => 'Hugo', 'apellido' => 'Tapia', 'ci' => '6234789'],
-        ['nombre' => 'Javier', 'apellido' => 'Siles', 'ci' => '8012345'],
-        ['nombre' => 'Marcelo', 'apellido' => 'Mercado', 'ci' => '4567890'],
-        ['nombre' => 'Felipe', 'apellido' => 'Rojas', 'ci' => '6987412'],
-        ['nombre' => 'Oscar', 'apellido' => 'Condori', 'ci' => '7456123'],
-        ['nombre' => 'Daniel', 'apellido' => 'Aguilera', 'ci' => '5321987'],
+        ['nombre' => 'Ricardo', 'apellido' => 'Cabrera', 'ci' => '5843210', 'telefono' => '72110001', 'email' => 'ricardo.cabrera@correo.com'],
+        ['nombre' => 'Mario', 'apellido' => 'Villca', 'ci' => '7123456', 'telefono' => '72110002', 'email' => 'mario.villca@correo.com'],
+        ['nombre' => 'Hugo', 'apellido' => 'Tapia', 'ci' => '6234789', 'telefono' => '72110003', 'email' => 'hugo.tapia@correo.com'],
+        ['nombre' => 'Javier', 'apellido' => 'Siles', 'ci' => '8012345', 'telefono' => '72110004', 'email' => 'javier.siles@correo.com'],
+        ['nombre' => 'Marcelo', 'apellido' => 'Mercado', 'ci' => '4567890', 'telefono' => '72110005', 'email' => 'marcelo.mercado@correo.com'],
+        ['nombre' => 'Felipe', 'apellido' => 'Rojas', 'ci' => '6987412', 'telefono' => '72110006', 'email' => 'felipe.rojas@correo.com'],
+        ['nombre' => 'Oscar', 'apellido' => 'Condori', 'ci' => '7456123', 'telefono' => '72110007', 'email' => 'oscar.condori@correo.com'],
+        ['nombre' => 'Daniel', 'apellido' => 'Aguilera', 'ci' => '5321987', 'telefono' => '72110008', 'email' => 'daniel.aguilera@correo.com'],
     ];
 
     /** @var array<int, string> */
@@ -126,33 +126,93 @@ class LogisticaOperativaSeeder extends Seeder
 
     private function asegurarFlota($db): void
     {
-        if (Schema::connection('logistica')->hasTable('vehiculo')) {
-            foreach ($this->placas as $placa) {
-                if ($db->table('vehiculo')->where('placa', $placa)->exists()) {
+        $schema = Schema::connection('logistica');
+
+        if ($schema->hasTable('vehiculo')) {
+            $plantillas = [
+                ['modelo' => 'Toyota Hilux 4x4', 'capacidad' => '3 Ton', 'anio' => 2020],
+                ['modelo' => 'Volvo FMX', 'capacidad' => '12 Ton', 'anio' => 2019],
+                ['modelo' => 'Mercedes Atego', 'capacidad' => '8 Ton', 'anio' => 2018],
+                ['modelo' => 'Nissan Patrol', 'capacidad' => '2 Ton', 'anio' => 2021],
+            ];
+
+            foreach ($this->placas as $i => $placa) {
+                $plantilla = $plantillas[$i % count($plantillas)];
+                $existente = $db->table('vehiculo')->where('placa', $placa)->first();
+
+                if ($existente) {
+                    $update = [];
+                    if ($schema->hasColumn('vehiculo', 'modelo') && empty($existente->modelo)) {
+                        $update['modelo'] = $plantilla['modelo'];
+                    }
+                    if ($schema->hasColumn('vehiculo', 'capacidad') && empty($existente->capacidad)) {
+                        $update['capacidad'] = $plantilla['capacidad'];
+                    }
+                    if ($schema->hasColumn('vehiculo', 'anio') && empty($existente->anio)) {
+                        $update['anio'] = $plantilla['anio'];
+                    }
+                    if ($update !== []) {
+                        $update['updated_at'] = now();
+                        $db->table('vehiculo')->where('id_vehiculo', $existente->id_vehiculo)->update($update);
+                    }
                     continue;
                 }
+
                 $row = ['placa' => $placa, 'created_at' => now(), 'updated_at' => now()];
-                if (Schema::connection('logistica')->hasColumn('vehiculo', 'modelo')) {
-                    $row['modelo'] = ['Toyota Hilux', 'Volvo FMX', 'Mercedes Atego', 'Nissan Patrol'][array_rand([0, 1, 2, 3])];
+                if ($schema->hasColumn('vehiculo', 'modelo')) {
+                    $row['modelo'] = $plantilla['modelo'];
                 }
-                if (Schema::connection('logistica')->hasColumn('vehiculo', 'capacidad')) {
-                    $row['capacidad'] = rand(3, 12).' Ton';
+                if ($schema->hasColumn('vehiculo', 'capacidad')) {
+                    $row['capacidad'] = $plantilla['capacidad'];
+                }
+                if ($schema->hasColumn('vehiculo', 'anio')) {
+                    $row['anio'] = $plantilla['anio'];
                 }
                 $db->table('vehiculo')->insert($row);
             }
         }
 
-        if (Schema::connection('logistica')->hasTable('conductor')) {
+        if ($schema->hasTable('conductor')) {
             foreach ($this->conductores as $c) {
-                if ($db->table('conductor')->where('nombre', $c['nombre'])->where('apellido', $c['apellido'])->exists()) {
+                $existente = $db->table('conductor')
+                    ->where('nombre', $c['nombre'])
+                    ->where('apellido', $c['apellido'])
+                    ->first();
+
+                if ($existente) {
+                    $update = [];
+                    if ($schema->hasColumn('conductor', 'ci') && empty($existente->ci)) {
+                        $update['ci'] = $c['ci'];
+                    }
+                    if ($schema->hasColumn('conductor', 'telefono') && empty($existente->telefono)) {
+                        $update['telefono'] = $c['telefono'];
+                    }
+                    if ($schema->hasColumn('conductor', 'email') && empty($existente->email)) {
+                        $update['email'] = $c['email'];
+                    }
+                    if ($update !== []) {
+                        $update['updated_at'] = now();
+                        $db->table('conductor')->where('id_conductor', $existente->id_conductor)->update($update);
+                    }
                     continue;
                 }
-                $db->table('conductor')->insert([
+
+                $row = [
                     'nombre' => $c['nombre'],
                     'apellido' => $c['apellido'],
                     'created_at' => now(),
                     'updated_at' => now(),
-                ]);
+                ];
+                if ($schema->hasColumn('conductor', 'ci')) {
+                    $row['ci'] = $c['ci'];
+                }
+                if ($schema->hasColumn('conductor', 'telefono')) {
+                    $row['telefono'] = $c['telefono'];
+                }
+                if ($schema->hasColumn('conductor', 'email')) {
+                    $row['email'] = $c['email'];
+                }
+                $db->table('conductor')->insert($row);
             }
         }
     }

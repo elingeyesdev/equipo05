@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS logistica.paquete (
     fecha_creacion      TIMESTAMP(0) WITHOUT TIME ZONE,
     fecha_entrega       TIMESTAMP(0) WITHOUT TIME ZONE,
     estado_id           BIGINT,
+    imagen              BYTEA,
     created_at          TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at          TIMESTAMP(0) WITHOUT TIME ZONE
 );
@@ -92,16 +93,26 @@ CREATE TABLE IF NOT EXISTS logistica.ubicacion (
 );
 
 CREATE TABLE IF NOT EXISTS logistica.vehiculo (
-    id_vehiculo BIGSERIAL PRIMARY KEY,
-    placa       VARCHAR(32),
-    created_at  TIMESTAMP(0) WITHOUT TIME ZONE,
-    updated_at  TIMESTAMP(0) WITHOUT TIME ZONE
+    id_vehiculo     BIGSERIAL PRIMARY KEY,
+    placa           VARCHAR(32),
+    modelo          VARCHAR(120),
+    anio            SMALLINT,
+    capacidad       VARCHAR(64),
+    id_marca        BIGINT,
+    id_tipovehiculo BIGINT,
+    observaciones   VARCHAR(255),
+    created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP(0) WITHOUT TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS logistica.conductor (
     id_conductor BIGSERIAL PRIMARY KEY,
     nombre       VARCHAR(120),
     apellido     VARCHAR(120),
+    ci           VARCHAR(40),
+    telefono     VARCHAR(40),
+    email        VARCHAR(120),
+    id_licencia  BIGINT,
     created_at   TIMESTAMP(0) WITHOUT TIME ZONE,
     updated_at   TIMESTAMP(0) WITHOUT TIME ZONE
 );

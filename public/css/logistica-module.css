@@ -361,43 +361,6 @@ body.module-logistica.platform-ui .logistica-flota-table tbody tr:hover {
     background: #f8fafc;
 }
 
-body.module-logistica.platform-ui .logistica-conductor-card,
-body.module-logistica.platform-ui .logistica-vehiculo-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
-    transition: box-shadow .15s ease, transform .15s ease;
-}
-
-body.module-logistica.platform-ui .logistica-conductor-card:hover,
-body.module-logistica.platform-ui .logistica-vehiculo-card:hover {
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    transform: translateY(-1px);
-}
-
-body.module-logistica.platform-ui .logistica-avatar {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #4f46e5, #0891b2);
-    color: #fff;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-body.module-logistica.platform-ui .logistica-placa-badge {
-    display: inline-block;
-    background: #0f172a;
-    color: #f8fafc;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    padding: 0.35rem 0.65rem;
-    border-radius: 0.35rem;
-    font-size: 0.95rem;
-}
-
 body.module-logistica.platform-ui .logistica-foto-preview img {
     max-height: 220px;
     max-width: 100%;
