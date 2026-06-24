@@ -171,6 +171,8 @@
                                             </div>
                                             @else
                                             <form action="{{ route('rescate.reports.destroy', $report->id) }}" method="POST" class="mb-0 d-flex w-100">
+                                                @csrf
+                                                @method('DELETE')
                                                 <a class="btn btn-primary btn-sm" href="{{ route('rescate.reports.show', $report->id) }}">
                                                     <i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}
                                                 </a>
@@ -190,8 +192,6 @@
                                                 </button>
                                                 @endcanApproveRescateReports
                                                 @canDeleteRescateReports
-                                                @csrf
-                                                @method('DELETE')
                                                 <button type="button" class="btn btn-danger btn-sm js-confirm-delete">
                                                     <i class="fa fa-fw fa-trash"></i> {{ __('Eliminar') }}
                                                 </button>

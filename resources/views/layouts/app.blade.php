@@ -906,6 +906,10 @@
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     @php $sidebarJsVer = file_exists(public_path('js/platform-sidebar-persist.js')) ? filemtime(public_path('js/platform-sidebar-persist.js')) : time(); @endphp
     <script src="{{ asset('js/platform-sidebar-persist.js') }}?v={{ $sidebarJsVer }}"></script>
+    @if(str_contains($bodyModuleClass ?? '', 'module-rescate'))
+        @php $confirmDeleteJsVer = file_exists(public_path('js/confirm-delete.js')) ? filemtime(public_path('js/confirm-delete.js')) : time(); @endphp
+        <script src="{{ asset('js/confirm-delete.js') }}?v={{ $confirmDeleteJsVer }}"></script>
+    @endif
     @yield('js')
     @stack('js')
 
