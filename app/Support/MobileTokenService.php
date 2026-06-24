@@ -4,6 +4,8 @@ namespace App\Support;
 
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -19,9 +21,17 @@ class MobileTokenService
             $user->tokens()->delete();
 
             return $user->createToken('alas-mobile')->plainTextToken;
-        } catch (\Throwable) {
-            return self::issueCacheToken($user);
+        } catch (\Throwable $e) {
+            Log::warning('Sanctum no disponible, token firmado: '.$e->getMessage());
         }
+
+        try {
+            return self::issueCacheToken($user);
+        } catch (\Throwable $e) {
+            Log::warning('Cache token no disponible, token cifrado: '.$e->getMessage());
+        }
+
+        return self::issueEncryptedToken($user);
     }
 
     public static function resolveUser(?string $bearer): ?Usuario
@@ -38,11 +48,11 @@ class MobileTokenService
         }
 
         $userId = Cache::get(self::CACHE_PREFIX.hash('sha256', $bearer));
-        if ($userId === null) {
-            return null;
+        if ($userId !== null) {
+            return Usuario::query()->find($userId);
         }
 
-        return Usuario::query()->find($userId);
+        return self::resolveEncryptedUser($bearer);
     }
 
     public static function revoke(?string $bearer): void
@@ -71,5 +81,31 @@ class MobileTokenService
         );
 
         return $plain;
+    }
+
+    private static function issueEncryptedToken(Usuario $user): string
+    {
+        return Crypt::encryptString(json_encode([
+            'uid' => (int) $user->getKey(),
+            'exp' => now()->addDays(30)->timestamp,
+        ], JSON_THROW_ON_ERROR));
+    }
+
+    private static function resolveEncryptedUser(string $token): ?Usuario
+    {
+        try {
+            $payload = json_decode(Crypt::decryptString($token), true, 512, JSON_THROW_ON_ERROR);
+            if (! is_array($payload)) {
+                return null;
+            }
+            $exp = (int) ($payload['exp'] ?? 0);
+            if ($exp < time()) {
+                return null;
+            }
+
+            return Usuario::query()->find($payload['uid'] ?? 0);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }
