@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('auth/login', [CitizenAuthController::class, 'login']);
 Route::post('auth/register', [CitizenAuthController::class, 'register']);
 
-Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
+Route::middleware('mobile.auth')->prefix('auth')->group(function () {
     Route::get('me', [CitizenAuthController::class, 'me']);
     Route::post('logout', [CitizenAuthController::class, 'logout']);
     Route::get('mis-solicitudes', [CitizenAuthController::class, 'misSolicitudes']);

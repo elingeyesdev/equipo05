@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use App\Support\AccessControl;
+use App\Support\MobileTokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -47,7 +48,7 @@ class CitizenAuthController extends Controller
 
         AccessControl::syncPublicCommunityRoles($user);
 
-        $token = $this->issueMobileToken($user);
+        $token = MobileTokenService::issue($user);
 
         return response()->json([
             'message' => 'Cuenta creada correctamente.',
@@ -78,8 +79,7 @@ class CitizenAuthController extends Controller
             ]);
         }
 
-        $user->tokens()->delete();
-        $token = $this->issueMobileToken($user);
+        $token = MobileTokenService::issue($user);
 
         return response()->json([
             'message' => 'Inicio de sesión correcto.',
@@ -100,7 +100,7 @@ class CitizenAuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()?->currentAccessToken()?->delete();
+        MobileTokenService::revoke($request->bearerToken());
 
         return response()->json([
             'message' => 'Sesión cerrada correctamente.',
@@ -233,6 +233,13 @@ class CitizenAuthController extends Controller
      */
     private function serializeUser(Usuario $user): array
     {
+        $rol = null;
+        try {
+            $rol = $user->primaryRoleName();
+        } catch (\Throwable $e) {
+            Log::warning('No se pudo leer el rol del usuario: '.$e->getMessage());
+        }
+
         return [
             'id' => (int) $user->getKey(),
             'nombre' => $user->nombre,
@@ -240,7 +247,7 @@ class CitizenAuthController extends Controller
             'email' => $user->email,
             'telefono' => $user->telefono,
             'cedula_identidad' => $user->cedula_identidad,
-            'rol' => $user->primaryRoleName(),
+            'rol' => $rol,
         ];
     }
 
@@ -253,31 +260,5 @@ class CitizenAuthController extends Controller
         $digits = preg_replace('/\D+/', '', $ci);
 
         return $digits !== '' ? $digits : $ci;
-    }
-
-    private function issueMobileToken(Usuario $user): string
-    {
-        $this->ensurePersonalAccessTokensTable();
-
-        return $user->createToken('alas-mobile')->plainTextToken;
-    }
-
-    private function ensurePersonalAccessTokensTable(): void
-    {
-        $connection = (new Usuario)->getConnectionName() ?? config('database.default');
-        if (Schema::connection($connection)->hasTable('personal_access_tokens')) {
-            return;
-        }
-
-        Schema::connection($connection)->create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('tokenable');
-            $table->string('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
-        });
     }
 }

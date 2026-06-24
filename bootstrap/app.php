@@ -41,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'logistica.db' => \App\Http\Middleware\UseLogisticaConnection::class,
             'seguimiento.db' => \App\Http\Middleware\UseSeguimientoConnection::class,
             'cuadrillas.db' => \App\Http\Middleware\UseCuadrillasConnection::class,
+            'mobile.auth' => \App\Http\Middleware\AuthenticateMobile::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

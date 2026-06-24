@@ -6,6 +6,8 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use App\Support\AccessControl;
+use App\Support\CoreSanctumSetup;
+use App\Support\UnifiedPostgres;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 use App\Models\PersonalAccessToken;
@@ -34,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        if (UnifiedPostgres::enabled()) {
+            CoreSanctumSetup::ensurePersonalAccessTokensTable();
+        }
 
         // AdminLTE/Bootstrap: evita la vista Tailwind por defecto (SVG gigantes sin estilos Tailwind).
         Paginator::defaultView('pagination::bootstrap-4');
