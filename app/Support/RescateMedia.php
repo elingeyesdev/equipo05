@@ -12,24 +12,19 @@ class RescateMedia
 {
     public static function url(?string $storagePath, string $seed = 'rescate'): string
     {
+        // Siempre priorizar la imagen subida por el usuario (hallazgo, evaluación, etc.).
+        if ($storagePath && Storage::disk('public')->exists($storagePath)) {
+            return self::localMediaUrl($storagePath);
+        }
+
         $publicRelative = AnimalImageCatalog::publicRelativePath($seed);
         if (is_file(public_path($publicRelative))) {
             return self::publicPath($publicRelative);
         }
 
-        if ($storagePath && Storage::disk('public')->exists($storagePath)) {
-            $size = Storage::disk('public')->size($storagePath);
-            if ($size > 15000) {
-                return self::localMediaUrl($storagePath);
-            }
-        }
-
         $speciesStorage = 'animal-files/species-'.AnimalImageCatalog::seedFor($seed).'.jpg';
         if (Storage::disk('public')->exists($speciesStorage)) {
-            $size = Storage::disk('public')->size($speciesStorage);
-            if ($size > 15000) {
-                return self::localMediaUrl($speciesStorage);
-            }
+            return self::localMediaUrl($speciesStorage);
         }
 
         self::ensureSpeciesImage($seed, false);

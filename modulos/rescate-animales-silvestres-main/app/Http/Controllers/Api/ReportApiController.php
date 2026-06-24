@@ -12,7 +12,7 @@ use Modules\Rescate\Http\Requests\ReportRequest;
 use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
 use Modules\Rescate\Services\Report\ReportUrgencyService;
 use App\Models\PersonalAccessToken as CorePersonalAccessToken;
-use App\Models\Usuario;
+use Modules\Rescate\Models\Species;
 
 class ReportApiController extends Controller
 {
@@ -52,10 +52,24 @@ class ReportApiController extends Controller
         }
         $data['aprobado'] = 0;
 
+        // Especie opcional: se refleja en observaciones de forma legible.
+        $especieId = $request->input('especie_id');
+        if ($especieId) {
+            $species = Species::find($especieId);
+            if ($species) {
+                $userObs = trim((string) ($data['observaciones'] ?? ''));
+                $data['observaciones'] = $userObs !== ''
+                    ? 'Especie: '.$species->nombre."\n".$userObs
+                    : 'Especie: '.$species->nombre;
+            }
+        }
 
         // imagen
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('reports', 'public');
+            $file = $request->file('imagen');
+            $extension = $file->guessExtension() ?: 'jpg';
+            $filename = 'report-'.uniqid('', true).'.'.$extension;
+            $path = $file->storeAs('reports', $filename, 'public');
             $data['imagen_url'] = $path;
         }
 

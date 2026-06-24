@@ -40,6 +40,7 @@ class ReportRequest extends FormRequest
             'centro_id' => $isUpdate ? 'nullable' : 'nullable|exists:rescate.centers,id|required_if:traslado_inmediato,1',
             // incendio_id para endpoints externos (API Gateway)
             'incendio_id' => 'nullable|integer',
+            'especie_id' => 'nullable|integer|exists:rescate.species,id',
         ];
 
         if ($isUpdate) {
