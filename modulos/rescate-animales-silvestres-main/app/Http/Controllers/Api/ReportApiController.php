@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Rescate\Http\Requests\ReportRequest;
 use Modules\Rescate\Services\Animal\AnimalTransferTransactionalService;
 use Modules\Rescate\Services\Report\ReportUrgencyService;
+use App\Models\PersonalAccessToken as CorePersonalAccessToken;
+use App\Models\Usuario;
 
 class ReportApiController extends Controller
 {
@@ -39,11 +41,12 @@ class ReportApiController extends Controller
     {
         $data = $request->validated();
 
-        // persona_id del usuario logueado (si está autenticado)
-        // Si no está autenticado (endpoint externo), persona_id será null
+        // persona_id del usuario logueado (rescate Sanctum o token core ciudadano)
         if (Auth::check()) {
             $personId = Person::where('usuario_id', Auth::id())->value('id');
             $data['persona_id'] = $personId;
+        } elseif ($coreUser = $this->resolveCoreCitizen($request)) {
+            $data['persona_id'] = $this->ensurePersonForUsuario($coreUser);
         } else {
             $data['persona_id'] = null;
         }
@@ -132,5 +135,44 @@ class ReportApiController extends Controller
     public function destroy(Report $report)
     {
         //
+    }
+
+    private function resolveCoreCitizen(Request $request): ?Usuario
+    {
+        $plain = $request->bearerToken();
+        if ($plain === null || $plain === '') {
+            return null;
+        }
+
+        $accessToken = CorePersonalAccessToken::findToken($plain);
+        if ($accessToken === null) {
+            return null;
+        }
+
+        $user = $accessToken->tokenable;
+
+        return $user instanceof Usuario ? $user : null;
+    }
+
+    private function ensurePersonForUsuario(Usuario $user): ?int
+    {
+        $existing = Person::where('usuario_id', $user->getKey())->first();
+        if ($existing) {
+            return (int) $existing->id;
+        }
+
+        $ci = preg_replace('/\D+/', '', (string) ($user->cedula_identidad ?? ''));
+        if ($ci === '') {
+            $ci = 'CORE-'.$user->getKey();
+        }
+
+        $person = Person::create([
+            'usuario_id' => $user->getKey(),
+            'nombre' => trim((string) $user->nombre.' '.(string) $user->apellido),
+            'ci' => $ci,
+            'telefono' => $user->telefono,
+        ]);
+
+        return (int) $person->id;
     }
 }
