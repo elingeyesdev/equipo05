@@ -33,14 +33,14 @@ window.OsmPlaceResolver = (function () {
                 return res.json();
             })
             .then(function (data) {
-                const lugar = data.lugar || 'Ubicación no identificada';
+                const lugar = data.zona || data.lugar || 'Zona no identificada';
                 memoryCache.set(key, lugar);
                 pending.delete(key);
                 return lugar;
             })
             .catch(function () {
                 pending.delete(key);
-                const fallback = 'Ubicación no identificada';
+                const fallback = 'Zona no identificada';
                 memoryCache.set(key, fallback);
                 return fallback;
             });
@@ -62,6 +62,7 @@ window.OsmPlaceResolver = (function () {
                 return;
             }
 
+            el.textContent = 'Buscando zona…';
             resolve(lat, lng).then(function (lugar) {
                 el.textContent = lugar;
                 el.classList.remove('osm-place--loading');

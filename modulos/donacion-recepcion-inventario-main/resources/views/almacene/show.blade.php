@@ -51,7 +51,7 @@
                         <span class="osm-place osm-place--loading"
                             data-lat="{{ $almacene->latitud }}"
                             data-lng="{{ $almacene->longitud }}">
-                            Buscando lugar…
+                            Buscando zona…
                         </span>
                     @else
                         Sin registro
@@ -90,7 +90,7 @@
                             <span class="osm-place osm-place--loading"
                                 data-lat="{{ $almacene->latitud }}"
                                 data-lng="{{ $almacene->longitud }}">
-                                Buscando lugar…
+                                Buscando zona…
                             </span>
                         </dd>
                     @endif
@@ -144,11 +144,11 @@
             <div class="text-muted">
                 <i class="fas fa-info-circle"></i>
                 @if($almacene->latitud && $almacene->longitud)
-                    Lugar:
-                    <span class="osm-place osm-place--loading"
+                        Lugar:
+                        <span class="osm-place osm-place--loading"
                         data-lat="{{ $almacene->latitud }}"
                         data-lng="{{ $almacene->longitud }}">
-                        Buscando…
+                        Buscando zona…
                     </span>
                 @else
                     Sin ubicación GPS registrada
@@ -302,7 +302,7 @@
             <div style="text-align: center;">
                 <h6><i class="fas fa-warehouse"></i> <strong>{{ $almacene->nombre }}</strong></h6>
                 <p class="mb-1"><i class="fas fa-map-marker-alt"></i> {{ $almacene->direccion }}</p>
-                <small class="text-muted osm-place" data-lat="${almacenLat}" data-lng="${almacenLng}">Buscando lugar…</small>
+                <small class="text-muted osm-place" data-lat="${almacenLat}" data-lng="${almacenLng}">Buscando zona…</small>
             </div>
         `;
 

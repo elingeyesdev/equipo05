@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Iniciar Sesión | Sistema Donaciones</title>
+    <title>Iniciar Sesión | {{ config('app.name', 'Alas chiquitanas') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
             <div class="login-box">
                 <div class="card card-outline card-primary">
                     <div class="card-header text-center">
-                        <a href="#" class="h1"><b>Sistema</b>Donaciones</a>
+                        <a href="#" class="h1"><b>Alas</b> chiquitanas</a>
                     </div>
                     <div class="card-body">
                         <p class="login-box-msg">Ingresa tus credenciales para iniciar sesión</p>

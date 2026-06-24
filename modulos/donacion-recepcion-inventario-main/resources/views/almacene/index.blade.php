@@ -114,7 +114,7 @@
                                     data-lat="{{ $almacene->latitud }}"
                                     data-lng="{{ $almacene->longitud }}"
                                     style="max-width: 220px;">
-                                    Buscando lugar…
+                                    Buscando zona…
                                 </small>
                             @else
                                 <span class="badge badge-secondary">

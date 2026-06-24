@@ -10,13 +10,13 @@ class OpenStreetMapGeocodingService
 {
     private const NOMINATIM_REVERSE = 'https://nominatim.openstreetmap.org/reverse';
 
-    public function reverse(float $lat, float $lng, int $zoom = 16): ?string
+    public function reverse(float $lat, float $lng, int $zoom = 13): ?string
     {
         if (! $this->validCoord($lat, $lng)) {
             return null;
         }
 
-        $cacheKey = 'osm:reverse:'.round($lat, 5).':'.round($lng, 5).':'.$zoom;
+        $cacheKey = 'osm:zone:v2:'.round($lat, 5).':'.round($lng, 5).':'.$zoom;
 
         return Cache::remember($cacheKey, now()->addDays(30), function () use ($lat, $lng, $zoom) {
             try {
@@ -40,7 +40,7 @@ class OpenStreetMapGeocodingService
                     return null;
                 }
 
-                return $this->formatAddress($data);
+                return $this->formatZoneLabel($data);
             } catch (\Throwable $e) {
                 Log::debug('OSM reverse geocode failed', [
                     'lat' => $lat,
@@ -54,38 +54,75 @@ class OpenStreetMapGeocodingService
     }
 
     /** @param array<string, mixed> $data */
-    public function formatAddress(array $data): ?string
+    public function formatZoneLabel(array $data): ?string
     {
         $address = $data['address'] ?? null;
         if (is_array($address)) {
-            $street = trim(implode(' ', array_filter([
-                $address['road'] ?? $address['pedestrian'] ?? $address['path'] ?? null,
-                $address['house_number'] ?? null,
-            ])));
-
-            $locality = $address['neighbourhood']
+            $zone = $address['neighbourhood']
                 ?? $address['suburb']
-                ?? $address['village']
+                ?? $address['quarter']
+                ?? $address['residential']
                 ?? $address['hamlet']
+                ?? $address['village']
+                ?? $address['isolated_dwelling']
                 ?? null;
 
-            $city = $address['city']
+            $municipio = $address['municipality']
+                ?? $address['city_district']
                 ?? $address['town']
-                ?? $address['municipality']
-                ?? $address['county']
+                ?? $address['city']
                 ?? null;
 
-            $region = $address['state'] ?? $address['region'] ?? null;
+            $departamento = $address['state'] ?? $address['region'] ?? null;
 
-            $parts = array_values(array_unique(array_filter([$street, $locality, $city, $region])));
+            $street = trim((string) ($address['road'] ?? $address['pedestrian'] ?? $address['path'] ?? ''));
+
+            $parts = [];
+            if ($zone) {
+                $parts[] = $zone;
+            } elseif ($street !== '') {
+                $parts[] = $street;
+            }
+
+            if ($municipio && ! in_array($municipio, $parts, true)) {
+                $parts[] = $municipio;
+            }
+
+            if ($departamento && count($parts) < 2 && ! in_array($departamento, $parts, true)) {
+                $parts[] = $departamento;
+            }
+
             if ($parts !== []) {
                 return implode(', ', $parts);
             }
         }
 
-        $display = trim((string) ($data['display_name'] ?? ''));
+        return $this->shortDisplayName((string) ($data['display_name'] ?? ''));
+    }
 
-        return $display !== '' ? $display : null;
+    /** @param array<string, mixed> $data */
+    public function formatAddress(array $data): ?string
+    {
+        return $this->formatZoneLabel($data);
+    }
+
+    private function shortDisplayName(string $display): ?string
+    {
+        $display = trim($display);
+        if ($display === '') {
+            return null;
+        }
+
+        $parts = array_values(array_filter(array_map('trim', explode(',', $display))));
+        if ($parts !== [] && end($parts) === 'Bolivia') {
+            array_pop($parts);
+        }
+
+        if ($parts === []) {
+            return null;
+        }
+
+        return implode(', ', array_slice($parts, 0, min(3, count($parts))));
     }
 
     private function validCoord(float $lat, float $lng): bool
@@ -97,7 +134,7 @@ class OpenStreetMapGeocodingService
 
     private function userAgent(): string
     {
-        $name = config('app.name', 'Equipo05');
+        $name = config('app.name', 'Alas chiquitanas');
 
         return $name.' Geocoding/1.0 ('.config('app.url', 'http://localhost').')';
     }

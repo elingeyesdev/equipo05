@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title','Plataforma de gestión territorial')</title>
+    <title>@yield('title', config('app.name', 'Alas chiquitanas'))</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -140,20 +140,21 @@
 
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             @php
-                $sidebarBrand = match (true) {
-                    str_contains($bodyModuleClass ?? '', 'module-territorial') => ['icon' => 'fa-globe-americas', 'label' => 'Territorial'],
-                    str_contains($bodyModuleClass ?? '', 'module-cuadrillas') => ['icon' => 'fa-fire', 'label' => 'Cuadrillas'],
-                    str_contains($bodyModuleClass ?? '', 'module-incendios') => ['icon' => 'fa-fire-alt', 'label' => 'Incendios'],
-                    str_contains($bodyModuleClass ?? '', 'module-logistica') => ['icon' => 'fa-truck', 'label' => 'Logística'],
-                    str_contains($bodyModuleClass ?? '', 'module-seguimiento') => ['icon' => 'fa-hands-helping', 'label' => 'Voluntarios'],
-                    str_contains($bodyModuleClass ?? '', 'module-inventario') => ['icon' => 'fa-boxes', 'label' => 'Inventario'],
-                    str_contains($bodyModuleClass ?? '', 'module-rescate') => ['icon' => 'fa-paw', 'label' => 'Rescate'],
-                    default => ['icon' => 'fa-hand-holding-heart', 'label' => 'Plataforma'],
+                $platformName = config('app.name', 'Alas chiquitanas');
+                $sidebarBrandIcon = match (true) {
+                    str_contains($bodyModuleClass ?? '', 'module-territorial') => 'fa-globe-americas',
+                    str_contains($bodyModuleClass ?? '', 'module-cuadrillas') => 'fa-fire',
+                    str_contains($bodyModuleClass ?? '', 'module-incendios') => 'fa-fire-alt',
+                    str_contains($bodyModuleClass ?? '', 'module-logistica') => 'fa-truck',
+                    str_contains($bodyModuleClass ?? '', 'module-seguimiento') => 'fa-hands-helping',
+                    str_contains($bodyModuleClass ?? '', 'module-inventario') => 'fa-boxes',
+                    str_contains($bodyModuleClass ?? '', 'module-rescate') => 'fa-paw',
+                    default => 'fa-leaf',
                 };
             @endphp
-            <a href="{{ route('home') }}" class="brand-link text-center">
-                <i class="fas {{ $sidebarBrand['icon'] }} fa-lg"></i>
-                <span class="brand-text font-weight-light ml-2">{{ $sidebarBrand['label'] }}</span>
+            <a href="{{ route('home') }}" class="brand-link text-center" title="{{ $platformName }}">
+                <i class="fas {{ $sidebarBrandIcon }} fa-lg"></i>
+                <span class="brand-text font-weight-light ml-2">{{ $platformName }}</span>
             </a>
 
             <div class="sidebar">
@@ -789,7 +790,7 @@
                         <li class="nav-item" data-sidebar-key="mod-territorial">
                             <a href="{{ route('territorial.dashboard') }}" class="nav-link {{ request()->routeIs('territorial.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-globe-americas text-info"></i>
-                                <p><span class="sidebar-menu-label">Mapa territorial integrado</span></p>
+                                <p><span class="sidebar-menu-label">Mapa general</span></p>
                             </a>
                         </li>
                         @endif
@@ -893,7 +894,7 @@
         </div>
 
         <footer class="main-footer">
-            <strong>© {{ date('Y') }} Plataforma de gestión territorial e incendios</strong>
+            <strong>© {{ date('Y') }} {{ config('app.name', 'Alas chiquitanas') }}</strong>
             <div class="float-right d-none d-sm-inline-block">
                 <b>Versión</b> 1.0.0
             </div>

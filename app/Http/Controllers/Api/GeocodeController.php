@@ -22,7 +22,8 @@ class GeocodeController extends Controller
         $lugar = $geocoder->reverse($lat, $lng);
 
         return response()->json([
-            'lugar' => $lugar ?? 'Ubicación no identificada',
+            'lugar' => $lugar ?? 'Zona no identificada',
+            'zona' => $lugar ?? 'Zona no identificada',
             'lat' => $lat,
             'lng' => $lng,
         ]);

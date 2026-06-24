@@ -89,9 +89,9 @@
         <p class="small text-muted mb-0">
             <i class="fas fa-info-circle mr-1"></i>
             @if($isCommunityViewer)
-                Activa o desactiva capas para ver incendios, rescate, logística e inventario en el mapa. Al hacer clic en un punto verás el nombre del lugar.
+                Activa o desactiva capas para ver incendios, rescate, logística e inventario. Al hacer clic en un punto verás la zona o municipio (OpenStreetMap).
             @else
-                Los marcadores enlazan al módulo de origen. Al abrir un punto se muestra la dirección aproximada (OpenStreetMap).
+                Los marcadores enlazan al módulo de origen. Al abrir un punto se muestra la zona, barrio o municipio (OpenStreetMap).
             @endif
         </p>
     </aside>
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const mod = moduleLabels[point.module] || point.module;
         let html = `<span class="territorial-popup-module">${mod}</span><br><strong>${point.label || ''}</strong>`;
         html += `<div class="territorial-popup-place text-muted small mt-1" data-lat="${point.lat}" data-lng="${point.lng}">`
-            + '<i class="fas fa-spinner fa-spin fa-sm"></i> Buscando lugar…</div>';
+            + '<i class="fas fa-spinner fa-spin fa-sm"></i> Buscando zona…</div>';
         const meta = point.meta || {};
         Object.keys(meta).forEach(function (k) {
             if (skipMetaKeys.has(k) || meta[k] == null || meta[k] === '') return;
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!placeEl || placeEl.dataset.resolved === '1') return;
             placeEl.dataset.resolved = '1';
             window.OsmPlaceResolver.resolve(lat, lng).then(function (lugar) {
-                placeEl.innerHTML = '<i class="fas fa-map-marker-alt mr-1"></i>' + lugar;
+                placeEl.innerHTML = '<i class="fas fa-map-marker-alt mr-1"></i><strong>Zona:</strong> ' + lugar;
             });
         });
     }
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }).addTo(map).bindPopup(
                 '<strong>Almacén central logística</strong>'
                 + '<div class="territorial-popup-place text-muted small mt-1" data-lat="' + o.lat + '" data-lng="' + o.lng + '">'
-                + '<i class="fas fa-spinner fa-spin fa-sm"></i> Buscando lugar…</div>'
+                + '<i class="fas fa-spinner fa-spin fa-sm"></i> Buscando zona…</div>'
             );
             enrichPopupPlace(origenMarker, o.lat, o.lng);
             allBounds.extend([o.lat, o.lng]);
