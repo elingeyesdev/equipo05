@@ -4,15 +4,58 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
+use App\Support\AccessControl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class CitizenAuthController extends Controller
 {
+    public function register(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:50'],
+            'apellido' => ['required', 'string', 'max:50'],
+            'email' => [
+                'required',
+                'email',
+                'max:100',
+                Rule::unique((new Usuario)->getTable(), 'email'),
+            ],
+            'telefono' => ['nullable', 'string', 'max:20'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'email.unique' => 'Este correo ya está registrado.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+        ]);
+
+        $user = Usuario::create([
+            'nombre' => $data['nombre'],
+            'apellido' => $data['apellido'],
+            'email' => strtolower(trim($data['email'])),
+            'telefono' => $data['telefono'] ?? null,
+            'contrasena' => Hash::make($data['password']),
+            'activo' => true,
+            'fecharegistro' => now(),
+        ]);
+
+        AccessControl::syncPublicCommunityRoles($user);
+
+        $token = $this->issueMobileToken($user);
+
+        return response()->json([
+            'message' => 'Cuenta creada correctamente.',
+            'token' => $token,
+            'usuario' => $this->serializeUser($user),
+        ], 201);
+    }
+
     public function login(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -36,7 +79,7 @@ class CitizenAuthController extends Controller
         }
 
         $user->tokens()->delete();
-        $token = $user->createToken('alas-mobile')->plainTextToken;
+        $token = $this->issueMobileToken($user);
 
         return response()->json([
             'message' => 'Inicio de sesión correcto.',
@@ -210,5 +253,31 @@ class CitizenAuthController extends Controller
         $digits = preg_replace('/\D+/', '', $ci);
 
         return $digits !== '' ? $digits : $ci;
+    }
+
+    private function issueMobileToken(Usuario $user): string
+    {
+        $this->ensurePersonalAccessTokensTable();
+
+        return $user->createToken('alas-mobile')->plainTextToken;
+    }
+
+    private function ensurePersonalAccessTokensTable(): void
+    {
+        $connection = (new Usuario)->getConnectionName() ?? config('database.default');
+        if (Schema::connection($connection)->hasTable('personal_access_tokens')) {
+            return;
+        }
+
+        Schema::connection($connection)->create('personal_access_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('tokenable');
+            $table->string('name');
+            $table->string('token', 64)->unique();
+            $table->text('abilities')->nullable();
+            $table->timestamp('last_used_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->timestamps();
+        });
     }
 }

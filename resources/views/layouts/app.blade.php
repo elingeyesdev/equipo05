@@ -185,9 +185,20 @@
                         $__showCuadrillas = AccessControl::showSidebarModule($__u, 'cuadrillas');
                         $__showRescate = AccessControl::showSidebarModule($__u, 'rescate');
                         $__showSync = AccessControl::showSidebarModule($__u, 'sync');
+                        $__showTerritorial = AccessControl::canViewTerritorialMap($__u);
+                        $__showTerritorialCommunity = $__showTerritorial && AccessControl::isPublicCommunityUser($__u);
                     @endphp
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <li class="nav-header">PROYECTOS</li>
+
+                        @if($__showTerritorialCommunity)
+                        <li class="nav-item" data-sidebar-key="mod-mapa-general">
+                            <a href="{{ route('territorial.dashboard') }}" class="nav-link {{ request()->routeIs('territorial.*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-globe-americas text-info"></i>
+                                <p><span class="sidebar-menu-label">Mapa general</span></p>
+                            </a>
+                        </li>
+                        @endif
 
                         @if($__showAdmin)
                         <li class="nav-item {{ request()->routeIs('dashboard') || request()->routeIs('roles.*') || request()->routeIs('usuarios.*') || request()->routeIs('campanias.*') || request()->routeIs('donaciones.*') || request()->routeIs('estados.*') || request()->routeIs('asignaciones.*') || request()->routeIs('gateway.trazabilidad.*') || request()->routeIs('reportes.trazabilidad.*') || request()->routeIs('mensajes.*') || request()->routeIs('chat.*') || request()->routeIs('saldosdonaciones.*') || request()->routeIs('reporte.cierreCaja*') ? 'menu-open' : '' }}" data-sidebar-key="mod-transparencia">

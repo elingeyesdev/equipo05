@@ -1,9 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Mapa territorial integrado')
+@php
+    $isCommunityViewer = \App\Support\AccessControl::isPublicCommunityUser(auth()->user());
+@endphp
 
-@section('content_header_title', 'Comando central territorial')
-@section('content_header_subtitle', 'Vista unificada de los 7 módulos operativos')
+@section('title', $isCommunityViewer ? 'Mapa general' : 'Mapa territorial integrado')
+
+@section('content_header_title', $isCommunityViewer ? 'Mapa general' : 'Comando central territorial')
+@section('content_header_subtitle', $isCommunityViewer
+    ? 'Incendios, rescate, logística, inventario y más en un solo mapa interactivo'
+    : 'Vista unificada de los 7 módulos operativos')
 
 @section('content')
 @php
@@ -82,7 +88,11 @@
         <hr class="my-3">
         <p class="small text-muted mb-0">
             <i class="fas fa-info-circle mr-1"></i>
-            Solo visible para el rol <strong>Administrador</strong>. Los marcadores enlazan al módulo de origen.
+            @if($isCommunityViewer)
+                Activa o desactiva capas para ver incendios, rescate, logística e inventario en el mapa. Al hacer clic en un punto verás el nombre del lugar.
+            @else
+                Los marcadores enlazan al módulo de origen. Al abrir un punto se muestra la dirección aproximada (OpenStreetMap).
+            @endif
         </p>
     </aside>
 
@@ -109,13 +119,35 @@
 @endpush
 
 @push('js')
+<script src="{{ asset('js/osm-place-resolver.js') }}"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    window.OsmPlaceResolver.configure({ apiUrl: @json(route('api.geocode.lugar')) });
+
     const apiUrl = @json(route('territorial.api.capas'));
     const layerMeta = @json($layerMeta);
     const moduleLabels = @json($moduleLabels);
+    const metaLabels = {
+        confidence: 'Confianza satélite',
+        frp: 'Potencia radiativa',
+        cluster_size: 'Puntos agrupados',
+        ubicacion: 'Referencia',
+        intensidad: 'Intensidad',
+        fecha: 'Fecha',
+        tipo: 'Tipo',
+        direccion: 'Dirección registrada',
+        urgencia: 'Urgencia',
+        especie: 'Especie',
+        estado: 'Estado',
+        comunidad: 'Comunidad',
+        solicitante: 'Solicitante',
+        prioridad: 'Prioridad',
+        reportante: 'Reportante',
+        integrantes: 'Integrantes',
+    };
+    const skipMetaKeys = new Set(['polygon', 'lat', 'lng', 'latitud', 'longitud', 'latitude', 'longitude']);
     const iconMap = {
         satellite: 'fa-satellite',
         fire: 'fa-fire',
@@ -165,16 +197,31 @@ document.addEventListener('DOMContentLoaded', function () {
     function buildPopup(point) {
         const mod = moduleLabels[point.module] || point.module;
         let html = `<span class="territorial-popup-module">${mod}</span><br><strong>${point.label || ''}</strong>`;
+        html += `<div class="territorial-popup-place text-muted small mt-1" data-lat="${point.lat}" data-lng="${point.lng}">`
+            + '<i class="fas fa-spinner fa-spin fa-sm"></i> Buscando lugar…</div>';
         const meta = point.meta || {};
         Object.keys(meta).forEach(function (k) {
-            if (meta[k] != null && meta[k] !== '' && k !== 'polygon') {
-                html += `<br><small class="text-muted">${k}: ${meta[k]}</small>`;
-            }
+            if (skipMetaKeys.has(k) || meta[k] == null || meta[k] === '') return;
+            const label = metaLabels[k] || k;
+            html += `<br><small class="text-muted">${label}: ${meta[k]}</small>`;
         });
         if (point.url) {
             html += `<br><a href="${point.url}" class="btn btn-xs btn-outline-primary mt-2 btn-sm">Ver en módulo</a>`;
         }
         return html;
+    }
+
+    function enrichPopupPlace(marker, lat, lng) {
+        marker.on('popupopen', function () {
+            const popupEl = marker.getPopup()?.getElement();
+            if (!popupEl) return;
+            const placeEl = popupEl.querySelector('.territorial-popup-place');
+            if (!placeEl || placeEl.dataset.resolved === '1') return;
+            placeEl.dataset.resolved = '1';
+            window.OsmPlaceResolver.resolve(lat, lng).then(function (lugar) {
+                placeEl.innerHTML = '<i class="fas fa-map-marker-alt mr-1"></i>' + lugar;
+            });
+        });
     }
 
     function setLoading(show) {
@@ -259,7 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     iconSize: [28, 28],
                     iconAnchor: [14, 14],
                 })
-            }).addTo(map).bindPopup('<strong>Almacén central logística</strong>');
+            }).addTo(map).bindPopup(
+                '<strong>Almacén central logística</strong>'
+                + '<div class="territorial-popup-place text-muted small mt-1" data-lat="' + o.lat + '" data-lng="' + o.lng + '">'
+                + '<i class="fas fa-spinner fa-spin fa-sm"></i> Buscando lugar…</div>'
+            );
+            enrichPopupPlace(origenMarker, o.lat, o.lng);
             allBounds.extend([o.lat, o.lng]);
         }
 
@@ -270,6 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const latlng = [point.lat, point.lng];
                 const marker = L.marker(latlng, { icon: markerIcon(point) });
                 marker.bindPopup(buildPopup(point));
+                enrichPopupPlace(marker, point.lat, point.lng);
                 layerGroups[key].addLayer(marker);
                 allBounds.extend(latlng);
 
@@ -285,6 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         fillOpacity: 0.15,
                         weight: 2,
                     }).bindPopup(buildPopup(point));
+                    enrichPopupPlace(polygon, point.lat, point.lng);
                     if (!polygonLayers[key]) polygonLayers[key] = [];
                     polygonLayers[key].push(polygon);
                     latlngs.forEach(function (ll) { allBounds.extend(ll); });

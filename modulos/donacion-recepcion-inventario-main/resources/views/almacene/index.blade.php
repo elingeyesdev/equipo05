@@ -92,7 +92,7 @@
                     <th width="60px">#</th>
                     <th><i class="fas fa-tag"></i> Nombre</th>
                     <th><i class="fas fa-map-marker-alt"></i> Dirección</th>
-                    <th><i class="fas fa-globe"></i> Ubicación GPS</th>
+                    <th><i class="fas fa-globe"></i> Ubicación</th>
                     <th width="200px" class="text-center"><i class="fas fa-cogs"></i> Acciones</th>
                 </tr>
             </thead>
@@ -110,8 +110,11 @@
                                     <i class="fas fa-check"></i> Registrada
                                 </span>
                                 <br>
-                                <small class="text-muted">
-                                    {{ number_format($almacene->latitud, 4) }}, {{ number_format($almacene->longitud, 4) }}
+                                <small class="text-muted osm-place osm-place--loading d-inline-block mt-1"
+                                    data-lat="{{ $almacene->latitud }}"
+                                    data-lng="{{ $almacene->longitud }}"
+                                    style="max-width: 220px;">
+                                    Buscando lugar…
                                 </small>
                             @else
                                 <span class="badge badge-secondary">
@@ -204,6 +207,10 @@
 
 @section('js')
 @include('inventario::partials.datatables-inventario-init')
+<script src="{{ asset('js/osm-place-resolver.js') }}"></script>
+<script>
+    window.OsmPlaceResolver.configure({ apiUrl: @json(route('api.geocode.lugar')) });
+</script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 <script>
@@ -225,6 +232,9 @@
                 nombre_desc: [1, 'desc'],
             },
         });
+        if (window.OsmPlaceResolver) {
+            window.OsmPlaceResolver.bindElements(document);
+        }
     });
 
     let deleteId;

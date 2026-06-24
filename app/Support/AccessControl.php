@@ -171,6 +171,7 @@ class AccessControl
                 'ciudadano.solicitudes_ayuda.crear',
                 'ciudadano.animales.reportar',
                 'comunidad.almacenes.ver',
+                'comunidad.mapa_territorial.ver',
             ],
             'donante' => [
                 'donante.campanas.ver',
@@ -180,6 +181,7 @@ class AccessControl
                 'donante.comprobantes.ver',
                 'donante.perfil.gestionar',
                 'comunidad.almacenes.ver',
+                'comunidad.mapa_territorial.ver',
             ],
             'voluntario_panel' => [
                 'voluntario.panel.ver',
@@ -276,14 +278,14 @@ class AccessControl
                 'donante.campanas.ver', 'donante.puntos.ver',
                 'donante.donaciones.crear', 'donante.donaciones_propias.ver',
                 'donante.comprobantes.ver', 'donante.perfil.gestionar',
-                'comunidad.almacenes.ver',
+                'comunidad.almacenes.ver', 'comunidad.mapa_territorial.ver',
             ],
             'Ciudadano' => [
                 'ciudadano.alertas.ver', 'ciudadano.incendios.reportar',
                 'ciudadano.reportes_propios.ver', 'ciudadano.solicitudes_ayuda.crear',
                 'ciudadano.animales.reportar',
                 'incendios.dashboard.ver',
-                'comunidad.almacenes.ver',
+                'comunidad.almacenes.ver', 'comunidad.mapa_territorial.ver',
             ],
         ];
     }
@@ -679,6 +681,17 @@ class AccessControl
         ]);
     }
 
+    public static function canViewTerritorialMap(?Usuario $user = null): bool
+    {
+        $user ??= auth()->user();
+
+        if (self::userHasRole($user, 'Administrador')) {
+            return true;
+        }
+
+        return self::userCan($user, 'comunidad.mapa_territorial.ver');
+    }
+
     public static function isOnlyRescateCitizen(): bool
     {
         $user = auth()->user();
@@ -721,7 +734,7 @@ class AccessControl
 
         if (self::isPublicCommunityUser($user)) {
             return match ($module) {
-                'incendios_ciudadano', 'inventario_donante', 'rescate' => true,
+                'incendios_ciudadano', 'inventario_donante', 'rescate', 'territorial' => true,
                 default => false,
             };
         }

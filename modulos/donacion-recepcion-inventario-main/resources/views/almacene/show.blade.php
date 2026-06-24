@@ -45,10 +45,14 @@
                 <i class="fas fa-globe"></i>
             </span>
             <div class="info-box-content">
-                <span class="info-box-text">Ubicación GPS</span>
+                <span class="info-box-text">Ubicación</span>
                 <span class="info-box-number" style="font-size: 0.9rem;">
                     @if($almacene->latitud && $almacene->longitud)
-                        {{ number_format($almacene->latitud, 6) }}, {{ number_format($almacene->longitud, 6) }}
+                        <span class="osm-place osm-place--loading"
+                            data-lat="{{ $almacene->latitud }}"
+                            data-lng="{{ $almacene->longitud }}">
+                            Buscando lugar…
+                        </span>
                     @else
                         Sin registro
                     @endif
@@ -81,11 +85,14 @@
                     <dd class="col-sm-8">{{ $almacene->direccion }}</dd>
 
                     @if($almacene->latitud && $almacene->longitud)
-                        <dt class="col-sm-4">Latitud:</dt>
-                        <dd class="col-sm-8">{{ $almacene->latitud }}</dd>
-
-                        <dt class="col-sm-4">Longitud:</dt>
-                        <dd class="col-sm-8">{{ $almacene->longitud }}</dd>
+                        <dt class="col-sm-4">Lugar en mapa:</dt>
+                        <dd class="col-sm-8">
+                            <span class="osm-place osm-place--loading"
+                                data-lat="{{ $almacene->latitud }}"
+                                data-lng="{{ $almacene->longitud }}">
+                                Buscando lugar…
+                            </span>
+                        </dd>
                     @endif
                 </dl>
             </div>
@@ -136,7 +143,16 @@
         <div class="card-footer">
             <div class="text-muted">
                 <i class="fas fa-info-circle"></i>
-                Coordenadas: {{ $almacene->latitud }}, {{ $almacene->longitud }}
+                @if($almacene->latitud && $almacene->longitud)
+                    Lugar:
+                    <span class="osm-place osm-place--loading"
+                        data-lat="{{ $almacene->latitud }}"
+                        data-lng="{{ $almacene->longitud }}">
+                        Buscando…
+                    </span>
+                @else
+                    Sin ubicación GPS registrada
+                @endif
             </div>
         </div>
     </div>
@@ -249,10 +265,16 @@
 @stop
 
 @section('js')
+<script src="{{ asset('js/osm-place-resolver.js') }}"></script>
+<script>
+    window.OsmPlaceResolver.configure({ apiUrl: @json(route('api.geocode.lugar')) });
+</script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     const almacenCoords = [{{ $almacene->latitud }}, {{ $almacene->longitud }}];
+    const almacenLat = {{ $almacene->latitud }};
+    const almacenLng = {{ $almacene->longitud }};
 
     // Initialize the map
     const map = L.map('map').setView(almacenCoords, 15);
@@ -280,11 +302,23 @@
             <div style="text-align: center;">
                 <h6><i class="fas fa-warehouse"></i> <strong>{{ $almacene->nombre }}</strong></h6>
                 <p class="mb-1"><i class="fas fa-map-marker-alt"></i> {{ $almacene->direccion }}</p>
-                <small class="text-muted">Lat: {{ $almacene->latitud }}, Lng: {{ $almacene->longitud }}</small>
+                <small class="text-muted osm-place" data-lat="${almacenLat}" data-lng="${almacenLng}">Buscando lugar…</small>
             </div>
         `;
 
     marker.bindPopup(popupContent).openPopup();
+    marker.on('popupopen', function () {
+        const el = marker.getPopup()?.getElement()?.querySelector('.osm-place');
+        if (!el || el.dataset.resolved === '1') return;
+        el.dataset.resolved = '1';
+        window.OsmPlaceResolver.resolve(almacenLat, almacenLng).then(function (lugar) {
+            el.textContent = lugar;
+        });
+    });
+    window.OsmPlaceResolver.resolve(almacenLat, almacenLng).then(function (lugar) {
+        const el = marker.getPopup()?.getElement()?.querySelector('.osm-place');
+        if (el) el.textContent = lugar;
+    });
 
     // Add circle around the warehouse
     L.circle(almacenCoords, {

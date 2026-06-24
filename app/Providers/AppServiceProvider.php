@@ -98,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('canManageInventarioAlmacenes', fn () => AccessControl::canManageInventarioAlmacenes());
         Blade::if('canViewInventarioAlmacenes', fn () => AccessControl::canViewInventarioAlmacenes());
         Blade::if('canReportIncendios', fn () => AccessControl::canReportIncendios());
+        Blade::if('canViewTerritorialMap', fn () => AccessControl::canViewTerritorialMap());
         Blade::if('isPublicCommunityUser', fn () => AccessControl::isPublicCommunityUser(auth()->user()));
         Blade::if('isOnlyRescateCitizen', fn () => AccessControl::isOnlyRescateCitizen());
     }

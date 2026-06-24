@@ -48,6 +48,7 @@ use App\Http\Controllers\Ext\{
     TrazabilidadSyncController,
     TrazabilidadController // Alias para el nuevo módulo
 };
+use App\Http\Controllers\Api\GeocodeController;
 use App\Http\Controllers\Fusion\Fase1IntegracionController;
 use App\Http\Controllers\Fusion\MapaOperativoController;
 use App\Http\Controllers\Fusion\ModulosIntegradosController;
@@ -116,7 +117,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/territorial', function () {
         return redirect()->route('territorial.dashboard');
-    })->middleware('role:Administrador')->name('fusion.modulos.territorial');
+    })->middleware('permission.check:comunidad.mapa_territorial.ver')->name('fusion.modulos.territorial');
+
+    Route::get('/api/geocode/lugar', [GeocodeController::class, 'lugar'])->name('api.geocode.lugar');
 
     // ====================================================
     // SINCRONIZACIONES (ACCESO GENERAL)
@@ -301,7 +304,7 @@ Route::prefix('cuadrillas/modulo')
 
 Route::prefix('territorial/modulo')
     ->as('territorial.')
-    ->middleware(['auth', 'role:Administrador'])
+    ->middleware(['auth', 'permission.check:comunidad.mapa_territorial.ver'])
     ->group(function () {
         Route::get('/', [MapaOperativoController::class, 'index'])->name('dashboard');
         Route::get('/mapa', [MapaOperativoController::class, 'index'])->name('mapa');

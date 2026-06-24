@@ -71,5 +71,6 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 EXPOSE 10000
 
 CMD php artisan config:cache \
+    && php artisan migrate --force --no-interaction \
     && (php artisan storage:link || true) \
     && apache2-foreground

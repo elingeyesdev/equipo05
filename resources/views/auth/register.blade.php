@@ -23,7 +23,7 @@
                     <div class="card-body">
                         <p class="login-box-msg">Crea tu cuenta de usuario común</p>
                         <p class="small text-muted text-center mb-3">
-                            Podrás reportar incendios, ver alertas, registrar donaciones y consultar solo tus propios datos.
+                            Podrás consultar el mapa general, reportar incendios, ver alertas, registrar donaciones y consultar almacenes y tus propios datos.
                         </p>
 
                         <form action="{{ route('register') }}" method="post">

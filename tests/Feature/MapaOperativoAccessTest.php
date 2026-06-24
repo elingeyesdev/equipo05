@@ -46,6 +46,32 @@ test('administrador puede consultar la api de capas del mapa territorial', funct
     $response->assertJsonStructure(['generated_at', 'center', 'summary', 'layers']);
 });
 
+test('usuario comun puede acceder al mapa general territorial', function () {
+    $email = 'ciudadano-mapa-test@example.com';
+    $user = Usuario::query()->whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
+
+    if (! $user) {
+        $user = Usuario::create([
+            'nombre' => 'Test',
+            'apellido' => 'Ciudadano',
+            'email' => $email,
+            'contrasena' => Hash::make('password'),
+            'telefono' => '70000002',
+            'activo' => true,
+        ]);
+    }
+
+    AccessControl::syncPublicCommunityRoles($user);
+    AccessControl::syncRolePermissionsIfStale();
+
+    $response = $this->actingAs($user)->get('/territorial/modulo');
+
+    $response->assertOk();
+    $response->assertSee('Mapa general', false);
+
+    $this->actingAs($user)->getJson('/territorial/modulo/api/capas')->assertOk();
+});
+
 test('voluntario recibe 403 en el mapa territorial', function () {
     $email = 'voluntario-territorial-test@example.com';
     $user = Usuario::query()->whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
