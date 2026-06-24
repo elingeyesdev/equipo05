@@ -251,8 +251,8 @@
                         @endif
 
                         @if($__showInventarioDonante)
-                        <li class="nav-item {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') || request()->routeIs('inventario.donante.mi-perfil*') || request()->routeIs('inventario.helpdesk') ? 'menu-open' : '' }}" data-sidebar-key="mod-donante">
-                            <a href="#" class="nav-link {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') || request()->routeIs('inventario.donante.mi-perfil*') || request()->routeIs('inventario.helpdesk') ? 'active' : '' }}">
+                        <li class="nav-item {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') || request()->routeIs('inventario.almacene.*') || request()->routeIs('inventario.donante.mi-perfil*') || request()->routeIs('inventario.helpdesk') ? 'menu-open' : '' }}" data-sidebar-key="mod-donante">
+                            <a href="#" class="nav-link {{ request()->routeIs('inventario.donaciones.*') || request()->routeIs('inventario.campana.*') || request()->routeIs('inventario.puntos-recoleccion.*') || request()->routeIs('inventario.almacene.*') || request()->routeIs('inventario.donante.mi-perfil*') || request()->routeIs('inventario.helpdesk') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-hand-holding-heart"></i>
                                 <p><span class="sidebar-menu-label">Mis donaciones</span> <i class="fas fa-angle-left right"></i></p>
                             </a>
@@ -275,6 +275,11 @@
                                 <li class="nav-item">
                                     <a href="{{ route('inventario.puntos-recoleccion.index') }}" class="nav-link {{ request()->routeIs('inventario.puntos-recoleccion.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i><p>Puntos de recolección</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('inventario.almacene.index') }}" class="nav-link {{ request()->routeIs('inventario.almacene.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Almacenes (consulta)</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -389,6 +394,11 @@
                                         <i class="far fa-circle nav-icon"></i><p>Alertas y mapa</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('incendios.focos-incendios.create') }}" class="nav-link {{ request()->routeIs('incendios.focos-incendios.create') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Reportar incendio</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endif
@@ -453,9 +463,21 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('rescate.home') }}" class="nav-link {{ request()->routeIs('rescate.home') ? 'active' : '' }}">
-                                        <i class="far fa-circle nav-icon"></i><p>Dashboard</p>
+                                        <i class="far fa-circle nav-icon"></i><p>Inicio</p>
                                     </a>
                                 </li>
+                                @if(AccessControl::isPublicCommunityUser($__u))
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.reports.create') }}" class="nav-link {{ request()->routeIs('rescate.reports.create') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Reportar hallazgo</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('rescate.reports.index') }}" class="nav-link {{ request()->routeIs('rescate.reports.index') || request()->routeIs('rescate.reports.show') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i><p>Mis reportes</p>
+                                    </a>
+                                </li>
+                                @else
                                 <li class="nav-item">
                                     <a href="{{ route('rescate.reports.index') }}" class="nav-link {{ request()->routeIs('rescate.reports.index') || request()->routeIs('rescate.reports.show') || request()->routeIs('rescate.reports.edit') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i><p>Reportes / Hallazgos</p>
@@ -511,6 +533,7 @@
                                         <i class="far fa-circle nav-icon"></i><p>Especies (catálogo)</p>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                         @endif

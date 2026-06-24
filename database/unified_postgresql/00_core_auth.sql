@@ -93,3 +93,18 @@ CREATE TABLE IF NOT EXISTS core.cache_locks (
     expiration  INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS core_cache_locks_expiration_index ON core.cache_locks (expiration);
+
+CREATE TABLE IF NOT EXISTS core.personal_access_tokens (
+    id              BIGSERIAL PRIMARY KEY,
+    tokenable_type  VARCHAR(255) NOT NULL,
+    tokenable_id    BIGINT NOT NULL,
+    name            VARCHAR(255) NOT NULL,
+    token           VARCHAR(64) NOT NULL UNIQUE,
+    abilities       TEXT,
+    last_used_at    TIMESTAMP(0) WITHOUT TIME ZONE,
+    expires_at      TIMESTAMP(0) WITHOUT TIME ZONE,
+    created_at      TIMESTAMP(0) WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP(0) WITHOUT TIME ZONE
+);
+CREATE INDEX IF NOT EXISTS core_pat_tokenable_idx ON core.personal_access_tokens (tokenable_type, tokenable_id);
+CREATE INDEX IF NOT EXISTS core_pat_expires_at_idx ON core.personal_access_tokens (expires_at);

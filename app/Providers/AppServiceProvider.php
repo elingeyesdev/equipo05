@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use App\Support\AccessControl;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
+use App\Models\PersonalAccessToken;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
         // AdminLTE/Bootstrap: evita la vista Tailwind por defecto (SVG gigantes sin estilos Tailwind).
         Paginator::defaultView('pagination::bootstrap-4');
         Paginator::defaultSimpleView('pagination::simple-bootstrap-4');
@@ -91,6 +95,10 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('canDeleteRescateReports', fn () => AccessControl::canDeleteRescateReports());
         Blade::if('canManageVeterinaryReleases', fn () => AccessControl::canManageVeterinaryReleases());
         Blade::if('canOperateIncendios', fn () => AccessControl::canOperateIncendios());
+        Blade::if('canManageInventarioAlmacenes', fn () => AccessControl::canManageInventarioAlmacenes());
+        Blade::if('canViewInventarioAlmacenes', fn () => AccessControl::canViewInventarioAlmacenes());
+        Blade::if('canReportIncendios', fn () => AccessControl::canReportIncendios());
+        Blade::if('isPublicCommunityUser', fn () => AccessControl::isPublicCommunityUser(auth()->user()));
         Blade::if('isOnlyRescateCitizen', fn () => AccessControl::isOnlyRescateCitizen());
     }
 

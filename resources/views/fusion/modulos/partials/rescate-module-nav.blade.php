@@ -1,15 +1,23 @@
 @php
-    $items = [
-        ['route' => 'rescate.home', 'patterns' => ['rescate.home', 'rescate.dashboard.*'], 'icon' => 'fa-chart-line', 'label' => 'Panel'],
-        ['route' => 'rescate.reports.index', 'patterns' => ['rescate.reports.index', 'rescate.reports.show', 'rescate.reports.edit', 'rescate.reports.create', 'rescate.reports.mapa-campo'], 'icon' => 'fa-binoculars', 'label' => 'Hallazgos'],
-        ['route' => 'rescate.animal-files.index', 'patterns' => ['rescate.animal-files.*', 'rescate.animal-records.*'], 'icon' => 'fa-paw', 'label' => 'Hojas de vida'],
-        ['route' => 'rescate.transfers.index', 'patterns' => ['rescate.transfers.*'], 'icon' => 'fa-truck', 'label' => 'Traslados'],
-        ['route' => 'rescate.medical-evaluations.index', 'patterns' => ['rescate.medical-evaluations.*', 'rescate.medical-evaluation-transactions.*'], 'icon' => 'fa-stethoscope', 'label' => 'Evaluaciones'],
-        ['route' => 'rescate.cares.index', 'patterns' => ['rescate.cares.*', 'rescate.care-feedings.*', 'rescate.animal-care-records.*', 'rescate.animal-feeding-records.*'], 'icon' => 'fa-heart', 'label' => 'Cuidados'],
-        ['route' => 'rescate.releases.index', 'patterns' => ['rescate.releases.*'], 'icon' => 'fa-leaf', 'label' => 'Liberaciones'],
-        ['route' => 'rescate.animal-histories.index', 'patterns' => ['rescate.animal-histories.*'], 'icon' => 'fa-history', 'label' => 'Historial'],
-        ['route' => 'rescate.reportes.index', 'patterns' => ['rescate.reportes.*'], 'icon' => 'fa-chart-bar', 'label' => 'Reportes'],
-    ];
+    $isCommunityUser = \App\Support\AccessControl::isPublicCommunityUser(auth()->user());
+
+    $items = $isCommunityUser
+        ? [
+            ['route' => 'rescate.home', 'patterns' => ['rescate.home', 'rescate.dashboard.*'], 'icon' => 'fa-home', 'label' => 'Inicio'],
+            ['route' => 'rescate.reports.create', 'patterns' => ['rescate.reports.create'], 'icon' => 'fa-bullhorn', 'label' => 'Reportar'],
+            ['route' => 'rescate.reports.index', 'patterns' => ['rescate.reports.index', 'rescate.reports.show'], 'icon' => 'fa-list', 'label' => 'Mis reportes'],
+        ]
+        : [
+            ['route' => 'rescate.home', 'patterns' => ['rescate.home', 'rescate.dashboard.*'], 'icon' => 'fa-chart-line', 'label' => 'Panel'],
+            ['route' => 'rescate.reports.index', 'patterns' => ['rescate.reports.index', 'rescate.reports.show', 'rescate.reports.edit', 'rescate.reports.create', 'rescate.reports.mapa-campo'], 'icon' => 'fa-binoculars', 'label' => 'Hallazgos'],
+            ['route' => 'rescate.animal-files.index', 'patterns' => ['rescate.animal-files.*', 'rescate.animal-records.*'], 'icon' => 'fa-paw', 'label' => 'Hojas de vida'],
+            ['route' => 'rescate.transfers.index', 'patterns' => ['rescate.transfers.*'], 'icon' => 'fa-truck', 'label' => 'Traslados'],
+            ['route' => 'rescate.medical-evaluations.index', 'patterns' => ['rescate.medical-evaluations.*', 'rescate.medical-evaluation-transactions.*'], 'icon' => 'fa-stethoscope', 'label' => 'Evaluaciones'],
+            ['route' => 'rescate.cares.index', 'patterns' => ['rescate.cares.*', 'rescate.care-feedings.*', 'rescate.animal-care-records.*', 'rescate.animal-feeding-records.*'], 'icon' => 'fa-heart', 'label' => 'Cuidados'],
+            ['route' => 'rescate.releases.index', 'patterns' => ['rescate.releases.*'], 'icon' => 'fa-leaf', 'label' => 'Liberaciones'],
+            ['route' => 'rescate.animal-histories.index', 'patterns' => ['rescate.animal-histories.*'], 'icon' => 'fa-history', 'label' => 'Historial'],
+            ['route' => 'rescate.reportes.index', 'patterns' => ['rescate.reportes.*'], 'icon' => 'fa-chart-bar', 'label' => 'Reportes'],
+        ];
 @endphp
 
 <div class="card card-outline shadow-sm mb-3 res-dashboard-shell">

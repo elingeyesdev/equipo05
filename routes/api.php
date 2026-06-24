@@ -1,7 +1,17 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\CitizenAuthController;
 use App\Http\Controllers\Api\Public\LogisticaPublicoController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('auth/login', [CitizenAuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
+    Route::get('me', [CitizenAuthController::class, 'me']);
+    Route::post('logout', [CitizenAuthController::class, 'logout']);
+    Route::get('mis-solicitudes', [CitizenAuthController::class, 'misSolicitudes']);
+    Route::get('mis-hallazgos', [CitizenAuthController::class, 'misHallazgos']);
+});
 
 Route::prefix('public/logistica')->group(function () {
     Route::post('solicitudes', [LogisticaPublicoController::class, 'storeSolicitud']);

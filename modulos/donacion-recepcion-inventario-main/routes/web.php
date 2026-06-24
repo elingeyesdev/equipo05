@@ -66,14 +66,17 @@ Route::middleware(['auth', 'permission.check:inventario.donantes.gestionar|inven
     Route::resource('donante', Modules\Inventario\Http\Controllers\DonanteController::class);
 });
 
+Route::middleware(['auth', 'permission.check:inventario.almacenes.gestionar|inventario.dashboard.ver|comunidad.almacenes.ver'])->group(function () {
+    Route::get('almacene', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'index'])->name('almacene.index');
+    Route::get('almacene/{almacene}', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'show'])->name('almacene.show');
+});
+
 Route::middleware(['auth', 'permission.check:inventario.almacenes.gestionar|inventario.dashboard.ver'])->group(function () {
     Route::get('almacene/create', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'create'])->name('almacene.create');
     Route::post('almacene', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'store'])->name('almacene.store');
     Route::get('almacene/{almacene}/edit', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'edit'])->name('almacene.edit');
     Route::put('almacene/{almacene}', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'update'])->name('almacene.update');
     Route::delete('almacene/{almacene}', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'destroy'])->name('almacene.destroy');
-    Route::get('almacene', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'index'])->name('almacene.index');
-    Route::get('almacene/{almacene}', [Modules\Inventario\Http\Controllers\AlmaceneController::class, 'show'])->name('almacene.show');
 });
 
 Route::middleware(['auth', 'permission.check:inventario.recoleccion.gestionar|inventario.dashboard.ver'])->group(function () {

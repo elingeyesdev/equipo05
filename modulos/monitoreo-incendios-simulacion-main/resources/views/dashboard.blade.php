@@ -280,7 +280,8 @@
                     </div>
                 </div>
 
-                {{-- Accesos Rápidos a Reportes --}}
+                {{-- Accesos Rápidos a Reportes (solo operadores) --}}
+                @canOperateIncendios
                 <x-adminlte-card title="Accesos Rápidos" theme="primary" icon="fas fa-bolt" class="mt-3 incendios-quick-access-card">
                     <div class="row incendios-quick-links justify-content-center">
                         <div class="col-12 col-sm-6 col-lg-3 mb-3">
@@ -309,6 +310,16 @@
                         </div>
                     </div>
                 </x-adminlte-card>
+                @else
+                <x-adminlte-card title="Participación ciudadana" theme="primary" icon="fas fa-bullhorn" class="mt-3 incendios-quick-access-card">
+                    <p class="text-muted mb-3">Puedes consultar el mapa de alertas y reportar un posible foco de incendio para que el equipo operativo lo revise.</p>
+                    @canReportIncendios
+                    <a href="{{ route('incendios.focos-incendios.create') }}" class="btn btn-danger btn-lg">
+                        <i class="fas fa-fire mr-1"></i> Reportar foco de incendio
+                    </a>
+                    @endcanReportIncendios
+                </x-adminlte-card>
+                @endcanOperateIncendios
             </x-adminlte-card>
         </div>
     </div>

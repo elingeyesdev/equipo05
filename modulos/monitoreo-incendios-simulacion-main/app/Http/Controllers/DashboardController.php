@@ -2,6 +2,7 @@
 
 namespace Modules\Incendios\Http\Controllers;
 
+use App\Support\AccessControl;
 use Modules\Incendios\Models\Biomasa;
 use Modules\Incendios\Models\FocoIncendio;
 use Modules\Incendios\Services\BiomasaSpatialMatcher;
@@ -67,8 +68,8 @@ class DashboardController extends Controller
 
         // Get user info for permission checks
         $user = auth()->user();
-        // Sistema unificado: con sesión en el main, todas las pestañas/acciones del panel están visibles; el "rol de contexto" es solo UI (sesión).
-        $isAdmin = true;
+        // Permisos reales: operadores ven métricas completas; ciudadanos solo monitoreo público.
+        $isAdmin = AccessControl::canOperateIncendios();
         $userId = $user->id ?? $user->usuarioid ?? null;
 
         // Get dashboard metrics with caching

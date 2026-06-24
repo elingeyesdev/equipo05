@@ -170,6 +170,7 @@ class AccessControl
                 'ciudadano.reportes_propios.ver',
                 'ciudadano.solicitudes_ayuda.crear',
                 'ciudadano.animales.reportar',
+                'comunidad.almacenes.ver',
             ],
             'donante' => [
                 'donante.campanas.ver',
@@ -178,6 +179,7 @@ class AccessControl
                 'donante.donaciones_propias.ver',
                 'donante.comprobantes.ver',
                 'donante.perfil.gestionar',
+                'comunidad.almacenes.ver',
             ],
             'voluntario_panel' => [
                 'voluntario.panel.ver',
@@ -274,12 +276,14 @@ class AccessControl
                 'donante.campanas.ver', 'donante.puntos.ver',
                 'donante.donaciones.crear', 'donante.donaciones_propias.ver',
                 'donante.comprobantes.ver', 'donante.perfil.gestionar',
+                'comunidad.almacenes.ver',
             ],
             'Ciudadano' => [
                 'ciudadano.alertas.ver', 'ciudadano.incendios.reportar',
                 'ciudadano.reportes_propios.ver', 'ciudadano.solicitudes_ayuda.crear',
                 'ciudadano.animales.reportar',
                 'incendios.dashboard.ver',
+                'comunidad.almacenes.ver',
             ],
         ];
     }
@@ -633,7 +637,46 @@ class AccessControl
 
     public static function canOperateIncendios(): bool
     {
-        return self::userHasAnyRole(auth()->user(), ['Administrador', 'Operador de Incendios']);
+        $user = auth()->user();
+
+        if (self::userHasAnyRole($user, ['Administrador', 'Operador de Incendios'])) {
+            return true;
+        }
+
+        return self::userCanAny($user, [
+            'incendios.focos.gestionar',
+            'incendios.reportes.ver',
+            'incendios.reportes_ciudadanos.ver',
+            'incendios.alertas.publicar',
+        ]);
+    }
+
+    public static function canManageInventarioAlmacenes(?Usuario $user = null): bool
+    {
+        $user ??= auth()->user();
+
+        return self::userCan($user, 'inventario.almacenes.gestionar');
+    }
+
+    public static function canViewInventarioAlmacenes(?Usuario $user = null): bool
+    {
+        $user ??= auth()->user();
+
+        if (self::canManageInventarioAlmacenes($user)) {
+            return true;
+        }
+
+        return self::userCan($user, 'comunidad.almacenes.ver');
+    }
+
+    public static function canReportIncendios(?Usuario $user = null): bool
+    {
+        $user ??= auth()->user();
+
+        return self::userCanAny($user, [
+            'ciudadano.incendios.reportar',
+            'incendios.focos.gestionar',
+        ]);
     }
 
     public static function isOnlyRescateCitizen(): bool

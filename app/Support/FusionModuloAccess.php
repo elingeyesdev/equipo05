@@ -17,7 +17,11 @@ class FusionModuloAccess
 
     public const CUADRILLAS_PERMISSIONS = 'cuadrillas.dashboard.ver|cuadrillas.equipos.gestionar|cuadrillas.recursos.gestionar|cuadrillas.reportes_campo.gestionar|cuadrillas.cursos.gestionar|cuadrillas.kardex.gestionar|cuadrillas.reportes.ver';
 
-    public const INCENDIOS_PERMISSIONS = 'incendios.dashboard.ver|incendios.alertas.publicar|incendios.reportes_ciudadanos.ver|incendios.reportes_ciudadanos.validar|incendios.focos.gestionar|incendios.estados.actualizar|incendios.reportes.ver|ciudadano.alertas.ver|ciudadano.incendios.reportar|ciudadano.reportes_propios.ver';
+    public const INCENDIOS_CITIZEN_PERMISSIONS = 'incendios.dashboard.ver|ciudadano.alertas.ver|ciudadano.incendios.reportar|ciudadano.reportes_propios.ver';
+
+    public const INCENDIOS_OPERATE_PERMISSIONS = 'incendios.alertas.publicar|incendios.reportes_ciudadanos.ver|incendios.reportes_ciudadanos.validar|incendios.focos.gestionar|incendios.estados.actualizar|incendios.reportes.ver';
+
+    public const INCENDIOS_PERMISSIONS = self::INCENDIOS_CITIZEN_PERMISSIONS.'|'.self::INCENDIOS_OPERATE_PERMISSIONS;
 
     public const RESCATE_PERMISSIONS = 'rescate.dashboard.ver|rescate.reportes.ver|rescate.rescates.gestionar|rescate.traslados.gestionar|rescate.animales.ver|veterinaria.dashboard.ver|veterinaria.animales.ver|veterinaria.evaluaciones.gestionar|veterinaria.diagnosticos.gestionar|veterinaria.tratamientos.gestionar|veterinaria.liberaciones.gestionar|veterinaria.reportes.ver|cuidados.dashboard.ver|cuidados.animales.ver|cuidados.alimentacion.registrar|cuidados.cuidados_diarios.registrar|cuidados.observaciones.registrar|ciudadano.animales.reportar|ciudadano.reportes_propios.ver';
 

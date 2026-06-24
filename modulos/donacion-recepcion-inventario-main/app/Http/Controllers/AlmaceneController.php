@@ -2,6 +2,7 @@
 
 namespace Modules\Inventario\Http\Controllers;
 
+use App\Support\AccessControl;
 use Modules\Inventario\Models\Almacene;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,8 @@ class AlmaceneController extends Controller
      */
     public function create(Request $request): View
     {
+        AccessControl::canManageInventarioAlmacenes() || abort(403);
+
         $almacene = new Almacene();
         $returnUrl = $request->query('return_url');
 
@@ -38,6 +41,8 @@ class AlmaceneController extends Controller
      */
     public function store(AlmaceneRequest $request): RedirectResponse
     {
+        AccessControl::canManageInventarioAlmacenes() || abort(403);
+
         $almacene = Almacene::create($request->validated());
 
         // Check if there's a return URL
@@ -67,6 +72,8 @@ class AlmaceneController extends Controller
      */
     public function edit($id): View
     {
+        AccessControl::canManageInventarioAlmacenes() || abort(403);
+
         $almacene = Almacene::find($id);
 
         return view('inventario::almacene.edit', compact('almacene'));
@@ -77,6 +84,8 @@ class AlmaceneController extends Controller
      */
     public function update(AlmaceneRequest $request, Almacene $almacene): RedirectResponse
     {
+        AccessControl::canManageInventarioAlmacenes() || abort(403);
+
         $almacene->update($request->validated());
 
         return Redirect::route('inventario.almacene.index')
@@ -85,6 +94,8 @@ class AlmaceneController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        AccessControl::canManageInventarioAlmacenes() || abort(403);
+
         try {
             $almacene = Almacene::findOrFail($id);
 

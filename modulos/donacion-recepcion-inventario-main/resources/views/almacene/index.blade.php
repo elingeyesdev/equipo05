@@ -5,14 +5,14 @@
 @section('content_header')
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h1><i class="fas fa-warehouse"></i> Gestión de Almacenes</h1>
+        <h1><i class="fas fa-warehouse"></i> @canManageInventarioAlmacenes Gestión de Almacenes @else Almacenes registrados @endcanManageInventarioAlmacenes</h1>
     </div>
     <div class="col-sm-6">
-        @can('gestionar-almacen')
+        @canManageInventarioAlmacenes
             <a href="{{ route('inventario.almacene.create') }}" class="btn btn-primary float-right">
                 <i class="fas fa-plus"></i> Nuevo Almacén
             </a>
-        @endcan
+        @endcanManageInventarioAlmacenes
     </div>
 </div>
 @stop
@@ -120,6 +120,7 @@
                             @endif
                         </td>
                         <td class="text-center">
+                            @canManageInventarioAlmacenes
                             <div class="btn-group mb-2" role="group">
                                 <a class="btn btn-success btn-sm"
                                     href="{{ route('inventario.estante.create', ['id_almacen' => $almacene->id_almacen]) }}"
@@ -128,12 +129,13 @@
                                 </a>
                             </div>
                             <br>
+                            @endcanManageInventarioAlmacenes
                             <div class="btn-group" role="group">
                                 <a class="btn btn-info btn-sm" href="{{ route('inventario.almacene.show', $almacene->id_almacen) }}"
                                     title="Ver detalles">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                @can('gestionar-almacen')
+                                @canManageInventarioAlmacenes
                                     <a class="btn btn-warning btn-sm" href="{{ route('inventario.almacene.edit', $almacene->id_almacen) }}"
                                         title="Editar">
                                         <i class="fas fa-edit"></i>
@@ -148,7 +150,7 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
-                                @endcan
+                                @endcanManageInventarioAlmacenes
                             </div>
                         </td>
                     </tr>
