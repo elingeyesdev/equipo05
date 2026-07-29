@@ -4,6 +4,7 @@ services:
     runtime: docker
     plan: free
     region: oregon
+    repo: https://github.com/elingeyesdev/equipo05
     branch: main
     autoDeployTrigger: commit
     dockerfilePath: ./Dockerfile.render
