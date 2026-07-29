@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: equipo05-didier-api
+    name: alaschiquitanas
     runtime: docker
     plan: free
     region: oregon
@@ -17,9 +17,9 @@ services:
       - key: APP_DEBUG
         value: "false"
       - key: APP_URL
-        value: https://equipo05-didier-api.onrender.com
+        value: https://alaschiquitanas.onrender.com
       - key: ASSET_URL
-        value: https://equipo05-didier-api.onrender.com
+        value: https://alaschiquitanas.onrender.com
       - key: LOG_CHANNEL
         value: stderr
       - key: LOG_LEVEL
@@ -35,7 +35,7 @@ services:
       - key: UNIFIED_PG_DATABASE
         value: postgres
       - key: UNIFIED_PG_USERNAME
-        value: postgres.qdwlpwlrvtcabffzadmn
+        value: postgres.gpnnxruzajdddonzuite
       - key: UNIFIED_PG_SSLMODE
         value: require
       - key: CACHE_STORE
